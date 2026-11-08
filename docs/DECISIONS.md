@@ -19,6 +19,8 @@
 | D14 | Cache des pages = assets statiques (pas de R2/KV) ; pages pré-rendues au build | Aucune ressource Cloudflare payante à créer. Les prix affichés sont ceux du dernier build ; le devis `/api/quote` relit la base (cache 5 min). |
 | D15 | Redirection de langue via `redirects` de `next.config.ts` (cookie `NEXT_LOCALE` → Accept-Language → EN) au lieu d'un Proxy | Le Proxy Next 16 tourne en mode Node, support seulement expérimental sur Cloudflare. |
 | D16 | Clé Supabase **publishable** et URL commitées (`wrangler.jsonc`, `.env.production`) | Clé conçue pour être publique, protégée par RLS + GRANT explicites ; aucun secret dans le dépôt. |
+| D17 | **Thème « Dark Tech Blue »** (noir + bleu électrique/cyan, grille technique, surfaces vitrées, lueurs) à la place du noir et or | Décision du propriétaire le 08/11/2026 ; remplace la palette or du cahier des charges. Contrastes vérifiés WCAG AA (axe). Couleurs centralisées : tokens CSS dans `globals.css`, palette SVG dans `src/components/visuals/palette.ts`. |
+| D18 | Visuels **originaux en SVG** (maquettes d'interface, art abstrait par catégorie, illustrations d'appareils) | Aucun droit tiers, aucun coût de génération, aucune requête réseau supplémentaire. |
 | D12 | Pages en `noindex,nofollow` + `robots.txt` bloquant tant que `NEXT_PUBLIC_ALLOW_INDEXING≠true` | Le site n'est pas une offre commerciale. |
 
 ## Décisions business en attente (bloquantes pour le lancement)

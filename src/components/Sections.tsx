@@ -16,7 +16,7 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           <h1>
             {h.titleA}
             <br />
-            <span className="gold">{h.titleB}</span>
+            <span className="hl">{h.titleB}</span>
           </h1>
           <p className="lead">{h.lead}</p>
           <div className="actions">

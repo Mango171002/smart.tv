@@ -1,4 +1,5 @@
 import { TallScreen, WideScreen } from './AppScreen';
+import { P } from './palette';
 
 /** Device frames wrapping the illustrative interface (pure CSS + SVG). */
 
@@ -37,15 +38,15 @@ export function PhoneFrame({ id }: { id: string }) {
 
 /** Small line illustrations for the device category cards. */
 export function DeviceIllustration({ kind }: { kind: 0 | 1 | 2 | 3 }) {
-  const stroke = '#d9b76f';
+  const stroke = P.accent;
   const common = { fill: 'none', stroke, strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
   return (
     <svg viewBox="0 0 96 64" className="device-art" aria-hidden="true" focusable="false">
       <defs>
         <linearGradient id={`dv-${kind}`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#1d3d69" />
-          <stop offset="0.6" stopColor="#a65968" />
-          <stop offset="1" stopColor="#f3a86a" />
+          <stop offset="0" stopColor={P.heroStops[0]} />
+          <stop offset="0.6" stopColor={P.heroStops[1]} />
+          <stop offset="1" stopColor={P.heroStops[2]} />
         </linearGradient>
       </defs>
       {kind === 0 && (
@@ -87,7 +88,7 @@ export function DeviceIllustration({ kind }: { kind: 0 | 1 | 2 | 3 }) {
 
 /** Abstract artwork for each content category (no titles, logos or rights-bearing imagery). */
 export function CategoryArt({ index }: { index: number }) {
-  const gold = '#d9b76f';
+  const gold = P.accent;
   return (
     <svg viewBox="0 0 160 100" className="tile-art" aria-hidden="true" focusable="false" preserveAspectRatio="xMaxYMin slice">
       {index === 0 && (
@@ -102,9 +103,9 @@ export function CategoryArt({ index }: { index: number }) {
       {index === 1 && (
         // Movies — film strip + projector beam
         <g>
-          <path d="M160 0 L70 70 L160 70 Z" fill="#ffe39c" opacity="0.08" />
+          <path d="M160 0 L70 70 L160 70 Z" fill={P.beam} opacity="0.08" />
           <g transform="rotate(-14 120 30)">
-            <rect x="78" y="14" width="96" height="30" fill="#0b1425" opacity="0.75" />
+            <rect x="78" y="14" width="96" height="30" fill={P.screenBg} opacity="0.75" />
             {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
               <g key={i}>
                 <rect x={82 + i * 12} y="17" width="6" height="4" rx="1" fill={gold} opacity="0.7" />
@@ -112,7 +113,7 @@ export function CategoryArt({ index }: { index: number }) {
               </g>
             ))}
             {[0, 1, 2].map((i) => (
-              <rect key={i} x={84 + i * 30} y="23" width="26" height="12" rx="1.5" fill="#a65968" opacity={0.5 + i * 0.15} />
+              <rect key={i} x={84 + i * 30} y="23" width="26" height="12" rx="1.5" fill={P.heroStops[1]} opacity={0.5 + i * 0.15} />
             ))}
           </g>
         </g>
@@ -121,7 +122,7 @@ export function CategoryArt({ index }: { index: number }) {
         // Series — stacked episodes
         <g>
           {[0, 1, 2, 3].map((i) => (
-            <rect key={i} x={92 + i * 9} y={10 + i * 9} width="52" height="30" rx="4" fill="#284f48" stroke={gold} strokeOpacity={0.25 + i * 0.2} opacity={0.5 + i * 0.15} />
+            <rect key={i} x={92 + i * 9} y={10 + i * 9} width="52" height="30" rx="4" fill="#0f4c5c" stroke={gold} strokeOpacity={0.25 + i * 0.2} opacity={0.5 + i * 0.15} />
           ))}
           <path d="M131 51 L141 57 L131 63 Z" fill={gold} />
         </g>
@@ -137,7 +138,7 @@ export function CategoryArt({ index }: { index: number }) {
               <rect x={98 + i * 20} y="0" width="12" height="6" rx="1.5" fill={gold} stroke="none" />
             </g>
           ))}
-          <path d="M100 6 L80 60 M124 6 L120 60 M144 6 L160 50" stroke="#ffe39c" strokeWidth="6" opacity="0.07" />
+          <path d="M100 6 L80 60 M124 6 L120 60 M144 6 L160 50" stroke={P.beam} strokeWidth="6" opacity="0.07" />
         </g>
       )}
       {index === 4 && (
@@ -146,7 +147,7 @@ export function CategoryArt({ index }: { index: number }) {
           <circle cx="128" cy="34" r="24" strokeWidth="1.5" opacity="0.7" />
           <ellipse cx="128" cy="34" rx="10" ry="24" strokeWidth="1.2" opacity="0.5" />
           <path d="M104 34 h48 M108 22 h40 M108 46 h40" strokeWidth="1.2" opacity="0.5" />
-          <path d="M84 80 L104 58 L116 70 L132 52 L160 80" fill="#494a30" stroke="none" opacity="0.6" />
+          <path d="M84 80 L104 58 L116 70 L132 52 L160 80" fill="#164a7a" stroke="none" opacity="0.6" />
         </g>
       )}
       {index === 5 && (

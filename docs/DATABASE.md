@@ -4,12 +4,12 @@ Projet : `gsxgfefpkosrlflggdxv` (eu-central-1, Postgres 17). Migrations dans `su
 
 | Migration | Contenu |
 |---|---|
-| `…100000_baseline_privileges` | **Désactive l'exposition automatique** : révoque les privilèges par défaut de `anon`, `authenticated`, `service_role` (tables, séquences, fonctions) et `EXECUTE` par défaut à `PUBLIC`. Crée le schéma `private` (non exposé). |
-| `…100100_catalog` | `markets`, `plans`, `prices` (+ trigger de cohérence devise ↔ marché, index unique « un prix ouvert par marché/offre »). |
-| `…100200_customers_orders` | `customers` (créé automatiquement à l'inscription Auth), `orders`, `order_events`, `payment_webhook_events`, machine d'états, verrou de lancement, journal d'audit. |
-| `…100300_contact_requests` | Demandes de support / liste de lancement + limitation anti-abus en base. |
-| `…100400_api_privileges_rls` | RLS sur toutes les tables + **GRANT explicites** table par table, colonne par colonne. |
-| `…100500_harden_platform_function` | Retire `EXECUTE` aux rôles API sur la fonction plateforme `rls_auto_enable()` (la protection reste active). |
+| `…134552_baseline_privileges` | **Désactive l'exposition automatique** : révoque les privilèges par défaut de `anon`, `authenticated`, `service_role` (tables, séquences, fonctions) et `EXECUTE` par défaut à `PUBLIC`. Crée le schéma `private` (non exposé). |
+| `…134733_catalog` | `markets`, `plans`, `prices` (+ trigger de cohérence devise ↔ marché, index unique « un prix ouvert par marché/offre »). |
+| `…134827_customers_orders` | `customers` (créé automatiquement à l'inscription Auth), `orders`, `order_events`, `payment_webhook_events`, machine d'états, verrou de lancement, journal d'audit. |
+| `…134848_contact_requests` | Demandes de support / liste de lancement + limitation anti-abus en base. |
+| `…134854_api_privileges_rls` | RLS sur toutes les tables + **GRANT explicites** table par table, colonne par colonne. |
+| `…135427_harden_platform_function` | Retire `EXECUTE` aux rôles API sur la fonction plateforme `rls_auto_enable()` (la protection reste active). |
 
 `supabase/seed.sql` (généré) : 3 marchés non licenciés, 16 offres, 48 prix `illustrative`. Idempotent, ne supprime rien.
 

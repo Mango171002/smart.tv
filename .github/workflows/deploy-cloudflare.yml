@@ -27,8 +27,13 @@ jobs:
         env:
           RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          # Remove spaces/line breaks that often sneak in when pasting the secret.
-          T="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
+          # Accept a bare token, a token with stray spaces/line breaks, or the whole
+          # "curl ... -H 'Authorization: Bearer <token>'" snippet shown by Cloudflare.
+          if printf '%s' "$RAW_TOKEN" | grep -q 'Bearer'; then
+            T="$(printf '%s' "$RAW_TOKEN" | tr '\n' ' ' | sed -E 's/.*Bearer[[:space:]]+([A-Za-z0-9_.-]+).*/\1/')"
+          else
+            T="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
+          fi
           if [ -z "$T" ]; then
             echo "::error::Add the CLOUDFLARE_API_TOKEN secret in GitHub → Settings → Secrets and variables → Actions."
             exit 1

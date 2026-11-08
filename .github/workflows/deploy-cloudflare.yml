@@ -23,14 +23,24 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: 9a7bb862febedb1b8e70a005037adee5
     steps:
       - uses: actions/checkout@v4
-      - name: Check that the Cloudflare token is configured
+      - name: Prepare and verify the Cloudflare token
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+          # Remove spaces/line breaks that often sneak in when pasting the secret.
+          T="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
+          if [ -z "$T" ]; then
             echo "::error::Add the CLOUDFLARE_API_TOKEN secret in GitHub → Settings → Secrets and variables → Actions."
             exit 1
           fi
+          echo "::add-mask::$T"
+          status="$(curl -s -o verify.json -w '%{http_code}' -H "Authorization: Bearer $T" https://api.cloudflare.com/client/v4/user/tokens/verify)"
+          if [ "$status" != "200" ]; then
+            echo "::error::Cloudflare rejected the token (HTTP $status). Re-create the CLOUDFLARE_API_TOKEN secret with only the token value."
+            exit 1
+          fi
+          rm -f verify.json
+          echo "CLOUDFLARE_API_TOKEN=$T" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -39,8 +49,6 @@ jobs:
       - run: npm test
       - name: Build and deploy
         run: npx opennextjs-cloudflare build && npx opennextjs-cloudflare deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - name: Smoke test
         run: |
           sleep 10

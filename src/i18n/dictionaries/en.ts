@@ -121,6 +121,13 @@ const en = {
       'How to get help if setup does not work',
     ],
   },
+  preview: {
+    eyebrow: 'Interface concept',
+    title: 'One experience on every screen.',
+    sub: 'Illustrative interface design for TV, computer and mobile. Artwork is abstract: no real channels, titles or logos are shown.',
+    labels: ['Smart TV', 'Computer', 'Mobile'],
+    caption: 'Concept interface — not contractual',
+  },
   how: {
     eyebrow: 'Simple by design',
     title: 'How it works.',

@@ -2,10 +2,9 @@ import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
+import { CategoryArt, DeviceIllustration, LaptopFrame, PhoneFrame, TvFrame } from './visuals/Devices';
 
 const BENEFIT_SYMBOLS = ['◎', '▣', '◇', '☏'];
-const CATEGORY_SYMBOLS = ['▣', '▤', '▷', '◉', '◈', '♡'];
-const DEVICE_SYMBOLS = ['▣', '▭', '▯', '▱'];
 
 export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.hero;
@@ -29,8 +28,13 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           </ul>
         </div>
         <div className="tvscene" role="img" aria-label={h.visualLabel}>
-          <div className="tv"><div className="tvtext" aria-hidden="true">{siteConfig.brandName}</div></div>
-          <div className="stand" />
+          <div className="scene-glow" aria-hidden="true" />
+          <div className="hero-tv">
+            <TvFrame id="hero-tv" label={siteConfig.brandName} />
+          </div>
+          <div className="hero-phone">
+            <PhoneFrame id="hero-phone" />
+          </div>
           <span className="demo-stamp">{h.stamp}</span>
         </div>
       </div>
@@ -63,7 +67,7 @@ export function ContentCategories({ dict, headingLevel = 2 }: { dict: Dictionary
         <ul className="content-grid">
           {c.categories.map((name, i) => (
             <li className="tile" key={name}>
-              <span aria-hidden="true">{CATEGORY_SYMBOLS[i]}</span>
+              <CategoryArt index={i} />
               <b>{name}</b>
             </li>
           ))}
@@ -85,7 +89,7 @@ export function DeviceGrid({ dict, headingLevel = 2 }: { dict: Dictionary; headi
         <ul className="devices">
           {d.items.map((item, i) => (
             <li className="card device" key={item.title}>
-              <div className="symbol" aria-hidden="true">{DEVICE_SYMBOLS[i]}</div>
+              <DeviceIllustration kind={i as 0 | 1 | 2 | 3} />
               <b>{item.title}</b>
               <small>{item.text}</small>
             </li>
@@ -152,6 +156,34 @@ export function HelpCta({ locale, dict }: { locale: Locale; dict: Dictionary }) 
           </div>
           <Link className="btn ghost" href={`/${locale}/help`}>{dict.helpCta.button} <span aria-hidden="true">→</span></Link>
         </div>
+      </div>
+    </section>
+  );
+}
+
+export function InterfacePreview({ dict }: { dict: Dictionary }) {
+  const p = dict.preview;
+  return (
+    <section id="preview" aria-labelledby="preview-title">
+      <div className="wrap">
+        <div className="eyebrow">{p.eyebrow}</div>
+        <h2 id="preview-title" className="section-title">{p.title}</h2>
+        <p className="sub">{p.sub}</p>
+        <div className="preview-stage" role="img" aria-label={`${p.caption}: ${p.labels.join(', ')}`}>
+          <figure className="preview-item preview-tv">
+            <TvFrame id="pv-tv" />
+            <figcaption>{p.labels[0]}</figcaption>
+          </figure>
+          <figure className="preview-item preview-laptop">
+            <LaptopFrame id="pv-laptop" />
+            <figcaption>{p.labels[1]}</figcaption>
+          </figure>
+          <figure className="preview-item preview-phone">
+            <PhoneFrame id="pv-phone" />
+            <figcaption>{p.labels[2]}</figcaption>
+          </figure>
+        </div>
+        <p className="footnote" style={{ textAlign: 'center' }}>{p.caption}</p>
       </div>
     </section>
   );

@@ -1,5 +1,5 @@
 import { PlanConfigurator } from '@/components/PlanConfigurator';
-import { Benefits, ContentCategories, DeviceGrid, Faq, HelpCta, Hero, HowItWorks } from '@/components/Sections';
+import { Benefits, ContentCategories, DeviceGrid, Faq, HelpCta, Hero, HowItWorks, InterfacePreview } from '@/components/Sections';
 import { getDictionary } from '@/i18n/dictionaries';
 import { getPriceTables } from '@/lib/price-source';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
@@ -34,6 +34,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
       <ContentCategories dict={dict} />
+      <InterfacePreview dict={dict} />
       <DeviceGrid dict={dict} />
       <HowItWorks dict={dict} />
       <Faq dict={dict} limit={5} />

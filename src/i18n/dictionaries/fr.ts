@@ -125,6 +125,13 @@ const fr: Dictionary = {
       'Comment obtenir de l’aide si l’installation échoue',
     ],
   },
+  preview: {
+    eyebrow: 'Concept d’interface',
+    title: 'Une seule expérience sur tous vos écrans.',
+    sub: 'Design d’interface illustratif pour TV, ordinateur et mobile. Les visuels sont abstraits : aucune vraie chaîne, aucun titre ni logo.',
+    labels: ['Smart TV', 'Ordinateur', 'Mobile'],
+    caption: 'Interface conceptuelle — non contractuelle',
+  },
   how: {
     eyebrow: 'Simple par conception',
     title: 'Comment ça marche.',

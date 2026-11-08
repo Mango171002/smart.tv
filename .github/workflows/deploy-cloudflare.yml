@@ -59,3 +59,26 @@ jobs:
           sleep 10
           curl -fsS https://sygmatv.com/api/health
           curl -fsS -o /dev/null -w "%{http_code}\n" https://sygmatv.com/en
+      - name: Lighthouse audit of the live site (mobile + desktop)
+        run: |
+          U=https://sygmatv.com/fr
+          npm i --no-save lighthouse@13.6.0 >/dev/null 2>&1
+          for preset in mobile desktop; do
+            extra=""; [ "$preset" = desktop ] && extra="--preset=desktop"
+            npx lighthouse "$U" --quiet $extra --chrome-flags="--headless=new --no-sandbox" \
+              --output=json --output-path="lh-$preset.json"
+          done
+          node - <<'NODE' >> "$GITHUB_STEP_SUMMARY"
+          const fs = require('fs');
+          let failed = false;
+          console.log('| Profile | Performance | Accessibility | Best practices | SEO* | LCP | CLS |');
+          console.log('|---|---|---|---|---|---|---|');
+          for (const p of ['mobile', 'desktop']) {
+            const r = JSON.parse(fs.readFileSync(`lh-${p}.json`, 'utf8'));
+            const s = (k) => Math.round(r.categories[k].score * 100);
+            for (const k of ['performance', 'accessibility', 'best-practices']) if (s(k) < 90) failed = true;
+            console.log(`| ${p} | ${s('performance')} | ${s('accessibility')} | ${s('best-practices')} | ${s('seo')} | ${r.audits['largest-contentful-paint'].displayValue} | ${r.audits['cumulative-layout-shift'].displayValue} |`);
+          }
+          console.log('\n*SEO is capped while the prototype is served with `noindex` on purpose.');
+          if (failed) { console.log('\n**A score dropped below 90.**'); process.exitCode = 1; }
+          NODE

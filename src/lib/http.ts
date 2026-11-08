@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 
-/** Client IP (first X-Forwarded-For hop — only trustworthy behind your own proxy/CDN). */
+/** Client IP: Cloudflare's `cf-connecting-ip`, else the first X-Forwarded-For hop. */
 export function clientIp(req: Request): string {
+  const cf = req.headers.get('cf-connecting-ip');
+  if (cf) return cf;
   const fwd = req.headers.get('x-forwarded-for');
   if (fwd) return fwd.split(',')[0]!.trim();
   return req.headers.get('x-real-ip') ?? 'unknown';

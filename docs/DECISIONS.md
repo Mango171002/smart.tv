@@ -15,6 +15,10 @@
 | D9 | CSP avec `'unsafe-inline'` pour les scripts | Nécessaire au rendu statique Next.js sans nonce ; passer aux nonces si les pages deviennent dynamiques. |
 | D10 | Conservation proposée des demandes de contact : 12 mois | Valeur raisonnable à faire valider par un juriste (affichée comme « brouillon »). |
 | D11 | Marché `EU` avec `tax_inclusive_pricing = true` | Obligation d'affichage TTC B2C dans l'UE ; à confirmer par le conseil fiscal. |
+| D13 | Hébergement sur **Cloudflare Workers** via l'adaptateur officiel OpenNext (`@opennextjs/cloudflare`) | Demande du propriétaire (GitHub + Supabase + Cloudflare). Garde le rendu serveur, les API et les en-têtes de sécurité. |
+| D14 | Cache des pages = assets statiques (pas de R2/KV) ; pages pré-rendues au build | Aucune ressource Cloudflare payante à créer. Les prix affichés sont ceux du dernier build ; le devis `/api/quote` relit la base (cache 5 min). |
+| D15 | Redirection de langue via `redirects` de `next.config.ts` (cookie `NEXT_LOCALE` → Accept-Language → EN) au lieu d'un Proxy | Le Proxy Next 16 tourne en mode Node, support seulement expérimental sur Cloudflare. |
+| D16 | Clé Supabase **publishable** et URL commitées (`wrangler.jsonc`, `.env.production`) | Clé conçue pour être publique, protégée par RLS + GRANT explicites ; aucun secret dans le dépôt. |
 | D12 | Pages en `noindex,nofollow` + `robots.txt` bloquant tant que `NEXT_PUBLIC_ALLOW_INDEXING≠true` | Le site n'est pas une offre commerciale. |
 
 ## Décisions business en attente (bloquantes pour le lancement)

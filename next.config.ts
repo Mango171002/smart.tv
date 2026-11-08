@@ -17,9 +17,22 @@ const csp = [
   ...(isDev ? [] : ['upgrade-insecure-requests']),
 ].join('; ');
 
+// Unprefixed pages: language from the NEXT_LOCALE cookie, then Accept-Language, else EN.
+// Implemented as config redirects (not a Proxy) so it runs natively on Cloudflare.
+const UNPREFIXED = ['/', '/plans', '/devices', '/coverage', '/help', '/legal/:doc'];
+const target = (locale: string, source: string) => (source === '/' ? `/${locale}` : `/${locale}${source}`);
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  async redirects() {
+    return UNPREFIXED.flatMap((source) => [
+      { source, has: [{ type: 'cookie' as const, key: 'NEXT_LOCALE', value: 'fr' }], destination: target('fr', source), permanent: false },
+      { source, has: [{ type: 'cookie' as const, key: 'NEXT_LOCALE', value: 'en' }], destination: target('en', source), permanent: false },
+      { source, has: [{ type: 'header' as const, key: 'accept-language', value: '^\\s*fr.*' }], destination: target('fr', source), permanent: false },
+      { source, destination: target('en', source), permanent: false },
+    ]);
+  },
   async headers() {
     return [
       {

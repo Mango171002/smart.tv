@@ -26,6 +26,18 @@ jobs:
       # No Supabase credentials in CI: the site falls back to the static illustrative tables.
       - run: npm run test:e2e
 
+  cloudflare-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Builds the Cloudflare Worker bundle (no deployment, no credentials needed).
+      - run: npx opennextjs-cloudflare build
+
   database:
     runs-on: ubuntu-latest
     services:

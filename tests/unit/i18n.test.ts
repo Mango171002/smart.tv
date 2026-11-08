@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { negotiateLocale } from '@/i18n/config';
 import { fill, getDictionary, plural } from '@/i18n/dictionaries';
 
 function shape(value: unknown): unknown {
@@ -39,17 +38,5 @@ describe('dictionaries', () => {
     expect(plural(c, 'month', 12)).toBe('12 months');
     expect(plural(getDictionary('fr').common, 'device', 3)).toBe('3 appareils');
     expect(fill('{a}-{b}', { a: 1, b: 'x' })).toBe('1-x');
-  });
-});
-
-describe('negotiateLocale', () => {
-  it.each([
-    [null, 'en'],
-    ['fr-CA,fr;q=0.9,en;q=0.8', 'fr'],
-    ['de-DE,de;q=0.9', 'en'],
-    ['de;q=0.9,fr;q=0.5,en;q=0.4', 'fr'],
-    ['en-GB', 'en'],
-  ])('%s → %s', (header, expected) => {
-    expect(negotiateLocale(header)).toBe(expected);
   });
 });

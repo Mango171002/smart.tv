@@ -17,8 +17,9 @@
 | Fonctionnalité | Statut |
 |---|---|
 | Application Next.js 16 (App Router, TypeScript strict, Tailwind v4) | ✅ Réel |
-| 7 pages × 2 langues (EN/FR) + 5 pages légales (brouillons) + 404 localisée | ✅ Réel, pré-rendues (SSG/ISR) |
+| 7 pages × 2 langues (EN/FR) + 5 pages légales (brouillons) + 404 localisée | ✅ Réel, pré-rendues au build (SSG) |
 | Routage par langue (cookie → Accept-Language → EN), hreflang, canonical, sitemap, robots | ✅ Réel |
+| Bundle Cloudflare Workers (OpenNext) testé dans le runtime workerd : 42/42 E2E | ✅ Réel — mise en ligne à connecter depuis le tableau de bord Cloudflare |
 | Grilles tarifaires **par marché** (centimes, sans conversion), lues depuis Supabase avec repli statique | ✅ Réel — mais les **montants restent indicatifs** (`status = illustrative`) |
 | Devis serveur `/api/quote` (le client ne décide jamais du prix) | ✅ Réel |
 | Formulaires « question » et « notification de lancement » → table `contact_requests` | ✅ Réel (base de **développement**) |

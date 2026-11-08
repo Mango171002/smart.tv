@@ -5,8 +5,6 @@ import { getDictionary } from '@/i18n/dictionaries';
 import { getPriceTables } from '@/lib/price-source';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
 
-export const revalidate = 300;
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await resolveLocale(params);
   const d = getDictionary(locale).meta;

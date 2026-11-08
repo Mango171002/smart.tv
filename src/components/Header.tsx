@@ -47,7 +47,17 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
         </nav>
         <div className="lang" role="group" aria-label={nav.language}>
           {LOCALES.map((l) => (
-            <Link key={l} href={`/${l}${rest}`} hrefLang={l} lang={l} aria-current={l === locale ? 'true' : undefined}>
+            <Link
+              key={l}
+              href={`/${l}${rest}`}
+              hrefLang={l}
+              lang={l}
+              aria-current={l === locale ? 'true' : undefined}
+              onClick={() => {
+                // Remembers the explicit language choice for unprefixed URLs (1 year).
+                document.cookie = `NEXT_LOCALE=${l}; path=/; max-age=31536000; samesite=lax`;
+              }}
+            >
               {l.toUpperCase()}
             </Link>
           ))}

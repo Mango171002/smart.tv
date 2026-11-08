@@ -13,7 +13,17 @@ Mesures Lighthouse 13.6 sur le site en ligne (`/fr`, Cloudflare Workers).
 le prototype est servi en `noindex` et `robots.txt` bloque tout. Passer
 `NEXT_PUBLIC_ALLOW_INDEXING=true` au lancement donne 100.
 
-## Après l'ajout des visuels
+## Après l'ajout des visuels SVG (8 novembre 2026)
+
+| Profil | Performance | Accessibilité | Bonnes pratiques | SEO* | LCP | TBT | CLS |
+|---|---|---|---|---|---|---|---|
+| Mobile | 98 | 100 | 100 | 66 | 0,9 s | 170 ms | 0 |
+| Ordinateur | 100 | 100 | 100 | 66 | 0,3 s | 0 ms | 0 |
+
+Les visuels n'ont pas dégradé l'affichage (LCP et CLS identiques) ; le léger écart mobile (TBT
+80 → 170 ms, dans la marge de variation d'une mesure) reste très en dessous du seuil de 200 ms.
+
+## Suivi continu
 
 Voir le résumé du workflow « Deploy to Cloudflare » (onglet Actions de GitHub) : chaque déploiement
 relance Lighthouse sur le site en ligne et **échoue si Performance, Accessibilité ou Bonnes

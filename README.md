@@ -24,7 +24,7 @@ Next.js 16 · TypeScript · Tailwind v4 · OpenNext Cloudflare · Supabase (Post
    | Root directory | `/` |
 
 4. **Deploy**. Chaque push sur la branche redéploie automatiquement le site.
-5. *(Facultatif)* Une fois l'URL connue (`https://iptv-international.<compte>.workers.dev`), l'ajouter en
+
    variable de build `NEXT_PUBLIC_SITE_URL` (Settings → Build → Variables) puis redéployer, pour des
    URL canoniques et un sitemap exacts.
 

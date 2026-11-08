@@ -1,11 +1,13 @@
-# OPTIONAL alternative to Cloudflare "Workers Builds" (Git integration in the dashboard).
-# Manual only. Requires two repository secrets that YOU create:
-#   CLOUDFLARE_API_TOKEN  (template "Edit Cloudflare Workers")
-#   CLOUDFLARE_ACCOUNT_ID
-name: Deploy to Cloudflare (manual)
+# Deploys the site to Cloudflare Workers (OpenNext).
+# Requires ONE repository secret that you create in GitHub:
+#   CLOUDFLARE_API_TOKEN  (Cloudflare token with the "Edit Cloudflare Workers" permissions)
+# Live URL: https://sygmatv.com
+name: Deploy to Cloudflare
 
 on:
   workflow_dispatch:
+  push:
+    branches: ['claude/intelligent-shannon-uwa4fi', 'main']
 
 permissions:
   contents: read
@@ -17,9 +19,18 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: cloudflare
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 9a7bb862febedb1b8e70a005037adee5
     steps:
       - uses: actions/checkout@v4
+      - name: Check that the Cloudflare token is configured
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::Add the CLOUDFLARE_API_TOKEN secret in GitHub → Settings → Secrets and variables → Actions."
+            exit 1
+          fi
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -30,4 +41,8 @@ jobs:
         run: npx opennextjs-cloudflare build && npx opennextjs-cloudflare deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Smoke test
+        run: |
+          sleep 10
+          curl -fsS https://sygmatv.com/api/health
+          curl -fsS -o /dev/null -w "%{http_code}\n" https://sygmatv.com/en

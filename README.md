@@ -25,14 +25,13 @@ Next.js 16 · TypeScript · Tailwind v4 · OpenNext Cloudflare · Supabase (Post
 
 4. **Deploy**. Chaque push sur la branche redéploie automatiquement le site.
 
-   variable de build `NEXT_PUBLIC_SITE_URL` (Settings → Build → Variables) puis redéployer, pour des
-   URL canoniques et un sitemap exacts.
+**Déploiement actuel :** GitHub Actions (`.github/workflows/deploy-cloudflare.yml`) déploie à chaque
+push sur `https://sygmatv.com`. Il nécessite un seul secret
+GitHub : `CLOUDFLARE_API_TOKEN` (Settings → Secrets and variables → Actions).
 
 La configuration non secrète (URL Supabase, clé publishable, options) est déjà dans
 `wrangler.jsonc` et `.env.production`. **Aucun secret n'est requis** pour le prototype.
 
-Alternative : workflow GitHub manuel `.github/workflows/deploy-cloudflare.yml` (nécessite les
-secrets `CLOUDFLARE_API_TOKEN` et `CLOUDFLARE_ACCOUNT_ID`, à créer par vous).
 
 ## Contrôles automatiques (GitHub Actions)
 

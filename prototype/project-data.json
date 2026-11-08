@@ -1,0 +1,117 @@
+{
+  "project": "IPTV International",
+  "status": "design_prototype_only",
+  "brand": {
+    "name": null,
+    "domain": null,
+    "prototypePlaceholder": "GlobalTV+"
+  },
+  "targetMarkets": [
+    "United States",
+    "Canada",
+    "Europe"
+  ],
+  "design": {
+    "style": "Dark Cinematic Premium",
+    "colors": {
+      "background": "#080D18",
+      "backgroundAlt": "#0B1425",
+      "panel": "#101D32",
+      "accentGold": "#D9B76F",
+      "text": "#F7F8FB",
+      "muted": "#A7B5CA"
+    },
+    "mobileFirst": true
+  },
+  "plans": {
+    "durationsMonths": [
+      1,
+      3,
+      6,
+      12
+    ],
+    "simultaneousStreams": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "realPrices": null,
+    "prototypePricesUsd": {
+      "1": 14,
+      "3": 34,
+      "6": 54,
+      "12": 79
+    },
+    "prototypeOnly": true
+  },
+  "markets": {
+    "US": {
+      "currency": "USD",
+      "licensed": null
+    },
+    "CA": {
+      "currency": "CAD",
+      "licensed": null
+    },
+    "EU": {
+      "currency": "EUR",
+      "licensed": null
+    }
+  },
+  "contentCategoriesIllustrative": [
+    "Live TV",
+    "Movies",
+    "Series",
+    "Sports",
+    "Documentaries",
+    "Family"
+  ],
+  "deviceCategoriesIllustrative": [
+    "Smart TV",
+    "Streaming devices",
+    "Mobile and tablet",
+    "Computer"
+  ],
+  "supplierRedistributionRightsVerified": false,
+  "territorialRightsVerified": false,
+  "paymentProvider": null,
+  "activationIntegration": null,
+  "businessIdentity": null,
+  "supportContacts": null,
+  "reviewsVerified": false,
+  "languages": {
+    "prototype": [
+      "en"
+    ],
+    "candidate": [
+      "en",
+      "fr"
+    ]
+  },
+  "prototypeFeatures": [
+    "responsive navigation",
+    "hero",
+    "benefits",
+    "plan configurator",
+    "content categories",
+    "devices",
+    "how it works",
+    "FAQ",
+    "simulated checkout",
+    "footer"
+  ],
+  "productionFeaturesNotImplemented": [
+    "real checkout",
+    "backend",
+    "orders",
+    "tax calculation",
+    "customer accounts",
+    "payment webhooks",
+    "subscription activation",
+    "support integration",
+    "licensed catalog",
+    "analytics",
+    "legal pages"
+  ]
+}

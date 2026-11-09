@@ -21,7 +21,8 @@
 | D16 | Clé Supabase **publishable** et URL commitées (`wrangler.jsonc`, `.env.production`) | Clé conçue pour être publique, protégée par RLS + GRANT explicites ; aucun secret dans le dépôt. |
 | D17 | **Thème « Dark Tech Blue »** (noir + bleu électrique/cyan, grille technique, surfaces vitrées, lueurs) à la place du noir et or | Décision du propriétaire le 08/11/2026 ; remplace la palette or du cahier des charges. Contrastes vérifiés WCAG AA (axe). Couleurs centralisées : tokens CSS dans `globals.css`, palette SVG dans `src/components/visuals/palette.ts`. |
 | D18 | Visuels **originaux en SVG** (maquettes d'interface, art abstrait par catégorie, illustrations d'appareils) | Aucun droit tiers, aucun coût de génération, aucune requête réseau supplémentaire. |
-| D12 | Pages en `noindex,nofollow` + `robots.txt` bloquant tant que `NEXT_PUBLIC_ALLOW_INDEXING≠true` | Le site n'est pas une offre commerciale. |
+| D12 | ~~Pages en `noindex`~~ → **indexation ouverte** depuis le 09/11/2026 (`NEXT_PUBLIC_ALLOW_INDEXING=true`) | Passage en pré-lancement à la demande du propriétaire. |
+| D19 | **Mode pré-lancement** (09/11/2026) : mentions « prototype / démo » retirées ; le parcours de commande devient une **pré-inscription réelle** (offre, région, appareil → `contact_requests`) ; prix présentés comme « prix de lancement prévus, hors taxes » | Demande du propriétaire de « tout activer ». La **vente réelle reste verrouillée** : aucun prestataire de paiement et aucune licence de diffusion vérifiée ; l'activer serait illégal et techniquement impossible. |
 
 ## Décisions business en attente (bloquantes pour le lancement)
 

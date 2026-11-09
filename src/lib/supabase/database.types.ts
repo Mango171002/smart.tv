@@ -32,6 +32,9 @@ export type Database = {
           name: string | null;
           status: string;
           subject: string | null;
+          interest_duration_months: number | null;
+          interest_streams: number | null;
+          preferred_device: 'smart_tv' | 'streaming_device' | 'mobile' | 'computer' | null;
         };
         Insert: {
           consent_given: boolean;
@@ -43,6 +46,9 @@ export type Database = {
           message?: string | null;
           name?: string | null;
           subject?: string | null;
+          interest_duration_months?: number | null;
+          interest_streams?: number | null;
+          preferred_device?: 'smart_tv' | 'streaming_device' | 'mobile' | 'computer' | null;
         };
         Update: never;
         Relationships: [];

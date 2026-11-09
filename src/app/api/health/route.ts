@@ -8,7 +8,7 @@ export async function GET() {
   const { source } = await getPriceTables();
   return NextResponse.json({
     status: 'ok',
-    mode: 'prototype',
+    mode: 'prelaunch',
     salesEnabled: getLaunchBlockers().length === 0,
     priceSource: source,
   });

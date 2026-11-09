@@ -8,13 +8,13 @@ const ROUTES = [
 ];
 
 test.describe('routing & SEO', () => {
-  test('every route renders with a unique title, h1 and noindex', async ({ page }) => {
+  test('every route renders with a unique title, h1, canonical and hreflang', async ({ page }) => {
     const titles = new Set<string>();
     for (const route of ROUTES) {
       const res = await page.goto(route);
       expect(res?.status(), route).toBe(200);
       await expect(page.locator('h1')).toHaveCount(1);
-      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+      await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
       await expect(page.locator('link[rel="alternate"][hreflang="fr"]')).toHaveCount(1);
       titles.add(`${route.slice(0, 3)}:${await page.title()}`);
     }
@@ -43,8 +43,20 @@ test.describe('routing & SEO', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
   });
 
-  test('robots.txt disallows everything during the prototype', async ({ request }) => {
-    expect(await (await request.get('/robots.txt')).text()).toContain('Disallow: /');
+  test('robots.txt is served', async ({ request }) => {
+    const res = await request.get('/robots.txt');
+    expect(res.status()).toBe(200);
+    expect(await res.text()).toMatch(/User-Agent: \*/i);
+  });
+
+  test('no prototype or demo wording remains', async ({ page }) => {
+    for (const route of ['/en', '/fr', '/en/plans', '/fr/help']) {
+      await page.goto(route);
+      const text = (await page.locator('body').innerText()).toLowerCase();
+      for (const word of ['prototype', 'demo', 'démo', 'simulat', 'illustrative', 'indicatif']) {
+        expect(text, `${route} contains "${word}"`).not.toContain(word);
+      }
+    }
   });
 });
 
@@ -78,35 +90,68 @@ test.describe('plan configurator', () => {
   });
 });
 
-test.describe('simulated checkout', () => {
-  test('walks through the three steps with a server-confirmed amount', async ({ page }) => {
+test.describe('pre-registration', () => {
+  test('pre-registers with the selected plan in three steps', async ({ page }) => {
+    let sent: Record<string, unknown> | null = null;
+    await page.route('**/api/contact', async (route) => {
+      sent = route.request().postDataJSON();
+      await route.fulfill({ status: 201, json: { ok: true } });
+    });
     await page.goto('/en');
     await page.locator('[data-stream="3"]').click();
-    const opener = page.getByRole('button', { name: /Preview checkout/ });
+    const opener = page.getByRole('button', { name: /^Pre-register/ });
     await opener.click();
     const dialog = page.getByTestId('checkout-dialog');
-    await expect(dialog).toHaveAccessibleName('Checkout preview');
-    await expect(dialog).toBeVisible();
+    await expect(dialog).toHaveAccessibleName('Pre-registration');
     await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
 
-    await dialog.getByRole('button', { name: /Review demo order/ }).click();
-    await expect(dialog.getByTestId('quote-status')).toHaveText(/Amount confirmed by the server/);
+    await dialog.getByLabel('Email address').fill('viewer@example.test');
+    await dialog.getByLabel('Main device').selectOption('mobile');
+    await dialog.getByRole('checkbox').check();
+    await dialog.getByRole('button', { name: /Continue/ }).click();
+    await expect(dialog.getByTestId('quote-status')).toHaveText(/Price confirmed by our server/);
     await expect(dialog.getByTestId('review-plan')).toHaveText('12 months · 3 streams');
     await expect(dialog.getByTestId('review-price')).toHaveText('$165.90 USD');
 
-    await dialog.getByRole('button', { name: /Back/ }).click();
-    await dialog.getByRole('button', { name: /Review demo order/ }).click();
-    await dialog.getByRole('button', { name: /Complete simulation/ }).click();
-    await expect(dialog.getByRole('heading', { name: 'Demo completed' })).toBeVisible();
-    await dialog.getByRole('button', { name: 'Return to website' }).click();
+    await dialog.getByRole('button', { name: /Confirm my pre-registration/ }).click();
+    await expect(dialog.getByRole('heading', { name: 'You are pre-registered!' })).toBeVisible();
+    await expect(dialog).toContainText('viewer@example.test');
+    expect(sent).toMatchObject({
+      kind: 'launch_waitlist', email: 'viewer@example.test', market: 'US', durationMonths: 12, streams: 3, device: 'mobile', consent: true,
+    });
+    await dialog.getByRole('button', { name: 'Back to the website' }).click();
     await expect(dialog).toBeHidden();
     await expect(opener).toBeFocused();
+  });
+
+  test('requires a valid email and consent before continuing', async ({ page }) => {
+    await page.goto('/fr');
+    await page.getByRole('button', { name: /^Me pré-inscrire/ }).click();
+    const dialog = page.getByTestId('checkout-dialog');
+    await dialog.getByRole('button', { name: /Continuer/ }).click();
+    await expect(dialog.getByText('Saisissez une adresse e-mail valide.')).toBeVisible();
+    await expect(dialog.getByText('Veuillez accepter d’être contacté au sujet du lancement.')).toBeVisible();
+    await expect(dialog.getByLabel('Adresse e-mail')).toHaveAttribute('aria-invalid', 'true');
+    await expect(dialog.getByTestId('quote-status')).toHaveCount(0);
+  });
+
+  test('shows a clear message when rate limited', async ({ page }) => {
+    await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
+    await page.goto('/en');
+    await page.getByRole('button', { name: /^Pre-register/ }).click();
+    const dialog = page.getByTestId('checkout-dialog');
+    await dialog.getByLabel('Email address').fill('viewer@example.test');
+    await dialog.getByRole('checkbox').check();
+    await dialog.getByRole('button', { name: /Continue/ }).click();
+    await expect(dialog.getByTestId('quote-status')).toHaveText(/confirmed/);
+    await dialog.getByRole('button', { name: /Confirm my pre-registration/ }).click();
+    await expect(dialog.getByRole('alert')).toHaveText('Too many requests. Please try again later.');
   });
 
   test('traps focus and closes with Escape, restoring focus', async ({ page, isMobile }) => {
     test.skip(isMobile, 'keyboard test runs on desktop');
     await page.goto('/en');
-    const opener = page.getByRole('button', { name: /Preview checkout/ });
+    const opener = page.getByRole('button', { name: /^Pre-register/ });
     await opener.click();
     const dialog = page.getByRole('dialog');
     for (let i = 0; i < 8; i++) {
@@ -116,17 +161,6 @@ test.describe('simulated checkout', () => {
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
     await expect(opener).toBeFocused();
-  });
-
-  test('sends no network request containing the demo email', async ({ page }) => {
-    const bodies: string[] = [];
-    page.on('request', (r) => bodies.push(r.postData() ?? ''));
-    await page.goto('/en');
-    await page.getByRole('button', { name: /Preview checkout/ }).click();
-    await page.fill('#demoemail', 'private@example.test');
-    await page.getByRole('button', { name: /Review demo order/ }).click();
-    await expect(page.getByTestId('quote-status')).toHaveText(/confirmed/);
-    expect(bodies.some((b) => b.includes('private@example.test'))).toBe(false);
   });
 });
 
@@ -193,7 +227,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
 
   test('checkout dialog has no violations', async ({ page }) => {
     await page.goto('/en');
-    await page.getByRole('button', { name: /Preview checkout/ }).click();
+    await page.getByRole('button', { name: /^Pre-register/ }).click();
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();
     expect(results.violations.map((v) => v.id)).toEqual([]);
   });

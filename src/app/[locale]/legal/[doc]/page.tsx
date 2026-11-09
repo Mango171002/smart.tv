@@ -50,7 +50,7 @@ export default async function LegalPage({ params }: { params: Params }) {
       <div className="card panel-pad" style={{ marginTop: 18 }}>
         <h2 style={{ marginTop: 0 }}>{dict.legal.pendingItems}</h2>
         <ul className="list-check">
-          {d.items.map((i) => <li key={i}>{i} — <span className="muted">{dict.common.pending}</span></li>)}
+          {d.items.map((i) => <li key={i}>{i}</li>)}
         </ul>
         {doc === 'imprint' && (
           <dl style={{ marginTop: 18 }}>

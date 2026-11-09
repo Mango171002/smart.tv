@@ -9,7 +9,7 @@ import { contactSchema } from '@/lib/validation';
 const limiter = createRateLimiter({ limit: 5, windowMs: 10 * 60_000 });
 
 /**
- * Stores a support request / launch-waitlist entry in Supabase using the
+ * Stores a support request / pre-registration (launch waitlist) in Supabase using the
  * publishable key: the `anon` role may only INSERT specific columns, cannot read
  * anything back, and is throttled again inside the database.
  */
@@ -44,6 +44,9 @@ export async function POST(req: Request) {
     market_code: input.market ?? null,
     subject: input.kind === 'support' ? input.subject : null,
     message: input.kind === 'support' ? input.message : null,
+    interest_duration_months: input.kind === 'launch_waitlist' ? (input.durationMonths ?? null) : null,
+    interest_streams: input.kind === 'launch_waitlist' ? (input.streams ?? null) : null,
+    preferred_device: input.kind === 'launch_waitlist' ? (input.device ?? null) : null,
     consent_given: true,
     consent_text_version: siteConfig.consentTextVersion,
   });

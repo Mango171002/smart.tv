@@ -175,8 +175,12 @@ select pg_temp.expect_error(
   $$insert into public.contact_requests (kind, email, subject, consent_given, consent_text_version)
     values ('support', 'nobody@example.test', 'x', true, 'v0-draft')$$, '23514', 'support requires a message');
 
-insert into public.contact_requests (kind, email, consent_given, consent_text_version)
-select 'support', 'flood@example.test', true, 'v0-draft' where false; -- no-op, keeps syntax symmetrical
+insert into public.contact_requests (kind, email, market_code, interest_duration_months, interest_streams, preferred_device, consent_given, consent_text_version)
+values ('launch_waitlist', 'prereg@example.test', 'EU', 12, 2, 'smart_tv', true, 'v0-draft');
+select pg_temp.check(true, 'anon can pre-register with plan interest');
+select pg_temp.expect_error(
+  $$insert into public.contact_requests (kind, email, preferred_device, consent_given, consent_text_version)
+    values ('launch_waitlist', 'bad-device@example.test', 'toaster', true, 'v0-draft')$$, '23514', 'unknown device rejected');
 do $$ begin
   for i in 1..5 loop
     insert into public.contact_requests (kind, email, subject, message, consent_given, consent_text_version)

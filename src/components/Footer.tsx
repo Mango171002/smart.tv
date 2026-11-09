@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { siteConfig } from '@/config/site';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { LEGAL_DOCS } from '@/lib/routes';
@@ -13,7 +12,6 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
         <div>
           <Brand />
           <p>{f.concept}</p>
-          {siteConfig.brandIsPlaceholder && <p>{f.brandPlaceholder}</p>}
         </div>
         <div>
           <b>{f.complianceTitle}</b>

@@ -22,6 +22,8 @@ const contactBase = {
   website: z.string().max(0).optional(),
 };
 
+export const DEVICE_KEYS = ['smart_tv', 'streaming_device', 'mobile', 'computer'] as const;
+
 export const contactSchema = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('support'),
@@ -33,6 +35,10 @@ export const contactSchema = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('launch_waitlist'),
     name: z.string().trim().max(120).optional(),
+    /** Pre-registration: plan and device of interest (no commitment, no payment). */
+    durationMonths: literalUnion(DURATIONS).optional(),
+    streams: literalUnion(STREAMS).optional(),
+    device: z.enum(DEVICE_KEYS).optional(),
     ...contactBase,
   }),
 ]);

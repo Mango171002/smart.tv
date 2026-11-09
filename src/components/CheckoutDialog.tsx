@@ -3,10 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MARKETS, type DurationMonths, type MarketCode, type StreamCount } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
-import { plural, type Dictionary } from '@/i18n/dictionaries';
+import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
 import { formatMoney } from '@/lib/pricing';
 
 type Step = 1 | 2 | 3;
+
+const DEVICE_KEYS = ['smart_tv', 'streaming_device', 'mobile', 'computer'] as const;
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 interface ServerQuote {
   amountMinor: number;
@@ -32,6 +35,12 @@ export function CheckoutDialog({
   const [step, setStep] = useState<Step>(1);
   const [quote, setQuote] = useState<ServerQuote | null>(null);
   const [quoteState, setQuoteState] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [email, setEmail] = useState('');
+  const [device, setDevice] = useState<(typeof DEVICE_KEYS)[number]>('smart_tv');
+  const [consent, setConsent] = useState(false);
+  const [fieldError, setFieldError] = useState<{ email?: string; consent?: string }>({});
+  const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'error'>('idle');
+  const [submitError, setSubmitError] = useState('');
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -74,7 +83,46 @@ export function CheckoutDialog({
     [onClose],
   );
 
+  async function confirm() {
+    setSubmitState('sending');
+    setSubmitError('');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          kind: 'launch_waitlist',
+          email: email.trim(),
+          locale,
+          market: selection.market,
+          durationMonths: selection.durationMonths,
+          streams: selection.streams,
+          device,
+          consent: true,
+        }),
+      });
+      if (res.ok) {
+        setSubmitState('idle');
+        setStep(3);
+        return;
+      }
+      setSubmitState('error');
+      setSubmitError(res.status === 429 ? c.errors.rateLimited : res.status === 503 ? c.errors.unavailable : c.errors.generic);
+    } catch {
+      setSubmitState('error');
+      setSubmitError(c.errors.generic);
+    }
+  }
+
   async function review() {
+    const errors: { email?: string; consent?: string } = {};
+    if (!EMAIL_RE.test(email.trim())) errors.email = c.errors.email;
+    if (!consent) errors.consent = c.errors.consent;
+    setFieldError(errors);
+    if (Object.keys(errors).length) {
+      dialogRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      return;
+    }
     setStep(2);
     setQuoteState('loading');
     try {
@@ -129,19 +177,48 @@ export function CheckoutDialog({
         {step === 1 && (
           <form
             className="form"
+            noValidate
             onSubmit={(e) => {
               e.preventDefault();
               void review();
             }}
           >
             <p className="muted">{c.intro}</p>
-            <label htmlFor="demoemail">{c.emailLabel}</label>
-            {/* Not named and never sent anywhere: this is a pure UI demonstration. */}
-            <input className="input" id="demoemail" type="email" autoComplete="off" placeholder="you@example.com" />
-            <label htmlFor="demodevice">{c.deviceLabel}</label>
-            <select className="input" id="demodevice">
-              {c.deviceOptions.map((o) => <option key={o}>{o}</option>)}
+            <label htmlFor="prereg-email">{c.emailLabel}</label>
+            <input
+              className="input"
+              id="prereg-email"
+              type="email"
+              autoComplete="email"
+              maxLength={254}
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={fieldError.email ? true : undefined}
+              aria-describedby={fieldError.email ? 'prereg-email-err' : undefined}
+            />
+            {fieldError.email && <span id="prereg-email-err" className="error">{fieldError.email}</span>}
+            <label htmlFor="prereg-device">{c.deviceLabel}</label>
+            <select
+              className="input"
+              id="prereg-device"
+              value={device}
+              onChange={(e) => setDevice(e.target.value as (typeof DEVICE_KEYS)[number])}
+            >
+              {c.deviceOptions.map((o, i) => <option key={o} value={DEVICE_KEYS[i]}>{o}</option>)}
             </select>
+            <label className="consent" htmlFor="prereg-consent">
+              <input
+                id="prereg-consent"
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                aria-invalid={fieldError.consent ? true : undefined}
+                aria-describedby={fieldError.consent ? 'prereg-consent-err' : undefined}
+              />
+              <span>{c.consentLabel}</span>
+            </label>
+            {fieldError.consent && <span id="prereg-consent-err" className="error">{fieldError.consent}</span>}
             <button type="submit" className="btn block">{c.review} <span aria-hidden="true">→</span></button>
           </form>
         )}
@@ -152,15 +229,21 @@ export function CheckoutDialog({
             <div className="orderline"><span>{c.region}</span><b data-testid="review-region">{regionLabel}</b></div>
             <div className="orderline"><span>{c.plan}</span><b data-testid="review-plan">{planLabel}</b></div>
             <div className="orderline"><span>{c.subtotal}</span><b data-testid="review-price">{subtotal}</b></div>
-            <div className="orderline"><span>{c.taxes}</span><b>{dict.common.notCalculated}</b></div>
+            <div className="orderline"><span>{c.taxes}</span><b>{c.taxesValue}</b></div>
             <p className="footnote" role="status" data-testid="quote-status">
               {quoteState === 'loading' && c.verifying}
               {quoteState === 'ok' && `✓ ${c.verified}`}
               {quoteState === 'error' && c.quoteError}
             </p>
             <p className="footnote">{c.productionNote}</p>
-            <button type="button" className="btn block" onClick={() => setStep(3)} disabled={quoteState === 'loading'}>
-              {c.finish} <span aria-hidden="true">→</span>
+            {submitState === 'error' && <div className="alert err" role="alert">{submitError}</div>}
+            <button
+              type="button"
+              className="btn block"
+              onClick={() => void confirm()}
+              disabled={quoteState === 'loading' || submitState === 'sending'}
+            >
+              {submitState === 'sending' ? c.sending : c.finish} <span aria-hidden="true">→</span>
             </button>
             <button type="button" className="btn ghost block" style={{ marginTop: 10 }} onClick={() => setStep(1)}>
               <span aria-hidden="true">←</span> {dict.common.back}
@@ -171,7 +254,7 @@ export function CheckoutDialog({
         {step === 3 && (
           <div className="success">
             <div className="checkmark" aria-hidden="true">✓</div>
-            <p className="muted">{c.doneText}</p>
+            <p className="muted">{fill(c.doneText, { email: email.trim() })}</p>
             <button type="button" className="btn" onClick={onClose}>{c.returnToSite}</button>
           </div>
         )}

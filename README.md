@@ -1,8 +1,9 @@
-# IPTV International — site vitrine (prototype non commercial)
+# IPTV International — site de pré-lancement
 
-> ⚠️ **Prototype de design.** Aucune vente, aucun paiement, aucune activation. Les droits de
-> redistribution, les prix, les territoires et l'identité commerciale ne sont **pas vérifiés**.
-> `GlobalTV+` est un **nom provisoire**.
+> **Mode pré-lancement.** Le site présente l'offre et enregistre de vraies pré-inscriptions
+> (Supabase). **Aucune vente ni aucun paiement** tant que les licences de diffusion, l'entité
+> juridique et le prestataire de paiement ne sont pas en place (verrou `src/config/launch-gate.ts`
+> + contraintes en base). `GlobalTV+` reste un **nom provisoire** (configurable).
 
 **Hébergement : GitHub (code + CI) · Supabase (base de données) · Cloudflare Workers (site).**
 Aucune installation locale n'est nécessaire.

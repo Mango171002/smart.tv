@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { CategoryArt, DeviceIllustration, LaptopFrame, PhoneFrame, TvFrame } from './visuals/Devices';
+import { CategoryArt, DeviceIllustration, LaptopFrame, PhoneFrame, TvFrame } from './visuals/Images';
 
 const BENEFIT_SYMBOLS = ['◎', '▣', '◇', '☏'];
 
@@ -30,10 +30,10 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
         <div className="tvscene" role="img" aria-label={h.visualLabel}>
           <div className="scene-glow" aria-hidden="true" />
           <div className="hero-tv">
-            <TvFrame id="hero-tv" label={siteConfig.brandName} />
+            <TvFrame label={siteConfig.brandName} loading="eager" />
           </div>
           <div className="hero-phone">
-            <PhoneFrame id="hero-phone" />
+            <PhoneFrame loading="eager" />
           </div>
           <span className="demo-stamp">{h.stamp}</span>
         </div>
@@ -171,15 +171,15 @@ export function InterfacePreview({ dict }: { dict: Dictionary }) {
         <p className="sub">{p.sub}</p>
         <div className="preview-stage" role="img" aria-label={`${p.caption}: ${p.labels.join(', ')}`}>
           <figure className="preview-item preview-tv">
-            <TvFrame id="pv-tv" />
+            <TvFrame />
             <figcaption>{p.labels[0]}</figcaption>
           </figure>
           <figure className="preview-item preview-laptop">
-            <LaptopFrame id="pv-laptop" />
+            <LaptopFrame />
             <figcaption>{p.labels[1]}</figcaption>
           </figure>
           <figure className="preview-item preview-phone">
-            <PhoneFrame id="pv-phone" />
+            <PhoneFrame />
             <figcaption>{p.labels[2]}</figcaption>
           </figure>
         </div>

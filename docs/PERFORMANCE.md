@@ -23,6 +23,16 @@ le prototype est servi en `noindex` et `robots.txt` bloque tout. Passer
 Les visuels n'ont pas dégradé l'affichage (LCP et CLS identiques) ; le léger écart mobile (TBT
 80 → 170 ms, dans la marge de variation d'une mesure) reste très en dessous du seuil de 200 ms.
 
+## Optimisation du 9 novembre 2026 (score retombé à 97-99)
+
+Cause : TBT passé de 80 ms à 110-120 ms après l'ajout des visuels et de la pré-inscription.
+
+| Correctif | Effet |
+|---|---|
+| Illustrations servies en **fichiers SVG statiques** (`public/visuals`, générés par `npm run visuals` à partir des composants) au lieu de SVG intégré — Next.js dupliquait le SVG dans la charge RSC | HTML de `/fr` : **132 Ko → 47 Ko** (gzip 18 → 9,5 Ko) ; fichiers SVG mis en cache (18 Ko au total) |
+| Fenêtre de pré-inscription **chargée à la demande** (`next/dynamic`, préchargée au survol/focus du bouton) | ≈ 30 Ko de JavaScript en moins au démarrage |
+| `browserslist` moderne (Chrome/Edge/Firefox 111+, Safari 16.4+) | Suppression des polyfills inutiles (≈ 14 Ko) |
+
 ## Suivi continu
 
 Voir le résumé du workflow « Deploy to Cloudflare » (onglet Actions de GitHub) : chaque déploiement

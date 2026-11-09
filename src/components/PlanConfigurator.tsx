@@ -5,7 +5,11 @@ import { DURATIONS, MARKETS, MARKET_CODES, STREAMS, type DurationMonths, type Ma
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
 import { computeQuote, formatMoney, type PriceTables } from '@/lib/pricing';
-import { CheckoutDialog } from './CheckoutDialog';
+import dynamic from 'next/dynamic';
+
+const loadDialog = () => import('./CheckoutDialog').then((m) => m.CheckoutDialog);
+// Downloaded on demand (prefetched on hover/focus of the button) to keep the initial JS small.
+const CheckoutDialog = dynamic(loadDialog, { ssr: false });
 
 export interface ConfiguratorProps {
   locale: Locale;
@@ -70,6 +74,8 @@ export function PlanConfigurator({ locale, tables, dict, initial }: Configurator
             type="button"
             className="btn"
             onClick={() => setCheckoutOpen(true)}
+            onPointerEnter={() => void loadDialog()}
+            onFocus={() => void loadDialog()}
             aria-haspopup="dialog"
           >
             {p.previewCheckout} <span aria-hidden="true">→</span>

@@ -228,6 +228,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
   test('checkout dialog has no violations', async ({ page }) => {
     await page.goto('/en');
     await page.getByRole('button', { name: /^Pre-register/ }).click();
+    await expect(page.getByRole('dialog')).toBeVisible(); // the dialog is loaded on demand
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();
     expect(results.violations.map((v) => v.id)).toEqual([]);
   });

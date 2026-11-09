@@ -323,7 +323,7 @@ textarea.input { min-height: 120px; resize: vertical; }
 /* ==========================================================================
    Original illustrative visuals (SVG mock-ups — no third-party content)
    ========================================================================== */
-.screen-svg { display: block; width: 100%; height: 100%; }
+.screen-svg { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 .mock-tv { width: 100%; }
 .mock-tv-screen {
@@ -360,7 +360,7 @@ textarea.input { min-height: 120px; resize: vertical; }
 
 /* Category artwork */
 .tile { position: relative; overflow: hidden; }
-.tile-art { position: absolute; top: 0; right: 0; width: 70%; height: 72%; pointer-events: none; }
+.tile-art { position: absolute; top: 0; right: 0; width: 70%; height: 72%; pointer-events: none; object-fit: cover; object-position: right top; }
 .tile b { position: relative; }
 
 /* Device cards */

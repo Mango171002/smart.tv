@@ -649,12 +649,12 @@ section.content-tight .cat-grid { margin-top: 0; }
 
 /* --------------------------------------------------------------------------
    Tier colours (owner decision 2026-11-11, Higgsfield-style pricing cards):
-   Starter = lime, Plus = magenta (recommended), Ultra = violet.
+   Starter = sky blue (cyan), Plus = magenta (recommended), Ultra = yellow (neon lime).
    -------------------------------------------------------------------------- */
 .offers { gap: clamp(56px, 6vw, 110px); }
-[data-tier='starter'] { --tier: var(--color-lime); }
+[data-tier='starter'] { --tier: var(--color-cyan); }
 [data-tier='plus'] { --tier: var(--color-magenta); }
-[data-tier='ultra'] { --tier: var(--color-violet); }
+[data-tier='ultra'] { --tier: var(--color-lime); }
 
 .tier-card {
   border: 1.5px solid color-mix(in srgb, var(--tier) 55%, transparent);

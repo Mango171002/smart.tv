@@ -646,3 +646,46 @@ section.content-tight .cat-grid { margin-top: 0; }
 @media (max-width: 900px) {
   .sim-layout { grid-template-columns: 1fr; }
 }
+
+/* --------------------------------------------------------------------------
+   Tier colours (owner decision 2026-11-11, Higgsfield-style pricing cards):
+   Starter = lime, Plus = magenta (recommended), Ultra = violet.
+   -------------------------------------------------------------------------- */
+.offers { gap: clamp(56px, 6vw, 110px); }
+[data-tier='starter'] { --tier: var(--color-lime); }
+[data-tier='plus'] { --tier: var(--color-magenta); }
+[data-tier='ultra'] { --tier: var(--color-violet); }
+
+.tier-card {
+  border: 1.5px solid color-mix(in srgb, var(--tier) 55%, transparent);
+  background:
+    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--tier) 16%, transparent), transparent 70%),
+    var(--color-surface);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--tier) 12%, transparent);
+}
+.tier-card::before {
+  content: ''; position: absolute; left: 24px; right: 24px; top: -1px; height: 3px; border-radius: 0 0 3px 3px; background: var(--tier);
+}
+.tier-card.is-recommended {
+  border: 2px solid var(--tier);
+  background:
+    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--tier) 22%, transparent), transparent 72%),
+    var(--color-surface);
+  box-shadow: 0 0 34px color-mix(in srgb, var(--tier) 26%, transparent);
+}
+.tier-card .tier-name { color: var(--tier); }
+.tier-card .tier-price span, .tier-card.is-recommended .tier-price span { color: var(--color-ink); }
+.tier-features svg { color: var(--tier); }
+.tier-badge { background: var(--tier); color: var(--color-bg); }
+.tier-card .btn, .tier-card .btn.ghost {
+  background: var(--tier); color: var(--color-bg); border-color: transparent;
+}
+@media (hover: hover) {
+  .tier-card:hover { border-color: var(--tier); box-shadow: 0 0 34px color-mix(in srgb, var(--tier) 28%, transparent); }
+  .tier-card .btn:hover { box-shadow: 0 8px 26px color-mix(in srgb, var(--tier) 35%, transparent); }
+}
+/* Simulator: the selected plan lights up in its colour */
+.simulator .choice[data-tier][aria-pressed='true'] {
+  border-color: var(--tier); background: color-mix(in srgb, var(--tier) 12%, transparent);
+  box-shadow: inset 0 0 0 1px var(--tier);
+}

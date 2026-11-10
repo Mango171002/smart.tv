@@ -60,7 +60,7 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
                   <li key={f}><Check size={16} strokeWidth={2} aria-hidden="true" /> {f}</li>
                 ))}
               </ul>
-              <button type="button" className={`btn block${t === 'plus' ? '' : ' ghost'}`} onClick={() => choose(t)}>
+              <button type="button" className="btn block" onClick={() => choose(t)}>
                 {fill(p.choose, { plan: info.name })}
               </button>
             </li>

@@ -1,5 +1,7 @@
 'use client';
 
+import { Menu } from 'lucide-react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -70,7 +72,7 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
           aria-controls="navlinks"
           onClick={() => setOpen((o) => !o)}
         >
-          ☰
+          <Menu size={20} strokeWidth={1.75} aria-hidden="true" />
         </button>
       </div>
     </header>

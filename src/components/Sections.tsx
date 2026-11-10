@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { CategoryArt, DeviceIllustration, LaptopFrame, PhoneFrame, TvFrame } from './visuals/Images';
-
-const BENEFIT_SYMBOLS = ['◎', '▣', '◇', '☏'];
+import { ArrowRight, ChevronRight } from 'lucide-react';
+import { BENEFIT_ICONS, CATEGORIES, DEVICE_ICONS, ICON_STROKE } from './icons';
+import { LaptopFrame, PhoneFrame, TvFrame } from './visuals/Images';
 
 export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.hero;
@@ -20,8 +20,12 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           </h1>
           <p className="lead">{h.lead}</p>
           <div className="actions">
-            <Link className="btn" href={`/${locale}#plans`}>{h.ctaPrimary} <span aria-hidden="true">→</span></Link>
-            <Link className="btn ghost" href={`/${locale}#how`}>{h.ctaSecondary} <span aria-hidden="true">▷</span></Link>
+            <Link className="btn" href={`/${locale}#plans`}>
+              {h.ctaPrimary} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+            </Link>
+            <Link className="btn ghost" href={`/${locale}#how`}>
+              {h.ctaSecondary} <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
+            </Link>
           </div>
           <ul className="checks">
             {h.checks.map((c) => <li key={c}>{c}</li>)}
@@ -44,13 +48,18 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
 
 export function Benefits({ dict }: { dict: Dictionary }) {
   return (
-    <ul className="wrap benefits" style={{ listStyle: 'none' }}>
-      {dict.benefits.map((b, i) => (
-        <li className="benefit" key={b.title}>
-          <span className="symbol" aria-hidden="true">{BENEFIT_SYMBOLS[i]}</span>
-          <div><b>{b.title}</b><small>{b.text}</small></div>
-        </li>
-      ))}
+    <ul className="wrap benefits">
+      {dict.benefits.map((b, i) => {
+        const { icon: Icon, cat } = BENEFIT_ICONS[i]!;
+        return (
+          <li className={`benefit${cat ? ` cat-${cat}` : ''}`} key={b.title}>
+            <span className="icon-box sm" aria-hidden="true">
+              <Icon size={22} strokeWidth={ICON_STROKE} />
+            </span>
+            <div><b>{b.title}</b><small>{b.text}</small></div>
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -64,13 +73,24 @@ export function ContentCategories({ dict, headingLevel = 2 }: { dict: Dictionary
         <div className="eyebrow">{c.eyebrow}</div>
         <H id="content-title" className="section-title">{c.title}</H>
         <p className="sub">{c.sub}</p>
-        <ul className="content-grid">
-          {c.categories.map((name, i) => (
-            <li className="tile" key={name}>
-              <CategoryArt index={i} />
-              <b>{name}</b>
-            </li>
-          ))}
+        <ul className="cat-grid">
+          {c.categories.map((item, i) => {
+            const { key, icon: Icon, support } = CATEGORIES[i]!;
+            return (
+              <li className={`cat-card cat-${key}`} key={item.title} data-category={key}>
+                <span className="icon-box lg" aria-hidden="true">
+                  <Icon size={28} strokeWidth={ICON_STROKE} />
+                </span>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+                <span className="cat-support" aria-hidden="true">
+                  {support.map((S, j) => <S key={j} size={18} strokeWidth={ICON_STROKE} />)}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </section>
@@ -87,13 +107,18 @@ export function DeviceGrid({ dict, headingLevel = 2 }: { dict: Dictionary; headi
         <H id="devices-title" className={headingLevel === 1 ? 'page-title' : 'section-title'}>{d.title}</H>
         <p className="sub">{d.sub}</p>
         <ul className="devices">
-          {d.items.map((item, i) => (
-            <li className="card device" key={item.title}>
-              <DeviceIllustration kind={i as 0 | 1 | 2 | 3} />
-              <b>{item.title}</b>
-              <small>{item.text}</small>
-            </li>
-          ))}
+          {d.items.map((item, i) => {
+            const Icon = DEVICE_ICONS[i]!;
+            return (
+              <li className="card device cat-streaming" key={item.title}>
+                <span className="icon-box" aria-hidden="true">
+                  <Icon size={24} strokeWidth={ICON_STROKE} />
+                </span>
+                <b>{item.title}</b>
+                <small>{item.text}</small>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </section>
@@ -154,7 +179,9 @@ export function HelpCta({ locale, dict }: { locale: Locale; dict: Dictionary }) 
             <h2 id="help-cta-title">{dict.helpCta.title}</h2>
             <div className="muted">{dict.helpCta.text}</div>
           </div>
-          <Link className="btn ghost" href={`/${locale}/help`}>{dict.helpCta.button} <span aria-hidden="true">→</span></Link>
+          <Link className="btn ghost" href={`/${locale}/help`}>
+            {dict.helpCta.button} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+          </Link>
         </div>
       </div>
     </section>

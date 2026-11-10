@@ -1,23 +1,27 @@
-/** Single source of truth for the colours used inside the SVG illustrations ("tech blue" theme). */
+/**
+ * Colours used inside the SVG illustrations — ELECTRIC FUSION NEON.
+ * Official colours only; dark tints are mixes of an official colour with the
+ * official Surface/Background (computed, not new brand colours).
+ */
 export const P = {
-  accent: '#4c9dff',
-  accentBright: '#22d3ee',
-  beam: '#7dd3fc',
-  screenBg: '#070c18',
-  barStrong: '#eef4ff',
-  barMuted: '#8ea3c4',
-  barDim: '#4b5d7e',
-  line: '#1c2740',
-  live: '#ff5c7a',
-  heroStops: ['#0b1f4d', '#1d4ed8', '#22d3ee', '#0a1a3a'] as const,
-  ridge: '#0d1d3d',
-  ridgeDark: '#081429',
+  accent: '#19d3f3', // Primary Cyan
+  accentBright: '#19d3f3',
+  beam: '#19d3f3',
+  screenBg: '#070d17', // Background
+  barStrong: '#f5f8ff', // Soft White
+  barMuted: '#9dadc3', // Muted Text
+  barDim: '#435062',
+  line: '#2b3848',
+  live: '#19d3f3', // Live TV = cyan
+  heroStops: ['#121e2d', '#6878ff', '#19d3f3', '#070d17'] as const,
+  ridge: '#131a33',
+  ridgeDark: '#0c1223',
   tiles: [
-    ['#1d3a7a', '#0a1222'],
-    ['#123f5e', '#0a1222'],
-    ['#0f4c5c', '#0a1222'],
-    ['#2e2a7a', '#0a1222'],
-    ['#164a7a', '#0a1222'],
-    ['#3b2f7a', '#0a1222'],
+    ['#145164', '#081924'],
+    ['#502957', '#151021'],
+    ['#475d27', '#131b17'],
+    ['#2a3768', '#0d1325'],
+    ['#145164', '#081924'],
+    ['#502957', '#151021'],
   ] as Array<[string, string]>,
 };

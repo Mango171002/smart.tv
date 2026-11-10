@@ -100,7 +100,12 @@ const fr: Dictionary = {
     eyebrow: 'Catégories de divertissement',
     title: 'Des contenus pour tous les goûts.',
     sub: 'Catégories prévues au lancement. Le catalogue détaillé sera publié pour chaque région avant l’ouverture des abonnements.',
-    categories: ['TV en direct', 'Films', 'Séries', 'Sport', 'Documentaires', 'Famille'],
+    categories: [
+      { title: 'Sport en direct', text: 'Football, basketball, sport automobile et autres événements en direct, selon la disponibilité dans votre région.' },
+      { title: 'Films et séries', text: 'Cinéma, séries et divertissement à la demande, dont documentaires et programmes pour la famille.' },
+      { title: 'TV en direct', text: 'Télévision, information et chaînes internationales, organisées par région.' },
+      { title: 'Streaming intelligent', text: 'Un seul compte pour Smart TV, boîtiers de streaming, mobile et ordinateur.' },
+    ],
   },
   devices: {
     eyebrow: 'Compatibilité',

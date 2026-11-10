@@ -1,5 +1,7 @@
 'use client';
 
+import { ArrowRight } from 'lucide-react';
+
 import { useRef, useState } from 'react';
 import { DURATIONS, MARKETS, MARKET_CODES, STREAMS, type DurationMonths, type MarketCode, type StreamCount } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
@@ -78,7 +80,7 @@ export function PlanConfigurator({ locale, tables, dict, initial }: Configurator
             onFocus={() => void loadDialog()}
             aria-haspopup="dialog"
           >
-            {p.previewCheckout} <span aria-hidden="true">→</span>
+            {p.previewCheckout} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
           </button>
         </div>
       </div>

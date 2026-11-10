@@ -98,7 +98,12 @@ const en = {
     eyebrow: 'Entertainment categories',
     title: 'Content for every interest.',
     sub: 'Content categories planned for launch. The detailed catalogue will be published for each region before subscriptions open.',
-    categories: ['Live TV', 'Movies', 'Series', 'Sports', 'Documentaries', 'Family'],
+    categories: [
+      { title: 'Live Sports', text: 'Football, basketball, motorsport and other live events, depending on availability in your region.' },
+      { title: 'Movies & Series', text: 'Cinema, series and on-demand entertainment, including documentaries and family titles.' },
+      { title: 'Live TV', text: 'Television, news and international channels, organised by region.' },
+      { title: 'Smart Streaming', text: 'One account for Smart TV, streaming devices, mobile and computer.' },
+    ],
   },
   devices: {
     eyebrow: 'Compatibility',

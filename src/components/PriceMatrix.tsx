@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react';
 import { DURATIONS, MARKETS, MARKET_CODES, STREAMS } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
@@ -12,7 +13,7 @@ export function PriceMatrix({ locale, tables, dict }: { locale: Locale; tables: 
           <div className="table-wrap" key={code} tabIndex={0} role="region" aria-label={`${dict.plans.matrixTitle} — ${dict.markets[code]}`}>
             <table className="matrix">
               <caption>
-                <span className="badge">{t.status === 'approved' ? '✓' : dict.common.illustrative}</span>{' '}
+                <span className="badge">{t.status === 'approved' ? <Check size={12} strokeWidth={2} aria-label="Approved" /> : dict.common.illustrative}</span>{' '}
                 {MARKETS[code].flag}{' '}
                 {fill(dict.plans.matrixCaption, { currency: t.currency, market: dict.markets[code] })}
               </caption>

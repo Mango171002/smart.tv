@@ -42,7 +42,7 @@ export function WideScreen({ id }: { id: string }) {
       {[28, 52, 74, 98].map((x, i) => (
         <rect key={x} x={x} y="11" width={i === 0 ? 18 : 16} height="3" rx="1.5" fill={i === 0 ? P.accent : P.barDim} />
       ))}
-      <circle cx="300" cy="12.5" r="4" fill="#0e1830" stroke="#25365a" strokeWidth="0.8" />
+      <circle cx="300" cy="12.5" r="4" fill="#121e2d" stroke={P.line} strokeWidth="0.8" />
       {/* hero banner */}
       <g>
         <rect x="12" y="24" width="296" height="72" rx="6" fill={`url(#${id}-hero)`} />
@@ -53,8 +53,8 @@ export function WideScreen({ id }: { id: string }) {
         <rect x="24" y="56" width="104" height="3" rx="1.5" fill={P.barMuted} />
         <rect x="24" y="62" width="88" height="3" rx="1.5" fill={P.barMuted} />
         <rect x="24" y="73" width="34" height="11" rx="3" fill={P.accent} />
-        <path d="M37 76 L42 78.5 L37 81 Z" fill="#ffffff" />
-        <rect x="62" y="73" width="28" height="11" rx="3" fill="#0b1222" stroke="#2a3b5f" strokeWidth="0.8" />
+        <path d="M37 76 L42 78.5 L37 81 Z" fill="#070d17" />
+        <rect x="62" y="73" width="28" height="11" rx="3" fill="#121e2d" stroke={P.barDim} strokeWidth="0.8" />
       </g>
       {/* row 1: continue watching */}
       <rect x="12" y="104" width="42" height="3" rx="1.5" fill={P.barStrong} />
@@ -69,7 +69,7 @@ export function WideScreen({ id }: { id: string }) {
       <rect x="12" y="149" width="30" height="3" rx="1.5" fill={P.barStrong} />
       {[0, 1, 2, 3].map((i) => (
         <g key={i}>
-          <rect x={12 + i * 75} y="156" width="70" height="20" rx="4" fill="#0c1528" stroke={P.line} strokeWidth="0.6" />
+          <rect x={12 + i * 75} y="156" width="70" height="20" rx="4" fill="#121e2d" stroke={P.line} strokeWidth="0.6" />
           <circle cx={20 + i * 75} cy="163" r="2" fill={P.live} />
           <rect x={25 + i * 75} y="161.5" width="20" height="3" rx="1.5" fill={P.barMuted} />
           <rect x={18 + i * 75} y="169" width="58" height="2" rx="1" fill={P.line} />
@@ -88,7 +88,7 @@ export function TallScreen({ id }: { id: string }) {
       <rect width="100" height="210" fill={P.screenBg} />
       <rect x="0" y="16" width="100" height="58" fill={`url(#${id}-hero)`} />
       <path d="M0 62 L22 48 L40 58 L60 42 L84 56 L100 50 L100 74 L0 74 Z" fill={P.ridge} />
-      <circle cx="50" cy="45" r="10" fill="#05070d" fillOpacity="0.55" stroke={P.barStrong} strokeWidth="1" />
+      <circle cx="50" cy="45" r="10" fill="#070d17" fillOpacity="0.55" stroke={P.barStrong} strokeWidth="1" />
       <path d="M47 40 L55 45 L47 50 Z" fill={P.barStrong} />
       <rect x="6" y="79" width="88" height="2" rx="1" fill={P.line} />
       <rect x="6" y="79" width="52" height="2" rx="1" fill={P.accent} />
@@ -97,7 +97,7 @@ export function TallScreen({ id }: { id: string }) {
       <rect x="6" y="99" width="78" height="2.5" rx="1.2" fill={P.barMuted} />
       <rect x="6" y="104" width="64" height="2.5" rx="1.2" fill={P.barMuted} />
       <rect x="6" y="112" width="26" height="9" rx="3" fill={P.accent} />
-      <rect x="36" y="112" width="26" height="9" rx="3" fill="#0b1222" stroke="#2a3b5f" strokeWidth="0.6" />
+      <rect x="36" y="112" width="26" height="9" rx="3" fill="#121e2d" stroke={P.barDim} strokeWidth="0.6" />
       {[0, 1, 2, 3].map((i) => (
         <g key={i}>
           <rect x="6" y={130 + i * 19} width="30" height="15" rx="3" fill={`url(#${id}-t${i + 1})`} />

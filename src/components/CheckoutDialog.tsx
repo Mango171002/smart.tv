@@ -1,5 +1,7 @@
 'use client';
 
+import { ArrowLeft, ArrowRight, Check, CircleCheck, X } from 'lucide-react';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MARKETS, type DurationMonths, type MarketCode, type StreamCount } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
@@ -164,7 +166,9 @@ export function CheckoutDialog({
           <h2 id="checkout-title" ref={titleRef} tabIndex={-1}>
             {step === 3 ? c.doneTitle : c.title}
           </h2>
-          <button type="button" className="close" aria-label={dict.common.close} onClick={onClose}>✕</button>
+          <button type="button" className="close" aria-label={dict.common.close} onClick={onClose}>
+            <X size={18} strokeWidth={1.75} aria-hidden="true" />
+          </button>
         </div>
         <ol className="progress" aria-label={c.title}>
           {c.steps.map((label, i) => (
@@ -219,7 +223,7 @@ export function CheckoutDialog({
               <span>{c.consentLabel}</span>
             </label>
             {fieldError.consent && <span id="prereg-consent-err" className="error">{fieldError.consent}</span>}
-            <button type="submit" className="btn block">{c.review} <span aria-hidden="true">→</span></button>
+            <button type="submit" className="btn block">{c.review} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" /></button>
           </form>
         )}
 
@@ -232,7 +236,7 @@ export function CheckoutDialog({
             <div className="orderline"><span>{c.taxes}</span><b>{c.taxesValue}</b></div>
             <p className="footnote" role="status" data-testid="quote-status">
               {quoteState === 'loading' && c.verifying}
-              {quoteState === 'ok' && `✓ ${c.verified}`}
+              {quoteState === 'ok' && <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><Check size={14} strokeWidth={2} aria-hidden="true" /> {c.verified}</span>}
               {quoteState === 'error' && c.quoteError}
             </p>
             <p className="footnote">{c.productionNote}</p>
@@ -243,17 +247,17 @@ export function CheckoutDialog({
               onClick={() => void confirm()}
               disabled={quoteState === 'loading' || submitState === 'sending'}
             >
-              {submitState === 'sending' ? c.sending : c.finish} <span aria-hidden="true">→</span>
+              {submitState === 'sending' ? c.sending : c.finish} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
             </button>
             <button type="button" className="btn ghost block" style={{ marginTop: 10 }} onClick={() => setStep(1)}>
-              <span aria-hidden="true">←</span> {dict.common.back}
+              <ArrowLeft size={18} strokeWidth={2} aria-hidden="true" /> {dict.common.back}
             </button>
           </div>
         )}
 
         {step === 3 && (
           <div className="success">
-            <div className="checkmark" aria-hidden="true">✓</div>
+            <div className="checkmark" aria-hidden="true"><CircleCheck size={56} strokeWidth={1.75} /></div>
             <p className="muted">{fill(c.doneText, { email: email.trim() })}</p>
             <button type="button" className="btn" onClick={onClose}>{c.returnToSite}</button>
           </div>

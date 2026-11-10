@@ -44,13 +44,3 @@ export function PhoneFrame({ loading = 'lazy' }: { loading?: Loading }) {
     </div>
   );
 }
-
-export function DeviceIllustration({ kind }: { kind: 0 | 1 | 2 | 3 }) {
-  // eslint-disable-next-line @next/next/no-img-element -- static decorative SVG
-  return <img src={`/visuals/device-${kind}.svg`} alt="" width={96} height={64} loading="lazy" decoding="async" className="device-art" />;
-}
-
-export function CategoryArt({ index }: { index: number }) {
-  // eslint-disable-next-line @next/next/no-img-element -- static decorative SVG
-  return <img src={`/visuals/category-${index}.svg`} alt="" width={160} height={100} loading="lazy" decoding="async" className="tile-art" />;
-}

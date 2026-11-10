@@ -164,6 +164,28 @@ test.describe('pre-registration', () => {
   });
 });
 
+test.describe('Electric Fusion Neon design system', () => {
+  test('category icons use the official colours and the primary CTA is cyan', async ({ page }) => {
+    await page.goto('/en');
+    const expected: Record<string, string> = {
+      sports: 'rgb(209, 254, 23)', // #D1FE17
+      movies: 'rgb(240, 68, 196)', // #F044C4
+      live: 'rgb(25, 211, 243)', // #19D3F3
+      streaming: 'rgb(104, 120, 255)', // #6878FF
+    };
+    const cards = page.locator('#content .cat-card');
+    await expect(cards).toHaveCount(4);
+    for (const [key, rgb] of Object.entries(expected)) {
+      const icon = page.locator(`#content .cat-card[data-category="${key}"] .icon-box svg`).first();
+      await expect(icon).toHaveCSS('color', rgb);
+    }
+    const cta = page.locator('.hero .btn').first();
+    await expect(cta).toHaveCSS('background-color', 'rgb(25, 211, 243)');
+    await expect(cta).toHaveCSS('color', 'rgb(7, 13, 23)');
+    await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(7, 13, 23)');
+  });
+});
+
 test.describe('navigation', () => {
   test('mobile menu opens, navigates and closes', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'mobile only');

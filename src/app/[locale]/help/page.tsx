@@ -27,7 +27,7 @@ export default async function HelpPage({ params }: { params: Promise<{ locale: s
       <Faq dict={dict} />
       <section aria-label={h.contactTitle} style={{ paddingTop: 0 }}>
         <div className="wrap faq-layout">
-          <div className="card panel-pad">
+          <div className="card panel-pad" id="prereg">
             <h2 style={{ marginTop: 0 }}>{h.waitlistTitle}</h2>
             <p className="muted">{h.waitlistSub}</p>
             {formsEnabled ? <ContactForm kind="launch_waitlist" locale={locale} dict={formDict} /> : <p className="alert err">{h.supportUnavailable}</p>}

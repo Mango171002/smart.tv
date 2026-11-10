@@ -49,7 +49,7 @@ export default async function CoveragePage({ params }: { params: Promise<{ local
           </div>
         </div>
       </section>
-      <ContentCategories dict={dict} />
+      <ContentCategories locale={locale} dict={dict} />
       <HelpCta locale={locale} dict={dict} />
     </>
   );

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import '../globals.css';
+import { AnnounceBar } from '@/components/AnnounceBar';
 import { Footer } from '@/components/Footer';
 import { Header } from '@/components/Header';
 import { siteConfig } from '@/config/site';
@@ -40,7 +41,7 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body>
         <a className="skip-link" href="#main">{dict.common.skipToContent}</a>
-        <div className="notice" role="note">{dict.common.prototypeNotice}</div>
+        <AnnounceBar locale={locale} dict={dict.announce} />
         <Header locale={locale} nav={dict.nav} />
         <main id="main" tabIndex={-1}>{children}</main>
         <Footer locale={locale} dict={dict} />

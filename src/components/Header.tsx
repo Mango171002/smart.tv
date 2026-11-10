@@ -22,6 +22,7 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
 
   const rest = pathname.replace(/^\/(en|fr)(?=\/|$)/, '');
   const links = [
+    { href: `/${locale}`, label: nav.home },
     { href: `/${locale}/plans`, label: nav.plans },
     { href: `/${locale}/coverage`, label: nav.content },
     { href: `/${locale}/devices`, label: nav.devices },

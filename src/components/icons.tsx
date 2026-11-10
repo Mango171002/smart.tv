@@ -11,6 +11,9 @@ import {
   FlagTriangleRight,
   Globe,
   Headset,
+  Layers,
+  Rocket,
+  Users,
   Laptop,
   Monitor,
   MonitorPlay,
@@ -40,13 +43,8 @@ export const CATEGORIES: Array<{ key: CategoryKey; icon: LucideIcon; support: Lu
   { key: 'streaming', icon: MonitorSmartphone, support: [Smartphone, Monitor, Cast] },
 ];
 
-/** Benefits strip: cyan (primary) except multi-device, which belongs to Smart Streaming (violet). */
-export const BENEFIT_ICONS: Array<{ icon: LucideIcon; cat?: CategoryKey }> = [
-  { icon: Globe },
-  { icon: MonitorSmartphone, cat: 'streaming' },
-  { icon: ShieldCheck },
-  { icon: Headset },
-];
+/** Features bar (5 items, primary cyan). */
+export const BENEFIT_ICONS: LucideIcon[] = [Rocket, Users, Layers, ShieldCheck, Headset];
 
 /** Device cards belong to Smart Streaming (violet). */
 export const DEVICE_ICONS: LucideIcon[] = [Monitor, Cast, Smartphone, Laptop];

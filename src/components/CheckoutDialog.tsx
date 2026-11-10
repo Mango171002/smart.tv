@@ -3,6 +3,7 @@
 import { ArrowLeft, ArrowRight, Check, CircleCheck, X } from 'lucide-react';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { MARKETS, type DurationMonths, type MarketCode, type StreamCount } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
@@ -146,7 +147,9 @@ export function CheckoutDialog({
   const planLabel = `${plural(dict.common, 'month', selection.durationMonths)} · ${plural(dict.common, 'stream', selection.streams)}`;
   const subtotal = quote ? `${formatMoney(quote.amountMinor, quote.currency, locale)} ${quote.currency}` : clientPrice;
 
-  return (
+  // Rendered in <body> through a portal: a transformed ancestor (e.g. a card's hover
+  // lift) would otherwise become the containing block of this fixed overlay.
+  return createPortal(
     <div
       className="overlay"
       onMouseDown={(e) => {
@@ -263,6 +266,7 @@ export function CheckoutDialog({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

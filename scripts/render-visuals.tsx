@@ -4,6 +4,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { TallScreen, WideScreen } from '../src/components/visuals/AppScreen';
+import { SCENE_FILES } from '../src/components/visuals/Scenes';
 
 const out = new URL('../public/visuals/', import.meta.url);
 mkdirSync(out, { recursive: true });
@@ -11,6 +12,7 @@ mkdirSync(out, { recursive: true });
 const files: Record<string, React.ReactElement> = {
   'screen-wide.svg': <WideScreen id="w" />,
   'screen-tall.svg': <TallScreen id="t" />,
+  ...Object.fromEntries(Object.entries(SCENE_FILES).map(([name, render]) => [name, render()])),
 };
 
 for (const [name, el] of Object.entries(files)) {

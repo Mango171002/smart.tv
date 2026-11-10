@@ -1,4 +1,5 @@
 import { PlanConfigurator } from '@/components/PlanConfigurator';
+import { Featured } from '@/components/Featured';
 import { Benefits, ContentCategories, DeviceGrid, Faq, HelpCta, Hero, HowItWorks, InterfacePreview } from '@/components/Sections';
 import { getDictionary } from '@/i18n/dictionaries';
 import { getPriceTables } from '@/lib/price-source';
@@ -17,6 +18,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <>
       <Hero locale={locale} dict={dict} />
+      <ContentCategories locale={locale} dict={dict} showHeading={false} />
+      <Featured locale={locale} dict={dict.featured} />
       <Benefits dict={dict} />
       <section id="plans" aria-labelledby="plans-title">
         <div className="wrap pricing-layout">
@@ -33,7 +36,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           />
         </div>
       </section>
-      <ContentCategories dict={dict} />
       <InterfacePreview dict={dict} />
       <DeviceGrid dict={dict} />
       <HowItWorks dict={dict} />

@@ -1,22 +1,24 @@
 import Link from 'next/link';
-import { siteConfig } from '@/config/site';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { ArrowRight, ChevronRight } from 'lucide-react';
+import { ArrowRight, CirclePlay, Globe } from 'lucide-react';
 import { BENEFIT_ICONS, CATEGORIES, DEVICE_ICONS, ICON_STROKE } from './icons';
 import { LaptopFrame, PhoneFrame, TvFrame } from './visuals/Images';
+import { TvScreen } from './visuals/Scenes';
 
 export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.hero;
   return (
     <div className="wrap hero">
       <div className="hero-grid">
-        <div>
-          <div className="eyebrow">{h.eyebrow}</div>
+        <div className="hero-copy">
+          <div className="eyebrow has-icon">
+            <Globe size={14} strokeWidth={2} aria-hidden="true" /> {h.eyebrow.split(' — ')[0]}
+            {h.eyebrow.includes(' — ') && <span className="eyebrow-extra"> — {h.eyebrow.split(' — ')[1]}</span>}
+          </div>
           <h1>
             {h.titleA}
-            <br />
-            <span className="hl">{h.titleB}</span>
+            <span className="hl-lime">{h.titleB}</span>
           </h1>
           <p className="lead">{h.lead}</p>
           <div className="actions">
@@ -24,70 +26,96 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
               {h.ctaPrimary} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
             </Link>
             <Link className="btn ghost" href={`/${locale}#how`}>
-              {h.ctaSecondary} <ChevronRight size={18} strokeWidth={2} aria-hidden="true" />
+              {h.ctaSecondary} <CirclePlay size={18} strokeWidth={1.75} aria-hidden="true" />
             </Link>
           </div>
-          <ul className="checks">
-            {h.checks.map((c) => <li key={c}>{c}</li>)}
-          </ul>
         </div>
-        <div className="tvscene" role="img" aria-label={h.visualLabel}>
-          <div className="scene-glow" aria-hidden="true" />
-          <div className="hero-tv">
-            <TvFrame label={siteConfig.brandName} loading="eager" />
+        <div className="hero-stage" role="img" aria-label={h.visualLabel}>
+          <div className="stage-glow" aria-hidden="true" />
+          <div className="stage-tv">
+            {/* Inline (not an <img>) so the hero paints without waiting for a download. */}
+            <div className="tv-bezel" aria-hidden="true">
+              <TvScreen />
+            </div>
+            <div className="tv-stand" aria-hidden="true" />
           </div>
-          <div className="hero-phone">
-            <PhoneFrame loading="eager" />
+          <div className="stage-phone">
+            <div className="mock-phone">
+              <div className="mock-phone-screen">
+                {/* eslint-disable-next-line @next/next/no-img-element -- static decorative SVG */}
+                <img src="/visuals/scene-phone.svg" alt="" width={200} height={420} decoding="async" className="screen-svg" />
+              </div>
+            </div>
           </div>
-          <span className="demo-stamp">{h.stamp}</span>
+          {/* eslint-disable-next-line @next/next/no-img-element -- static decorative SVG */}
+          <img className="stage-box" src="/visuals/scene-box.svg" alt="" width={320} height={170} decoding="async" />
         </div>
+        <ul className="checks hero-checks">
+          {h.checks.map((c) => <li key={c}>{c}</li>)}
+        </ul>
       </div>
     </div>
   );
 }
 
+/** Features bar (five reassurance items). */
 export function Benefits({ dict }: { dict: Dictionary }) {
   return (
-    <ul className="wrap benefits">
-      {dict.benefits.map((b, i) => {
-        const { icon: Icon, cat } = BENEFIT_ICONS[i]!;
-        return (
-          <li className={`benefit${cat ? ` cat-${cat}` : ''}`} key={b.title}>
-            <span className="icon-box sm" aria-hidden="true">
-              <Icon size={22} strokeWidth={ICON_STROKE} />
-            </span>
-            <div><b>{b.title}</b><small>{b.text}</small></div>
-          </li>
-        );
-      })}
-    </ul>
+    <div className="wrap">
+      <ul className="features-bar">
+        {dict.benefits.map((b, i) => {
+          const Icon = BENEFIT_ICONS[i]!;
+          return (
+            <li key={b.title}>
+              <Icon size={30} strokeWidth={ICON_STROKE} aria-hidden="true" />
+              <div><b>{b.title}</b><small>{b.text}</small></div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 
-export function ContentCategories({ dict, headingLevel = 2 }: { dict: Dictionary; headingLevel?: 1 | 2 }) {
+/** The four official category cards (neon outline style). */
+export function ContentCategories({
+  locale,
+  dict,
+  headingLevel = 2,
+  showHeading = true,
+}: {
+  locale: Locale;
+  dict: Dictionary;
+  headingLevel?: 1 | 2;
+  showHeading?: boolean;
+}) {
   const c = dict.content;
   const H = headingLevel === 1 ? 'h1' : 'h2';
   return (
-    <section id="content" aria-labelledby="content-title">
+    <section id="content" aria-labelledby="content-title" className={showHeading ? undefined : 'content-tight'}>
       <div className="wrap">
-        <div className="eyebrow">{c.eyebrow}</div>
-        <H id="content-title" className="section-title">{c.title}</H>
-        <p className="sub">{c.sub}</p>
+        <div className={showHeading ? undefined : 'sr-only'}>
+          <div className="eyebrow">{c.eyebrow}</div>
+          <H id="content-title" className="section-title">{c.title}</H>
+          <p className="sub">{c.sub}</p>
+        </div>
         <ul className="cat-grid">
           {c.categories.map((item, i) => {
-            const { key, icon: Icon, support } = CATEGORIES[i]!;
+            const { key, icon: Icon } = CATEGORIES[i]!;
             return (
-              <li className={`cat-card cat-${key}`} key={item.title} data-category={key}>
-                <span className="icon-box lg" aria-hidden="true">
-                  <Icon size={28} strokeWidth={ICON_STROKE} />
-                </span>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
-                <span className="cat-support" aria-hidden="true">
-                  {support.map((S, j) => <S key={j} size={18} strokeWidth={ICON_STROKE} />)}
-                </span>
+              <li key={item.title}>
+                <Link className={`cat-card cat-${key}`} href={`/${locale}/coverage`} data-category={key}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- static decorative SVG */}
+                  <img className="cat-art" src={`/visuals/cat-${key}.svg`} alt="" width={240} height={160} loading="lazy" decoding="async" />
+                  <span className="cat-icon" aria-hidden="true">
+                    <Icon size={40} strokeWidth={ICON_STROKE} />
+                  </span>
+                  <ArrowRight className="cat-arrow" size={20} strokeWidth={1.75} aria-hidden="true" />
+                  <span className="cat-text">
+                    <span className="cat-title">{item.title}</span>
+                    <span className="cat-desc">{item.text}</span>
+                  </span>
+                </Link>
               </li>
             );
           })}

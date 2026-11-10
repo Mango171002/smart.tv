@@ -135,6 +135,18 @@ test.describe('pre-registration', () => {
     await expect(dialog.getByTestId('quote-status')).toHaveCount(0);
   });
 
+  test('dialog stays still when hovered and lives in <body> (regression)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'hover only exists on desktop');
+    await page.goto('/en');
+    await page.getByRole('button', { name: /^Pre-register/ }).click();
+    const checkbox = page.getByTestId('checkout-dialog').getByRole('checkbox');
+    await checkbox.hover();
+    const before = await checkbox.boundingBox();
+    await page.waitForTimeout(400);
+    expect(await checkbox.boundingBox()).toEqual(before);
+    expect(await page.evaluate(() => document.querySelector('.overlay')?.parentElement === document.body)).toBe(true);
+  });
+
   test('shows a clear message when rate limited', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
     await page.goto('/en');
@@ -176,13 +188,52 @@ test.describe('Electric Fusion Neon design system', () => {
     const cards = page.locator('#content .cat-card');
     await expect(cards).toHaveCount(4);
     for (const [key, rgb] of Object.entries(expected)) {
-      const icon = page.locator(`#content .cat-card[data-category="${key}"] .icon-box svg`).first();
+      const icon = page.locator(`#content .cat-card[data-category="${key}"] .cat-icon svg`).first();
       await expect(icon).toHaveCSS('color', rgb);
     }
     const cta = page.locator('.hero .btn').first();
     await expect(cta).toHaveCSS('background-color', 'rgb(25, 211, 243)');
     await expect(cta).toHaveCSS('color', 'rgb(7, 13, 23)');
     await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(7, 13, 23)');
+  });
+});
+
+test.describe('home page (approved mock-up)', () => {
+  test('featured carousel moves with the arrows and dots', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'arrows are hidden on small screens (swipe instead)');
+    await page.goto('/en');
+    const carousel = page.getByRole('region', { name: 'Featured genres' });
+    const prev = carousel.getByRole('button', { name: 'Previous' });
+    const next = carousel.getByRole('button', { name: 'Next' });
+    await expect(prev).toBeDisabled();
+    await next.click();
+    await expect(page.getByRole('button', { name: '2 of 4' })).toHaveAttribute('aria-current', 'true');
+    await expect(prev).toBeEnabled();
+    await page.getByRole('button', { name: '4 of 4' }).click();
+    await expect(page.getByRole('button', { name: '4 of 4' })).toHaveAttribute('aria-current', 'true');
+  });
+
+  test('announcement bar links to pre-registration', async ({ page }) => {
+    await page.goto('/fr');
+    await page.getByRole('link', { name: /S’inscrire à l’alerte/ }).click();
+    await expect(page).toHaveURL(/\/fr\/help#prereg$/);
+    await expect(page.locator('#prereg')).toBeVisible();
+  });
+
+  test('category cards lead to the content page', async ({ page }) => {
+    await page.goto('/en');
+    await page.locator('#content .cat-card[data-category="movies"]').click();
+    await expect(page).toHaveURL(/\/en\/coverage$/);
+  });
+
+  test('no third-party brand names are shown', async ({ page }) => {
+    for (const route of ['/en', '/fr']) {
+      await page.goto(route);
+      const text = (await page.locator('body').innerText()).toLowerCase();
+      for (const word of ['uefa', 'champions league', 'nba', 'avatar', 'house of the dragon', 'f1', 'formula 1']) {
+        expect(text, `${route} mentions ${word}`).not.toContain(word);
+      }
+    }
   });
 });
 

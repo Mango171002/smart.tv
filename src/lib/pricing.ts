@@ -1,47 +1,61 @@
-import prototypeTables from '@/config/prototype-price-tables.json';
-import {
-  DURATIONS,
-  MARKET_CODES,
-  STREAMS,
-  type DurationMonths,
-  type MarketCode,
-  type StreamCount,
-} from '@/config/markets';
+import table from '@/config/price-tables.json';
 
 /** Pure pricing logic, shared by the server (authoritative) and the UI (display). */
 
+export const TIERS = ['starter', 'plus', 'ultra'] as const;
+export type Tier = (typeof TIERS)[number];
+
+export const TERMS = ['12m', '24m', '36m', 'lifetime'] as const;
+export type Term = (typeof TERMS)[number];
+
+export const STREAMS = [1, 2, 3, 4] as const;
+export type StreamCount = (typeof STREAMS)[number];
+
+/** Number of months covered by a term (null = lifetime, one-time payment). */
+export const TERM_MONTHS: Record<Term, number | null> = { '12m': 12, '24m': 24, '36m': 36, lifetime: null };
+
+/** Tier characteristics that drive the UI (features text lives in i18n). */
+export const TIER_INFO: Record<Tier, { quality: 'hd' | 'fhd' | 'uhd' }> = {
+  starter: { quality: 'hd' },
+  plus: { quality: 'fhd' },
+  ultra: { quality: 'uhd' },
+};
+
 export type PriceStatus = 'illustrative' | 'approved';
-export type PlanKey = `${DurationMonths}x${StreamCount}`;
+export type PlanKey = `${Tier}:${Term}:${StreamCount}`;
 
 export interface PriceTable {
-  market: MarketCode;
   currency: string;
-  /** illustrative = prototype data, never chargeable. */
+  /** illustrative = planned price, never chargeable. */
   status: PriceStatus;
   prices: Partial<Record<PlanKey, number>>;
 }
 
-export type PriceTables = Record<MarketCode, PriceTable>;
-
 export interface PlanSelection {
-  market: MarketCode;
-  durationMonths: DurationMonths;
+  tier: Tier;
+  term: Term;
+  /** Simultaneous screens (1 included, up to 4). */
   streams: StreamCount;
 }
 
 export interface Quote extends PlanSelection {
   currency: string;
   amountMinor: number;
-  monthlyEquivalentMinor: number;
+  /** Monthly equivalent (null for lifetime). */
+  monthlyEquivalentMinor: number | null;
+  /** What the same period would cost with consecutive 12-month plans (null for 12m and lifetime). */
+  referenceMinor: number | null;
+  savingsMinor: number;
+  savingsPercent: number;
   status: PriceStatus;
-  /** Taxes are never computed in the prototype. */
+  /** Taxes are never computed before launch. */
   taxMinor: null;
   chargeable: boolean;
 }
 
 export class PricingError extends Error {
   constructor(
-    public readonly code: 'unknown_market' | 'unknown_plan' | 'price_unavailable',
+    public readonly code: 'unknown_plan' | 'price_unavailable',
     message: string,
   ) {
     super(message);
@@ -49,60 +63,57 @@ export class PricingError extends Error {
   }
 }
 
-export const planKey = (d: DurationMonths, s: StreamCount): PlanKey => `${d}x${s}`;
+export const planKey = (tier: Tier, term: Term, streams: StreamCount): PlanKey => `${tier}:${term}:${streams}`;
+export const isTier = (v: unknown): v is Tier => typeof v === 'string' && (TIERS as readonly string[]).includes(v);
+export const isTerm = (v: unknown): v is Term => typeof v === 'string' && (TERMS as readonly string[]).includes(v);
+export const isStreamCount = (v: unknown): v is StreamCount => typeof v === 'number' && (STREAMS as readonly number[]).includes(v);
 
-export function isDuration(v: unknown): v is DurationMonths {
-  return typeof v === 'number' && (DURATIONS as readonly number[]).includes(v);
-}
-export function isStreamCount(v: unknown): v is StreamCount {
-  return typeof v === 'number' && (STREAMS as readonly number[]).includes(v);
-}
-
-export function computeQuote(tables: PriceTables, sel: PlanSelection): Quote {
-  if (!(MARKET_CODES as readonly string[]).includes(sel.market)) {
-    throw new PricingError('unknown_market', `Unknown market ${String(sel.market)}`);
-  }
-  if (!isDuration(sel.durationMonths) || !isStreamCount(sel.streams)) {
+export function computeQuote(t: PriceTable, sel: PlanSelection): Quote {
+  if (!isTier(sel.tier) || !isTerm(sel.term) || !isStreamCount(sel.streams)) {
     throw new PricingError('unknown_plan', 'Unknown plan');
   }
-  const table = tables[sel.market];
-  const amount = table?.prices[planKey(sel.durationMonths, sel.streams)];
-  if (!table || typeof amount !== 'number' || !Number.isInteger(amount) || amount <= 0) {
-    throw new PricingError('price_unavailable', 'No price for this plan in this market');
+  const amount = t.prices[planKey(sel.tier, sel.term, sel.streams)];
+  if (typeof amount !== 'number' || !Number.isInteger(amount) || amount <= 0) {
+    throw new PricingError('price_unavailable', 'No price for this plan');
   }
+  const months = TERM_MONTHS[sel.term];
+  const yearly = t.prices[planKey(sel.tier, '12m', sel.streams)];
+  const reference = months && months > 12 && typeof yearly === 'number' ? (yearly * months) / 12 : null;
+  const savings = reference ? Math.max(0, reference - amount) : 0;
   return {
     ...sel,
-    currency: table.currency,
+    currency: t.currency,
     amountMinor: amount,
-    monthlyEquivalentMinor: Math.round(amount / sel.durationMonths),
-    status: table.status,
+    monthlyEquivalentMinor: months ? Math.round(amount / months) : null,
+    referenceMinor: reference,
+    savingsMinor: savings,
+    savingsPercent: reference ? Math.round((savings / reference) * 100) : 0,
+    status: t.status,
     taxMinor: null,
-    // Illustrative prices can never be charged, whatever else is configured.
-    chargeable: table.status === 'approved',
+    // Planned (illustrative) prices can never be charged.
+    chargeable: t.status === 'approved',
   };
 }
 
-/** Static fallback tables (illustrative), generated from the approved prototype. */
-export function getStaticPriceTables(): PriceTables {
-  const out = {} as PriceTables;
-  for (const market of MARKET_CODES) {
-    const t = prototypeTables.tables[market];
-    out[market] = {
-      market,
-      currency: t.currency,
-      status: 'illustrative',
-      prices: t.prices as Partial<Record<PlanKey, number>>,
-    };
+/** Built-in planned price list (generated by scripts/generate-prices.mjs). */
+export function getStaticPriceTable(): PriceTable {
+  const prices: Partial<Record<PlanKey, number>> = {};
+  const src = table.prices as Record<string, Record<string, Record<string, number>>>;
+  for (const tier of TIERS) for (const term of TERMS) for (const n of STREAMS) {
+    const v = src[tier]?.[term]?.[String(n)];
+    if (typeof v === 'number') prices[planKey(tier, term, n)] = v;
   }
-  return out;
+  return { currency: table.currency, status: 'illustrative', prices };
 }
 
+/** Formats money; whole amounts are shown without decimals (49 $ rather than 49,00 $). */
 export function formatMoney(amountMinor: number, currency: string, locale: string): string {
+  const whole = amountMinor % 100 === 0;
   return new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', {
     style: 'currency',
     currency,
-    currencyDisplay: 'symbol',
-    minimumFractionDigits: 2,
+    currencyDisplay: 'narrowSymbol',
+    minimumFractionDigits: whole ? 0 : 2,
     maximumFractionDigits: 2,
   }).format(amountMinor / 100);
 }

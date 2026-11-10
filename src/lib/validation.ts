@@ -1,14 +1,14 @@
 import { z } from 'zod';
-import { DURATIONS, MARKET_CODES, STREAMS } from '@/config/markets';
+import { MARKET_CODES } from '@/config/markets';
+import { STREAMS, TERMS, TIERS } from '@/lib/pricing';
 import { LOCALES } from '@/i18n/config';
 
-const literalUnion = <T extends readonly number[]>(values: T) =>
-  z.number().int().refine((v): v is T[number] => (values as readonly number[]).includes(v), 'invalid value');
+const streamCount = z.number().int().refine((v): v is (typeof STREAMS)[number] => (STREAMS as readonly number[]).includes(v), 'invalid value');
 
 export const planSelectionSchema = z.object({
-  market: z.enum(MARKET_CODES),
-  durationMonths: literalUnion(DURATIONS),
-  streams: literalUnion(STREAMS),
+  tier: z.enum(TIERS),
+  term: z.enum(TERMS),
+  streams: streamCount,
 });
 
 const email = z.string().trim().toLowerCase().max(254).pipe(z.email());
@@ -36,8 +36,9 @@ export const contactSchema = z.discriminatedUnion('kind', [
     kind: z.literal('launch_waitlist'),
     name: z.string().trim().max(120).optional(),
     /** Pre-registration: plan and device of interest (no commitment, no payment). */
-    durationMonths: literalUnion(DURATIONS).optional(),
-    streams: literalUnion(STREAMS).optional(),
+    tier: z.enum(TIERS).optional(),
+    term: z.enum(TERMS).optional(),
+    streams: streamCount.optional(),
     device: z.enum(DEVICE_KEYS).optional(),
     ...contactBase,
   }),

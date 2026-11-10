@@ -1,63 +1,56 @@
 import 'server-only';
-import { MARKET_CODES, type DurationMonths, type StreamCount } from '@/config/markets';
 import { getPublicSupabase } from '@/lib/supabase/server';
-import { getStaticPriceTables, isDuration, isStreamCount, planKey, type PriceTables } from '@/lib/pricing';
+import { getStaticPriceTable, isStreamCount, isTerm, isTier, planKey, STREAMS, TERMS, TIERS, type PriceTable } from '@/lib/pricing';
 
 export type PriceSource = 'database' | 'static';
 
+/** Planned prices are published for the US market (USD) for every visitor. */
+const PRICE_MARKET = 'US';
 const TTL_MS = 5 * 60 * 1000;
-let cache: { at: number; value: { tables: PriceTables; source: PriceSource } } | null = null;
+let cache: { at: number; value: { table: PriceTable; source: PriceSource } } | null = null;
 
 interface PriceRow {
-  market_code: string;
   currency: string;
   amount_minor: number;
   status: 'illustrative' | 'approved' | 'retired';
-  plans: { duration_months: number; streams: number } | null;
+  plans: { tier_code: string | null; term: string | null; streams: number } | null;
 }
 
-/** Builds price tables from database rows. Exported for unit tests. */
-export function tablesFromRows(rows: PriceRow[]): PriceTables | null {
-  const tables = getStaticPriceTables();
-  const seen = new Set<string>();
-  for (const market of MARKET_CODES) {
-    tables[market] = { ...tables[market], prices: {}, status: 'approved' };
-  }
+/** Builds the price table from database rows; null when incomplete. Exported for unit tests. */
+export function tableFromRows(rows: PriceRow[]): PriceTable | null {
+  const t: PriceTable = { currency: 'USD', status: 'approved', prices: {} };
   for (const row of rows) {
-    if (!(MARKET_CODES as readonly string[]).includes(row.market_code) || !row.plans) continue;
-    const { duration_months: d, streams: s } = row.plans;
-    if (!isDuration(d) || !isStreamCount(s) || row.status === 'retired') continue;
-    const t = tables[row.market_code as (typeof MARKET_CODES)[number]];
-    if (t.currency !== row.currency) continue;
-    t.prices[planKey(d as DurationMonths, s as StreamCount)] = row.amount_minor;
-    // A table is only "approved" when every price in it is approved.
+    const tier = row.plans?.tier_code;
+    const term = row.plans?.term;
+    const streams = row.plans?.streams;
+    if (!isTier(tier) || !isTerm(term) || !isStreamCount(streams) || row.status === 'retired' || row.currency !== 'USD') continue;
+    t.prices[planKey(tier, term, streams)] = row.amount_minor;
+    // The table is "approved" only when every price in it is approved.
     if (row.status !== 'approved') t.status = 'illustrative';
-    seen.add(row.market_code);
   }
-  for (const market of MARKET_CODES) {
-    if (!seen.has(market)) return null; // incomplete data: fall back to static tables
-  }
-  return tables;
+  for (const tier of TIERS) for (const term of TERMS) for (const n of STREAMS) if (!t.prices[planKey(tier, term, n)]) return null;
+  return t;
 }
 
-export async function getPriceTables(): Promise<{ tables: PriceTables; source: PriceSource }> {
+export async function getPriceTable(): Promise<{ table: PriceTable; source: PriceSource }> {
   if (cache && Date.now() - cache.at < TTL_MS) return cache.value;
-  let value: { tables: PriceTables; source: PriceSource } = { tables: getStaticPriceTables(), source: 'static' };
+  let value: { table: PriceTable; source: PriceSource } = { table: getStaticPriceTable(), source: 'static' };
   const supabase = getPublicSupabase();
   if (supabase) {
     try {
       const { data, error } = await supabase
         .from('prices')
-        .select('market_code, currency, amount_minor, status, plans(duration_months, streams)')
+        .select('currency, amount_minor, status, plans(tier_code, term, streams)')
+        .eq('market_code', PRICE_MARKET)
         .abortSignal(AbortSignal.timeout(4000));
       if (!error && data) {
-        const tables = tablesFromRows(data as unknown as PriceRow[]);
-        if (tables) value = { tables, source: 'database' };
+        const table = tableFromRows(data as unknown as PriceRow[]);
+        if (table) value = { table, source: 'database' };
       } else if (error) {
-        console.warn('[price-source] falling back to static tables:', error.message);
+        console.warn('[price-source] falling back to the static table:', error.message);
       }
     } catch (e) {
-      console.warn('[price-source] falling back to static tables:', (e as Error).message);
+      console.warn('[price-source] falling back to the static table:', (e as Error).message);
     }
   }
   cache = { at: Date.now(), value };

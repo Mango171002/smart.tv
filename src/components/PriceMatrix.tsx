@@ -1,43 +1,48 @@
-import { Check } from 'lucide-react';
-import { DURATIONS, MARKETS, MARKET_CODES, STREAMS } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
-import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
-import { formatMoney, planKey, type PriceTables } from '@/lib/pricing';
+import { fill, type Dictionary } from '@/i18n/dictionaries';
+import { computeQuote, formatMoney, TERMS, TIERS, type PriceTable } from '@/lib/pricing';
 
-export function PriceMatrix({ locale, tables, dict }: { locale: Locale; tables: PriceTables; dict: Dictionary }) {
+/** Full planned price list: tiers (rows) x terms (columns). */
+export function PriceMatrix({ locale, table, dict }: { locale: Locale; table: PriceTable; dict: Dictionary }) {
+  const p = dict.plans;
   return (
-    <div>
-      {MARKET_CODES.map((code) => {
-        const t = tables[code];
-        return (
-          <div className="table-wrap" key={code} tabIndex={0} role="region" aria-label={`${dict.plans.matrixTitle} — ${dict.markets[code]}`}>
-            <table className="matrix">
-              <caption>
-                <span className="badge">{t.status === 'approved' ? <Check size={12} strokeWidth={2} aria-label="Approved" /> : dict.common.illustrative}</span>{' '}
-                {MARKETS[code].flag}{' '}
-                {fill(dict.plans.matrixCaption, { currency: t.currency, market: dict.markets[code] })}
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">{dict.plans.duration}</th>
-                  {STREAMS.map((s) => <th scope="col" key={s}>{plural(dict.common, 'stream', s)}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {DURATIONS.map((d) => (
-                  <tr key={d}>
-                    <th scope="row">{plural(dict.common, 'month', d)}</th>
-                    {STREAMS.map((s) => {
-                      const v = t.prices[planKey(d, s)];
-                      return <td key={s}>{typeof v === 'number' ? formatMoney(v, t.currency, locale) : '—'}</td>;
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        );
-      })}
+    <div className="table-wrap" tabIndex={0} role="region" aria-label={p.matrixTitle}>
+      <table className="matrix">
+        <caption>
+          <span className="badge">{table.status === 'approved' ? '✓' : dict.common.illustrative}</span>{' '}
+          {fill(p.matrixCaption, { currency: table.currency })}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">{p.plan}</th>
+            {TERMS.map((t) => <th scope="col" key={t}>{p.terms[t]}{t === 'lifetime' ? '*' : ''}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {TIERS.map((tier) => (
+            <tr key={tier}>
+              <th scope="row">{p.tiers[tier].name}</th>
+              {TERMS.map((term) => {
+                const q = computeQuote(table, { tier, term, streams: 1 });
+                return (
+                  <td key={term}>
+                    {formatMoney(q.amountMinor, table.currency, locale)}
+                    {q.monthlyEquivalentMinor !== null && term !== '12m' && (
+                      <small className="matrix-sub">{fill(dict.common.perMonth, { price: formatMoney(q.monthlyEquivalentMinor, table.currency, locale) })}</small>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="matrix-note">{fill(p.extraStreams, {
+        y12: formatMoney(computeQuote(table, { tier: 'starter', term: '12m', streams: 2 }).amountMinor - computeQuote(table, { tier: 'starter', term: '12m', streams: 1 }).amountMinor, table.currency, locale),
+        y24: formatMoney(computeQuote(table, { tier: 'starter', term: '24m', streams: 2 }).amountMinor - computeQuote(table, { tier: 'starter', term: '24m', streams: 1 }).amountMinor, table.currency, locale),
+        y36: formatMoney(computeQuote(table, { tier: 'starter', term: '36m', streams: 2 }).amountMinor - computeQuote(table, { tier: 'starter', term: '36m', streams: 1 }).amountMinor, table.currency, locale),
+        life: formatMoney(computeQuote(table, { tier: 'starter', term: 'lifetime', streams: 2 }).amountMinor - computeQuote(table, { tier: 'starter', term: 'lifetime', streams: 1 }).amountMinor, table.currency, locale),
+      })}</p>
     </div>
   );
 }

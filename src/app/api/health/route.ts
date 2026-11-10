@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getLaunchBlockers } from '@/config/launch-gate';
-import { getPriceTables } from '@/lib/price-source';
+import { getPriceTable } from '@/lib/price-source';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const { source } = await getPriceTables();
+  const { source } = await getPriceTable();
   return NextResponse.json({
     status: 'ok',
     mode: 'prelaunch',

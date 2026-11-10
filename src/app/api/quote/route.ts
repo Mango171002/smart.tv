@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPriceTables } from '@/lib/price-source';
+import { getPriceTable } from '@/lib/price-source';
 import { computeQuote, PricingError } from '@/lib/pricing';
 import { checkSameOrigin, clientIp, jsonError, readJson } from '@/lib/http';
 import { createRateLimiter } from '@/lib/rate-limit';
@@ -22,9 +22,9 @@ export async function POST(req: Request) {
   const parsed = planSelectionSchema.safeParse(body);
   if (!parsed.success) return jsonError(400, 'invalid_selection');
 
-  const { tables, source } = await getPriceTables();
+  const { table, source } = await getPriceTable();
   try {
-    const quote = computeQuote(tables, parsed.data);
+    const quote = computeQuote(table, parsed.data);
     return NextResponse.json({
       ok: true,
       quote,

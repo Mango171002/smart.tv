@@ -60,32 +60,61 @@ test.describe('routing & SEO', () => {
   });
 });
 
-test.describe('plan configurator', () => {
-  test('updates the price for region, duration and streams', async ({ page }) => {
+test.describe('offers: Starter / Plus / Ultra + simulator', () => {
+  test('shows the three yearly plans with Plus recommended', async ({ page }) => {
+    await page.goto('/en');
+    await expect(page.getByTestId('tier-price-starter')).toHaveText('$49');
+    await expect(page.getByTestId('tier-price-plus')).toHaveText('$59');
+    await expect(page.getByTestId('tier-price-ultra')).toHaveText('$69');
+    await expect(page.locator('.tier-card.is-recommended')).toHaveAttribute('data-tier', 'plus');
+    await expect(page.locator('.tier-card.is-recommended .tier-badge')).toHaveText('Recommended');
+  });
+
+  test('simulator: plan, duration and screens update price, monthly equivalent and savings', async ({ page }) => {
     await page.goto('/en');
     const price = page.getByTestId('price');
-    await expect(price).toHaveText('$79.00');
-    await page.locator('[data-month="1"]').click();
-    await expect(price).toHaveText('$14.00');
-    await expect(page.locator('[data-month="1"]')).toHaveAttribute('aria-pressed', 'true');
-    await page.locator('[data-stream="2"]').click();
-    await expect(price).toHaveText('$21.70');
-    await expect(page.getByTestId('selection')).toHaveText('1 month · 2 streams');
-    await page.selectOption('#region', 'CA');
-    await expect(price).toHaveText('CA$28.64');
-    await page.selectOption('#region', 'EU');
-    await expect(price).toHaveText('€19.96');
+    await expect(page.getByTestId('selection')).toHaveText('Plus · 12 months · 1 device');
+    await expect(price).toHaveText('$59');
+    await page.locator('.simulator [data-tier="starter"]').click();
+    await page.locator('[data-term="36m"]').click();
+    await expect(page.getByTestId('selection')).toHaveText('Starter · 36 months · 1 device');
+    await expect(price).toHaveText('$99');
+    await expect(page.locator('.price-sub')).toHaveText('≈ $2.75 / month');
+    await expect(page.getByTestId('savings')).toHaveText('Save $48 compared with 3 × 12 months');
+    await page.locator('[data-stream="3"]').click();
+    await expect(page.getByTestId('selection')).toHaveText('Starter · 36 months · 3 devices');
+    await expect(price).toHaveText('$159');
+    await expect(page.locator('[data-stream="2"] .choice-note')).toHaveText('+$30');
+    await page.locator('.simulator [data-tier="ultra"]').click();
+    await page.locator('[data-term="lifetime"]').click();
+    await page.locator('[data-stream="4"]').click();
+    await expect(price).toHaveText('$349');
+    await expect(page.locator('.price-sub')).toHaveText('One-time payment');
+    await expect(page.getByTestId('savings')).toHaveCount(0);
+  });
+
+  test('"Choose" on a plan card selects it in the simulator', async ({ page }) => {
+    await page.goto('/en');
+    await page.getByRole('button', { name: 'Choose Ultra' }).click();
+    await expect(page.locator('.simulator [data-tier="ultra"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByTestId('price')).toHaveText('$69');
   });
 
   test('formats prices in French', async ({ page }) => {
     await page.goto('/fr');
-    await page.selectOption('#region', 'EU');
-    await expect(page.getByTestId('price')).toHaveText(/72,68\s€/);
+    await expect(page.getByTestId('tier-price-starter')).toHaveText(/^49\s\$$/);
+    await page.locator('[data-term="24m"]').click();
+    await expect(page.getByTestId('price')).toHaveText(/^95\s\$$/);
   });
 
-  test('price matrix lists all markets', async ({ page }) => {
+  test('price matrix lists every plan and duration, with the extra-screen rule', async ({ page }) => {
     await page.goto('/en/plans');
-    await expect(page.locator('table.matrix')).toHaveCount(3);
+    const table = page.locator('table.matrix');
+    await expect(table).toHaveCount(1);
+    await expect(table.locator('tbody tr')).toHaveCount(3);
+    await expect(table.locator('thead th')).toHaveCount(5);
+    await expect(table).toContainText('$199');
+    await expect(page.locator('.matrix-note')).toContainText('+$10 for 12 months');
     await expect(page.getByTestId('price-source')).toBeVisible();
   });
 });
@@ -98,7 +127,9 @@ test.describe('pre-registration', () => {
       await route.fulfill({ status: 201, json: { ok: true } });
     });
     await page.goto('/en');
-    await page.locator('[data-stream="3"]').click();
+    await page.locator('.simulator [data-tier="ultra"]').click();
+    await page.locator('[data-term="24m"]').click();
+    await page.locator('[data-stream="2"]').click();
     const opener = page.getByRole('button', { name: /^Pre-register/ });
     await opener.click();
     const dialog = page.getByTestId('checkout-dialog');
@@ -106,18 +137,20 @@ test.describe('pre-registration', () => {
     await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
 
     await dialog.getByLabel('Email address').fill('viewer@example.test');
+    await dialog.getByLabel('Your region').selectOption('CA');
     await dialog.getByLabel('Main device').selectOption('mobile');
     await dialog.getByRole('checkbox').check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/Price confirmed by our server/);
-    await expect(dialog.getByTestId('review-plan')).toHaveText('12 months · 3 streams');
-    await expect(dialog.getByTestId('review-price')).toHaveText('$165.90 USD');
+    await expect(dialog.getByTestId('review-plan')).toHaveText('Ultra · 24 months · 2 devices');
+    await expect(dialog.getByTestId('review-region')).toContainText('Canada');
+    await expect(dialog.getByTestId('review-price')).toHaveText('$129 USD');
 
     await dialog.getByRole('button', { name: /Confirm my pre-registration/ }).click();
     await expect(dialog.getByRole('heading', { name: 'You are pre-registered!' })).toBeVisible();
     await expect(dialog).toContainText('viewer@example.test');
     expect(sent).toMatchObject({
-      kind: 'launch_waitlist', email: 'viewer@example.test', market: 'US', durationMonths: 12, streams: 3, device: 'mobile', consent: true,
+      kind: 'launch_waitlist', email: 'viewer@example.test', market: 'CA', tier: 'ultra', term: '24m', streams: 2, device: 'mobile', consent: true,
     });
     await dialog.getByRole('button', { name: 'Back to the website' }).click();
     await expect(dialog).toBeHidden();
@@ -131,6 +164,7 @@ test.describe('pre-registration', () => {
     await dialog.getByRole('button', { name: /Continuer/ }).click();
     await expect(dialog.getByText('Saisissez une adresse e-mail valide.')).toBeVisible();
     await expect(dialog.getByText('Veuillez accepter d’être contacté au sujet du lancement.')).toBeVisible();
+    await expect(dialog.getByText('Choisissez votre région.')).toBeVisible();
     await expect(dialog.getByLabel('Adresse e-mail')).toHaveAttribute('aria-invalid', 'true');
     await expect(dialog.getByTestId('quote-status')).toHaveCount(0);
   });
@@ -153,6 +187,7 @@ test.describe('pre-registration', () => {
     await page.getByRole('button', { name: /^Pre-register/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
+    await dialog.getByLabel('Your region').selectOption('US');
     await dialog.getByRole('checkbox').check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/confirmed/);

@@ -4,10 +4,10 @@ import { ArrowLeft, ArrowRight, Check, CircleCheck, X } from 'lucide-react';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { MARKETS, type DurationMonths, type MarketCode, type StreamCount } from '@/config/markets';
+import { MARKETS, MARKET_CODES, type MarketCode } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
-import { formatMoney } from '@/lib/pricing';
+import { formatMoney, type PlanSelection } from '@/lib/pricing';
 
 type Step = 1 | 2 | 3;
 
@@ -29,8 +29,8 @@ export function CheckoutDialog({
   onClose,
 }: {
   locale: Locale;
-  dict: Pick<Dictionary, 'checkout' | 'common' | 'markets'>;
-  selection: { market: MarketCode; durationMonths: DurationMonths; streams: StreamCount };
+  dict: Pick<Dictionary, 'checkout' | 'common' | 'markets' | 'plans'>;
+  selection: PlanSelection;
   clientPrice: string;
   onClose: () => void;
 }) {
@@ -40,8 +40,9 @@ export function CheckoutDialog({
   const [quoteState, setQuoteState] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [email, setEmail] = useState('');
   const [device, setDevice] = useState<(typeof DEVICE_KEYS)[number]>('smart_tv');
+  const [market, setMarket] = useState<MarketCode | ''>('');
   const [consent, setConsent] = useState(false);
-  const [fieldError, setFieldError] = useState<{ email?: string; consent?: string }>({});
+  const [fieldError, setFieldError] = useState<{ email?: string; region?: string; consent?: string }>({});
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'error'>('idle');
   const [submitError, setSubmitError] = useState('');
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -97,8 +98,9 @@ export function CheckoutDialog({
           kind: 'launch_waitlist',
           email: email.trim(),
           locale,
-          market: selection.market,
-          durationMonths: selection.durationMonths,
+          market,
+          tier: selection.tier,
+          term: selection.term,
           streams: selection.streams,
           device,
           consent: true,
@@ -118,8 +120,9 @@ export function CheckoutDialog({
   }
 
   async function review() {
-    const errors: { email?: string; consent?: string } = {};
+    const errors: { email?: string; region?: string; consent?: string } = {};
     if (!EMAIL_RE.test(email.trim())) errors.email = c.errors.email;
+    if (!market) errors.region = c.errors.region;
     if (!consent) errors.consent = c.errors.consent;
     setFieldError(errors);
     if (Object.keys(errors).length) {
@@ -143,8 +146,8 @@ export function CheckoutDialog({
     }
   }
 
-  const regionLabel = `${MARKETS[selection.market].flag} ${dict.markets[selection.market]} · ${MARKETS[selection.market].currency}`;
-  const planLabel = `${plural(dict.common, 'month', selection.durationMonths)} · ${plural(dict.common, 'stream', selection.streams)}`;
+  const regionLabel = market ? `${MARKETS[market].flag} ${dict.markets[market]}` : '';
+  const planLabel = `${dict.plans.tiers[selection.tier].name} · ${dict.plans.terms[selection.term]} · ${plural(dict.common, 'device', selection.streams)}`;
   const subtotal = quote ? `${formatMoney(quote.amountMinor, quote.currency, locale)} ${quote.currency}` : clientPrice;
 
   // Rendered in <body> through a portal: a transformed ancestor (e.g. a card's hover
@@ -205,6 +208,21 @@ export function CheckoutDialog({
               aria-describedby={fieldError.email ? 'prereg-email-err' : undefined}
             />
             {fieldError.email && <span id="prereg-email-err" className="error">{fieldError.email}</span>}
+            <label htmlFor="prereg-region">{c.regionLabel}</label>
+            <select
+              className="input"
+              id="prereg-region"
+              value={market}
+              onChange={(e) => setMarket(e.target.value as MarketCode | '')}
+              aria-invalid={fieldError.region ? true : undefined}
+              aria-describedby={fieldError.region ? 'prereg-region-err' : undefined}
+            >
+              <option value="">—</option>
+              {MARKET_CODES.map((code) => (
+                <option key={code} value={code}>{MARKETS[code].flag} {dict.markets[code]}</option>
+              ))}
+            </select>
+            {fieldError.region && <span id="prereg-region-err" className="error">{fieldError.region}</span>}
             <label htmlFor="prereg-device">{c.deviceLabel}</label>
             <select
               className="input"

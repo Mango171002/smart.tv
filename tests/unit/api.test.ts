@@ -21,30 +21,30 @@ afterEach(() => vi.unstubAllEnvs());
 describe('POST /api/quote', () => {
   it('returns the authoritative quote', async () => {
     const { POST } = await import('@/app/api/quote/route');
-    const res = await POST(post('/api/quote', { market: 'US', durationMonths: 12, streams: 1 }));
+    const res = await POST(post('/api/quote', { tier: 'starter', term: '12m', streams: 1 }));
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.quote.amountMinor).toBe(7900);
+    expect(json.quote.amountMinor).toBe(4900);
     expect(json.chargeable).toBe(false);
     expect(json.taxes.calculated).toBe(false);
     expect(json.source).toBe('static');
   });
   it('ignores any client-supplied price', async () => {
     const { POST } = await import('@/app/api/quote/route');
-    const res = await POST(post('/api/quote', { market: 'US', durationMonths: 12, streams: 1, amountMinor: 1 }));
-    expect((await res.json()).quote.amountMinor).toBe(7900);
+    const res = await POST(post('/api/quote', { tier: 'starter', term: '12m', streams: 1, amountMinor: 1 }));
+    expect((await res.json()).quote.amountMinor).toBe(4900);
   });
   it('rejects invalid input, bad JSON and cross-origin calls', async () => {
     const { POST } = await import('@/app/api/quote/route');
-    expect((await POST(post('/api/quote', { market: 'US', durationMonths: 7, streams: 1 }))).status).toBe(400);
+    expect((await POST(post('/api/quote', { tier: 'starter', term: '7m', streams: 1 }))).status).toBe(400);
     expect((await POST(post('/api/quote', '{not json'))).status).toBe(400);
-    expect((await POST(post('/api/quote', { market: 'US', durationMonths: 1, streams: 1 }, { origin: 'https://evil.test' }))).status).toBe(403);
+    expect((await POST(post('/api/quote', { tier: 'plus', term: '24m', streams: 2 }, { origin: 'https://evil.test' }))).status).toBe(403);
   });
   it('rate limits per IP', async () => {
     const { POST } = await import('@/app/api/quote/route');
     const statuses: number[] = [];
     for (let i = 0; i < 62; i++) {
-      statuses.push((await POST(post('/api/quote', { market: 'US', durationMonths: 1, streams: 1 }, { 'x-forwarded-for': '203.0.113.9' }))).status);
+      statuses.push((await POST(post('/api/quote', { tier: 'plus', term: '24m', streams: 2 }, { 'x-forwarded-for': '203.0.113.9' }))).status);
     }
     expect(statuses.slice(0, 60).every((s) => s === 200)).toBe(true);
     expect(statuses.at(-1)).toBe(429);
@@ -55,7 +55,7 @@ describe('POST /api/checkout', () => {
   it('is locked while launch blockers remain, even with SALES_ENABLED=true', async () => {
     vi.stubEnv('SALES_ENABLED', 'true');
     const { POST } = await import('@/app/api/checkout/route');
-    const res = await POST(post('/api/checkout', { market: 'US', durationMonths: 1, streams: 1 }));
+    const res = await POST(post('/api/checkout', { tier: 'plus', term: '24m', streams: 2 }));
     expect(res.status).toBe(403);
     const json = await res.json();
     expect(json.error).toBe('sales_disabled');

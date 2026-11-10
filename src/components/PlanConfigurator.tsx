@@ -1,13 +1,11 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
-
+import dynamic from 'next/dynamic';
+import { ArrowRight, Check } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { DURATIONS, MARKETS, MARKET_CODES, STREAMS, type DurationMonths, type MarketCode, type StreamCount } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
-import { computeQuote, formatMoney, type PriceTables } from '@/lib/pricing';
-import dynamic from 'next/dynamic';
+import { computeQuote, formatMoney, STREAMS, TERMS, TERM_MONTHS, TIERS, type PriceTable, type StreamCount, type Term, type Tier } from '@/lib/pricing';
 
 const loadDialog = () => import('./CheckoutDialog').then((m) => m.CheckoutDialog);
 // Downloaded on demand (prefetched on hover/focus of the button) to keep the initial JS small.
@@ -15,83 +13,140 @@ const CheckoutDialog = dynamic(loadDialog, { ssr: false });
 
 export interface ConfiguratorProps {
   locale: Locale;
-  tables: PriceTables;
+  table: PriceTable;
   dict: Pick<Dictionary, 'plans' | 'common' | 'markets' | 'checkout'>;
-  initial?: { market?: MarketCode; durationMonths?: DurationMonths; streams?: StreamCount };
 }
 
-export function PlanConfigurator({ locale, tables, dict, initial }: ConfiguratorProps) {
-  const [market, setMarket] = useState<MarketCode>(initial?.market ?? 'US');
-  const [durationMonths, setDuration] = useState<DurationMonths>(initial?.durationMonths ?? 12);
-  const [streams, setStreams] = useState<StreamCount>(initial?.streams ?? 1);
+export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
+  const [tier, setTier] = useState<Tier>('plus');
+  const [term, setTerm] = useState<Term>('12m');
+  const [streams, setStreams] = useState<StreamCount>(1);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const openerRef = useRef<HTMLButtonElement>(null);
+  const simulatorRef = useRef<HTMLDivElement>(null);
 
   const p = dict.plans;
-  const quote = computeQuote(tables, { market, durationMonths, streams });
-  const price = formatMoney(quote.amountMinor, quote.currency, locale);
-  const perMonth = fill(dict.common.perMonth, { price: formatMoney(quote.monthlyEquivalentMinor, quote.currency, locale) });
-  const selectionLabel = `${plural(dict.common, 'month', durationMonths)} · ${plural(dict.common, 'stream', streams)}`;
+  const money = (minor: number) => formatMoney(minor, table.currency, locale);
+  const quote = computeQuote(table, { tier, term, streams });
+  const tierName = p.tiers[tier].name;
+  const selectionLabel = `${tierName} · ${p.terms[term]} · ${plural(dict.common, 'device', streams)}`;
+
+  function choose(t: Tier) {
+    setTier(t);
+    simulatorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    simulatorRef.current?.focus({ preventScroll: true });
+  }
 
   return (
-    <div className="card config" data-testid="configurator">
-      <label className="field-title" htmlFor="region">{p.regionLabel}</label>
-      <select id="region" className="fullselect" value={market} onChange={(e) => setMarket(e.target.value as MarketCode)}>
-        {MARKET_CODES.map((code) => (
-          <option key={code} value={code}>
-            {MARKETS[code].flag} {dict.markets[code]} · {MARKETS[code].currency}
-          </option>
-        ))}
-      </select>
+    <div className="offers">
+      {/* 1. The three yearly plans */}
+      <ul className="tier-grid">
+        {TIERS.map((t) => {
+          const yearly = computeQuote(table, { tier: t, term: '12m', streams: 1 });
+          const info = p.tiers[t];
+          return (
+            <li key={t} className={`tier-card${t === 'plus' ? ' is-recommended' : ''}`} data-tier={t}>
+              {t === 'plus' && <span className="tier-badge">{p.recommended}</span>}
+              <h3 className="tier-name">{info.name}</h3>
+              <p className="tier-tagline">{info.tagline}</p>
+              <p className="tier-price">
+                <span data-testid={`tier-price-${t}`}>{money(yearly.amountMinor)}</span> <small>{p.perYear}</small>
+              </p>
+              <ul className="tier-features">
+                {info.features.map((f) => (
+                  <li key={f}><Check size={16} strokeWidth={2} aria-hidden="true" /> {f}</li>
+                ))}
+              </ul>
+              <button type="button" className={`btn block${t === 'plus' ? '' : ' ghost'}`} onClick={() => choose(t)}>
+                {fill(p.choose, { plan: info.name })}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
 
-      <div className="field-title" id="duration-label">{p.durationLabel}</div>
-      <div className="choices" role="group" aria-labelledby="duration-label">
-        {DURATIONS.map((d) => (
-          <button key={d} type="button" className="choice" data-month={d} aria-pressed={d === durationMonths} onClick={() => setDuration(d)}>
-            {plural(dict.common, 'month', d)}
-          </button>
-        ))}
-      </div>
+      {/* 2. Simulator: plan, then duration */}
+      <div className="card config simulator" ref={simulatorRef} tabIndex={-1} data-testid="configurator" aria-labelledby="simulator-title">
+        <h3 id="simulator-title" className="simulator-title">{p.simulatorTitle}</h3>
+        <p className="muted simulator-sub">{p.simulatorSub}</p>
 
-      <div className="field-title" id="streams-label">{p.streamsLabel}</div>
-      <div className="choices" role="group" aria-labelledby="streams-label">
-        {STREAMS.map((s) => (
-          <button key={s} type="button" className="choice" data-stream={s} aria-pressed={s === streams} onClick={() => setStreams(s)}>
-            {plural(dict.common, 'device', s)}
-          </button>
-        ))}
-      </div>
-
-      <div className="summary">
-        <div>
-          <small className="label">{p.summaryLabel}</small>
-          <strong data-testid="selection">{selectionLabel}</strong>
-          <small>{p.notAnOffer}</small>
+        <div className="field-title" id="tier-label">{p.tierLabel}</div>
+        <div className="choices choices-3" role="group" aria-labelledby="tier-label">
+          {TIERS.map((t) => (
+            <button key={t} type="button" className="choice" data-tier={t} aria-pressed={t === tier} onClick={() => setTier(t)}>
+              {p.tiers[t].name}
+            </button>
+          ))}
         </div>
-        <div>
-          <div className="price" data-testid="price" aria-live="polite">{price}</div>
-          <span className="price-sub">{perMonth}</span>
-          <button
-            ref={openerRef}
-            type="button"
-            className="btn"
-            onClick={() => setCheckoutOpen(true)}
-            onPointerEnter={() => void loadDialog()}
-            onFocus={() => void loadDialog()}
-            aria-haspopup="dialog"
-          >
-            {p.previewCheckout} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
-          </button>
+
+        <div className="field-title" id="term-label">{p.termLabel}</div>
+        <div className="choices" role="group" aria-labelledby="term-label">
+          {TERMS.map((tm) => {
+            const q = computeQuote(table, { tier, term: tm, streams });
+            return (
+              <button key={tm} type="button" className="choice choice-term" data-term={tm} aria-pressed={tm === term} onClick={() => setTerm(tm)}>
+                <span>{p.terms[tm]}{tm === 'lifetime' ? '*' : ''}</span>
+                {q.savingsPercent > 0 && <span className="choice-badge">{fill(p.savePct, { pct: q.savingsPercent })}</span>}
+                {tm === 'lifetime' && <span className="choice-note">{p.oneTime}</span>}
+              </button>
+            );
+          })}
         </div>
+
+        <div className="field-title" id="streams-label">{p.streamsLabel}</div>
+        <div className="choices" role="group" aria-labelledby="streams-label">
+          {STREAMS.map((n) => {
+            const extra = computeQuote(table, { tier, term, streams: n }).amountMinor - computeQuote(table, { tier, term, streams: 1 }).amountMinor;
+            return (
+              <button key={n} type="button" className="choice choice-term" data-stream={n} aria-pressed={n === streams} onClick={() => setStreams(n)}>
+                <span>{plural(dict.common, 'device', n)}</span>
+                <span className="choice-note">{n === 1 ? p.included : `+${money(extra)}`}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="summary">
+          <div>
+            <small className="label">{p.summaryLabel}</small>
+            <strong data-testid="selection">{selectionLabel}</strong>
+            <small>{p.notAnOffer}</small>
+            {quote.referenceMinor && quote.savingsMinor > 0 && (
+              <small className="savings" data-testid="savings">
+                {fill(p.savings, { amount: money(quote.savingsMinor), n: (TERM_MONTHS[term] ?? 12) / 12 })}
+              </small>
+            )}
+          </div>
+          <div>
+            <div className="price" data-testid="price" aria-live="polite">{money(quote.amountMinor)}</div>
+            <span className="price-sub">
+              {quote.monthlyEquivalentMinor !== null
+                ? fill(dict.common.perMonth, { price: money(quote.monthlyEquivalentMinor) })
+                : p.oneTime}
+            </span>
+            <button
+              ref={openerRef}
+              type="button"
+              className="btn"
+              onClick={() => setCheckoutOpen(true)}
+              onPointerEnter={() => void loadDialog()}
+              onFocus={() => void loadDialog()}
+              aria-haspopup="dialog"
+            >
+              {p.previewCheckout} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+        <p className="footnote">{p.noPayment}</p>
+        <p className="footnote">{p.lifetimeNote}</p>
       </div>
-      <div className="footnote">{p.noPayment}</div>
 
       {checkoutOpen && (
         <CheckoutDialog
           locale={locale}
           dict={dict}
-          selection={{ market, durationMonths, streams }}
-          clientPrice={price}
+          selection={{ tier, term, streams }}
+          clientPrice={money(quote.amountMinor)}
           onClose={() => {
             setCheckoutOpen(false);
             requestAnimationFrame(() => openerRef.current?.focus());

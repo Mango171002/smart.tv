@@ -49,6 +49,8 @@ export type Database = {
           interest_duration_months?: number | null;
           interest_streams?: number | null;
           preferred_device?: 'smart_tv' | 'streaming_device' | 'mobile' | 'computer' | null;
+          interest_tier?: 'starter' | 'plus' | 'ultra' | null;
+          interest_term?: '12m' | '24m' | '36m' | 'lifetime' | null;
         };
         Update: never;
         Relationships: [];
@@ -71,7 +73,15 @@ export type Database = {
         Relationships: [];
       };
       plans: {
-        Row: { created_at: string; duration_months: number; id: number; is_active: boolean; streams: number };
+        Row: {
+          created_at: string;
+          duration_months: number | null;
+          id: number;
+          is_active: boolean;
+          streams: number;
+          tier_code: 'starter' | 'plus' | 'ultra' | null;
+          term: '12m' | '24m' | '36m' | 'lifetime' | null;
+        };
         Insert: never;
         Update: never;
         Relationships: [];

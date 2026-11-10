@@ -99,10 +99,11 @@ describe('same-origin (CSRF) check', () => {
 
 describe('input validation', () => {
   it('validates plan selection strictly', () => {
-    expect(planSelectionSchema.safeParse({ market: 'EU', durationMonths: 6, streams: 2 }).success).toBe(true);
-    expect(planSelectionSchema.safeParse({ market: 'EU', durationMonths: 5, streams: 2 }).success).toBe(false);
-    expect(planSelectionSchema.safeParse({ market: 'FR', durationMonths: 6, streams: 2 }).success).toBe(false);
-    expect(planSelectionSchema.safeParse({ market: 'EU', durationMonths: '6', streams: 2 }).success).toBe(false);
+    expect(planSelectionSchema.safeParse({ tier: 'ultra', term: 'lifetime', streams: 4 }).success).toBe(true);
+    expect(planSelectionSchema.safeParse({ tier: 'ultra', term: 'lifetime', streams: 5 }).success).toBe(false);
+    expect(planSelectionSchema.safeParse({ tier: 'ultra', term: '6m', streams: 1 }).success).toBe(false);
+    expect(planSelectionSchema.safeParse({ tier: 'gold', term: '12m', streams: 1 }).success).toBe(false);
+    expect(planSelectionSchema.safeParse({ tier: 'plus' }).success).toBe(false);
   });
 
   const support = { kind: 'support', name: 'A', email: 'A@Example.com ', subject: 'Help', message: 'Long enough message', locale: 'en', consent: true };
@@ -117,6 +118,8 @@ describe('input validation', () => {
   it('requires a message for support but not for the waitlist', () => {
     expect(contactSchema.safeParse({ ...support, message: 'short' }).success).toBe(false);
     expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'fr', consent: true }).success).toBe(true);
+    expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'fr', consent: true, tier: 'plus', term: '36m', market: 'CA' }).success).toBe(true);
+    expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'fr', consent: true, tier: 'gold' }).success).toBe(false);
   });
   it('rejects oversized fields and unknown locales', () => {
     expect(contactSchema.safeParse({ ...support, message: 'x'.repeat(4001) }).success).toBe(false);

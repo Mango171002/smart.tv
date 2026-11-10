@@ -68,14 +68,30 @@ drop table public._exposure_probe;
 
 -- ---------- Seed sanity ----------
 select pg_temp.check((select count(*) = 3 from public.markets), 'three markets seeded');
-select pg_temp.check((select count(*) = 16 from public.plans), 'sixteen plans seeded');
-select pg_temp.check((select count(*) = 48 from public.prices where status = 'illustrative'), '48 illustrative prices');
+select pg_temp.check((select count(*) = 3 from public.plan_tiers), 'three tiers seeded');
+select pg_temp.check((select count(*) = 48 from public.plans where tier_code is not null and is_active), '48 tier/term/stream plans active');
+select pg_temp.check((select count(*) = 16 from public.plans where tier_code is null and not is_active), 'legacy plans kept but inactive');
+select pg_temp.check((select count(*) = 48 from public.prices where status = 'illustrative' and valid_to is null), '48 current planned prices');
+select pg_temp.check((select count(*) = 48 from public.prices where status = 'retired' and valid_to is not null), 'legacy prices retired, not deleted');
+select pg_temp.check((select bool_and(duration_months is null) from public.plans where term = 'lifetime'), 'lifetime plans have no duration');
+select pg_temp.expect_error($$insert into public.plans (tier_code, term, duration_months, streams) values ('plus', '12m', 12, 2)$$,
+  '23505', 'one plan per tier, term and streams');
+select pg_temp.expect_error($$insert into public.plans (tier_code, term, duration_months, streams) values ('plus', 'lifetime', 12, 2)$$,
+  '23514', 'lifetime plan cannot have a duration');
 select pg_temp.check(not exists (select 1 from public.markets where licensed or sales_enabled), 'no market licensed or selling');
 select pg_temp.check(not exists (select 1 from public.prices where status = 'approved'), 'no approved prices');
 select pg_temp.check(
   (select amount_minor from public.prices pr join public.plans p on p.id = pr.plan_id
-    where pr.market_code = 'US' and p.duration_months = 12 and p.streams = 1) = 7900,
-  'US 12m/1 stream = 79.00 (prototype parity)');
+    where pr.market_code = 'US' and p.tier_code = 'starter' and p.term = '12m' and p.streams = 1 and pr.valid_to is null) = 4900,
+  'Starter 12 months, 1 screen = 49.00 USD');
+select pg_temp.check(
+  (select amount_minor from public.prices pr join public.plans p on p.id = pr.plan_id
+    where pr.market_code = 'US' and p.tier_code = 'ultra' and p.term = 'lifetime' and p.streams = 1 and pr.valid_to is null) = 19900,
+  'Ultra lifetime, 1 screen = 199.00 USD');
+select pg_temp.check(
+  (select amount_minor from public.prices pr join public.plans p on p.id = pr.plan_id
+    where pr.market_code = 'US' and p.tier_code = 'ultra' and p.term = 'lifetime' and p.streams = 4 and pr.valid_to is null) = 34900,
+  'Ultra lifetime, 4 screens = 349.00 USD');
 
 -- ---------- Integrity constraints ----------
 select pg_temp.expect_error($$update public.markets set sales_enabled = true where code = 'US'$$,
@@ -99,9 +115,9 @@ insert into public.orders (id, customer_id, email, market_code, plan_id, price_i
 select '10000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000001', 'alice@example.test',
        pr.market_code, pr.plan_id, pr.id, pr.currency, pr.amount_minor, 'test-idempotency-key-0001'
   from public.prices pr join public.plans p on p.id = pr.plan_id
- where pr.market_code = 'US' and p.duration_months = 12 and p.streams = 1;
+ where pr.market_code = 'US' and p.tier_code = 'starter' and p.term = '12m' and p.streams = 1 and pr.valid_to is null;
 
-select pg_temp.check((select total_minor = 7900 from public.orders where id = '10000000-0000-4000-8000-000000000001'),
+select pg_temp.check((select total_minor = 4900 from public.orders where id = '10000000-0000-4000-8000-000000000001'),
   'order total computed by database');
 select pg_temp.check((select count(*) = 1 from public.order_events where order_id = '10000000-0000-4000-8000-000000000001'),
   'order creation audited');
@@ -152,7 +168,10 @@ reset role;
 -- ---------- anon ----------
 set local role anon;
 select pg_temp.check((select count(*) = 3 from public.markets), 'anon reads markets');
-select pg_temp.check((select count(*) = 48 from public.prices), 'anon reads current prices');
+select pg_temp.check((select count(*) = 48 from public.prices), 'anon reads only current prices');
+select pg_temp.check((select count(*) = 48 from public.plans), 'anon reads only active plans');
+select pg_temp.check((select count(*) = 3 from public.plan_tiers), 'anon reads tiers');
+select pg_temp.expect_error($$update public.plan_tiers set max_quality = 'hd'$$, '42501', 'anon cannot change tiers');
 select pg_temp.expect_error($$select * from public.orders$$, '42501', 'anon cannot read orders');
 select pg_temp.expect_error($$select * from public.customers$$, '42501', 'anon cannot read customers');
 select pg_temp.expect_error($$select * from public.payment_webhook_events$$, '42501', 'anon cannot read webhooks');
@@ -177,6 +196,9 @@ select pg_temp.expect_error(
 
 insert into public.contact_requests (kind, email, market_code, interest_duration_months, interest_streams, preferred_device, consent_given, consent_text_version)
 values ('launch_waitlist', 'prereg@example.test', 'EU', 12, 2, 'smart_tv', true, 'v0-draft');
+insert into public.contact_requests (kind, email, market_code, interest_tier, interest_term, preferred_device, consent_given, consent_text_version)
+values ('launch_waitlist', 'prereg-tier@example.test', 'CA', 'ultra', 'lifetime', 'mobile', true, 'v0-draft');
+select pg_temp.check(true, 'anon can pre-register with tier and term');
 select pg_temp.check(true, 'anon can pre-register with plan interest');
 select pg_temp.expect_error(
   $$insert into public.contact_requests (kind, email, preferred_device, consent_given, consent_text_version)

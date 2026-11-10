@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import { Featured } from '@/components/Featured';
 import { Benefits, ContentCategories, DeviceGrid, Faq, HelpCta, Hero, HowItWorks, InterfacePreview } from '@/components/Sections';
 import { getDictionary } from '@/i18n/dictionaries';
-import { getPriceTables } from '@/lib/price-source';
+import { getPriceTable } from '@/lib/price-source';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await resolveLocale(params);
   const dict = getDictionary(locale);
-  const { tables } = await getPriceTables();
+  const { table } = await getPriceTable();
   return (
     <>
       <Hero locale={locale} dict={dict} />
@@ -26,20 +26,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </Suspense>
       <Benefits dict={dict} />
       <section id="plans" aria-labelledby="plans-title">
-        <div className="wrap pricing-layout">
-          <div>
+        <div className="wrap">
+          <div className="plans-head">
             <div className="eyebrow">{dict.plans.eyebrow}</div>
             <h2 id="plans-title" className="section-title">{dict.plans.title}</h2>
             <p className="sub">{dict.plans.sub}</p>
-            <p className="footnote">{dict.plans.footnote}</p>
           </div>
           <Suspense fallback={null}>
             <PlanConfigurator
               locale={locale}
-              tables={tables}
+              table={table}
               dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout }}
             />
           </Suspense>
+          <p className="footnote">{dict.plans.footnote}</p>
         </div>
       </section>
       <InterfacePreview dict={dict} />

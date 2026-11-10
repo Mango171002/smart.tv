@@ -17,7 +17,8 @@
     "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "visuals": "esbuild scripts/render-visuals.tsx --bundle --platform=node --format=esm --jsx=automatic --packages=external --outfile=.cache/render-visuals.mjs --log-level=warning && node .cache/render-visuals.mjs",
-    "hero": "node scripts/build-hero.mjs"
+    "hero": "node scripts/build-hero.mjs",
+    "prices": "node scripts/generate-prices.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",

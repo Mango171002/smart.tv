@@ -255,10 +255,9 @@ test.describe('layout (fluid container)', () => {
       expect(m.overflow).toBeLessThanOrEqual(0);
       // brand, hero text, cards and features bar share the same left edge
       for (const v of [m.hero, m.cats, m.features]) expect(Math.abs(v - m.brand)).toBeLessThanOrEqual(1);
-      // side gutters stay between 16px and 64px up to the max content width
       expect(m.brand).toBeGreaterThanOrEqual(16);
-      if (width <= 1920) expect(m.brand).toBeLessThanOrEqual(width * 0.07);
-      expect(m.width).toBeLessThanOrEqual(1720 + 1);
+      // desktop: the content occupies 80% of the screen width
+      if (width >= 1024) expect(Math.abs(m.width - width * 0.8)).toBeLessThanOrEqual(2);
       await page.close();
     });
   }

@@ -28,10 +28,13 @@
   --danger: #ff8a8a;
   /* Layout tokens (fluid): side gutter and maximum content width */
   --gutter: clamp(16px, 3.6vw, 64px);
-  --container: clamp(1200px, 88vw, 1720px);
+  --container: 100vw; /* phones/tablets: full width minus the gutters */
   /* Default accent = primary cyan; category cards override --cat */
   --cat: var(--color-cyan);
 }
+
+/* Desktop: content occupies 80% of the screen width (owner decision) */
+@media (min-width: 1024px) { :root { --container: 80vw; } }
 
 .cat-sports { --cat: var(--color-lime); }
 .cat-movies { --cat: var(--color-magenta); }

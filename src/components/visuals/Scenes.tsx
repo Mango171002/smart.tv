@@ -3,7 +3,6 @@
  * Everything is drawn here: no photos, no people, no logos, no third-party titles.
  * Rendered to static files in /public/visuals by `npm run visuals`.
  */
-import { Bookmark, Clapperboard, House, Play, RadioTower, Trophy, Tv } from 'lucide-react';
 import type { ReactElement } from 'react';
 
 const C = {
@@ -79,96 +78,8 @@ function Stadium({ id, w, h }: { id: string; w: number; h: number }) {
   );
 }
 
-/** Main TV screen: stadium scene + app chrome + the four category tiles. */
-export function TvScreen() {
-  const w = 640;
-  const h = 360;
-  const tiles = [
-    { label: 'Live Sports', color: C.lime, Icon: Trophy },
-    { label: 'Movies & Series', color: C.magenta, Icon: Clapperboard },
-    { label: 'Live TV', color: C.cyan, Icon: Tv },
-    { label: 'My List', color: C.violet, Icon: Bookmark },
-  ];
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${w} ${h}`}>
-      <Stadium id="tv" w={w} h={h} />
-      <rect width={w} height={h} fill={C.bg} opacity="0.12" />
-      {/* side rail */}
-      <rect width="44" height={h} fill={C.bg} opacity="0.55" />
-      <RadioTower x={12} y={26} width={20} height={20} color={C.muted} strokeWidth={1.75} />
-      <House x={12} y={66} width={20} height={20} color={C.cyan} strokeWidth={1.75} />
-      {/* brand mark */}
-      <rect x="62" y="22" width="20" height="18" rx="5" fill={C.cyan} />
-      <Play x={66} y={25} width={12} height={12} color={C.bg} strokeWidth={2.5} />
-      <text x="90" y="36" fill={C.ink} fontFamily="Inter, Arial, sans-serif" fontSize="15" fontWeight="800">GlobalTV<tspan fill={C.cyan}>+</tspan></text>
-      {/* category tiles */}
-      {tiles.map(({ label, color, Icon }, i) => {
-        const x = 150 + i * 116;
-        return (
-          <g key={label}>
-            <rect x={x} y={250} width="104" height="74" rx="9" fill={C.surface} fillOpacity="0.85" stroke={color} strokeWidth="2" />
-            <Icon x={x + 40} y={262} width={24} height={24} color={color} strokeWidth={1.75} />
-            <text x={x + 52} y={310} textAnchor="middle" fill={C.ink} fontFamily="Inter, Arial, sans-serif" fontSize="11" fontWeight="600">{label}</text>
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
 
-/** Phone player screen. */
-export function PhoneScreen() {
-  const w = 200;
-  const h = 420;
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${w} ${h}`}>
-      <rect width={w} height={h} fill={C.bg} />
-      <circle cx="100" cy="70" r="26" fill="none" stroke={C.cyan} strokeWidth="3" />
-      <path d="M92 56 L114 70 L92 84 Z" fill="none" stroke={C.cyan} strokeWidth="3" strokeLinejoin="round" />
-      <svg x="0" y="130" width={w} height="150" viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice">
-        <Stadium id="ph" w={200} h={150} />
-      </svg>
-      <circle cx="100" cy="205" r="18" fill={C.bg} fillOpacity="0.5" stroke={C.ink} strokeWidth="2" />
-      <path d="M95 196 L109 205 L95 214 Z" fill={C.ink} />
-      <rect x="16" y="300" width="168" height="5" rx="2.5" fill="#2b3848" />
-      <rect x="16" y="300" width="110" height="5" rx="2.5" fill={C.cyan} />
-      <rect x="16" y="322" width="120" height="7" rx="3" fill={C.ink} />
-      <rect x="16" y="338" width="150" height="5" rx="2.5" fill={C.muted} />
-      <rect x="16" y="364" width="80" height="6" rx="3" fill={C.cyan} />
-      <rect x="16" y="380" width="120" height="6" rx="3" fill="#2b3848" />
-    </svg>
-  );
-}
 
-/** Set-top box and remote control. */
-export function BoxRemote() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 170">
-      <defs>
-        <linearGradient id="box" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#24303f" />
-          <stop offset="1" stopColor={C.bg} />
-        </linearGradient>
-        <linearGradient id="remote" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#2a3442" />
-          <stop offset="1" stopColor="#0b111b" />
-        </linearGradient>
-      </defs>
-      <ellipse cx="130" cy="150" rx="120" ry="12" fill="#000" opacity="0.6" />
-      <path d="M20 96 L60 70 L230 70 L250 96 L250 128 Q250 140 238 140 L32 140 Q20 140 20 128 Z" fill="url(#box)" stroke="#2b3848" />
-      <path d="M20 96 L250 96" stroke="#3a4757" />
-      <rect x="110" y="116" width="50" height="4" rx="2" fill={C.cyan} />
-      <g transform="rotate(-28 270 90)">
-        <rect x="250" y="20" width="40" height="140" rx="16" fill="url(#remote)" stroke="#3a4757" />
-        <circle cx="270" cy="44" r="5" fill={C.magenta} opacity="0.8" />
-        <circle cx="270" cy="72" r="12" fill="none" stroke="#5a6676" strokeWidth="2" />
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-          <circle key={i} cx={260 + (i % 3) * 10} cy={100 + Math.floor(i / 3) * 12} r="3" fill="#5a6676" />
-        ))}
-      </g>
-    </svg>
-  );
-}
 
 /** "Featured" carousel artwork — four original genre scenes. */
 export function FeaturedArt({ index }: { index: number }) {
@@ -332,8 +243,6 @@ export function CategoryArt({ category }: { category: 'sports' | 'movies' | 'liv
 
 /** Every static visual file, generated by `npm run visuals` and checked by unit tests. */
 export const SCENE_FILES: Record<string, () => ReactElement> = {
-  'scene-phone.svg': () => <PhoneScreen />,
-  'scene-box.svg': () => <BoxRemote />,
   'featured-0.svg': () => <FeaturedArt index={0} />,
   'featured-1.svg': () => <FeaturedArt index={1} />,
   'featured-2.svg': () => <FeaturedArt index={2} />,

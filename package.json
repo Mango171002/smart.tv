@@ -16,7 +16,8 @@
     "cf:preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "visuals": "esbuild scripts/render-visuals.tsx --bundle --platform=node --format=esm --jsx=automatic --packages=external --outfile=.cache/render-visuals.mjs --log-level=warning && node .cache/render-visuals.mjs"
+    "visuals": "esbuild scripts/render-visuals.tsx --bundle --platform=node --format=esm --jsx=automatic --packages=external --outfile=.cache/render-visuals.mjs --log-level=warning && node .cache/render-visuals.mjs",
+    "hero": "node scripts/build-hero.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",
@@ -38,6 +39,7 @@
     "esbuild": "^0.28.2",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.5",
+    "sharp": "0.35.5",
     "tailwindcss": "^4.3.5",
     "typescript": "^6.0.3",
     "vitest": "^5.1.0",

@@ -1,13 +1,20 @@
 import Link from 'next/link';
+import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { ArrowRight, CirclePlay, Globe } from 'lucide-react';
 import { BENEFIT_ICONS, CATEGORIES, DEVICE_ICONS, ICON_STROKE } from './icons';
 import { LaptopFrame, PhoneFrame, TvFrame } from './visuals/Images';
-import { TvScreen } from './visuals/Scenes';
+
+/** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
+const HERO_WIDTHS = [480, 768, 1080, 1440];
+const HERO_SIZES = '(max-width: 900px) 100vw, 760px';
+const heroSrcSet = (ext: 'avif' | 'webp') => HERO_WIDTHS.map((w) => `/images/hero-${w}.${ext} ${w}w`).join(', ');
 
 export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.hero;
+  // Start downloading the banner (largest element on screen) as early as possible.
+  preload('/images/hero-1080.avif', { as: 'image', type: 'image/avif', imageSrcSet: heroSrcSet('avif'), imageSizes: HERO_SIZES, fetchPriority: 'high' });
   return (
     <div className="wrap hero">
       <div className="hero-grid">
@@ -30,25 +37,19 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
             </Link>
           </div>
         </div>
-        <div className="hero-stage" role="img" aria-label={h.visualLabel}>
-          <div className="stage-glow" aria-hidden="true" />
-          <div className="stage-tv">
-            {/* Inline (not an <img>) so the hero paints without waiting for a download. */}
-            <div className="tv-bezel" aria-hidden="true">
-              <TvScreen />
-            </div>
-            <div className="tv-stand" aria-hidden="true" />
-          </div>
-          <div className="stage-phone">
-            <div className="mock-phone">
-              <div className="mock-phone-screen">
-                {/* eslint-disable-next-line @next/next/no-img-element -- static decorative SVG */}
-                <img src="/visuals/scene-phone.svg" alt="" width={200} height={420} decoding="async" className="screen-svg" />
-              </div>
-            </div>
-          </div>
-          {/* eslint-disable-next-line @next/next/no-img-element -- static decorative SVG */}
-          <img className="stage-box" src="/visuals/scene-box.svg" alt="" width={320} height={170} decoding="async" />
+        <div className="hero-stage">
+          <picture>
+            <source type="image/avif" srcSet={heroSrcSet('avif')} sizes={HERO_SIZES} />
+            <source type="image/webp" srcSet={heroSrcSet('webp')} sizes={HERO_SIZES} />
+            <img
+              src="/images/hero-1080.webp"
+              alt={h.visualLabel}
+              width={1672}
+              height={941}
+              fetchPriority="high"
+              decoding="async"
+            />
+          </picture>
         </div>
         <ul className="checks hero-checks">
           {h.checks.map((c) => <li key={c}>{c}</li>)}

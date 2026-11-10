@@ -53,7 +53,8 @@ test.describe('routing & SEO', () => {
     for (const route of ['/en', '/fr', '/en/plans', '/fr/help']) {
       await page.goto(route);
       const text = (await page.locator('body').innerText()).toLowerCase();
-      for (const word of ['prototype', 'demo', 'démo', 'simulat', 'illustrative', 'indicatif']) {
+      // "Simulateur / Simulator" (the price simulator) is fine; a *simulated* checkout is not.
+      for (const word of ['prototype', 'demo', 'démo', 'simulation', 'simulé', 'simulated', 'illustrative', 'indicatif']) {
         expect(text, `${route} contains "${word}"`).not.toContain(word);
       }
     }

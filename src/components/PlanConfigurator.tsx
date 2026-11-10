@@ -29,6 +29,9 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
   const money = (minor: number) => formatMoney(minor, table.currency, locale);
   const quote = computeQuote(table, { tier, term, streams });
   const tierName = p.tiers[tier].name;
+  // Claims shown next to the simulator are computed from the price list, so they stay true.
+  const bestPct = Math.max(...TIERS.map((t) => computeQuote(table, { tier: t, term: '36m', streams: 1 }).savingsPercent));
+  const lowestMonthly = Math.min(...TIERS.map((t) => computeQuote(table, { tier: t, term: '36m', streams: 1 }).monthlyEquivalentMinor ?? Infinity));
   const selectionLabel = `${tierName} · ${p.terms[term]} · ${plural(dict.common, 'device', streams)}`;
 
   function choose(t: Tier) {
@@ -65,10 +68,22 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
         })}
       </ul>
 
-      {/* 2. Simulator: plan, then duration */}
-      <div className="card config simulator" ref={simulatorRef} tabIndex={-1} data-testid="configurator" aria-labelledby="simulator-title">
-        <h3 id="simulator-title" className="simulator-title">{p.simulatorTitle}</h3>
-        <p className="muted simulator-sub">{p.simulatorSub}</p>
+      {/* 2. Simulator: text on the left (40%), card on the right (60%) */}
+      <div className="sim-layout" ref={simulatorRef} tabIndex={-1}>
+        <div className="sim-intro">
+          <div className="eyebrow">{p.simulatorEyebrow}</div>
+          <h3 id="simulator-title" className="sim-title">
+            {p.simulatorTitleA} <span className="hl">{fill(p.simulatorTitleB, { pct: bestPct })}</span>
+          </h3>
+          <p className="sim-sub">{p.simulatorSub}</p>
+          <ul className="list-check sim-points">
+            <li>{fill(p.simulatorPoints[0]!, { pct: bestPct })}</li>
+            <li>{fill(p.simulatorPoints[1]!, { price: money(lowestMonthly) })}</li>
+            <li>{p.simulatorPoints[2]}</li>
+            <li>{p.simulatorPoints[3]}</li>
+          </ul>
+        </div>
+      <div className="card config simulator" data-testid="configurator" aria-labelledby="simulator-title">
 
         <div className="field-title" id="tier-label">{p.tierLabel}</div>
         <div className="choices choices-3" role="group" aria-labelledby="tier-label">
@@ -139,6 +154,7 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
         </div>
         <p className="footnote">{p.noPayment}</p>
         <p className="footnote">{p.lifetimeNote}</p>
+      </div>
       </div>
 
       {checkoutOpen && (

@@ -152,8 +152,6 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
             </button>
           </div>
         </div>
-        <p className="footnote">{p.noPayment}</p>
-        <p className="footnote">{p.lifetimeNote}</p>
       </div>
       </div>
 

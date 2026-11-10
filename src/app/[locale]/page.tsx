@@ -39,7 +39,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout }}
             />
           </Suspense>
-          <p className="footnote">{dict.plans.footnote}</p>
         </div>
       </section>
       <InterfacePreview dict={dict} />

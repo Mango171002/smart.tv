@@ -239,6 +239,31 @@ test.describe('home page (approved mock-up)', () => {
   });
 });
 
+test.describe('layout (fluid container)', () => {
+  for (const width of [390, 768, 1280, 1440, 1920, 2560]) {
+    test(`aligned edges and no horizontal scroll at ${width}px`, async ({ browser }) => {
+      const page = await browser.newPage({ viewport: { width, height: 1000 } });
+      await page.goto('/fr');
+      const m = await page.evaluate(() => {
+        const left = (s: string) => Math.round(document.querySelector(s)!.getBoundingClientRect().left);
+        const g = document.querySelector('.cat-grid')!.getBoundingClientRect();
+        return {
+          brand: left('.brand'), hero: left('.hero-copy'), cats: left('.cat-grid'), features: left('.features-bar'),
+          width: g.width, overflow: document.documentElement.scrollWidth - innerWidth,
+        };
+      });
+      expect(m.overflow).toBeLessThanOrEqual(0);
+      // brand, hero text, cards and features bar share the same left edge
+      for (const v of [m.hero, m.cats, m.features]) expect(Math.abs(v - m.brand)).toBeLessThanOrEqual(1);
+      // side gutters stay between 16px and 64px up to the max content width
+      expect(m.brand).toBeGreaterThanOrEqual(16);
+      if (width <= 1920) expect(m.brand).toBeLessThanOrEqual(width * 0.07);
+      expect(m.width).toBeLessThanOrEqual(1720 + 1);
+      await page.close();
+    });
+  }
+});
+
 test.describe('navigation', () => {
   test('mobile menu opens, navigates and closes', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'mobile only');

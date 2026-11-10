@@ -12,6 +12,7 @@ const BADGE_CAT = ['sports', 'sports', 'movies', 'movies'] as const;
 export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['featured'] }) {
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [ready, setReady] = useState(false);
   const total = dict.items.length;
 
   const goTo = useCallback((i: number) => {
@@ -24,6 +25,7 @@ export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['f
   useEffect(() => {
     const el = track.current;
     if (!el) return;
+    setReady(true); // interactive (hydrated)
     const onScroll = () => {
       const slides = Array.from(el.children) as HTMLElement[];
       // At the end of the track the last slide can never reach the left edge.
@@ -51,7 +53,7 @@ export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['f
             {dict.seeAll} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
           </Link>
         </div>
-        <div className="carousel" role="region" aria-roledescription="carousel" aria-label={dict.carouselLabel}>
+        <div className="carousel" role="region" aria-roledescription="carousel" aria-label={dict.carouselLabel} data-ready={ready || undefined} data-fits={total <= 4 || undefined}>
           <button
             type="button"
             className="carousel-btn prev"
@@ -89,7 +91,7 @@ export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['f
             <ChevronRight size={22} strokeWidth={1.75} aria-hidden="true" />
           </button>
         </div>
-        <div className="dots">
+        <div className="dots" data-fits={total <= 4 || undefined}>
           {dict.items.map((item, i) => (
             <button
               key={item.title}

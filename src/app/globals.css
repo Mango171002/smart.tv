@@ -495,6 +495,7 @@ section.content-tight .cat-grid { margin-top: 0; }
 .carousel { position: relative; }
 .carousel-track {
   display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 3 * 16px) / 3.4); gap: 16px;
+  scroll-behavior: smooth;
   overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; list-style: none; margin: 0; padding: 0;
 }
 .carousel-track::-webkit-scrollbar { display: none; }
@@ -521,6 +522,12 @@ section.content-tight .cat-grid { margin-top: 0; }
 .dot { width: 24px; height: 24px; border: 0; background: transparent; display: grid; place-items: center; padding: 0; }
 .dot::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--line-strong); transition: background-color .15s ease; }
 .dot[aria-current='true']::before { background: var(--color-cyan); }
+
+/* Four items or fewer fit on wide screens: no arrows/dots there (nothing to scroll). */
+@media (min-width: 901px) {
+  .carousel[data-fits] .carousel-track { grid-auto-columns: calc((100% - 3 * 16px) / 4); }
+  .carousel[data-fits] .carousel-btn, .dots[data-fits] { display: none; }
+}
 
 /* Features bar */
 .features-bar {

@@ -199,16 +199,18 @@ test.describe('Electric Fusion Neon design system', () => {
 });
 
 test.describe('home page (approved mock-up)', () => {
-  test('featured carousel moves with the arrows and dots', async ({ page, isMobile }) => {
-    test.skip(isMobile, 'arrows are hidden on small screens (swipe instead)');
+  test('featured: four cards fit on desktop, swipe + dots on mobile', async ({ page, isMobile }) => {
     await page.goto('/en');
     const carousel = page.getByRole('region', { name: 'Featured genres' });
-    const prev = carousel.getByRole('button', { name: 'Previous' });
-    const next = carousel.getByRole('button', { name: 'Next' });
-    await expect(prev).toBeDisabled();
-    await next.click();
+    await expect(carousel).toHaveAttribute('data-ready', 'true'); // wait for hydration
+    if (!isMobile) {
+      await expect(carousel.getByRole('button', { name: 'Next' })).toBeHidden();
+      const overflow = await page.locator('#featured-track').evaluate((el) => el.scrollWidth - el.clientWidth);
+      expect(overflow).toBeLessThanOrEqual(1); // all four cards fit, nothing to scroll
+      return;
+    }
+    await page.getByRole('button', { name: '2 of 4' }).click();
     await expect(page.getByRole('button', { name: '2 of 4' })).toHaveAttribute('aria-current', 'true');
-    await expect(prev).toBeEnabled();
     await page.getByRole('button', { name: '4 of 4' }).click();
     await expect(page.getByRole('button', { name: '4 of 4' })).toHaveAttribute('aria-current', 'true');
   });

@@ -57,11 +57,16 @@ function Stadium({ id, w, h }: { id: string; w: number; h: number }) {
       <path d={`M${w * 0.85} ${h * 0.16} L${w * 0.68} ${horizon} L${w * 0.8} ${horizon} Z`} fill={C.ink} opacity="0.05" />
       {/* stands with crowd dots */}
       <path d={`M0 ${h * 0.34} Q${w / 2} ${h * 0.24} ${w} ${h * 0.34} L${w} ${horizon} L0 ${horizon} Z`} fill="#0b1224" />
-      {Array.from({ length: 90 }, (_, i) => {
-        const x = ((i * 37) % 100) / 100 * w;
-        const y = h * 0.36 + (((i * 53) % 100) / 100) * (horizon - h * 0.38);
-        const col = [C.cyan, C.magenta, C.violet, C.muted][i % 4];
-        return <circle key={i} cx={x} cy={y} r={h * 0.004 + 0.4} fill={col} opacity="0.55" />;
+      {/* crowd: 90 dots drawn as 4 paths (one per colour) to keep the DOM small */}
+      {[C.cyan, C.magenta, C.violet, C.muted].map((col, k) => {
+        const r = h * 0.004 + 0.4;
+        let d = '';
+        for (let i = k; i < 90; i += 4) {
+          const x = (((i * 37) % 100) / 100) * w;
+          const y = h * 0.36 + (((i * 53) % 100) / 100) * (horizon - h * 0.38);
+          d += `M${(x - r).toFixed(1)} ${y.toFixed(1)}a${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(2 * r).toFixed(2)} 0a${r.toFixed(2)} ${r.toFixed(2)} 0 1 0 ${(-2 * r).toFixed(2)} 0`;
+        }
+        return <path key={col} d={d} fill={col} opacity="0.55" />;
       })}
       {/* pitch */}
       <path d={`M${-w * 0.1} ${h} L${w * 0.18} ${horizon} L${w * 0.82} ${horizon} L${w * 1.1} ${h} Z`} fill={`url(#${id}-pitch)`} />

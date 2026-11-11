@@ -809,7 +809,7 @@ section.content-tight .cat-grid { margin-top: 0; }
    then platforms bar and reassurance bar below the cards.
    ========================================================================== */
 .tier-card { isolation: isolate; }
-.tier-card > :not(.tier-art):not(.tier-badge) { position: relative; z-index: 1; }
+.tier-card > :not(picture):not(.tier-badge) { position: relative; z-index: 1; }
 .tier-art {
   position: absolute; z-index: 0; top: 0; right: 0; width: 62%; height: auto; aspect-ratio: 16 / 9; object-fit: cover;
   opacity: .5; pointer-events: none; border-top-right-radius: 19px;
@@ -1118,3 +1118,13 @@ html { scroll-padding-top: 84px; }
 }
 @media (hover: hover) { .support-fab:hover { transform: translateY(-2px); box-shadow: 0 14px 36px color-mix(in srgb, var(--color-cyan) 45%, transparent); } }
 @media (max-width: 580px) { .support-fab { min-height: 54px; width: 54px; padding: 0; justify-content: center; } .support-fab span { display: none; } }
+/* Plan cards: generated artwork covering the top of the card (subject top-right) */
+.tier-card > picture { position: absolute; inset: 0 0 auto 0; z-index: 0; pointer-events: none; }
+.tier-card > picture .tier-art {
+  position: static; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; opacity: .9;
+  border-radius: 19px 19px 0 0;
+  -webkit-mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+}
+.tier-card > :not(picture):not(.tier-badge) { position: relative; z-index: 1; }
+.tier-card .tier-head { margin-top: clamp(72px, 7.5vw, 120px); }

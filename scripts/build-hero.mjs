@@ -48,3 +48,14 @@ for (const scene of SCENES) {
   const kb = (f) => (statSync(f).size / 1024).toFixed(0);
   console.log(`featured-${scene}: avif ${kb(`${OUT}featured-${scene}-480.avif`)}/${kb(`${OUT}featured-${scene}-960.avif`)} KB`);
 }
+
+// Plan cards artwork (assets/plans/plan-<tier>.png → public/images/plan-<tier>-<w>.avif|webp)
+for (const tier of ['starter', 'plus', 'ultra']) {
+  const src = fileURLToPath(new URL(`../assets/plans/plan-${tier}.png`, import.meta.url));
+  for (const w of [480, 960]) {
+    const base = sharp(src).resize({ width: w });
+    await base.clone().avif({ quality: 50, effort: 6 }).toFile(`${OUT}plan-${tier}-${w}.avif`);
+    await base.clone().webp({ quality: 72, effort: 6 }).toFile(`${OUT}plan-${tier}-${w}.webp`);
+  }
+  console.log(`plan-${tier}: avif ${(statSync(`${OUT}plan-${tier}-480.avif`).size / 1024).toFixed(0)}/${(statSync(`${OUT}plan-${tier}-960.avif`).size / 1024).toFixed(0)} KB`);
+}

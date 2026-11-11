@@ -902,3 +902,115 @@ section.content-tight .cat-grid { margin-top: 0; }
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
 .plans-head .sub { color: var(--color-ink); opacity: .86; }
+
+/* ==========================================================================
+   Simulator v2 (owner mock-up 11/11/2026). Colours follow the selected plan:
+   .sim-layout[data-tier] sets --tier; each plan button keeps its own --tier.
+   ========================================================================== */
+.sim-layout { align-items: start; }
+.sim-title .hl { color: var(--tier); transition: color .2s ease; }
+.sim-points { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 14px; }
+.sim-points li { display: flex; align-items: center; gap: 14px; color: var(--color-ink); font-size: 15px; }
+
+.simulator {
+  padding: clamp(20px, 2vw, 30px); border: 1.5px solid transparent;
+  background:
+    linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
+    linear-gradient(140deg, var(--color-cyan), var(--color-violet) 45%, var(--color-magenta)) border-box;
+  box-shadow: 0 0 34px color-mix(in srgb, var(--color-violet) 18%, transparent);
+}
+.sim-head { display: flex; align-items: center; gap: 16px; padding-bottom: 18px; margin-bottom: 6px; border-bottom: 1px solid var(--line); }
+.sim-head-icon {
+  display: grid; place-items: center; flex: none; width: 52px; height: 52px; border-radius: 14px; color: var(--color-cyan);
+  border: 1px solid color-mix(in srgb, var(--color-cyan) 35%, transparent); background: color-mix(in srgb, var(--color-cyan) 9%, transparent);
+}
+.sim-head-title { margin: 0; font-size: 20px; font-weight: 800; }
+.sim-head-sub { margin: 2px 0 0; color: var(--color-muted); font-size: 14px; }
+.simulator .field-title { display: flex; align-items: center; gap: 12px; font-size: 16px; margin: 22px 0 12px; }
+.step-num {
+  display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 850;
+  color: var(--color-bg); background: var(--color-cyan);
+}
+#term-label .step-num { background: var(--color-violet); color: var(--color-ink); }
+#streams-label .step-num { background: var(--color-magenta); color: var(--color-bg); }
+
+.choice-rich {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 12px; text-align: left;
+  padding: 14px 14px; min-height: 64px; background: var(--surface-low);
+}
+.choice-rich .choice-text { display: grid; gap: 2px; min-width: 0; }
+.choice-rich .choice-text b { font-size: 16px; white-space: nowrap; }
+.choice-rich .choice-text small { font-size: 12px; font-weight: 500; color: var(--color-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.choice-rich .choice-icon { flex: none; color: var(--tier, var(--color-cyan)); }
+.choices-3 .choice-rich { justify-content: flex-start; padding-inline: 16px; }
+.dev-stack { display: inline-flex; flex: none; color: var(--color-cyan); }
+.dev-stack svg + svg { margin-left: -12px; }
+.choice-check { position: absolute; top: 8px; right: 8px; color: var(--color-bg); fill: var(--tier); }
+.choice-rich .choice-badge {
+  position: absolute; top: -11px; left: 50%; translate: -50% 0; margin: 0; padding: 2px 10px; border-radius: 999px;
+  background: var(--color-cyan); color: var(--color-bg); font-size: 12px; font-weight: 850;
+}
+.choices:has(.choice-badge) { margin-top: 18px; }
+
+/* selected state = plan colour */
+.simulator .choice[aria-pressed='true'] {
+  border-color: var(--tier); color: var(--color-ink);
+  background: color-mix(in srgb, var(--tier) 14%, var(--surface-low));
+  box-shadow: inset 0 0 0 1px var(--tier), 0 0 18px color-mix(in srgb, var(--tier) 22%, transparent);
+}
+.simulator .choice[aria-pressed='true'] .choice-icon,
+.simulator .choice[aria-pressed='true'] .dev-stack { color: var(--tier); }
+@media (hover: hover) { .simulator .choice:hover { border-color: color-mix(in srgb, var(--tier) 60%, transparent); } }
+
+/* summary */
+.sim-summary {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: clamp(16px, 2vw, 30px);
+  border-color: color-mix(in srgb, var(--tier) 35%, var(--line-strong));
+}
+.sum-left strong { font-size: clamp(20px, 1vw + 12px, 26px); margin: 4px 0 10px; }
+.sum-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.sum-chips span {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 10px; font-size: 13px; color: var(--color-ink);
+  border: 1px solid var(--line-strong); background: var(--color-surface);
+}
+.sum-chips svg { color: var(--tier); }
+.sum-note { font-size: 12px; }
+.sum-price { text-align: center; padding-left: clamp(16px, 2vw, 30px); border-left: 1px solid var(--line-strong); }
+.sum-price .label { display: block; }
+.sim-summary .price { color: var(--tier); text-align: center; font-size: clamp(34px, 1.6vw + 22px, 46px); line-height: 1.1; transition: color .2s ease; }
+.sim-summary .price-sub { text-align: center; margin: 2px 0 0; font-size: 13px; }
+.sim-summary .savings { display: block; max-width: 210px; margin-top: 6px; font-size: 12px; color: var(--tier); }
+.sim-cta { background: var(--tier); color: var(--color-bg); border-color: transparent; white-space: nowrap; }
+@media (hover: hover) { .sim-cta:hover { box-shadow: 0 8px 26px color-mix(in srgb, var(--tier) 35%, transparent); } }
+
+@media (max-width: 1180px) {
+  .sim-summary { grid-template-columns: minmax(0, 1fr) auto; }
+  .sim-cta { grid-column: 1 / -1; justify-self: stretch; }
+}
+@media (max-width: 640px) {
+  .sim-summary { grid-template-columns: 1fr; }
+  .sum-price { border-left: 0; padding-left: 0; border-top: 1px solid var(--line-strong); padding-top: 14px; }
+  .choices-3 .choice-rich .choice-text small { display: none; }
+  .choices-3 .choice-rich { flex-direction: column; justify-content: center; gap: 6px; text-align: center; padding-inline: 6px; }
+}
+/* Simulator v2 proportions: narrow text column, wide card (owner mock-up) */
+@media (min-width: 901px) {
+  .sim-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 2.5fr); gap: clamp(24px, 2.6vw, 48px); }
+}
+.sim-title { font-size: clamp(28px, 1.2vw + 16px, 42px); }
+.simulator { container-type: inline-size; }
+.dev-stack svg { width: 20px; height: 20px; }
+.dev-stack svg + svg { margin-left: -11px; }
+@container (max-width: 760px) {
+  .sim-summary { grid-template-columns: minmax(0, 1fr) auto; }
+  .sim-cta { grid-column: 1 / -1; justify-self: stretch; }
+  .choices:not(.choices-3) .choice-rich { flex-direction: column; justify-content: center; gap: 6px; text-align: center; }
+  .choices:not(.choices-3) .choice-rich .choice-text { justify-items: center; }
+}
+@container (max-width: 520px) {
+  .sim-summary { grid-template-columns: 1fr; }
+  .sum-price { border-left: 0; padding-left: 0; border-top: 1px solid var(--line-strong); padding-top: 14px; }
+  .choices-3 .choice-rich .choice-text small { display: none; }
+  .choices-3 .choice-rich { flex-direction: column; justify-content: center; gap: 6px; text-align: center; padding-inline: 6px; }
+}
+.choices:has(.choice-badge) { row-gap: 20px; }

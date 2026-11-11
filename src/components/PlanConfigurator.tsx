@@ -5,6 +5,12 @@ import {
   ArrowRight,
   BadgeCheck,
   CalendarClock,
+  CalendarDays,
+  CircleCheck,
+  Infinity as InfinityIcon,
+  Monitor,
+  Rocket,
+  SlidersHorizontal,
   Crown,
   Gem,
   MonitorPlay,
@@ -68,6 +74,14 @@ const TIER_LOOK: Record<Tier, { Icon: LucideIcon; art: string }> = {
   ultra: { Icon: Gem, art: '/visuals/cat-streaming.svg' },
 };
 
+/** Left-hand points of the simulator (icon colour = official category colour). */
+const SIM_POINTS: { Icon: LucideIcon; cat: string }[] = [
+  { Icon: Zap, cat: 'sports' },
+  { Icon: MonitorSmartphone, cat: 'live' },
+  { Icon: ShieldCheck, cat: 'live' },
+  { Icon: Rocket, cat: 'movies' },
+];
+
 const loadDialog = () => import('./CheckoutDialog').then((m) => m.CheckoutDialog);
 // Downloaded on demand (prefetched on hover/focus of the button) to keep the initial JS small.
 const CheckoutDialog = dynamic(loadDialog, { ssr: false });
@@ -97,7 +111,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
   const tierName = p.tiers[tier].name;
   // Claims shown next to the simulator are computed from the price list, so they stay true.
   const bestPct = Math.max(...TIERS.map((t) => computeQuote(table, { tier: t, term: '36m', streams: 1 }).savingsPercent));
-  const lowestMonthly = Math.min(...TIERS.map((t) => computeQuote(table, { tier: t, term: '36m', streams: 1 }).monthlyEquivalentMinor ?? Infinity));
+  const SelectedTierIcon = TIER_LOOK[tier].Icon;
   const selectionLabel = `${tierName} · ${p.terms[term]} · ${plural(dict.common, 'device', streams)}`;
 
   function choose(t: Tier) {
@@ -167,80 +181,125 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
       {children}
 
       {/* 2. Simulator: text on the left (40%), card on the right (60%) */}
-      <div className="sim-layout" ref={simulatorRef} tabIndex={-1}>
+      <div className="sim-layout" ref={simulatorRef} tabIndex={-1} data-tier={tier}>
         <div className="sim-intro">
           <div className="eyebrow">{p.simulatorEyebrow}</div>
           <h3 id="simulator-title" className="sim-title">
             {p.simulatorTitleA} <span className="hl">{fill(p.simulatorTitleB, { pct: bestPct })}</span>
           </h3>
           <p className="sim-sub">{p.simulatorSub}</p>
-          <ul className="list-check sim-points">
-            <li>{fill(p.simulatorPoints[0]!, { pct: bestPct })}</li>
-            <li>{fill(p.simulatorPoints[1]!, { price: money(lowestMonthly) })}</li>
-            <li>{p.simulatorPoints[2]}</li>
-            <li>{p.simulatorPoints[3]}</li>
+          <ul className="sim-points">
+            {SIM_POINTS.map(({ Icon, cat }, i) => (
+              <li key={i} className={`cat-${cat}`}>
+                <span className="icon-box sm" aria-hidden="true">
+                  <Icon size={20} strokeWidth={1.75} />
+                </span>
+                <span>{fill(p.simulatorPoints[i]!, { pct: bestPct })}</span>
+              </li>
+            ))}
           </ul>
         </div>
-      <div className="card config simulator" data-testid="configurator" aria-labelledby="simulator-title">
 
-        <div className="field-title" id="tier-label">{p.tierLabel}</div>
-        <div className="choices choices-3" role="group" aria-labelledby="tier-label">
-          {TIERS.map((t) => (
-            <button key={t} type="button" className="choice" data-tier={t} aria-pressed={t === tier} onClick={() => setTier(t)}>
-              {p.tiers[t].name}
-            </button>
-          ))}
-        </div>
-
-        <div className="field-title" id="term-label">{p.termLabel}</div>
-        <div className="choices" role="group" aria-labelledby="term-label">
-          {TERMS.map((tm) => {
-            const q = computeQuote(table, { tier, term: tm, streams });
-            return (
-              <button key={tm} type="button" className="choice choice-term" data-term={tm} aria-pressed={tm === term} onClick={() => setTerm(tm)}>
-                <span>{p.terms[tm]}</span>
-                {q.savingsPercent > 0 && <span className="choice-badge">{fill(p.savePct, { pct: q.savingsPercent })}</span>}
-                {tm === 'lifetime' && <span className="choice-note">{p.oneTime}</span>}
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="field-title" id="streams-label">{p.streamsLabel}</div>
-        <div className="choices" role="group" aria-labelledby="streams-label">
-          {STREAMS.map((n) => {
-            const extra = computeQuote(table, { tier, term, streams: n }).amountMinor - computeQuote(table, { tier, term, streams: 1 }).amountMinor;
-            return (
-              <button key={n} type="button" className="choice choice-term" data-stream={n} aria-pressed={n === streams} onClick={() => setStreams(n)}>
-                <span>{plural(dict.common, 'device', n)}</span>
-                <span className="choice-note">{n === 1 ? p.included : `+${money(extra)}`}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="summary">
-          <div>
-            <small className="label">{p.summaryLabel}</small>
-            <strong data-testid="selection">{selectionLabel}</strong>
-            <small>{p.notAnOffer}</small>
-            {quote.referenceMinor && quote.savingsMinor > 0 && (
-              <small className="savings" data-testid="savings">
-                {fill(p.savings, { amount: money(quote.savingsMinor), n: (TERM_MONTHS[term] ?? 12) / 12 })}
-              </small>
-            )}
-          </div>
-          <div>
-            <div className="price" data-testid="price" aria-live="polite">{money(quote.amountMinor)}</div>
-            <span className="price-sub">
-              {quote.monthlyEquivalentMinor !== null
-                ? fill(dict.common.perMonth, { price: money(quote.monthlyEquivalentMinor) })
-                : p.oneTime}
+        <div className="card config simulator" data-testid="configurator" aria-labelledby="simulator-title">
+          <div className="sim-head">
+            <span className="sim-head-icon" aria-hidden="true">
+              <SlidersHorizontal size={24} strokeWidth={1.75} />
             </span>
+            <div>
+              <p className="sim-head-title">{p.simulatorCardTitle}</p>
+              <p className="sim-head-sub">{p.simulatorCardSub}</p>
+            </div>
+          </div>
+
+          <div className="field-title" id="tier-label"><span className="step-num" aria-hidden="true">1</span>{p.tierLabel}</div>
+          <div className="choices choices-3" role="group" aria-labelledby="tier-label">
+            {TIERS.map((t) => {
+              const Icon = TIER_LOOK[t].Icon;
+              return (
+                <button key={t} type="button" className="choice choice-rich" data-tier={t} aria-pressed={t === tier} onClick={() => setTier(t)}>
+                  <Icon className="choice-icon" size={28} strokeWidth={1.75} aria-hidden="true" />
+                  <span className="choice-text">
+                    <b>{p.tiers[t].name}</b>
+                    <small>{p.tiers[t].tagline}</small>
+                  </span>
+                  {t === tier && <CircleCheck className="choice-check" size={22} strokeWidth={2} aria-hidden="true" />}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="field-title" id="term-label"><span className="step-num" aria-hidden="true">2</span>{p.termLabel}</div>
+          <div className="choices" role="group" aria-labelledby="term-label">
+            {TERMS.map((tm) => {
+              const q = computeQuote(table, { tier, term: tm, streams });
+              const Icon = tm === 'lifetime' ? InfinityIcon : CalendarDays;
+              return (
+                <button key={tm} type="button" className="choice choice-rich choice-term" data-term={tm} aria-pressed={tm === term} onClick={() => setTerm(tm)}>
+                  {q.savingsPercent > 0 && <span className="choice-badge">{fill(p.savePct, { pct: q.savingsPercent })}</span>}
+                  <Icon className="choice-icon" size={24} strokeWidth={1.75} aria-hidden="true" />
+                  <span className="choice-text">
+                    <b>{p.terms[tm]}</b>
+                    {tm === 'lifetime' && <small className="choice-note">{p.oneTime}</small>}
+                  </span>
+                  {tm === term && <CircleCheck className="choice-check" size={20} strokeWidth={2} aria-hidden="true" />}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="field-title" id="streams-label"><span className="step-num" aria-hidden="true">3</span>{p.streamsLabel}</div>
+          <div className="choices" role="group" aria-labelledby="streams-label">
+            {STREAMS.map((n) => {
+              const extra = computeQuote(table, { tier, term, streams: n }).amountMinor - computeQuote(table, { tier, term, streams: 1 }).amountMinor;
+              return (
+                <button key={n} type="button" className="choice choice-rich choice-term" data-stream={n} aria-pressed={n === streams} onClick={() => setStreams(n)}>
+                  <span className="dev-stack" aria-hidden="true">
+                    {Array.from({ length: n }, (_, i) => (
+                      <Monitor key={i} size={22} strokeWidth={1.75} />
+                    ))}
+                  </span>
+                  <span className="choice-text">
+                    <b>{plural(dict.common, 'device', n)}</b>
+                    <small className="choice-note">{n === 1 ? p.included : `+${money(extra)}`}</small>
+                  </span>
+                  {n === streams && <CircleCheck className="choice-check" size={20} strokeWidth={2} aria-hidden="true" />}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="summary sim-summary">
+            <div className="sum-left">
+              <small className="label">{p.summaryLabel}</small>
+              <strong data-testid="selection">{selectionLabel}</strong>
+              <div className="sum-chips">
+                <span>
+                  <SelectedTierIcon size={16} strokeWidth={1.75} aria-hidden="true" />
+                  {fill(p.chipPlan, { plan: p.tiers[tier].name })}
+                </span>
+                <span><CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" />{p.terms[term]}</span>
+                <span><Monitor size={16} strokeWidth={1.75} aria-hidden="true" />{plural(dict.common, 'device', streams)}</span>
+              </div>
+              <small className="sum-note">{p.notAnOffer}</small>
+            </div>
+            <div className="sum-price">
+              <small className="label">{p.totalLabel}</small>
+              <div className="price" data-testid="price" aria-live="polite">{money(quote.amountMinor)}</div>
+              <span className="price-sub">
+                {quote.monthlyEquivalentMinor !== null
+                  ? fill(dict.common.perMonth, { price: money(quote.monthlyEquivalentMinor) })
+                  : p.oneTime}
+              </span>
+              {quote.referenceMinor && quote.savingsMinor > 0 && (
+                <small className="savings" data-testid="savings">
+                  {fill(p.savings, { amount: money(quote.savingsMinor), n: (TERM_MONTHS[term] ?? 12) / 12 })}
+                </small>
+              )}
+            </div>
             <button
               ref={openerRef}
               type="button"
-              className="btn"
+              className="btn sim-cta"
               onClick={() => setCheckoutOpen(true)}
               onPointerEnter={() => void loadDialog()}
               onFocus={() => void loadDialog()}
@@ -250,7 +309,6 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
             </button>
           </div>
         </div>
-      </div>
       </div>
 
       {checkoutOpen && (

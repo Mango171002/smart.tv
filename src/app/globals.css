@@ -614,7 +614,7 @@ section.content-tight .cat-grid { margin-top: 0; }
 
 @media (max-width: 900px) {
   .tier-grid { grid-template-columns: 1fr; }
-  .tier-card.is-recommended { order: -1; }
+
 }
 @media (max-width: 580px) {
   .tier-card { padding: 24px 18px; }
@@ -1168,3 +1168,26 @@ html { scroll-padding-top: 84px; }
 }
 /* Most watched: category badge on the left (owner request) */
 .slide-badge { right: auto; left: 12px; }
+
+/* ==========================================================================
+   Phone tweaks (owner request 12/11/2026) — desktop/laptop unchanged
+   ========================================================================== */
+@media (max-width: 900px) {
+  /* Hero: title + text, then the banner, then the two buttons */
+  .hero-grid { grid-template-areas: 'eyebrow' 'title' 'lead' 'stage' 'actions' 'checks'; row-gap: 0; }
+  .hero-copy { display: contents; }
+  .hero-copy > .eyebrow { grid-area: eyebrow; justify-self: start; }
+  .hero-copy > h1 { grid-area: title; }
+  .hero-copy > .lead { grid-area: lead; }
+  .hero-stage { grid-area: stage; margin-top: 8px; }
+  .hero-copy > .actions { grid-area: actions; margin: 10px 0 22px; }
+  /* Menu button on the right, logo on the left */
+  .nav > a:first-child { margin-right: auto; }
+  .mobile-menu { margin-left: auto; }
+  /* Reassurance bar under the plans: hidden on phones */
+  .trust-bar { display: none; }
+}
+@media (max-width: 580px) {
+  /* Benefits under "Most watched": 4 instead of 5 */
+  .features-bar li:last-child { display: none; }
+}

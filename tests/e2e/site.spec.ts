@@ -291,7 +291,7 @@ test.describe('layout (fluid container)', () => {
         const left = (s: string) => Math.round(document.querySelector(s)!.getBoundingClientRect().left);
         const g = document.querySelector('.cat-grid')!.getBoundingClientRect();
         return {
-          brand: left('.brand'), hero: left('.hero-copy'), cats: left('.cat-grid'), features: left('.features-bar'),
+          brand: left('.brand'), hero: left('.hero h1'), cats: left('.cat-grid'), features: left('.features-bar'),
           width: g.width, overflow: document.documentElement.scrollWidth - innerWidth,
         };
       });

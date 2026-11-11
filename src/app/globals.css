@@ -1166,3 +1166,5 @@ html { scroll-padding-top: 84px; }
   mask-image: linear-gradient(to bottom, black 70%, transparent 100%), linear-gradient(to right, transparent 0, black 8%, black 92%, transparent 100%);
   mask-composite: intersect;
 }
+/* Most watched: category badge on the left (owner request) */
+.slide-badge { right: auto; left: 12px; }

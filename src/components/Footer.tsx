@@ -26,7 +26,7 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           <ul>
             <li><Link href={`/${locale}#plans`}>{dict.nav.plans}</Link></li>
             <li><Link href={`/${locale}#content`}>{dict.nav.content}</Link></li>
-            <li><Link href={`/${locale}#devices`}>{dict.nav.devices}</Link></li>
+            <li><Link href={`/${locale}#preview`}>{dict.nav.devices}</Link></li>
             <li><Link href={`/${locale}#how`}>{dict.nav.how}</Link></li>
             <li><Link href={`/${locale}#faq`}>{dict.nav.help}</Link></li>
           </ul>

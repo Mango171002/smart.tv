@@ -123,7 +123,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   });
 
   test('former pages redirect to their section of the one-page site', async ({ request }) => {
-    for (const [from, to] of [['/en/plans', '/en#plans'], ['/fr/help', '/en#faq'], ['/en/devices', '/en#devices'], ['/fr/coverage', '/en#content']] as const) {
+    for (const [from, to] of [['/en/plans', '/en#plans'], ['/fr/help', '/en#faq'], ['/en/devices', '/en#preview'], ['/fr/coverage', '/en#content']] as const) {
       const res = await request.get(from, { maxRedirects: 0 });
       expect(res.status(), from).toBe(308);
       expect(res.headers()['location'], from).toMatch(new RegExp(`${to.replace('#', '\\#')}$`));

@@ -3,7 +3,7 @@ import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { AppWindow, ArrowRight, CirclePlay, Flame, Globe, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
-import { BENEFIT_ICONS, CATEGORIES, DEVICE_ICONS, ICON_STROKE } from './icons';
+import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
 const HERO_WIDTHS = [480, 768, 1080, 1440];
@@ -133,37 +133,8 @@ export function ContentCategories({
   );
 }
 
-/** Accent colour of each device card / step (official category colours). */
-const DEVICE_CATS = ['live', 'streaming', 'movies', 'sports'] as const;
+/** Accent colour of each step (official category colours). */
 const STEP_CATS = ['live', 'movies', 'sports'] as const;
-
-export function DeviceGrid({ dict, headingLevel = 2 }: { dict: Dictionary; headingLevel?: 1 | 2 }) {
-  const d = dict.devices;
-  const H = headingLevel === 1 ? 'h1' : 'h2';
-  return (
-    <section id="devices" aria-labelledby="devices-title">
-      <div className="wrap">
-        <div className="eyebrow">{d.eyebrow}</div>
-        <H id="devices-title" className={headingLevel === 1 ? 'page-title' : 'section-title'}>{d.title}</H>
-        <p className="sub">{d.sub}</p>
-        <ul className="devices">
-          {d.items.map((item, i) => {
-            const Icon = DEVICE_ICONS[i]!;
-            return (
-              <li className={`card device cat-${DEVICE_CATS[i % DEVICE_CATS.length]}`} key={item.title}>
-                <span className="icon-box" aria-hidden="true">
-                  <Icon size={24} strokeWidth={ICON_STROKE} />
-                </span>
-                <b>{item.title}</b>
-                <small>{item.text}</small>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </section>
-  );
-}
 
 export function HowItWorks({ dict }: { dict: Dictionary }) {
   const h = dict.how;

@@ -19,7 +19,7 @@ const csp = [
 
 // English only (owner decision): unprefixed URLs go to /en, the former French URLs to their English version.
 // Former pages (one-page site) point to their section of the home page.
-const FORMER_PAGES: Record<string, string> = { '/plans': '#plans', '/devices': '#devices', '/coverage': '#content', '/help': '#faq' };
+const FORMER_PAGES: Record<string, string> = { '/plans': '#plans', '/devices': '#preview', '/coverage': '#content', '/help': '#faq' };
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,

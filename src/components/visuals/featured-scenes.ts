@@ -1,16 +1,16 @@
-/** Order of the "Most watched" artwork files (public/visuals/featured-<scene>.svg), matching dict.featured.items. */
+/** Display order of the "Most watched" cards (colours mixed); artwork files (public/visuals/featured-<scene>.svg), matching dict.featured.items. */
 export const FEATURED_SCENES = [
   'football',
-  'american-football',
-  'hockey',
-  'basketball',
   'adventure',
-  'crime',
-  'fantasy',
-  'comedy',
-  'tennis',
-  'motorsport',
+  'hockey',
   'family',
+  'american-football',
+  'crime',
+  'basketball',
   'docs',
+  'tennis',
+  'fantasy',
+  'motorsport',
+  'comedy',
 ] as const;
 export type FeaturedScene = (typeof FEATURED_SCENES)[number];

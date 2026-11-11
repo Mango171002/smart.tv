@@ -5,9 +5,9 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Locale } from '@/i18n/config';
 import { fill, type Dictionary } from '@/i18n/dictionaries';
+import { FEATURED_SCENES } from '@/components/visuals/featured-scenes';
 
-/** Badge colour follows the category system: sports = lime, movies/series = magenta. */
-const BADGE_CAT = ['sports', 'sports', 'movies', 'movies'] as const;
+/** Badge colour follows the category system (item.cat): sports = lime, movies/series = magenta… */
 
 export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['featured'] }) {
   const track = useRef<HTMLDivElement>(null);
@@ -68,15 +68,18 @@ export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['f
             {dict.items.map((item, i) => (
               <div
                 key={item.title}
-                className={`slide cat-${BADGE_CAT[i]}`}
+                className={`slide cat-${item.cat}`}
                 role="group"
                 aria-roledescription="slide"
                 aria-label={`${fill(dict.slideLabel, { n: i + 1, total })} — ${item.title}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element -- static decorative SVG */}
-                <img src={`/visuals/featured-${i}.svg`} alt="" width={480} height={270} loading="lazy" decoding="async" />
+                <img src={`/visuals/featured-${FEATURED_SCENES[i]}.svg`} alt="" width={480} height={270} loading="lazy" decoding="async" />
                 <span className="slide-badge">{item.badge}</span>
-                <span className="slide-title">{item.title}</span>
+                <span className="slide-text">
+                  <span className="slide-title">{item.title}</span>
+                  <span className="slide-region">{item.region}</span>
+                </span>
               </div>
             ))}
           </div>

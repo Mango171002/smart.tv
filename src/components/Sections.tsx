@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { ArrowRight, CirclePlay, Globe } from 'lucide-react';
+import { ArrowRight, CirclePlay, Globe, MessagesSquare, Plus } from 'lucide-react';
 import { BENEFIT_ICONS, CATEGORIES, DEVICE_ICONS, ICON_STROKE } from './icons';
 import { LaptopFrame, PhoneFrame, TvFrame } from './visuals/Images';
 
@@ -126,6 +126,10 @@ export function ContentCategories({
   );
 }
 
+/** Accent colour of each device card / step (official category colours). */
+const DEVICE_CATS = ['live', 'streaming', 'movies', 'sports'] as const;
+const STEP_CATS = ['live', 'movies', 'sports'] as const;
+
 export function DeviceGrid({ dict, headingLevel = 2 }: { dict: Dictionary; headingLevel?: 1 | 2 }) {
   const d = dict.devices;
   const H = headingLevel === 1 ? 'h1' : 'h2';
@@ -139,7 +143,7 @@ export function DeviceGrid({ dict, headingLevel = 2 }: { dict: Dictionary; headi
           {d.items.map((item, i) => {
             const Icon = DEVICE_ICONS[i]!;
             return (
-              <li className="card device cat-streaming" key={item.title}>
+              <li className={`card device cat-${DEVICE_CATS[i % DEVICE_CATS.length]}`} key={item.title}>
                 <span className="icon-box" aria-hidden="true">
                   <Icon size={24} strokeWidth={ICON_STROKE} />
                 </span>
@@ -163,8 +167,8 @@ export function HowItWorks({ dict }: { dict: Dictionary }) {
         <h2 id="how-title" className="section-title">{h.title}</h2>
         <ol className="steps">
           {h.steps.map((s, i) => (
-            <li className="card step" key={s.title}>
-              <div className="num" aria-hidden="true">{i + 1}</div>
+            <li className={`card step cat-${STEP_CATS[i % STEP_CATS.length]}`} key={s.title}>
+              <div className="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</div>
               <b>{s.title}</b>
               <small>{s.text}</small>
             </li>
@@ -189,7 +193,10 @@ export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
         <div className="faq">
           {items.map((item) => (
             <details key={item.q}>
-              <summary>{item.q}</summary>
+              <summary>
+                <span>{item.q}</span>
+                <Plus className="faq-icon" size={18} strokeWidth={2} aria-hidden="true" />
+              </summary>
               <p>{item.a}</p>
             </details>
           ))}
@@ -204,11 +211,14 @@ export function HelpCta({ locale, dict }: { locale: Locale; dict: Dictionary }) 
     <section aria-labelledby="help-cta-title">
       <div className="wrap">
         <div className="card help">
-          <div>
+          <span className="icon-box lg help-icon" aria-hidden="true">
+            <MessagesSquare size={26} strokeWidth={ICON_STROKE} />
+          </span>
+          <div className="help-text">
             <h2 id="help-cta-title">{dict.helpCta.title}</h2>
             <div className="muted">{dict.helpCta.text}</div>
           </div>
-          <Link className="btn ghost" href={`/${locale}/help`}>
+          <Link className="btn" href={`/${locale}/help`}>
             {dict.helpCta.button} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
           </Link>
         </div>

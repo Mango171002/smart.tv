@@ -235,20 +235,23 @@ test.describe('Electric Fusion Neon design system', () => {
 });
 
 test.describe('home page (approved mock-up)', () => {
-  test('featured: four cards fit on desktop, swipe + dots on mobile', async ({ page, isMobile }) => {
+  test('most watched: 12 genres with region, arrows on desktop, dots everywhere', async ({ page, isMobile }) => {
     await page.goto('/en');
-    const carousel = page.getByRole('region', { name: 'Featured genres' });
+    const carousel = page.getByRole('region', { name: 'Most watched genres' });
     await expect(carousel).toHaveAttribute('data-ready', 'true'); // wait for hydration
+    await expect(carousel.getByRole('group')).toHaveCount(12);
+    await expect(carousel.getByRole('group', { name: /American football/ })).toContainText('USA');
+    await expect(carousel.getByRole('group', { name: /Ice hockey/ })).toContainText('Canada');
     if (!isMobile) {
-      await expect(carousel.getByRole('button', { name: 'Next' })).toBeHidden();
-      const overflow = await page.locator('#featured-track').evaluate((el) => el.scrollWidth - el.clientWidth);
-      expect(overflow).toBeLessThanOrEqual(1); // all four cards fit, nothing to scroll
-      return;
+      const next = carousel.getByRole('button', { name: 'Next' });
+      await expect(next).toBeVisible();
+      await next.click();
+      await expect(page.getByRole('button', { name: '2 of 12', exact: true })).toHaveAttribute('aria-current', 'true');
     }
-    await page.getByRole('button', { name: '2 of 4' }).click();
-    await expect(page.getByRole('button', { name: '2 of 4' })).toHaveAttribute('aria-current', 'true');
-    await page.getByRole('button', { name: '4 of 4' }).click();
-    await expect(page.getByRole('button', { name: '4 of 4' })).toHaveAttribute('aria-current', 'true');
+    await page.getByRole('button', { name: '12 of 12', exact: true }).click();
+    await expect(page.getByRole('button', { name: '12 of 12', exact: true })).toHaveAttribute('aria-current', 'true');
+    const imgs = await carousel.locator('img').evaluateAll((els) => els.map((e) => (e as HTMLImageElement).getAttribute('src')));
+    expect(new Set(imgs).size).toBe(12);
   });
 
   test('announcement bar links to pre-registration', async ({ page }) => {

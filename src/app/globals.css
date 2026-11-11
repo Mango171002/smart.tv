@@ -689,3 +689,124 @@ section.content-tight .cat-grid { margin-top: 0; }
   border-color: var(--tier); background: color-mix(in srgb, var(--tier) 12%, transparent);
   box-shadow: inset 0 0 0 1px var(--tier);
 }
+
+/* ==========================================================================
+   Owner request (11/11/2026): narrower plan cards, 12-genre carousel with
+   region, and the lower part of the page (interface → footer) in the
+   ELECTRIC FUSION NEON charter. Official colours only.
+   ========================================================================== */
+.plans-head { margin-inline: auto; text-align: center; }
+.plans-head .sub { margin-inline: auto; }
+.tier-grid { width: 100%; margin-inline: auto; }
+@media (min-width: 1024px) { .tier-grid { max-width: min(86%, 1320px); } }
+
+/* Carousel: more genres → arrows + dots; about 4 cards visible on desktop */
+@media (min-width: 1200px) { .carousel-track { grid-auto-columns: calc((100% - 3 * 16px) / 4.25); } }
+.slide-text { position: absolute; left: 16px; right: 16px; bottom: 12px; z-index: 1; display: grid; gap: 2px; }
+.slide-text .slide-title { position: static; }
+.slide-region {
+  justify-self: start; font-size: 11px; font-weight: 700; letter-spacing: .3px; color: var(--cat);
+  padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat) 45%, transparent);
+}
+.dot[aria-current='true']::before { width: 22px; border-radius: 6px; }
+.dot::before { transition: width .2s ease, background-color .15s ease; }
+
+/* Section accents: eyebrow + soft glow follow the section colour */
+.eyebrow { --eb: var(--color-cyan); color: var(--eb); border-color: color-mix(in srgb, var(--eb) 30%, transparent); background: color-mix(in srgb, var(--eb) 6%, transparent); }
+.eyebrow::before { background: var(--eb); box-shadow: 0 0 8px var(--eb); }
+#preview, #devices, #how, #faq { position: relative; isolation: isolate; }
+#preview .eyebrow { --eb: var(--color-violet); }
+#devices .eyebrow { --eb: var(--color-cyan); }
+#how .eyebrow { --eb: var(--color-magenta); }
+#faq .eyebrow { --eb: var(--color-lime); }
+#preview::before, #how::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 15% 30%, color-mix(in srgb, var(--color-violet) 9%, transparent), transparent 70%);
+}
+#how::before { background: radial-gradient(55% 80% at 85% 50%, color-mix(in srgb, var(--color-magenta) 8%, transparent), transparent 70%); }
+
+/* Interface preview: neon frame */
+.preview-stage {
+  position: relative; border: 1px solid transparent;
+  background:
+    radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--color-violet) 22%, transparent), transparent 60%) padding-box,
+    linear-gradient(140deg, var(--color-surface), var(--color-bg)) padding-box,
+    linear-gradient(120deg, var(--color-cyan), var(--color-violet) 40%, var(--color-magenta) 75%, var(--color-lime)) border-box;
+  box-shadow: 0 0 40px color-mix(in srgb, var(--color-violet) 14%, transparent);
+}
+.preview-item figcaption {
+  display: table; margin: 14px auto 0; padding: 4px 12px; border-radius: 999px; color: var(--color-ink);
+  border: 1px solid var(--line-strong); background: var(--surface-low);
+}
+.preview-tv figcaption { border-color: color-mix(in srgb, var(--color-cyan) 50%, transparent); }
+.preview-laptop figcaption { border-color: color-mix(in srgb, var(--color-violet) 60%, transparent); }
+.preview-phone figcaption { border-color: color-mix(in srgb, var(--color-magenta) 55%, transparent); }
+
+/* Devices + steps: neon cards coloured by --cat */
+.device, .step {
+  position: relative; overflow: hidden; border-color: color-mix(in srgb, var(--cat) 30%, transparent);
+  background: radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--cat) 12%, transparent), transparent 70%), var(--color-surface);
+}
+.device::before, .step::before {
+  content: ''; position: absolute; inset: 0 22% auto; height: 2px; border-radius: 0 0 4px 4px;
+  background: var(--cat); box-shadow: 0 0 14px var(--cat);
+}
+.device b { font-size: 16px; }
+.steps { counter-reset: step; position: relative; }
+.step { text-align: left; padding: 26px; }
+.step .num {
+  margin: 0 0 14px; width: auto; height: auto; background: none; border-radius: 0; place-items: start;
+  font-size: 44px; line-height: 1; font-weight: 850; letter-spacing: -1.5px; color: var(--cat);
+  text-shadow: 0 0 22px color-mix(in srgb, var(--cat) 45%, transparent);
+}
+.step b { font-size: 17px; margin: 0 0 6px; }
+@media (min-width: 821px) {
+  .step:not(:last-child)::after {
+    content: ''; position: absolute; right: 22px; top: 40px; width: 34%; height: 2px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--cat) 60%, transparent), transparent);
+  }
+}
+
+/* FAQ: neon accordion */
+.faq details {
+  position: relative; border-radius: 14px; padding: 0; transition: border-color .2s ease, box-shadow .2s ease;
+}
+.faq summary {
+  list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 20px;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq-icon {
+  flex: none; color: var(--color-lime); width: 30px; height: 30px; padding: 6px; border-radius: 9px;
+  border: 1px solid color-mix(in srgb, var(--color-lime) 35%, transparent); background: color-mix(in srgb, var(--color-lime) 7%, transparent);
+  transition: transform .2s ease;
+}
+.faq details[open] { border-color: color-mix(in srgb, var(--color-lime) 45%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--color-lime) 8%, transparent); }
+.faq details[open] .faq-icon { transform: rotate(45deg); }
+.faq details[open]::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 3px; border-radius: 0 3px 3px 0; background: var(--color-lime); }
+.faq p { padding: 0 20px 18px; margin: 0; }
+@media (hover: hover) { .faq details:not([open]):hover { border-color: color-mix(in srgb, var(--color-lime) 30%, transparent); } }
+
+/* Help call-to-action: gradient neon banner */
+.help {
+  --cat: var(--color-magenta);
+  justify-content: flex-start; padding: clamp(24px, 3vw, 40px); border: 1px solid transparent;
+  background:
+    radial-gradient(70% 140% at 0% 50%, color-mix(in srgb, var(--color-magenta) 16%, transparent), transparent 70%) padding-box,
+    radial-gradient(60% 140% at 100% 50%, color-mix(in srgb, var(--color-cyan) 12%, transparent), transparent 70%) padding-box,
+    linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
+    linear-gradient(90deg, var(--color-magenta), var(--color-violet), var(--color-cyan)) border-box;
+  box-shadow: 0 0 40px color-mix(in srgb, var(--color-magenta) 12%, transparent);
+}
+.help-text { flex: 1; }
+.help h2 { font-size: clamp(22px, 1vw + 16px, 30px); }
+@media (max-width: 640px) { .help-icon { display: none; } }
+
+/* Footer: neon divider */
+.footer { position: relative; border-top: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--color-surface) 60%, var(--color-bg)), var(--color-bg)); }
+.footer::before {
+  content: ''; position: absolute; inset: 0 0 auto; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-cyan), var(--color-violet), var(--color-magenta), var(--color-lime), transparent);
+  opacity: .8;
+}
+.footer b { display: inline-block; margin-bottom: 2px; }

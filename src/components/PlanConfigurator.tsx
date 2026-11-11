@@ -100,7 +100,7 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
             const q = computeQuote(table, { tier, term: tm, streams });
             return (
               <button key={tm} type="button" className="choice choice-term" data-term={tm} aria-pressed={tm === term} onClick={() => setTerm(tm)}>
-                <span>{p.terms[tm]}{tm === 'lifetime' ? '*' : ''}</span>
+                <span>{p.terms[tm]}</span>
                 {q.savingsPercent > 0 && <span className="choice-badge">{fill(p.savePct, { pct: q.savingsPercent })}</span>}
                 {tm === 'lifetime' && <span className="choice-note">{p.oneTime}</span>}
               </button>

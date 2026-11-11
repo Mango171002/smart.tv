@@ -103,8 +103,8 @@ const fr: Dictionary = {
     sub: 'Trois offres annuelles, puis des tarifs dégressifs sur 24 mois, 36 mois ou à vie. Pré-inscription gratuite, sans paiement avant l’ouverture.',
     footnote: 'Prix de lancement prévus, en dollars américains (USD), hors taxes. Contenus et nombre de chaînes confirmés par pays avant l’ouverture.',
     perYear: '/ an',
-    catalogueChannels: '**{n}** chaînes TV en direct',
-    catalogueVod: '**{n}** films & séries (VOD)',
+    catalogueChannels: '**+{n}** chaînes TV en direct',
+    catalogueVod: '**+{n}** films & séries (VOD)',
     recommended: 'Recommandé',
     choose: 'Choisir {plan}',
     tiers: {
@@ -114,7 +114,6 @@ const fr: Dictionary = {
         features: [
           { icon: 'tv', text: 'Bouquet **Essentiel**' },
           { icon: 'news', text: 'Chaînes nationales & info' },
-          { icon: 'film', text: 'Films & séries : base' },
           { icon: 'quality', text: 'Qualité **HD & Full HD**' },
           { icon: 'shield', text: 'Diffusion stabilisée' },
           { icon: 'guide', text: 'Guide TV (EPG) inclus' },
@@ -129,7 +128,6 @@ const fr: Dictionary = {
         features: [
           { icon: 'tv', text: 'Bouquet **Étendu**', accent: true },
           { icon: 'sport', text: 'Sport & divertissement', accent: true },
-          { icon: 'film', text: 'Films & séries : étendu' },
           { icon: 'quality', text: 'Qualité **4K Ultra HD**', accent: true },
           { icon: 'shield', text: 'Serveurs haute stabilité' },
           { icon: 'guide', text: 'Guide TV (EPG) inclus' },
@@ -145,7 +143,6 @@ const fr: Dictionary = {
         features: [
           { icon: 'tv', text: 'Bouquet **Complet**', accent: true },
           { icon: 'globe', text: 'Chaînes internationales', accent: true },
-          { icon: 'film', text: 'Films & séries : complet', accent: true },
           { icon: 'quality', text: 'Qualité **4K Ultra HD & HDR**', accent: true },
           { icon: 'zap', text: 'Serveurs premium' },
           { icon: 'guide', text: 'Guide TV (EPG) inclus' },

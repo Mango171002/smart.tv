@@ -101,8 +101,8 @@ const en = {
     sub: 'Three yearly plans, then lower prices over 24 months, 36 months or lifetime. Free pre-registration, no payment before launch.',
     footnote: 'Planned launch prices in US dollars (USD), before taxes. Content and number of channels confirmed per country before launch.',
     perYear: '/ year',
-    catalogueChannels: '**{n}** live TV channels',
-    catalogueVod: '**{n}** movies & series (VOD)',
+    catalogueChannels: '**+{n}** live TV channels',
+    catalogueVod: '**+{n}** movies & series (VOD)',
     recommended: 'Recommended',
     choose: 'Choose {plan}',
     tiers: {
@@ -112,7 +112,6 @@ const en = {
         features: [
           { icon: 'tv', text: '**Essential** bundle' },
           { icon: 'news', text: 'National channels & news' },
-          { icon: 'film', text: 'Core movies & series' },
           { icon: 'quality', text: '**HD & Full HD** quality' },
           { icon: 'shield', text: 'Stabilised streaming' },
           { icon: 'guide', text: 'TV guide (EPG) included' },
@@ -127,7 +126,6 @@ const en = {
         features: [
           { icon: 'tv', text: '**Extended** bundle', accent: true },
           { icon: 'sport', text: 'Sports & entertainment', accent: true },
-          { icon: 'film', text: 'Extended movies & series' },
           { icon: 'quality', text: '**4K Ultra HD** quality', accent: true },
           { icon: 'shield', text: 'High-stability servers' },
           { icon: 'guide', text: 'TV guide (EPG) included' },
@@ -143,7 +141,6 @@ const en = {
         features: [
           { icon: 'tv', text: '**Complete** bundle', accent: true },
           { icon: 'globe', text: 'International channels', accent: true },
-          { icon: 'film', text: 'Full movies & series', accent: true },
           { icon: 'quality', text: '**4K Ultra HD & HDR**', accent: true },
           { icon: 'zap', text: 'Premium servers' },
           { icon: 'guide', text: 'TV guide (EPG) included' },

@@ -1069,3 +1069,8 @@ body::after {
 /* "How it works": narrower step cards, centred block */
 #how .wrap { text-align: center; }
 #how .steps { max-width: min(100%, 1040px); margin-inline: auto; text-align: left; }
+/* Generated banner: softer fade on the edges (bottom floor reflections) */
+.hero-stage img {
+  -webkit-mask-image: radial-gradient(ellipse 76% 74% at 50% 45%, black 64%, transparent 100%);
+  mask-image: radial-gradient(ellipse 76% 74% at 50% 45%, black 64%, transparent 100%);
+}

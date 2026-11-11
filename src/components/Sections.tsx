@@ -44,8 +44,8 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
             <img
               src="/images/hero-1080.webp"
               alt={h.visualLabel}
-              width={1672}
-              height={941}
+              width={1480}
+              height={833}
               fetchPriority="high"
               decoding="async"
             />

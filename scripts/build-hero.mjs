@@ -8,11 +8,13 @@ import { fileURLToPath } from 'node:url';
 const SRC = fileURLToPath(new URL('../assets/hero/hero-source.png', import.meta.url));
 const OUT = fileURLToPath(new URL('../public/images/', import.meta.url));
 const HERO_WIDTHS = [480, 768, 1080, 1440];
+// Trim the empty dark margins of the generated banner (16:9 kept) so the scene appears larger.
+const CROP = { left: 96, top: 54, width: 1480, height: 833 };
 mkdirSync(OUT, { recursive: true });
 
 const meta = await sharp(SRC).metadata();
 for (const w of HERO_WIDTHS) {
-  const base = sharp(SRC).resize({ width: Math.min(w, meta.width), withoutEnlargement: true });
+  const base = sharp(SRC).extract(CROP).resize({ width: Math.min(w, CROP.width), withoutEnlargement: true });
   await base.clone().avif({ quality: 52, effort: 6 }).toFile(`${OUT}hero-${w}.avif`);
   await base.clone().webp({ quality: 74, effort: 6 }).toFile(`${OUT}hero-${w}.webp`);
   const kb = (f) => (statSync(f).size / 1024).toFixed(0);

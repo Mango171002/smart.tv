@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { MARKETS, MARKET_CODES, type MarketCode } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
@@ -14,16 +14,31 @@ export function ContactForm({
   kind,
   locale,
   dict,
+  trialSubject,
 }: {
   kind: Kind;
   locale: Locale;
   dict: Pick<Dictionary, 'forms' | 'markets'>;
+  /** When set, arriving on #trial pre-fills the subject with this text. */
+  trialSubject?: string;
 }) {
   const f = dict.forms;
   const id = useId();
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<FieldErrors>({});
+  const subjectRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!trialSubject) return;
+    const prefill = () => {
+      const input = subjectRef.current;
+      if (window.location.hash === '#trial' && input && !input.value) input.value = trialSubject;
+    };
+    prefill();
+    window.addEventListener('hashchange', prefill);
+    return () => window.removeEventListener('hashchange', prefill);
+  }, [trialSubject]);
 
   function validate(data: FormData): FieldErrors {
     const e: FieldErrors = {};
@@ -123,7 +138,7 @@ export function ContactForm({
       {kind === 'support' && (
         <>
           <label htmlFor={`${id}-subject`}>{f.subject}</label>
-          <input className="input" maxLength={150} required {...field('subject')} />
+          <input className="input" maxLength={150} required ref={subjectRef} {...field('subject')} />
           {err('subject')}
 
           <label htmlFor={`${id}-message`}>{f.message}</label>

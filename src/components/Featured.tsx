@@ -1,9 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Locale } from '@/i18n/config';
 import { fill, type Dictionary } from '@/i18n/dictionaries';
 import { FEATURED_SCENES } from '@/components/visuals/featured-scenes';
 
@@ -14,7 +12,7 @@ const slideSrcSet = (scene: string, ext: 'avif' | 'webp') =>
 
 /** Badge colour follows the category system (item.cat): sports = lime, movies/series = magenta… */
 
-export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['featured'] }) {
+export function Featured({ dict }: { dict: Dictionary['featured'] }) {
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [ready, setReady] = useState(false);
@@ -54,9 +52,6 @@ export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['f
       <div className="wrap">
         <div className="featured-head">
           <h2 id="featured-title" className="bar-title">{dict.title}</h2>
-          <Link className="see-all" href={`/${locale}/coverage`}>
-            {dict.seeAll} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
-          </Link>
         </div>
         <div className="carousel" role="region" aria-roledescription="carousel" aria-label={dict.carouselLabel} data-ready={ready || undefined} data-fits={total <= 4 || undefined}>
           <button
@@ -81,7 +76,7 @@ export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['f
                 <picture>
                   <source type="image/avif" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'avif')} sizes={SLIDE_SIZES} />
                   <source type="image/webp" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'webp')} sizes={SLIDE_SIZES} />
-                  {/* eslint-disable-next-line @next/next/no-img-element -- decorative artwork, responsive sources above */}
+                  { }
                   <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp`} alt="" width={480} height={270} loading="lazy" decoding="async" />
                 </picture>
                 <span className="slide-badge">{item.badge}</span>

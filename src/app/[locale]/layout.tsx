@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
 import '../globals.css';
 import { Footer } from '@/components/Footer';
+import { SupportButton } from '@/components/SupportButton';
 import { Header } from '@/components/Header';
 import { siteConfig } from '@/config/site';
 import { LOCALES, isLocale } from '@/i18n/config';
@@ -43,6 +44,7 @@ export default async function LocaleLayout({
         <Header locale={locale} nav={dict.nav} />
         <main id="main" tabIndex={-1}>{children}</main>
         <Footer locale={locale} dict={dict} />
+        <SupportButton locale={locale} nav={dict.nav} />
       </body>
     </html>
   );

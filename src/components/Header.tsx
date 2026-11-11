@@ -21,13 +21,11 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
   }, [open]);
 
   const rest = pathname.replace(/^\/(en|fr)(?=\/|$)/, '');
+  // One-page site: the menu scrolls to sections of the home page.
   const links = [
-    { href: `/${locale}`, label: nav.home },
-    { href: `/${locale}/plans`, label: nav.plans },
-    { href: `/${locale}/coverage`, label: nav.content },
-    { href: `/${locale}/devices`, label: nav.devices },
+    { href: `/${locale}#plans`, label: nav.plans },
     { href: `/${locale}#how`, label: nav.how },
-    { href: `/${locale}/help`, label: nav.help },
+    { href: `/${locale}#faq`, label: nav.help },
   ];
 
   return (
@@ -37,16 +35,20 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
           <Brand />
         </Link>
         <nav id="navlinks" className={`links${open ? ' open' : ''}`} aria-label={nav.label}>
+          {/* Plain anchors: native in-page scrolling + hashchange (used by the trial form pre-fill) */}
           {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              aria-current={pathname === l.href ? 'page' : undefined}
-              onClick={() => setOpen(false)}
-            >
+            <a key={l.href} href={l.href} onClick={() => setOpen(false)}>
               {l.label}
-            </Link>
+            </a>
           ))}
+          <span className="nav-ctas">
+            <a className="btn btn-sm" href={`/${locale}#trial`} onClick={() => setOpen(false)}>
+              {nav.trial}
+            </a>
+            <a className="btn btn-sm btn-lime" href={`/${locale}#plans`} onClick={() => setOpen(false)}>
+              {nav.getStarted}
+            </a>
+          </span>
         </nav>
         <div className="lang" role="group" aria-label={nav.language}>
           {LOCALES.map((l) => (

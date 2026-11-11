@@ -1,6 +1,7 @@
 import type { Locale } from '@/i18n/config';
 
-export const PAGES = ['', '/plans', '/devices', '/coverage', '/help'] as const;
+/** One-page site: everything lives on the home page (owner decision, 11/11/2026). */
+export const PAGES = [''] as const;
 export const LEGAL_DOCS = ['terms', 'privacy', 'cookies', 'refunds', 'imprint'] as const;
 export type LegalDoc = (typeof LEGAL_DOCS)[number];
 

@@ -24,10 +24,12 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
         <nav aria-label={f.siteTitle}>
           <b>{f.siteTitle}</b>
           <ul>
-            <li><Link href={`/${locale}/plans`}>{dict.nav.plans}</Link></li>
-            <li><Link href={`/${locale}/devices`}>{dict.nav.devices}</Link></li>
-            <li><Link href={`/${locale}/coverage`}>{dict.nav.content}</Link></li>
-            <li><Link href={`/${locale}/help`}>{dict.nav.help}</Link></li>
+            <li><Link href={`/${locale}#plans`}>{dict.nav.plans}</Link></li>
+            <li><Link href={`/${locale}#content`}>{dict.nav.content}</Link></li>
+            <li><Link href={`/${locale}#devices`}>{dict.nav.devices}</Link></li>
+            <li><Link href={`/${locale}#how`}>{dict.nav.how}</Link></li>
+            <li><Link href={`/${locale}#faq`}>{dict.nav.help}</Link></li>
+            <li><Link href={`/${locale}#support`}>{dict.nav.support}</Link></li>
           </ul>
         </nav>
         <nav aria-label={f.legalTitle}>

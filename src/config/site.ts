@@ -19,6 +19,8 @@ export const siteConfig = {
   /** Domain not decided. */
   domain: null as string | null,
   supportEmail: null as string | null,
+  /** WhatsApp support number in international format without '+' or spaces (e.g. '33612345678'). Null = the floating support button opens the contact form. */
+  supportWhatsApp: null as string | null,
   supportHours: null as string | null,
   legalEntity: null as string | null,
   legalAddress: null as string | null,

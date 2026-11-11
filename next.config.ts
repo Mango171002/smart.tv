@@ -19,19 +19,27 @@ const csp = [
 
 // Unprefixed pages: language from the NEXT_LOCALE cookie, then Accept-Language, else EN.
 // Implemented as config redirects (not a Proxy) so it runs natively on Cloudflare.
-const UNPREFIXED = ['/', '/plans', '/devices', '/coverage', '/help', '/legal/:doc'];
-const target = (locale: string, source: string) => (source === '/' ? `/${locale}` : `/${locale}${source}`);
+const UNPREFIXED = ['/', '/legal/:doc', '/plans', '/devices', '/coverage', '/help'];
+// One-page site: the former pages now point to their section on the home page.
+const FORMER_PAGES: Record<string, string> = { '/plans': '#plans', '/devices': '#devices', '/coverage': '#content', '/help': '#faq' };
+const target = (locale: string, source: string) =>
+  source === '/' ? `/${locale}` : FORMER_PAGES[source] ? `/${locale}${FORMER_PAGES[source]}` : `/${locale}${source}`;
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   async redirects() {
-    return UNPREFIXED.flatMap((source) => [
+    const former = Object.entries(FORMER_PAGES).map(([path, anchor]) => ({
+      source: `/:locale(en|fr)${path}`,
+      destination: `/:locale${anchor}`,
+      permanent: true,
+    }));
+    return [...former, ...UNPREFIXED.flatMap((source) => [
       { source, has: [{ type: 'cookie' as const, key: 'NEXT_LOCALE', value: 'fr' }], destination: target('fr', source), permanent: false },
       { source, has: [{ type: 'cookie' as const, key: 'NEXT_LOCALE', value: 'en' }], destination: target('en', source), permanent: false },
       { source, has: [{ type: 'header' as const, key: 'accept-language', value: '^\\s*fr.*' }], destination: target('fr', source), permanent: false },
       { source, destination: target('en', source), permanent: false },
-    ]);
+    ])];
   },
   async headers() {
     return [

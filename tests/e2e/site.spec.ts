@@ -2,8 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const ROUTES = [
-  '/en', '/fr', '/en/plans', '/fr/plans', '/en/devices', '/fr/devices', '/en/coverage', '/fr/coverage',
-  '/en/help', '/fr/help', '/en/legal/terms', '/en/legal/privacy', '/en/legal/cookies', '/en/legal/refunds',
+  '/en', '/fr', '/en/legal/terms', '/en/legal/privacy', '/en/legal/cookies', '/en/legal/refunds',
   '/en/legal/imprint', '/fr/legal/privacy',
 ];
 
@@ -46,9 +45,9 @@ test.describe('routing & SEO', () => {
   });
 
   test('language switcher keeps the current page', async ({ page }) => {
-    await page.goto('/en/devices');
+    await page.goto('/en/legal/privacy');
     await page.getByRole('group', { name: 'Display language' }).getByRole('link', { name: 'FR' }).click();
-    await expect(page).toHaveURL(/\/fr\/devices$/);
+    await expect(page).toHaveURL(/\/fr\/legal\/privacy$/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
   });
 
@@ -59,7 +58,7 @@ test.describe('routing & SEO', () => {
   });
 
   test('no prototype or demo wording remains', async ({ page }) => {
-    for (const route of ['/en', '/fr', '/en/plans', '/fr/help']) {
+    for (const route of ['/en', '/fr']) {
       await page.goto(route);
       const text = (await page.locator('body').innerText()).toLowerCase();
       // "Simulateur / Simulator" (the price simulator) is fine; a *simulated* checkout is not.
@@ -135,15 +134,12 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     await expect(page.getByTestId('price')).toHaveText(/^95\s\$$/);
   });
 
-  test('price matrix lists every plan and duration, with the extra-screen rule', async ({ page }) => {
-    await page.goto('/en/plans');
-    const table = page.locator('table.matrix');
-    await expect(table).toHaveCount(1);
-    await expect(table.locator('tbody tr')).toHaveCount(3);
-    await expect(table.locator('thead th')).toHaveCount(5);
-    await expect(table).toContainText('$199');
-    await expect(page.locator('.matrix-note')).toContainText('+$10 for 12 months');
-    await expect(page.getByTestId('price-source')).toBeVisible();
+  test('former pages redirect to their section of the one-page site', async ({ request }) => {
+    for (const [from, to] of [['/en/plans', '/en#plans'], ['/fr/help', '/fr#faq'], ['/en/devices', '/en#devices'], ['/fr/coverage', '/fr#content']] as const) {
+      const res = await request.get(from, { maxRedirects: 0 });
+      expect(res.status(), from).toBe(308);
+      expect(res.headers()['location'], from).toMatch(new RegExp(`${to.replace('#', '\\#')}$`));
+    }
   });
 });
 
@@ -281,10 +277,10 @@ test.describe('home page (approved mock-up)', () => {
     expect(new Set(imgs).size).toBe(12);
   });
 
-  test('category cards lead to the content page', async ({ page }) => {
+  test('category cards lead to the most watched genres', async ({ page }) => {
     await openHome(page, '/en');
     await page.locator('#content .cat-card[data-category="movies"]').click();
-    await expect(page).toHaveURL(/\/en\/coverage$/);
+    await expect(page).toHaveURL(/\/en#featured$/);
   });
 
   test('no third-party brand names are shown', async ({ page }) => {
@@ -330,13 +326,13 @@ test.describe('navigation', () => {
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Devices' }).click();
-    await expect(page).toHaveURL(/\/en\/devices$/);
+    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'How it works' }).click();
+    await expect(page).toHaveURL(/\/en#how$/);
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('no horizontal scrolling', async ({ page }) => {
-    for (const r of ['/en', '/fr/plans', '/en/help']) {
+    for (const r of ['/en', '/fr', '/en/legal/privacy']) {
       await page.goto(r);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow, r).toBeLessThanOrEqual(0);
@@ -344,10 +340,36 @@ test.describe('navigation', () => {
   });
 });
 
-test.describe('help forms (network mocked)', () => {
-  test('validates client-side and reports success', async ({ page }) => {
+test.describe('one-page navigation and support (network mocked)', () => {
+  test('header: 3 section links and 2 call-to-action buttons', async ({ page, isMobile }) => {
+    await page.goto('/en');
+    if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
+    const nav = page.getByRole('navigation', { name: 'Main navigation' });
+    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Request a trial', 'Get started']);
+    await expect(nav.getByRole('link', { name: 'Request a trial' })).toHaveCSS('background-color', 'rgb(25, 211, 243)');
+    await expect(nav.getByRole('link', { name: 'Get started' })).toHaveCSS('background-color', 'rgb(209, 254, 23)');
+  });
+
+  test('"Request a trial" opens the support form with the subject pre-filled', async ({ page, isMobile }) => {
+    await page.goto('/en');
+    if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
+    await page.getByRole('link', { name: 'Request a trial' }).click();
+    await expect(page).toHaveURL(/#trial$/);
+    await expect(page.getByTestId('form-support').getByLabel('Subject')).toHaveValue('Trial request');
+  });
+
+  test('floating support button goes to the support form', async ({ page }) => {
+    await page.goto('/fr');
+    const fab = page.getByRole('link', { name: 'Contacter le support' });
+    await expect(fab).toBeVisible();
+    await fab.click();
+    await expect(page).toHaveURL(/\/fr#support$/);
+    await expect(page.getByTestId('form-support')).toBeVisible();
+  });
+
+  test('support form validates client-side and reports success', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 201, json: { ok: true } }));
-    await page.goto('/en/help');
+    await page.goto('/en#support');
     const form = page.getByTestId('form-support');
     test.skip((await form.count()) === 0, 'contact form disabled in this build');
     await form.getByRole('button', { name: 'Send question' }).click();
@@ -362,20 +384,23 @@ test.describe('help forms (network mocked)', () => {
     await expect(form.getByText('Thank you — your question has been recorded.')).toBeVisible();
   });
 
-  test('shows a rate-limit message', async ({ page }) => {
+  test('support form shows a rate-limit message', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
-    await page.goto('/fr/help');
-    const form = page.getByTestId('form-launch_waitlist');
+    await page.goto('/fr#support');
+    const form = page.getByTestId('form-support');
     test.skip((await form.count()) === 0, 'contact form disabled in this build');
+    await form.getByLabel('Nom', { exact: true }).fill('Alex');
     await form.getByLabel('Adresse e-mail').fill('alex@example.test');
+    await form.getByLabel('Objet').fill('Installation');
+    await form.getByLabel('Message').fill('Comment se passera l’installation ?');
     await form.getByRole('checkbox').check();
-    await form.getByRole('button', { name: 'Me prévenir' }).click();
+    await form.getByRole('button', { name: 'Envoyer la question' }).click();
     await expect(form.getByText('Trop de demandes. Veuillez réessayer plus tard.')).toBeVisible();
   });
 });
 
 test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
-  for (const route of ['/en', '/fr/plans', '/en/help', '/en/devices', '/en/coverage', '/en/legal/privacy']) {
+  for (const route of ['/en', '/fr', '/en/legal/privacy']) {
     test(`no violations on ${route}`, async ({ page }) => {
       await page.goto(route);
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();

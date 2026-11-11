@@ -3,6 +3,8 @@ import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { AppWindow, ArrowRight, CirclePlay, Flame, Globe, Headset, Laptop, MessagesSquare, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
+import { ContactForm } from './ContactForm';
+import { isContactFormEnabled } from '@/lib/features';
 import { BENEFIT_ICONS, CATEGORIES, DEVICE_ICONS, ICON_STROKE } from './icons';
 import { LaptopFrame, PhoneFrame, TvFrame } from './visuals/Images';
 
@@ -109,11 +111,11 @@ export function ContentCategories({
             const { key, icon: Icon } = CATEGORIES[i]!;
             return (
               <li key={item.title}>
-                <Link className={`cat-card cat-${key}`} href={`/${locale}/coverage`} data-category={key}>
+                <Link className={`cat-card cat-${key}`} href={`/${locale}#featured`} data-category={key}>
                   <picture>
                     <source type="image/avif" srcSet={catSrcSet(key, 'avif')} sizes={CAT_SIZES} />
                     <source type="image/webp" srcSet={catSrcSet(key, 'webp')} sizes={CAT_SIZES} />
-                    {/* eslint-disable-next-line @next/next/no-img-element -- decorative artwork, responsive sources above */}
+                    { }
                     <img className="cat-art" src={`/images/cat-${key}-400.webp`} alt="" width={1536} height={1024} loading="lazy" decoding="async" />
                   </picture>
                   <span className="cat-icon" aria-hidden="true">
@@ -226,7 +228,7 @@ export function HelpCta({ locale, dict }: { locale: Locale; dict: Dictionary }) 
             <h2 id="help-cta-title">{dict.helpCta.title}</h2>
             <div className="muted">{dict.helpCta.text}</div>
           </div>
-          <Link className="btn" href={`/${locale}/help`}>
+          <Link className="btn" href={`/${locale}#support`}>
             {dict.helpCta.button} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
           </Link>
         </div>
@@ -308,5 +310,30 @@ export function PlanExtras({ dict }: { dict: Dictionary }) {
         })}
       </ul>
     </div>
+  );
+}
+
+/** Support section (one-page site): FAQ follow-up, trial requests and questions by email. */
+export function SupportSection({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+  const h = dict.help;
+  return (
+    <section id="support" aria-labelledby="support-title">
+      {/* "Request a trial" (header) lands here and pre-fills the subject */}
+      <span id="trial" className="anchor-offset" aria-hidden="true" />
+      <div className="wrap faq-layout">
+        <div>
+          <div className="eyebrow">{h.supportEyebrow}</div>
+          <h2 id="support-title" className="section-title">{h.supportTitle}</h2>
+          <p className="sub">{h.supportSub}</p>
+        </div>
+        <div className="card panel-pad support-card">
+          {isContactFormEnabled() ? (
+            <ContactForm kind="support" locale={locale} dict={{ forms: dict.forms, markets: dict.markets }} trialSubject={h.trialSubject} />
+          ) : (
+            <p className="alert err">{h.supportUnavailable}</p>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }

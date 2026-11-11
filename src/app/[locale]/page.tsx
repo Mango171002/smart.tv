@@ -1,5 +1,5 @@
 import { FeaturedIsland, PlansIsland } from '@/components/islands';
-import { Benefits, ContentCategories, PlanExtras, DeviceGrid, Faq, HelpCta, Hero, HowItWorks, InterfacePreview } from '@/components/Sections';
+import { Benefits, ContentCategories, PlanExtras, SupportSection, DeviceGrid, Faq, Hero, HowItWorks, InterfacePreview } from '@/components/Sections';
 import { getDictionary } from '@/i18n/dictionaries';
 import { getPriceTable } from '@/lib/price-source';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
@@ -19,7 +19,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Hero locale={locale} dict={dict} />
       <ContentCategories locale={locale} dict={dict} showHeading={false} />
       {/* Below-the-fold islands hydrate only when they come near the viewport. */}
-      <FeaturedIsland locale={locale} dict={dict.featured} />
+      <FeaturedIsland dict={dict.featured} />
       <Benefits dict={dict} />
       <section id="plans" aria-labelledby="plans-title">
         <div className="wrap">
@@ -42,8 +42,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <InterfacePreview dict={dict} />
       <DeviceGrid dict={dict} />
       <HowItWorks dict={dict} />
-      <Faq dict={dict} limit={5} />
-      <HelpCta locale={locale} dict={dict} />
+      <Faq dict={dict} />
+      <SupportSection locale={locale} dict={dict} />
     </>
   );
 }

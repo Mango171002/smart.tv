@@ -416,19 +416,11 @@ textarea.input { min-height: 120px; resize: vertical; }
 }
 
 /* ==========================================================================
-   Home page — approved mock-up (announcement bar, hero stage, neon cards,
+   Home page — approved mock-up (hero stage, neon cards,
    featured carousel, features bar)
    ========================================================================== */
 
 /* Announcement bar */
-.announce { background: var(--color-surface); border-bottom: 1px solid var(--line); font-size: 13px; }
-.announce-in { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 40px; padding-top: 6px; padding-bottom: 6px; }
-.announce-zap { color: var(--color-lime); }
-.announce b { color: var(--color-ink); font-weight: 700; }
-.announce-sep { color: var(--line-strong); }
-.announce-text { color: var(--color-muted); }
-.announce-cta { margin-left: auto; color: var(--color-cyan); font-weight: 700; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-@media (hover: hover) { .announce-cta:hover { text-decoration: underline; } }
 
 /* Active navigation item: white text + cyan underline */
 .links a { position: relative; padding: 6px 0; }
@@ -551,14 +543,10 @@ section.content-tight .cat-grid { margin-top: 0; }
 }
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; grid-template-areas: 'copy' 'stage' 'checks'; }
-  .announce-sep, .announce-text { display: none; }
-  .announce-in { justify-content: space-between; }
   .carousel-track { grid-auto-columns: calc((100% - 16px) / 1.6); }
   .carousel-btn { display: none; }
 }
 @media (max-width: 580px) {
-  .announce-in { font-size: 12px; gap: 8px; }
-  .announce-in b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .hero .btn { width: 100%; min-width: 0; }
   .actions { flex-direction: column; }
   .hl-lime { font-size: 25px; }

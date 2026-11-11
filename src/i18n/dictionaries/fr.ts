@@ -70,11 +70,6 @@ const fr: Dictionary = {
     { title: 'Données protégées', text: 'Aucun paiement avant l’ouverture' },
     { title: 'Support par e-mail', text: 'Une équipe à votre écoute' },
   ],
-  announce: {
-    lead: 'Lancement prochain — IPTV International',
-    text: 'Streaming premium : Sport • Cinéma • TV en direct • Multi-appareils',
-    cta: 'S’inscrire à l’alerte',
-  },
   featured: {
     title: 'Les plus regardés',
     seeAll: 'Voir tout',

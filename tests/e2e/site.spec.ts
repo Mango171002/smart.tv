@@ -281,13 +281,6 @@ test.describe('home page (approved mock-up)', () => {
     expect(new Set(imgs).size).toBe(12);
   });
 
-  test('announcement bar links to pre-registration', async ({ page }) => {
-    await openHome(page, '/fr');
-    await page.getByRole('link', { name: /S’inscrire à l’alerte/ }).click();
-    await expect(page).toHaveURL(/\/fr\/help#prereg$/);
-    await expect(page.locator('#prereg')).toBeVisible();
-  });
-
   test('category cards lead to the content page', async ({ page }) => {
     await openHome(page, '/en');
     await page.locator('#content .cat-card[data-category="movies"]').click();

@@ -68,11 +68,6 @@ const en = {
     { title: 'Protected data', text: 'No payment before launch' },
     { title: 'Email support', text: 'A team listening to you' },
   ],
-  announce: {
-    lead: 'Launching soon — IPTV International',
-    text: 'Premium streaming: Sports • Movies • Live TV • Multi-device',
-    cta: 'Get the launch alert',
-  },
   featured: {
     title: 'Most watched',
     seeAll: 'See all',

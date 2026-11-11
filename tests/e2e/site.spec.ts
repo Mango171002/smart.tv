@@ -306,7 +306,7 @@ test.describe('home page (approved mock-up)', () => {
 });
 
 test.describe('layout (fluid container)', () => {
-  for (const width of [390, 768, 1280, 1440, 1920, 2560]) {
+  for (const width of [390, 768, 1024, 1180, 1280, 1440, 1920, 2560]) {
     test(`aligned edges and no horizontal scroll at ${width}px`, async ({ browser }) => {
       const page = await browser.newPage({ viewport: { width, height: 1000 } });
       await openHome(page, '/fr');

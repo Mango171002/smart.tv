@@ -79,8 +79,8 @@ export function Benefits({ dict }: { dict: Dictionary }) {
 }
 
 /** The four official category cards (neon outline style). */
-/** Generated category artwork (npm run hero → public/images/cat-<key>-<w>.avif|webp). Hidden on phones. */
-const CAT_SIZES = '(max-width: 580px) 1px, (max-width: 900px) 45vw, 20vw';
+/** Generated category artwork (npm run hero → public/images/cat-<key>-<w>.avif|webp). */
+const CAT_SIZES = '(max-width: 900px) 50vw, 20vw';
 const catSrcSet = (key: string, ext: 'avif' | 'webp') => `/images/cat-${key}-400.${ext} 400w, /images/cat-${key}-800.${ext} 800w`;
 
 export function ContentCategories({

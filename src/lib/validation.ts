@@ -22,14 +22,24 @@ const contactBase = {
   website: z.string().max(0).optional(),
 };
 
+/** International phone number, E.164 (e.g. +14155550123). */
+export const phone = z.string().trim().regex(/^\+[1-9]\d{6,14}$/);
+
 export const DEVICE_KEYS = ['smart_tv', 'streaming_device', 'mobile', 'computer'] as const;
 
 export const contactSchema = z.discriminatedUnion('kind', [
   z.object({
     kind: z.literal('support'),
     name: z.string().trim().min(1).max(120),
+    phone: phone.optional(),
     subject: z.string().trim().min(1).max(150),
     message: z.string().trim().min(10).max(4000),
+    ...contactBase,
+  }),
+  z.object({
+    kind: z.literal('trial_request'),
+    name: z.string().trim().min(1).max(120),
+    phone,
     ...contactBase,
   }),
   z.object({

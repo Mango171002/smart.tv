@@ -328,62 +328,77 @@ test.describe('navigation', () => {
   });
 });
 
-test.describe('one-page navigation and support (network mocked)', () => {
+test.describe('one-page navigation, trial & support requests (network mocked)', () => {
   test('header: 3 section links and 2 call-to-action buttons', async ({ page, isMobile }) => {
     await page.goto('/en');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Request a trial', 'Get started']);
-    await expect(nav.getByRole('link', { name: 'Request a trial' })).toHaveCSS('background-color', 'rgb(25, 211, 243)');
+    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Get started']);
+    await expect(nav.getByRole('button', { name: 'Request a trial' })).toHaveCSS('background-color', 'rgb(25, 211, 243)');
     await expect(nav.getByRole('link', { name: 'Get started' })).toHaveCSS('background-color', 'rgb(209, 254, 23)');
   });
 
-  test('"Request a trial" opens the support form with the subject pre-filled', async ({ page, isMobile }) => {
+  test('"Request a trial" opens a window: name, email, phone with country code', async ({ page, isMobile }) => {
+    let sent: Record<string, unknown> | null = null;
+    await page.route('**/api/contact', async (route) => {
+      sent = route.request().postDataJSON();
+      await route.fulfill({ status: 201, json: { ok: true } });
+    });
     await page.goto('/en');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
-    await page.getByRole('link', { name: 'Request a trial' }).click();
-    await expect(page).toHaveURL(/#trial$/);
-    await expect(page.getByTestId('form-support').getByLabel('Subject')).toHaveValue('Trial request');
+    await page.getByRole('button', { name: 'Request a trial' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Request a trial' });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Send request' }).click();
+    await expect(dialog.getByText('Enter your name.')).toBeVisible();
+    await expect(dialog.getByText('Enter a valid phone number.')).toBeVisible();
+    const countries = dialog.getByRole('combobox', { name: 'Country calling code' });
+    expect(await countries.locator('option').count()).toBeGreaterThan(200);
+    await countries.selectOption('FR');
+    await dialog.getByLabel('Full name').fill('Alex Martin');
+    await dialog.getByLabel('Email address').fill('alex@example.test');
+    await dialog.getByLabel('Phone number').fill('06 12 34 56 78');
+    await dialog.getByRole('checkbox').check();
+    await dialog.getByRole('button', { name: 'Send request' }).click();
+    await expect(page.getByRole('dialog', { name: 'Request sent!' })).toContainText('Thank you, Alex Martin.');
+    expect(sent).toMatchObject({ kind: 'trial_request', name: 'Alex Martin', email: 'alex@example.test', phone: '+33612345678', market: 'EU', consent: true });
   });
 
-  test('floating support button goes to the support form', async ({ page }) => {
+  test('floating support button opens the support window (question required)', async ({ page }) => {
+    let sent: Record<string, unknown> | null = null;
+    await page.route('**/api/contact', async (route) => {
+      sent = route.request().postDataJSON();
+      await route.fulfill({ status: 201, json: { ok: true } });
+    });
     await page.goto('/en');
-    const fab = page.getByRole('link', { name: 'Contact support' });
-    await expect(fab).toBeVisible();
-    await fab.click();
-    await expect(page).toHaveURL(/\/en#support$/);
-    await expect(page.getByTestId('form-support')).toBeVisible();
+    await page.getByRole('button', { name: 'Contact support' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Contact support' });
+    await dialog.getByLabel('Full name').fill('Alex');
+    await dialog.getByLabel('Email address').fill('alex@example.test');
+    await dialog.getByLabel('Phone number').fill('4155550123');
+    await dialog.getByRole('checkbox').check();
+    await dialog.getByRole('button', { name: 'Send request' }).click();
+    await expect(dialog.getByText('Your message must be at least 10 characters.')).toBeVisible();
+    await dialog.getByLabel('Your question').fill('How will the installation work?');
+    await dialog.getByRole('button', { name: 'Send request' }).click();
+    await expect(page.getByRole('dialog', { name: 'Request sent!' })).toBeVisible();
+    expect(sent).toMatchObject({ kind: 'support', phone: '+14155550123', subject: 'Support request', message: 'How will the installation work?' });
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
   });
 
-  test('support form validates client-side and reports success', async ({ page }) => {
-    await page.route('**/api/contact', (route) => route.fulfill({ status: 201, json: { ok: true } }));
-    await page.goto('/en#support');
-    const form = page.getByTestId('form-support');
-    test.skip((await form.count()) === 0, 'contact form disabled in this build');
-    await form.getByRole('button', { name: 'Send question' }).click();
-    await expect(form.getByText('Please check the highlighted fields.')).toBeVisible();
-    await expect(form.getByLabel('Email address')).toHaveAttribute('aria-invalid', 'true');
-    await form.getByLabel('Name', { exact: true }).fill('Alex');
-    await form.getByLabel('Email address').fill('alex@example.test');
-    await form.getByLabel('Subject').fill('Setup');
-    await form.getByLabel('Message').fill('How will device setup work?');
-    await form.getByRole('checkbox').check();
-    await form.getByRole('button', { name: 'Send question' }).click();
-    await expect(form.getByText('Thank you — your question has been recorded.')).toBeVisible();
-  });
-
-  test('support form shows a rate-limit message', async ({ page }) => {
+  test('request window shows a rate-limit message', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
-    await page.goto('/en#support');
-    const form = page.getByTestId('form-support');
-    test.skip((await form.count()) === 0, 'contact form disabled in this build');
-    await form.getByLabel('Name', { exact: true }).fill('Alex');
-    await form.getByLabel('Email address').fill('alex@example.test');
-    await form.getByLabel('Subject').fill('Setup');
-    await form.getByLabel('Message').fill('How will the installation work?');
-    await form.getByRole('checkbox').check();
-    await form.getByRole('button', { name: 'Send question' }).click();
-    await expect(form.getByText('Too many requests. Please try again later.')).toBeVisible();
+    await page.goto('/en');
+    await page.getByRole('button', { name: 'Contact support' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Contact support' });
+    await dialog.getByLabel('Full name').fill('Alex');
+    await dialog.getByLabel('Email address').fill('alex@example.test');
+    await dialog.getByLabel('Phone number').fill('4155550123');
+    await dialog.getByLabel('Your question').fill('How will the installation work?');
+    await dialog.getByRole('checkbox').check();
+    await dialog.getByRole('button', { name: 'Send request' }).click();
+    await expect(dialog.getByText('Too many requests. Please try again later.')).toBeVisible();
   });
 });
 
@@ -395,6 +410,14 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
       expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).slice(0, 3).join(', ')}`)).toEqual([]);
     });
   }
+
+  test('request window has no violations', async ({ page }) => {
+    await page.goto('/en');
+    await page.getByRole('button', { name: 'Contact support' }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();
+    expect(results.violations.map((v) => v.id)).toEqual([]);
+  });
 
   test('checkout dialog has no violations', async ({ page }) => {
     await openHome(page, '/en');

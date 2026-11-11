@@ -184,6 +184,19 @@ insert into public.contact_requests (kind, name, email, locale, market_code, sub
 values ('support', 'Alice', 'alice@example.test', 'en', 'US', 'Device help', 'How do I set up my TV?', true, 'v0-draft');
 select pg_temp.check(true, 'anon can submit support request');
 
+-- Trial requests (name + E.164 phone required, insert-only)
+insert into public.contact_requests (kind, name, email, phone, locale, market_code, consent_given, consent_text_version)
+  values ('trial_request', 'Alex', 'trial@example.test', '+14155550123', 'en', 'US', true, 'v-test');
+select pg_temp.check(true, 'anon can submit a trial request with a phone number');
+select pg_temp.expect_error(
+  $$insert into public.contact_requests (kind, name, email, consent_given, consent_text_version) values ('trial_request', 'Alex', 'trial2@example.test', true, 'v-test')$$,
+  '23514', 'trial request without phone is rejected');
+select pg_temp.expect_error(
+  $$insert into public.contact_requests (kind, name, email, phone, consent_given, consent_text_version) values ('trial_request', 'Alex', 'trial3@example.test', '0612', true, 'v-test')$$,
+  '23514', 'phone must be in international format');
+select pg_temp.expect_error($$select phone from public.contact_requests$$, '42501', 'anon cannot read phone numbers');
+
+
 select pg_temp.expect_error(
   $$insert into public.contact_requests (kind, email, consent_given, consent_text_version)
     values ('launch_waitlist', 'nobody@example.test', false, 'v0-draft')$$, '42501', 'consent is mandatory (RLS)');

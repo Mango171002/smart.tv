@@ -126,3 +126,20 @@ describe('input validation', () => {
     expect(contactSchema.safeParse({ ...support, locale: 'de' }).success).toBe(false);
   });
 });
+
+describe('trial requests', () => {
+  it('requires a name and an international phone number', async () => {
+    const { contactSchema } = await import('@/lib/validation');
+    const base = { kind: 'trial_request', email: 'a@b.co', locale: 'en', consent: true } as const;
+    expect(contactSchema.safeParse({ ...base, name: 'Alex', phone: '+33612345678' }).success).toBe(true);
+    expect(contactSchema.safeParse({ ...base, name: 'Alex' }).success).toBe(false);
+    expect(contactSchema.safeParse({ ...base, phone: '+33612345678' }).success).toBe(false);
+    expect(contactSchema.safeParse({ ...base, name: 'Alex', phone: '0612345678' }).success).toBe(false);
+  });
+  it('builds E.164 numbers from a calling code and a national number', async () => {
+    const { toE164 } = await import('@/components/RequestDialog');
+    expect(toE164('33', '06 12 34 56 78')).toBe('+33612345678');
+    expect(toE164('1', '(415) 555-0123')).toBe('+14155550123');
+    expect(toE164('44', '12')).toBeNull();
+  });
+});

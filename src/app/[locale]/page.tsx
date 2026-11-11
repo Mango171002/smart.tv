@@ -1,5 +1,5 @@
 import { FeaturedIsland, PlansIsland } from '@/components/islands';
-import { Benefits, ContentCategories, PlanExtras, SupportSection, DeviceGrid, Faq, Hero, HowItWorks, InterfacePreview } from '@/components/Sections';
+import { Benefits, ContentCategories, PlanExtras, DeviceGrid, Faq, Hero, HowItWorks, InterfacePreview } from '@/components/Sections';
 import { getDictionary } from '@/i18n/dictionaries';
 import { getPriceTable } from '@/lib/price-source';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
@@ -43,7 +43,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <DeviceGrid dict={dict} />
       <HowItWorks dict={dict} />
       <Faq dict={dict} />
-      <SupportSection locale={locale} dict={dict} />
     </>
   );
 }

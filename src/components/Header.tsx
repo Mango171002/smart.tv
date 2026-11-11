@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { Brand } from './Brand';
+import { openRequest } from './RequestHost';
 
 export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
   const [open, setOpen] = useState(false);
@@ -39,9 +40,17 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
             </a>
           ))}
           <span className="nav-ctas">
-            <a className="btn btn-sm" href={`/${locale}#trial`} onClick={() => setOpen(false)}>
+            <button
+              type="button"
+              className="btn btn-sm"
+              aria-haspopup="dialog"
+              onClick={() => {
+                setOpen(false);
+                openRequest('trial');
+              }}
+            >
               {nav.trial}
-            </a>
+            </button>
             <a className="btn btn-sm btn-lime" href={`/${locale}#plans`} onClick={() => setOpen(false)}>
               {nav.getStarted}
             </a>

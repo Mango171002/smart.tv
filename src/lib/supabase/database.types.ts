@@ -25,11 +25,12 @@ export type Database = {
           created_at: string;
           email: string;
           id: string;
-          kind: 'support' | 'launch_waitlist';
+          kind: 'support' | 'launch_waitlist' | 'trial_request';
           locale: string;
           market_code: string | null;
           message: string | null;
           name: string | null;
+          phone: string | null;
           status: string;
           subject: string | null;
           interest_duration_months: number | null;
@@ -40,11 +41,12 @@ export type Database = {
           consent_given: boolean;
           consent_text_version: string;
           email: string;
-          kind: 'support' | 'launch_waitlist';
+          kind: 'support' | 'launch_waitlist' | 'trial_request';
           locale?: string;
           market_code?: string | null;
           message?: string | null;
           name?: string | null;
+          phone?: string | null;
           subject?: string | null;
           interest_duration_months?: number | null;
           interest_streams?: number | null;
@@ -162,7 +164,7 @@ export type Database = {
     Views: { [_ in never]: never };
     Functions: { [_ in never]: never };
     Enums: {
-      contact_kind: 'support' | 'launch_waitlist';
+      contact_kind: 'support' | 'launch_waitlist' | 'trial_request';
       order_status: OrderStatus;
       price_status: 'illustrative' | 'approved' | 'retired';
     };

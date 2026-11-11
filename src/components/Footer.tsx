@@ -29,7 +29,6 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
             <li><Link href={`/${locale}#devices`}>{dict.nav.devices}</Link></li>
             <li><Link href={`/${locale}#how`}>{dict.nav.how}</Link></li>
             <li><Link href={`/${locale}#faq`}>{dict.nav.help}</Link></li>
-            <li><Link href={`/${locale}#support`}>{dict.nav.support}</Link></li>
           </ul>
         </nav>
         <nav aria-label={f.legalTitle}>

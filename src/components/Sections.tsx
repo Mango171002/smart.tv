@@ -4,7 +4,6 @@ import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { AppWindow, ArrowRight, CirclePlay, Flame, Globe, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { BENEFIT_ICONS, CATEGORIES, DEVICE_ICONS, ICON_STROKE } from './icons';
-import { LaptopFrame, PhoneFrame, TvFrame } from './visuals/Images';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
 const HERO_WIDTHS = [480, 768, 1080, 1440];
@@ -214,6 +213,25 @@ export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
   );
 }
 
+/** Generated device images (npm run hero → public/images/screen-<device>-<w>.avif|webp). */
+const DEVICE_SHOTS = {
+  tv: { widths: [640, 1280], w: 1672, h: 941, sizes: '(max-width: 900px) 92vw, 40vw' },
+  laptop: { widths: [520, 1040], w: 1448, h: 1086, sizes: '(max-width: 900px) 46vw, 30vw' },
+  phone: { widths: [240, 480], w: 940, h: 1672, sizes: '(max-width: 900px) 30vw, 11vw' },
+} as const;
+
+function DeviceShot({ device }: { device: keyof typeof DEVICE_SHOTS }) {
+  const d = DEVICE_SHOTS[device];
+  const set = (ext: string) => d.widths.map((w) => `/images/screen-${device}-${w}.${ext} ${w}w`).join(', ');
+  return (
+    <picture>
+      <source type="image/avif" srcSet={set('avif')} sizes={d.sizes} />
+      <source type="image/webp" srcSet={set('webp')} sizes={d.sizes} />
+      <img className="device-shot" src={`/images/screen-${device}-${d.widths[0]}.webp`} alt="" width={d.w} height={d.h} loading="lazy" decoding="async" />
+    </picture>
+  );
+}
+
 export function InterfacePreview({ dict }: { dict: Dictionary }) {
   const p = dict.preview;
   return (
@@ -224,15 +242,15 @@ export function InterfacePreview({ dict }: { dict: Dictionary }) {
         <p className="sub">{p.sub}</p>
         <div className="preview-stage" role="img" aria-label={`${p.caption}: ${p.labels.join(', ')}`}>
           <figure className="preview-item preview-tv">
-            <TvFrame />
+            <DeviceShot device="tv" />
             <figcaption>{p.labels[0]}</figcaption>
           </figure>
           <figure className="preview-item preview-laptop">
-            <LaptopFrame />
+            <DeviceShot device="laptop" />
             <figcaption>{p.labels[1]}</figcaption>
           </figure>
           <figure className="preview-item preview-phone">
-            <PhoneFrame />
+            <DeviceShot device="phone" />
             <figcaption>{p.labels[2]}</figcaption>
           </figure>
         </div>

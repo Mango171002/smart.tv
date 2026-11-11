@@ -1144,3 +1144,25 @@ html { scroll-padding-top: 84px; }
 .phone-input span { position: absolute; left: 14px; top: 50%; translate: 0 -50%; color: var(--color-muted); font-weight: 650; pointer-events: none; }
 .phone-input .input { padding-left: 64px; }
 @media (max-width: 520px) { .phone-row { grid-template-columns: 1fr; } }
+/* "One experience on every screen": generated device images, blended into the background */
+.preview-stage { grid-template-columns: 1.55fr 1.1fr 0.5fr; align-items: end; gap: clamp(14px, 2vw, 34px); padding-inline: 0; }
+.preview-item picture { display: block; }
+.device-shot {
+  display: block; width: 100%; height: auto; mix-blend-mode: lighten;
+  -webkit-mask-image: radial-gradient(75% 75% at 50% 50%, black 72%, transparent 100%);
+  mask-image: radial-gradient(75% 75% at 50% 50%, black 72%, transparent 100%);
+}
+.preview-phone .device-shot { -webkit-mask-image: none; mask-image: none; }
+@media (max-width: 900px) {
+  .preview-stage { grid-template-columns: 1fr 0.42fr; }
+  .preview-tv { grid-column: 1 / -1; }
+  .preview-phone { width: auto; margin: 0; }
+}
+#preview { isolation: auto; }
+/* Soft fade on every edge (sides + floor reflections at the bottom) */
+.preview-item .device-shot, .preview-phone .device-shot {
+  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%), linear-gradient(to right, transparent 0, black 8%, black 92%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, black 70%, transparent 100%), linear-gradient(to right, transparent 0, black 8%, black 92%, transparent 100%);
+  mask-composite: intersect;
+}

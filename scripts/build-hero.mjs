@@ -59,3 +59,15 @@ for (const tier of ['starter', 'plus', 'ultra']) {
   }
   console.log(`plan-${tier}: avif ${(statSync(`${OUT}plan-${tier}-480.avif`).size / 1024).toFixed(0)}/${(statSync(`${OUT}plan-${tier}-960.avif`).size / 1024).toFixed(0)} KB`);
 }
+
+// "One experience on every screen" device images (assets/screens/screen-<device>.png)
+const SCREENS = { tv: [640, 1280], laptop: [520, 1040], phone: [240, 480] };
+for (const [device, widths] of Object.entries(SCREENS)) {
+  const src = fileURLToPath(new URL(`../assets/screens/screen-${device}.png`, import.meta.url));
+  for (const w of widths) {
+    const base = sharp(src).resize({ width: w });
+    await base.clone().avif({ quality: 52, effort: 6 }).toFile(`${OUT}screen-${device}-${w}.avif`);
+    await base.clone().webp({ quality: 74, effort: 6 }).toFile(`${OUT}screen-${device}-${w}.webp`);
+  }
+  console.log(`screen-${device}: avif ${widths.map((w) => (statSync(`${OUT}screen-${device}-${w}.avif`).size / 1024).toFixed(0)).join('/')} KB`);
+}

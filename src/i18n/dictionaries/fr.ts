@@ -103,6 +103,16 @@ const fr: Dictionary = {
     sub: 'Trois offres annuelles, puis des tarifs dégressifs sur 24 mois, 36 mois ou à vie. Pré-inscription gratuite, sans paiement avant l’ouverture.',
     footnote: 'Prix de lancement prévus, en dollars américains (USD), hors taxes. Contenus et nombre de chaînes confirmés par pays avant l’ouverture.',
     perYear: '/ an',
+    devicesBar: {
+      title: 'Pensé pour tous vos appareils',
+      items: ['Smart TV', 'Android TV', 'Fire TV', 'Apple TV', 'Mobile & tablette', 'PC & Mac'],
+    },
+    trust: [
+      { title: 'Installation rapide', text: 'Guide pas à pas par appareil' },
+      { title: 'Données protégées', text: 'Aucun paiement avant l’ouverture' },
+      { title: 'À votre écoute', text: 'Centre d’aide et support e-mail' },
+      { title: 'Conditions claires', text: 'Tout est affiché avant l’achat' },
+    ],
     catalogueChannels: '**+{n}** chaînes TV en direct',
     catalogueVod: '**+{n}** films & séries (VOD)',
     recommended: 'Recommandé',
@@ -110,7 +120,7 @@ const fr: Dictionary = {
     tiers: {
       starter: {
         name: 'Starter',
-        tagline: 'L’essentiel pour bien démarrer',
+        tagline: 'L’essentiel pour démarrer',
         features: [
           { icon: 'tv', text: 'Bouquet **Essentiel**' },
           { icon: 'news', text: 'Chaînes nationales & info' },

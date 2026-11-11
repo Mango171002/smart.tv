@@ -1,4 +1,5 @@
 import { PlanConfigurator } from '@/components/PlanConfigurator';
+import { PlanExtras } from '@/components/Sections';
 import { PriceMatrix } from '@/components/PriceMatrix';
 import { HelpCta } from '@/components/Sections';
 import { getDictionary } from '@/i18n/dictionaries';
@@ -28,7 +29,9 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
             locale={locale}
             table={table}
             dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout }}
-          />
+          >
+            <PlanExtras dict={dict} />
+          </PlanConfigurator>
           <p className="footnote">{dict.plans.footnote}</p>
           <p className="footnote" data-testid="price-source">{dict.plans.source[source]}</p>
         </div>

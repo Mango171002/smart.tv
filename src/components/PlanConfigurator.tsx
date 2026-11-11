@@ -5,6 +5,10 @@ import {
   ArrowRight,
   BadgeCheck,
   CalendarClock,
+  Crown,
+  Gem,
+  MonitorPlay,
+  Star,
   Check,
   Clapperboard,
   Globe,
@@ -20,7 +24,7 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
 import { CATALOGUE } from '@/config/catalogue';
@@ -57,6 +61,13 @@ function catalogueLines(tier: Tier, p: Dictionary['plans'], locale: Locale) {
   return lines;
 }
 
+/** Plan identity: icon + artwork (artwork can be replaced by generated images later). */
+const TIER_LOOK: Record<Tier, { Icon: LucideIcon; art: string }> = {
+  starter: { Icon: MonitorPlay, art: '/visuals/cat-movies.svg' },
+  plus: { Icon: Crown, art: '/visuals/featured-football.svg' },
+  ultra: { Icon: Gem, art: '/visuals/cat-streaming.svg' },
+};
+
 const loadDialog = () => import('./CheckoutDialog').then((m) => m.CheckoutDialog);
 // Downloaded on demand (prefetched on hover/focus of the button) to keep the initial JS small.
 const CheckoutDialog = dynamic(loadDialog, { ssr: false });
@@ -65,9 +76,11 @@ export interface ConfiguratorProps {
   locale: Locale;
   table: PriceTable;
   dict: Pick<Dictionary, 'plans' | 'common' | 'markets' | 'checkout'>;
+  /** Rendered between the plan cards and the simulator (server-rendered content). */
+  children?: ReactNode;
 }
 
-export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
+export function PlanConfigurator({ locale, table, dict, children }: ConfiguratorProps) {
   const [tier, setTier] = useState<Tier>('plus');
   const [term, setTerm] = useState<Term>('12m');
   const [streams, setStreams] = useState<StreamCount>(1);
@@ -100,14 +113,31 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
         {TIERS.map((t) => {
           const yearly = computeQuote(table, { tier: t, term: '12m', streams: 1 });
           const info = p.tiers[t];
+          const TierIcon = TIER_LOOK[t].Icon;
           return (
             <li key={t} className={`tier-card${t === 'plus' ? ' is-recommended' : ''}`} data-tier={t}>
-              {t === 'plus' && <span className="tier-badge">{p.recommended}</span>}
-              <h3 className="tier-name">{info.name}</h3>
-              <p className="tier-tagline">{info.tagline}</p>
+              {t === 'plus' && (
+                <span className="tier-badge">
+                  <Star size={13} strokeWidth={2.5} aria-hidden="true" /> {p.recommended}
+                </span>
+              )}
+              {/* eslint-disable-next-line @next/next/no-img-element -- decorative artwork */}
+              <img className="tier-art" src={TIER_LOOK[t].art} alt="" width={480} height={270} loading="lazy" decoding="async" />
+              <div className="tier-head">
+                <span className="tier-icon" aria-hidden="true">
+                  <TierIcon size={30} strokeWidth={1.75} />
+                </span>
+                <div>
+                  <h3 className="tier-name">{info.name}</h3>
+                  <p className="tier-tagline">{info.tagline}</p>
+                </div>
+              </div>
               <p className="tier-price">
                 <span data-testid={`tier-price-${t}`}>{money(yearly.amountMinor)}</span> <small>{p.perYear}</small>
               </p>
+              {yearly.monthlyEquivalentMinor !== null && (
+                <p className="tier-monthly">{fill(dict.common.perMonth, { price: money(yearly.monthlyEquivalentMinor) })}</p>
+              )}
               <ul className="tier-features">
                 {catalogueLines(t, p, locale).map((line) => (
                   <li key={line.key} className="is-accent" data-testid={`catalogue-${line.key}-${t}`}>
@@ -133,6 +163,8 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
           );
         })}
       </ul>
+
+      {children}
 
       {/* 2. Simulator: text on the left (40%), card on the right (60%) */}
       <div className="sim-layout" ref={simulatorRef} tabIndex={-1}>

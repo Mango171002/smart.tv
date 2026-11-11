@@ -816,3 +816,70 @@ section.content-tight .cat-grid { margin-top: 0; }
 .tier-features li { white-space: nowrap; }
 .tier-features li > span { overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 1180px) and (min-width: 901px) { .tier-features li { font-size: 13px; gap: 8px; } }
+
+/* ==========================================================================
+   Plan cards v2 (owner mock-up 11/11/2026): icon + artwork + monthly pill,
+   then platforms bar and reassurance bar below the cards.
+   ========================================================================== */
+.tier-card { isolation: isolate; }
+.tier-card > :not(.tier-art):not(.tier-badge) { position: relative; z-index: 1; }
+.tier-art {
+  position: absolute; z-index: 0; top: 0; right: 0; width: 62%; height: auto; aspect-ratio: 16 / 9; object-fit: cover;
+  opacity: .5; pointer-events: none; border-top-right-radius: 19px;
+  -webkit-mask-image: radial-gradient(120% 120% at 100% 0%, black 30%, transparent 72%);
+  mask-image: radial-gradient(120% 120% at 100% 0%, black 30%, transparent 72%);
+}
+.tier-badge { z-index: 2; display: inline-flex; align-items: center; gap: 6px; }
+.tier-head { display: flex; align-items: center; gap: 14px; }
+.tier-head .tier-tagline { margin: 2px 0 0; }
+.tier-icon {
+  display: grid; place-items: center; flex: none; width: 54px; height: 54px; border-radius: 16px; color: var(--tier);
+  border: 1px solid color-mix(in srgb, var(--tier) 45%, transparent);
+  background: color-mix(in srgb, var(--tier) 12%, transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--tier) 25%, transparent);
+}
+.tier-monthly {
+  justify-self: start; align-self: flex-start; margin: -4px 0 0; padding: 4px 14px; border-radius: 999px;
+  font-weight: 750; font-size: 14px; color: var(--tier); font-variant-numeric: tabular-nums;
+  border: 1.5px solid color-mix(in srgb, var(--tier) 60%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 55%, transparent);
+}
+
+.plan-extras { display: grid; gap: 22px; width: 100%; margin-inline: auto; margin-top: calc(-1 * clamp(20px, 3vw, 64px)); }
+@media (min-width: 1024px) { .plan-extras { max-width: min(86%, 1320px); } }
+.platforms-bar {
+  display: flex; align-items: center; gap: clamp(16px, 2vw, 32px); padding: 20px clamp(18px, 2vw, 30px);
+  border-radius: 20px; border: 1px solid var(--line-strong); background: var(--color-surface);
+}
+.platforms-title { display: flex; align-items: center; gap: 14px; margin: 0; flex: none; font-weight: 800; font-size: 17px; line-height: 1.25; max-width: 250px; }
+.platforms-title svg { color: var(--color-cyan); flex: none; }
+.platforms-bar ul { list-style: none; margin: 0; padding: 0 0 0 clamp(16px, 2vw, 32px); border-left: 1px solid var(--line-strong); flex: 1; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.platforms-bar li { display: grid; justify-items: center; gap: 8px; text-align: center; font-size: 13px; font-weight: 650; color: var(--color-ink); }
+.platforms-bar li svg { color: var(--color-cyan); }
+.platforms-bar li:nth-child(2) svg { color: var(--color-lime); }
+.platforms-bar li:nth-child(3) svg { color: var(--color-magenta); }
+.platforms-bar li:nth-child(4) svg { color: var(--color-ink); }
+.platforms-bar li:nth-child(5) svg { color: var(--color-violet); }
+.trust-bar { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
+.trust-bar li { display: flex; align-items: center; gap: 14px; padding: 6px clamp(10px, 1.6vw, 26px); }
+.trust-bar li + li { border-left: 1px solid var(--line-strong); }
+.trust-bar svg { color: var(--cat); flex: none; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cat) 45%, transparent)); }
+.trust-bar b { display: block; font-size: 15px; }
+.trust-bar small { display: block; color: var(--color-muted); font-size: 13px; }
+@media (max-width: 1100px) {
+  .platforms-bar { flex-direction: column; align-items: stretch; }
+  .platforms-title { max-width: none; justify-content: center; }
+  .platforms-bar ul { border-left: 0; padding: 14px 0 0; border-top: 1px solid var(--line-strong); grid-template-columns: repeat(3, 1fr); row-gap: 18px; }
+  .trust-bar { grid-template-columns: repeat(2, 1fr); row-gap: 14px; }
+  .trust-bar li:nth-child(3) { border-left: 0; }
+}
+@media (max-width: 560px) {
+  .trust-bar { grid-template-columns: 1fr; }
+  .trust-bar li + li { border-left: 0; border-top: 1px solid var(--line-strong); padding-top: 14px; }
+}
+@media (min-width: 1101px) {
+  .tier-head .tier-tagline, .trust-bar b { white-space: nowrap; }
+  .trust-bar li { padding-inline: clamp(8px, 1.2vw, 22px); gap: 12px; }
+  .trust-bar b { font-size: 14.5px; }
+  .trust-bar small { font-size: 12.5px; }
+}

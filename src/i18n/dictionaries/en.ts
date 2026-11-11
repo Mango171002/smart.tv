@@ -101,6 +101,16 @@ const en = {
     sub: 'Three yearly plans, then lower prices over 24 months, 36 months or lifetime. Free pre-registration, no payment before launch.',
     footnote: 'Planned launch prices in US dollars (USD), before taxes. Content and number of channels confirmed per country before launch.',
     perYear: '/ year',
+    devicesBar: {
+      title: 'Designed for all your devices',
+      items: ['Smart TV', 'Android TV', 'Fire TV', 'Apple TV', 'Mobile & tablet', 'PC & Mac'],
+    },
+    trust: [
+      { title: 'Quick setup', text: 'Step-by-step guide per device' },
+      { title: 'Data protected', text: 'No payment before launch' },
+      { title: 'Here to help', text: 'Help centre and email support' },
+      { title: 'Clear terms', text: 'Everything shown before you buy' },
+    ],
     catalogueChannels: '**+{n}** live TV channels',
     catalogueVod: '**+{n}** movies & series (VOD)',
     recommended: 'Recommended',

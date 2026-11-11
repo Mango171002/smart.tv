@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { ArrowRight, CirclePlay, Globe, MessagesSquare, Plus } from 'lucide-react';
+import { AppWindow, ArrowRight, CirclePlay, Flame, Globe, Headset, Laptop, MessagesSquare, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { BENEFIT_ICONS, CATEGORIES, DEVICE_ICONS, ICON_STROKE } from './icons';
 import { LaptopFrame, PhoneFrame, TvFrame } from './visuals/Images';
 
@@ -252,5 +252,53 @@ export function InterfacePreview({ dict }: { dict: Dictionary }) {
         <p className="footnote" style={{ textAlign: 'center' }}>{p.caption}</p>
       </div>
     </section>
+  );
+}
+
+const PLATFORM_ICONS: LucideIcon[] = [Tv, TvMinimalPlay, Flame, AppWindow, Smartphone, Laptop];
+const TRUST: { Icon: LucideIcon; cat: string }[] = [
+  { Icon: Zap, cat: 'sports' },
+  { Icon: ShieldCheck, cat: 'live' },
+  { Icon: Headset, cat: 'movies' },
+  { Icon: RefreshCcw, cat: 'streaming' },
+];
+
+/** Below the plan cards: platforms bar + reassurance bar (text only, no third-party logos). */
+export function PlanExtras({ dict }: { dict: Dictionary }) {
+  const p = dict.plans;
+  return (
+    <div className="plan-extras">
+      <div className="platforms-bar">
+        <p className="platforms-title">
+          <MonitorSmartphone size={34} strokeWidth={ICON_STROKE} aria-hidden="true" />
+          <span>{p.devicesBar.title}</span>
+        </p>
+        <ul>
+          {p.devicesBar.items.map((name, i) => {
+            const Icon = PLATFORM_ICONS[i] ?? Tv;
+            return (
+              <li key={name}>
+                <Icon size={26} strokeWidth={ICON_STROKE} aria-hidden="true" />
+                <span>{name}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <ul className="trust-bar">
+        {p.trust.map((item, i) => {
+          const { Icon, cat } = TRUST[i % TRUST.length]!;
+          return (
+            <li key={item.title} className={`cat-${cat}`}>
+              <Icon size={30} strokeWidth={ICON_STROKE} aria-hidden="true" />
+              <span>
+                <b>{item.title}</b>
+                <small>{item.text}</small>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }

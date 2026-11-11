@@ -1014,3 +1014,51 @@ section.content-tight .cat-grid { margin-top: 0; }
   .choices-3 .choice-rich { flex-direction: column; justify-content: center; gap: 6px; text-align: center; padding-inline: 6px; }
 }
 .choices:has(.choice-badge) { row-gap: 20px; }
+
+/* ==========================================================================
+   Site background (owner reference, adapted to the charter — 11/11/2026)
+   Indigo night: the official background tinted with the official violet,
+   a light leak top-left, a violet/magenta veil top-right, a faint tech grid
+   fading in from the corners, and a vignette. Fixed layers drawn once by the
+   compositor: no image download, no repaint on scroll.
+   ========================================================================== */
+body { isolation: isolate; }
+body::before, body::after {
+  content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+}
+body::before {
+  background:
+    /* light leak, top-left */
+    radial-gradient(60% 65% at -6% -8%, color-mix(in srgb, var(--color-violet) 40%, transparent), transparent 70%),
+    /* veil, top-right */
+    radial-gradient(45% 45% at 106% 0%, color-mix(in srgb, var(--color-magenta) 11%, transparent), transparent 72%),
+    /* cool counter-light, bottom-right */
+    radial-gradient(50% 45% at 100% 105%, color-mix(in srgb, var(--color-cyan) 7%, transparent), transparent 70%),
+    /* vignette */
+    radial-gradient(130% 100% at 50% 40%, transparent 60%, color-mix(in srgb, var(--color-bg) 70%, transparent) 100%),
+    /* indigo night: violet-tinted top, official background at the bottom */
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--color-violet) 13%, var(--color-bg)) 0%,
+      color-mix(in srgb, var(--color-violet) 6%, var(--color-bg)) 55%,
+      var(--color-bg) 100%);
+}
+body::after {
+  /* faint tech grid, visible in the bottom-right and top-left corners only */
+  background:
+    linear-gradient(color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 5%, transparent) 1px, transparent 1px) 0 0 / 56px 56px;
+  -webkit-mask-image: radial-gradient(45% 50% at 100% 100%, black, transparent 75%), radial-gradient(30% 35% at 0% 0%, black, transparent 75%);
+  mask-image: radial-gradient(45% 50% at 100% 100%, black, transparent 75%), radial-gradient(30% 35% at 0% 0%, black, transparent 75%);
+}
+@media (max-width: 640px) {
+  body::before {
+    background:
+      radial-gradient(90% 45% at -10% -5%, color-mix(in srgb, var(--color-violet) 32%, transparent), transparent 70%),
+      radial-gradient(70% 35% at 110% 0%, color-mix(in srgb, var(--color-magenta) 10%, transparent), transparent 72%),
+      linear-gradient(180deg, color-mix(in srgb, var(--color-violet) 12%, var(--color-bg)) 0%, var(--color-bg) 100%);
+  }
+}
+@media print { body::before, body::after { display: none; } }
+/* The hero photo has a near-black background: blend it into the indigo site background */
+.hero-stage img { mix-blend-mode: lighten; }
+.hero { isolation: auto; }

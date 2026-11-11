@@ -1067,3 +1067,10 @@ body::after {
 
   .hero-stage { margin: -70px -9% -50px -20%; }
 }
+/* Category cards: generated photos instead of line art — larger, fading towards the title (bottom-left) */
+.cat-art {
+  width: 86%; height: 100%; object-fit: cover; object-position: right top; opacity: .95;
+  -webkit-mask-image: radial-gradient(120% 110% at 100% 0%, black 38%, transparent 78%);
+  mask-image: radial-gradient(120% 110% at 100% 0%, black 38%, transparent 78%);
+}
+.cat-card > :not(picture) { position: relative; z-index: 1; }

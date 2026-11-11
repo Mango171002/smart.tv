@@ -21,3 +21,17 @@ for (const w of HERO_WIDTHS) {
   console.log(`hero-${w}: avif ${kb(`${OUT}hero-${w}.avif`)} KB, webp ${kb(`${OUT}hero-${w}.webp`)} KB`);
 }
 console.log(`source ${meta.width}x${meta.height}`);
+
+// Category cards artwork (assets/categories/cat-<key>.png → public/images/cat-<key>-<w>.avif|webp)
+const CATS = ['sports', 'movies', 'live', 'streaming'];
+const CAT_WIDTHS = [400, 800];
+for (const key of CATS) {
+  const src = fileURLToPath(new URL(`../assets/categories/cat-${key}.png`, import.meta.url));
+  for (const w of CAT_WIDTHS) {
+    const base = sharp(src).resize({ width: w, withoutEnlargement: true });
+    await base.clone().avif({ quality: 50, effort: 6 }).toFile(`${OUT}cat-${key}-${w}.avif`);
+    await base.clone().webp({ quality: 72, effort: 6 }).toFile(`${OUT}cat-${key}-${w}.webp`);
+    const kb = (f) => (statSync(f).size / 1024).toFixed(0);
+    console.log(`cat-${key}-${w}: avif ${kb(`${OUT}cat-${key}-${w}.avif`)} KB, webp ${kb(`${OUT}cat-${key}-${w}.webp`)} KB`);
+  }
+}

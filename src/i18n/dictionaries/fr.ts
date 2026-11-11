@@ -103,6 +103,8 @@ const fr: Dictionary = {
     sub: 'Trois offres annuelles, puis des tarifs dégressifs sur 24 mois, 36 mois ou à vie. Pré-inscription gratuite, sans paiement avant l’ouverture.',
     footnote: 'Prix de lancement prévus, en dollars américains (USD), hors taxes. Contenus et nombre de chaînes confirmés par pays avant l’ouverture.',
     perYear: '/ an',
+    catalogueChannels: '**{n}** chaînes TV en direct',
+    catalogueVod: '**{n}** films & séries (VOD)',
     recommended: 'Recommandé',
     choose: 'Choisir {plan}',
     tiers: {

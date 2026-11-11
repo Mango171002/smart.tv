@@ -13,6 +13,8 @@ import {
   MonitorSmartphone,
   Newspaper,
   ShieldCheck,
+  Film,
+  RadioTower,
   Trophy,
   Tv,
   Zap,
@@ -21,6 +23,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
+import { CATALOGUE } from '@/config/catalogue';
 import { computeQuote, formatMoney, STREAMS, TERMS, TERM_MONTHS, TIERS, type PriceTable, type StreamCount, type Term, type Tier } from '@/lib/pricing';
 
 /** Icon per plan feature (Lucide, Outline Premium). */
@@ -42,6 +45,16 @@ const FEATURE_ICONS: Record<string, LucideIcon> = {
 /** Renders "Quality **4K**" with the starred part in bold. */
 function richText(text: string) {
   return text.split('**').map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part));
+}
+
+/** Channel / movie counts: shown only once confirmed in src/config/catalogue.ts. */
+function catalogueLines(tier: Tier, p: Dictionary['plans'], locale: Locale) {
+  const c = CATALOGUE[tier];
+  const n = (v: number) => new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US').format(v);
+  const lines: { key: string; Icon: LucideIcon; text: string }[] = [];
+  if (c.channels) lines.push({ key: 'channels', Icon: RadioTower, text: fill(p.catalogueChannels, { n: n(c.channels) }) });
+  if (c.vod) lines.push({ key: 'vod', Icon: Film, text: fill(p.catalogueVod, { n: n(c.vod) }) });
+  return lines;
 }
 
 const loadDialog = () => import('./CheckoutDialog').then((m) => m.CheckoutDialog);
@@ -96,6 +109,12 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
                 <span data-testid={`tier-price-${t}`}>{money(yearly.amountMinor)}</span> <small>{p.perYear}</small>
               </p>
               <ul className="tier-features">
+                {catalogueLines(t, p, locale).map((line) => (
+                  <li key={line.key} className="is-accent" data-testid={`catalogue-${line.key}-${t}`}>
+                    <line.Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+                    <span>{richText(line.text)}</span>
+                  </li>
+                ))}
                 {info.features.map((f) => {
                   const Icon = FEATURE_ICONS[f.icon] ?? Check;
                   return (

@@ -101,6 +101,8 @@ const en = {
     sub: 'Three yearly plans, then lower prices over 24 months, 36 months or lifetime. Free pre-registration, no payment before launch.',
     footnote: 'Planned launch prices in US dollars (USD), before taxes. Content and number of channels confirmed per country before launch.',
     perYear: '/ year',
+    catalogueChannels: '**{n}** live TV channels',
+    catalogueVod: '**{n}** movies & series (VOD)',
     recommended: 'Recommended',
     choose: 'Choose {plan}',
     tiers: {

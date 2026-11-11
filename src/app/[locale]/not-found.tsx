@@ -1,14 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import en from '@/i18n/dictionaries/en';
-import fr from '@/i18n/dictionaries/fr';
 
 export default function NotFound() {
-  const pathname = usePathname() ?? '';
-  const locale = pathname.startsWith('/fr') ? 'fr' : 'en';
-  const t = (locale === 'fr' ? fr : en).notFound;
+  const locale = 'en';
+  const t = en.notFound;
   return (
     <div className="wrap page-head" style={{ paddingBottom: 80, textAlign: 'center' }}>
       <div className="eyebrow">404</div>

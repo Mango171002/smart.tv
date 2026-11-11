@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CATALOGUE } from '@/config/catalogue';
 import { TIERS } from '@/lib/pricing';
 import en from '@/i18n/dictionaries/en';
-import fr from '@/i18n/dictionaries/fr';
+
 
 describe('catalogue counts', () => {
   it('are either unset (hidden) or positive whole numbers', () => {
@@ -19,7 +19,7 @@ describe('catalogue counts', () => {
     }
   });
   it('have wording in both languages', () => {
-    for (const d of [en, fr]) {
+    for (const d of [en]) {
       expect(d.plans.catalogueChannels).toContain('{n}');
       expect(d.plans.catalogueVod).toContain('{n}');
     }

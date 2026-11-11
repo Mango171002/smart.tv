@@ -60,7 +60,7 @@ function richText(text: string) {
 /** Channel / movie counts: shown only once confirmed in src/config/catalogue.ts. */
 function catalogueLines(tier: Tier, p: Dictionary['plans'], locale: Locale) {
   const c = CATALOGUE[tier];
-  const n = (v: number) => new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US').format(v);
+  const n = (v: number) => new Intl.NumberFormat(locale === 'en' ? 'en-US' : locale).format(v);
   const lines: { key: string; Icon: LucideIcon; text: string }[] = [];
   if (c.channels) lines.push({ key: 'channels', Icon: RadioTower, text: fill(p.catalogueChannels, { n: n(c.channels) }) });
   if (c.vod) lines.push({ key: 'vod', Icon: Film, text: fill(p.catalogueVod, { n: n(c.vod) }) });

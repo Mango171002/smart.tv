@@ -22,7 +22,7 @@ export function buildMetadata({
     openGraph: {
       title: `${title} | ${siteConfig.brandName}`,
       description,
-      locale: locale === 'fr' ? 'fr_FR' : 'en_US',
+      locale: 'en_US',
       type: 'website',
       siteName: siteConfig.brandName,
     },

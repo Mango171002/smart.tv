@@ -117,9 +117,9 @@ describe('input validation', () => {
   });
   it('requires a message for support but not for the waitlist', () => {
     expect(contactSchema.safeParse({ ...support, message: 'short' }).success).toBe(false);
-    expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'fr', consent: true }).success).toBe(true);
-    expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'fr', consent: true, tier: 'plus', term: '36m', market: 'CA' }).success).toBe(true);
-    expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'fr', consent: true, tier: 'gold' }).success).toBe(false);
+    expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'en', consent: true }).success).toBe(true);
+    expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'en', consent: true, tier: 'plus', term: '36m', market: 'CA' }).success).toBe(true);
+    expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'en', consent: true, tier: 'gold' }).success).toBe(false);
   });
   it('rejects oversized fields and unknown locales', () => {
     expect(contactSchema.safeParse({ ...support, message: 'x'.repeat(4001) }).success).toBe(false);

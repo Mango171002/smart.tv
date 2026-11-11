@@ -2,13 +2,12 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const ROUTES = [
-  '/en', '/fr', '/en/legal/terms', '/en/legal/privacy', '/en/legal/cookies', '/en/legal/refunds',
-  '/en/legal/imprint', '/fr/legal/privacy',
+  '/en', '/en/legal/terms', '/en/legal/privacy', '/en/legal/cookies', '/en/legal/refunds', '/en/legal/imprint',
 ];
 
 
 /** Home page; the plans island hydrates when it nears the viewport, like for a real visitor. */
-async function openHome(page: import('@playwright/test').Page, path: '/en' | '/fr') {
+async function openHome(page: import('@playwright/test').Page, path: '/en') {
   await page.goto(path);
   await page.locator('#plans').scrollIntoViewIfNeeded();
   await page.locator('.offers[data-ready]').waitFor();
@@ -23,32 +22,28 @@ test.describe('routing & SEO', () => {
       expect(res?.status(), route).toBe(200);
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
-      await expect(page.locator('link[rel="alternate"][hreflang="fr"]')).toHaveCount(1);
+      await expect(page.locator('link[rel="alternate"][hreflang="fr"]')).toHaveCount(0);
       titles.add(`${route.slice(0, 3)}:${await page.title()}`);
     }
     expect(titles.size).toBeGreaterThanOrEqual(ROUTES.length - 1);
   });
 
-  test('root redirects using Accept-Language', async ({ browser }) => {
+  test('English only: the root and the former French URLs lead to English', async ({ browser }) => {
     const ctx = await browser.newContext({ locale: 'fr-CA', extraHTTPHeaders: { 'accept-language': 'fr-CA,fr;q=0.9' } });
     const page = await ctx.newPage();
     await page.goto('/');
-    await expect(page).toHaveURL(/\/fr$/);
-    await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+    await expect(page).toHaveURL(/\/en$/);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await page.goto('/fr/legal/privacy');
+    await expect(page).toHaveURL(/\/en\/legal\/privacy$/);
+    await expect(page.getByRole('group', { name: 'Display language' })).toHaveCount(0);
     await ctx.close();
   });
 
   test('unknown pages return a localized 404', async ({ page }) => {
-    const res = await page.goto('/fr/does-not-exist');
+    const res = await page.goto('/en/does-not-exist');
     expect(res?.status()).toBe(404);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Cette page n’existe pas.');
-  });
-
-  test('language switcher keeps the current page', async ({ page }) => {
-    await page.goto('/en/legal/privacy');
-    await page.getByRole('group', { name: 'Display language' }).getByRole('link', { name: 'FR' }).click();
-    await expect(page).toHaveURL(/\/fr\/legal\/privacy$/);
-    await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('This page does not exist.');
   });
 
   test('robots.txt is served', async ({ request }) => {
@@ -58,7 +53,7 @@ test.describe('routing & SEO', () => {
   });
 
   test('no prototype or demo wording remains', async ({ page }) => {
-    for (const route of ['/en', '/fr']) {
+    for (const route of ['/en']) {
       await page.goto(route);
       const text = (await page.locator('body').innerText()).toLowerCase();
       // "Simulateur / Simulator" (the price simulator) is fine; a *simulated* checkout is not.
@@ -105,7 +100,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   test('each plan benefit fits on one line, nothing cut off', async ({ page }) => {
     for (const width of [390, 1024, 1280, 1440, 1920]) {
       await page.setViewportSize({ width, height: 900 });
-      for (const path of ['/en', '/fr'] as const) {
+      for (const path of ['/en'] as const) {
         await openHome(page, path);
         const bad = await page.locator('.tier-features li').evaluateAll((els) =>
           els
@@ -127,15 +122,8 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     await expect(page.getByTestId('price')).toHaveText('$69');
   });
 
-  test('formats prices in French', async ({ page }) => {
-    await openHome(page, '/fr');
-    await expect(page.getByTestId('tier-price-starter')).toHaveText(/^49\s\$$/);
-    await page.locator('[data-term="24m"]').click();
-    await expect(page.getByTestId('price')).toHaveText(/^95\s\$$/);
-  });
-
   test('former pages redirect to their section of the one-page site', async ({ request }) => {
-    for (const [from, to] of [['/en/plans', '/en#plans'], ['/fr/help', '/fr#faq'], ['/en/devices', '/en#devices'], ['/fr/coverage', '/fr#content']] as const) {
+    for (const [from, to] of [['/en/plans', '/en#plans'], ['/fr/help', '/en#faq'], ['/en/devices', '/en#devices'], ['/fr/coverage', '/en#content']] as const) {
       const res = await request.get(from, { maxRedirects: 0 });
       expect(res.status(), from).toBe(308);
       expect(res.headers()['location'], from).toMatch(new RegExp(`${to.replace('#', '\\#')}$`));
@@ -182,14 +170,14 @@ test.describe('pre-registration', () => {
   });
 
   test('requires a valid email and consent before continuing', async ({ page }) => {
-    await openHome(page, '/fr');
-    await page.getByRole('button', { name: /^Pré-inscription gratuite/ }).click();
+    await openHome(page, '/en');
+    await page.getByRole('button', { name: /^Free pre-registration/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
-    await dialog.getByRole('button', { name: /Continuer/ }).click();
-    await expect(dialog.getByText('Saisissez une adresse e-mail valide.')).toBeVisible();
-    await expect(dialog.getByText('Veuillez accepter d’être contacté au sujet du lancement.')).toBeVisible();
-    await expect(dialog.getByText('Choisissez votre région.')).toBeVisible();
-    await expect(dialog.getByLabel('Adresse e-mail')).toHaveAttribute('aria-invalid', 'true');
+    await dialog.getByRole('button', { name: /^Continue/ }).click();
+    await expect(dialog.getByText('Enter a valid email address.')).toBeVisible();
+    await expect(dialog.getByText('Please accept to be contacted about the launch.')).toBeVisible();
+    await expect(dialog.getByText('Choose your region.')).toBeVisible();
+    await expect(dialog.getByLabel('Email address')).toHaveAttribute('aria-invalid', 'true');
     await expect(dialog.getByTestId('quote-status')).toHaveCount(0);
   });
 
@@ -284,7 +272,7 @@ test.describe('home page (approved mock-up)', () => {
   });
 
   test('no third-party brand names are shown', async ({ page }) => {
-    for (const route of ['/en', '/fr']) {
+    for (const route of ['/en']) {
       await page.goto(route);
       const text = (await page.locator('body').innerText()).toLowerCase();
       for (const word of ['uefa', 'champions league', 'nba', 'avatar', 'house of the dragon', 'f1', 'formula 1']) {
@@ -298,7 +286,7 @@ test.describe('layout (fluid container)', () => {
   for (const width of [390, 768, 1024, 1180, 1280, 1440, 1920, 2560]) {
     test(`aligned edges and no horizontal scroll at ${width}px`, async ({ browser }) => {
       const page = await browser.newPage({ viewport: { width, height: 1000 } });
-      await openHome(page, '/fr');
+      await openHome(page, '/en');
       const m = await page.evaluate(() => {
         const left = (s: string) => Math.round(document.querySelector(s)!.getBoundingClientRect().left);
         const g = document.querySelector('.cat-grid')!.getBoundingClientRect();
@@ -332,7 +320,7 @@ test.describe('navigation', () => {
   });
 
   test('no horizontal scrolling', async ({ page }) => {
-    for (const r of ['/en', '/fr', '/en/legal/privacy']) {
+    for (const r of ['/en', '/en/legal/privacy']) {
       await page.goto(r);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow, r).toBeLessThanOrEqual(0);
@@ -359,11 +347,11 @@ test.describe('one-page navigation and support (network mocked)', () => {
   });
 
   test('floating support button goes to the support form', async ({ page }) => {
-    await page.goto('/fr');
-    const fab = page.getByRole('link', { name: 'Contacter le support' });
+    await page.goto('/en');
+    const fab = page.getByRole('link', { name: 'Contact support' });
     await expect(fab).toBeVisible();
     await fab.click();
-    await expect(page).toHaveURL(/\/fr#support$/);
+    await expect(page).toHaveURL(/\/en#support$/);
     await expect(page.getByTestId('form-support')).toBeVisible();
   });
 
@@ -386,21 +374,21 @@ test.describe('one-page navigation and support (network mocked)', () => {
 
   test('support form shows a rate-limit message', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
-    await page.goto('/fr#support');
+    await page.goto('/en#support');
     const form = page.getByTestId('form-support');
     test.skip((await form.count()) === 0, 'contact form disabled in this build');
-    await form.getByLabel('Nom', { exact: true }).fill('Alex');
-    await form.getByLabel('Adresse e-mail').fill('alex@example.test');
-    await form.getByLabel('Objet').fill('Installation');
-    await form.getByLabel('Message').fill('Comment se passera l’installation ?');
+    await form.getByLabel('Name', { exact: true }).fill('Alex');
+    await form.getByLabel('Email address').fill('alex@example.test');
+    await form.getByLabel('Subject').fill('Setup');
+    await form.getByLabel('Message').fill('How will the installation work?');
     await form.getByRole('checkbox').check();
-    await form.getByRole('button', { name: 'Envoyer la question' }).click();
-    await expect(form.getByText('Trop de demandes. Veuillez réessayer plus tard.')).toBeVisible();
+    await form.getByRole('button', { name: 'Send question' }).click();
+    await expect(form.getByText('Too many requests. Please try again later.')).toBeVisible();
   });
 });
 
 test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
-  for (const route of ['/en', '/fr', '/en/legal/privacy']) {
+  for (const route of ['/en', '/en/legal/privacy', '/en/legal/terms']) {
     test(`no violations on ${route}`, async ({ page }) => {
       await page.goto(route);
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();

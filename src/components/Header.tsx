@@ -3,14 +3,12 @@
 import { Menu } from 'lucide-react';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { LOCALES, type Locale } from '@/i18n/config';
+import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { Brand } from './Brand';
 
 export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
-  const pathname = usePathname() || `/${locale}`;
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -20,7 +18,6 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
     return () => document.removeEventListener('keydown', onKey);
   }, [open]);
 
-  const rest = pathname.replace(/^\/(en|fr)(?=\/|$)/, '');
   // One-page site: the menu scrolls to sections of the home page.
   const links = [
     { href: `/${locale}#plans`, label: nav.plans },
@@ -50,23 +47,6 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
             </a>
           </span>
         </nav>
-        <div className="lang" role="group" aria-label={nav.language}>
-          {LOCALES.map((l) => (
-            <Link
-              key={l}
-              href={`/${l}${rest}`}
-              hrefLang={l}
-              lang={l}
-              aria-current={l === locale ? 'true' : undefined}
-              onClick={() => {
-                // Remembers the explicit language choice for unprefixed URLs (1 year).
-                document.cookie = `NEXT_LOCALE=${l}; path=/; max-age=31536000; samesite=lax`;
-              }}
-            >
-              {l.toUpperCase()}
-            </Link>
-          ))}
-        </div>
         <button
           type="button"
           className="mobile-menu"

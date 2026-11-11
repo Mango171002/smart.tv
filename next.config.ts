@@ -17,29 +17,25 @@ const csp = [
   ...(isDev ? [] : ['upgrade-insecure-requests']),
 ].join('; ');
 
-// Unprefixed pages: language from the NEXT_LOCALE cookie, then Accept-Language, else EN.
-// Implemented as config redirects (not a Proxy) so it runs natively on Cloudflare.
-const UNPREFIXED = ['/', '/legal/:doc', '/plans', '/devices', '/coverage', '/help'];
-// One-page site: the former pages now point to their section on the home page.
+// English only (owner decision): unprefixed URLs go to /en, the former French URLs to their English version.
+// Former pages (one-page site) point to their section of the home page.
 const FORMER_PAGES: Record<string, string> = { '/plans': '#plans', '/devices': '#devices', '/coverage': '#content', '/help': '#faq' };
-const target = (locale: string, source: string) =>
-  source === '/' ? `/${locale}` : FORMER_PAGES[source] ? `/${locale}${FORMER_PAGES[source]}` : `/${locale}${source}`;
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   async redirects() {
-    const former = Object.entries(FORMER_PAGES).map(([path, anchor]) => ({
-      source: `/:locale(en|fr)${path}`,
-      destination: `/:locale${anchor}`,
-      permanent: true,
-    }));
-    return [...former, ...UNPREFIXED.flatMap((source) => [
-      { source, has: [{ type: 'cookie' as const, key: 'NEXT_LOCALE', value: 'fr' }], destination: target('fr', source), permanent: false },
-      { source, has: [{ type: 'cookie' as const, key: 'NEXT_LOCALE', value: 'en' }], destination: target('en', source), permanent: false },
-      { source, has: [{ type: 'header' as const, key: 'accept-language', value: '^\\s*fr.*' }], destination: target('fr', source), permanent: false },
-      { source, destination: target('en', source), permanent: false },
-    ])];
+    const former = Object.entries(FORMER_PAGES).flatMap(([path, anchor]) => [
+      { source: `/:locale(en|fr)${path}`, destination: `/en${anchor}`, permanent: true },
+      { source: path, destination: `/en${anchor}`, permanent: true },
+    ]);
+    return [
+      ...former,
+      { source: '/', destination: '/en', permanent: false },
+      { source: '/legal/:doc', destination: '/en/legal/:doc', permanent: false },
+      { source: '/fr', destination: '/en', permanent: true },
+      { source: '/fr/:path*', destination: '/en/:path*', permanent: true },
+    ];
   },
   async headers() {
     return [

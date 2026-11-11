@@ -17,7 +17,7 @@ export const TERM_MONTHS: Record<Term, number | null> = { '12m': 12, '24m': 24, 
 /** Tier characteristics that drive the UI (features text lives in i18n). */
 export const TIER_INFO: Record<Tier, { quality: 'hd' | 'fhd' | 'uhd' }> = {
   starter: { quality: 'hd' },
-  plus: { quality: 'fhd' },
+  plus: { quality: 'uhd' },
   ultra: { quality: 'uhd' },
 };
 

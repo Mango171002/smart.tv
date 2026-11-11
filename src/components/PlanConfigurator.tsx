@@ -1,11 +1,44 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { ArrowRight, Check } from 'lucide-react';
+import {
+  ArrowRight,
+  BadgeCheck,
+  CalendarClock,
+  Check,
+  Clapperboard,
+  Globe,
+  Headset,
+  History,
+  MonitorSmartphone,
+  ShieldCheck,
+  Tv,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
 import { computeQuote, formatMoney, STREAMS, TERMS, TERM_MONTHS, TIERS, type PriceTable, type StreamCount, type Term, type Tier } from '@/lib/pricing';
+
+/** Icon per plan feature (Lucide, Outline Premium). */
+const FEATURE_ICONS: Record<string, LucideIcon> = {
+  tv: Tv,
+  globe: Globe,
+  film: Clapperboard,
+  quality: BadgeCheck,
+  shield: ShieldCheck,
+  zap: Zap,
+  guide: CalendarClock,
+  replay: History,
+  device: MonitorSmartphone,
+  support: Headset,
+};
+
+/** Renders "Quality **4K**" with the starred part in bold. */
+function richText(text: string) {
+  return text.split('**').map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part));
+}
 
 const loadDialog = () => import('./CheckoutDialog').then((m) => m.CheckoutDialog);
 // Downloaded on demand (prefetched on hover/focus of the button) to keep the initial JS small.
@@ -59,10 +92,17 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
                 <span data-testid={`tier-price-${t}`}>{money(yearly.amountMinor)}</span> <small>{p.perYear}</small>
               </p>
               <ul className="tier-features">
-                {info.features.map((f) => (
-                  <li key={f}><Check size={16} strokeWidth={2} aria-hidden="true" /> {f}</li>
-                ))}
+                {info.features.map((f) => {
+                  const Icon = FEATURE_ICONS[f.icon] ?? Check;
+                  return (
+                    <li key={f.text} className={'accent' in f && f.accent ? 'is-accent' : undefined}>
+                      <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+                      <span>{richText(f.text)}</span>
+                    </li>
+                  );
+                })}
               </ul>
+              <p className="tier-note">{info.note}</p>
               <button type="button" className="btn block" onClick={() => choose(t)}>
                 {fill(p.choose, { plan: info.name })}
               </button>

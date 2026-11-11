@@ -12,7 +12,7 @@ on conflict (code) do nothing;
 insert into public.plan_tiers (code, sort_order, max_quality)
 values
   ('starter', 1, 'hd'),
-  ('plus', 2, 'fhd'),
+  ('plus', 2, 'uhd'),
   ('ultra', 3, 'uhd')
 on conflict (code) do nothing;
 

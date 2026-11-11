@@ -804,3 +804,11 @@ section.content-tight .cat-grid { margin-top: 0; }
   opacity: .8;
 }
 .footer b { display: inline-block; margin-bottom: 2px; }
+
+/* Plan features: icon per line, highlighted differences in the plan colour */
+.tier-features li { line-height: 1.4; }
+.tier-features li svg { flex: none; margin-top: 0; }
+.tier-features strong { font-weight: 800; }
+.tier-features li.is-accent { color: var(--tier); font-weight: 650; }
+.tier-features li.is-accent strong { color: var(--tier); }
+.tier-note { margin: 0; font-size: 13px; font-style: italic; color: var(--color-muted); }

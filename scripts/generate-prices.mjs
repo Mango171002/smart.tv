@@ -8,7 +8,7 @@ export const TERMS = ['12m', '24m', '36m', 'lifetime'];
 const TERM_MONTHS = { '12m': 12, '24m': 24, '36m': 36, lifetime: null };
 export const TIERS = [
   { code: 'starter', sort: 1, quality: 'hd' },
-  { code: 'plus', sort: 2, quality: 'fhd' },
+  { code: 'plus', sort: 2, quality: 'uhd' },
   { code: 'ultra', sort: 3, quality: 'uhd' },
 ];
 export const STREAMS = [1, 2, 3, 4];

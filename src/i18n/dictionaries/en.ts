@@ -80,7 +80,6 @@ const en = {
     next: 'Next',
     carouselLabel: 'Most watched genres',
     slideLabel: '{n} of {total}',
-    note: 'Among the most watched genres in the United States, Canada and Europe — the catalogue is published per country before subscriptions open.',
     items: [
       { cat: 'sports', badge: 'SPORTS', title: 'Football night', region: 'Europe' },
       { cat: 'sports', badge: 'SPORTS', title: 'American football', region: 'USA' },

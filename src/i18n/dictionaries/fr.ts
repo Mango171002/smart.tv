@@ -82,7 +82,6 @@ const fr: Dictionary = {
     next: 'Suivant',
     carouselLabel: 'Genres les plus regardés',
     slideLabel: '{n} sur {total}',
-    note: 'Parmi les genres les plus regardés aux États-Unis, au Canada et en Europe — le catalogue est publié par pays avant l’ouverture des abonnements.',
     items: [
       { cat: 'sports', badge: 'SPORT', title: 'Soirée football', region: 'Europe' },
       { cat: 'sports', badge: 'SPORT', title: 'Football américain', region: 'USA' },

@@ -1,6 +1,4 @@
-import { PlanConfigurator } from '@/components/PlanConfigurator';
-import { Suspense } from 'react';
-import { Featured } from '@/components/Featured';
+import { FeaturedIsland, PlansIsland } from '@/components/islands';
 import { Benefits, ContentCategories, DeviceGrid, Faq, HelpCta, Hero, HowItWorks, InterfacePreview } from '@/components/Sections';
 import { getDictionary } from '@/i18n/dictionaries';
 import { getPriceTable } from '@/lib/price-source';
@@ -20,10 +18,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       <Hero locale={locale} dict={dict} />
       <ContentCategories locale={locale} dict={dict} showHeading={false} />
-      {/* Suspense boundaries let React hydrate each interactive island in its own short task. */}
-      <Suspense fallback={null}>
-        <Featured locale={locale} dict={dict.featured} />
-      </Suspense>
+      {/* Below-the-fold islands hydrate only when they come near the viewport. */}
+      <FeaturedIsland locale={locale} dict={dict.featured} />
       <Benefits dict={dict} />
       <section id="plans" aria-labelledby="plans-title">
         <div className="wrap">
@@ -32,13 +28,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <h2 id="plans-title" className="section-title">{dict.plans.title}</h2>
             <p className="sub">{dict.plans.sub}</p>
           </div>
-          <Suspense fallback={null}>
-            <PlanConfigurator
-              locale={locale}
-              table={table}
-              dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout }}
-            />
-          </Suspense>
+          <PlansIsland
+            locale={locale}
+            table={table}
+            dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout }}
+          />
         </div>
       </section>
       <InterfacePreview dict={dict} />

@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { ArrowRight, Check } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
 import { computeQuote, formatMoney, STREAMS, TERMS, TERM_MONTHS, TIERS, type PriceTable, type StreamCount, type Term, type Tier } from '@/lib/pricing';
@@ -22,6 +22,9 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
   const [term, setTerm] = useState<Term>('12m');
   const [streams, setStreams] = useState<StreamCount>(1);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const offersRef = useRef<HTMLDivElement>(null);
+  // Marks the island as hydrated (it is hydrated lazily, when near the viewport).
+  useEffect(() => offersRef.current?.setAttribute('data-ready', 'true'), []);
   const openerRef = useRef<HTMLButtonElement>(null);
   const simulatorRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +44,7 @@ export function PlanConfigurator({ locale, table, dict }: ConfiguratorProps) {
   }
 
   return (
-    <div className="offers">
+    <div className="offers" ref={offersRef}>
       {/* 1. The three yearly plans */}
       <ul className="tier-grid">
         {TIERS.map((t) => {

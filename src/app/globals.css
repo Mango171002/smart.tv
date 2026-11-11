@@ -698,7 +698,8 @@ section.content-tight .cat-grid { margin-top: 0; }
 .plans-head { margin-inline: auto; text-align: center; }
 .plans-head .sub { margin-inline: auto; }
 .tier-grid { width: 100%; margin-inline: auto; }
-@media (min-width: 1024px) { .tier-grid { max-width: min(86%, 1320px); } }
+.sim-layout { width: 100%; margin-inline: auto; }
+@media (min-width: 1024px) { .tier-grid, .sim-layout { max-width: min(86%, 1320px); } }
 
 /* Carousel: more genres → arrows + dots; about 4 cards visible on desktop */
 @media (min-width: 1200px) { .carousel-track { grid-auto-columns: calc((100% - 3 * 16px) / 4.25); } }
@@ -726,15 +727,8 @@ section.content-tight .cat-grid { margin-top: 0; }
 }
 #how::before { background: radial-gradient(55% 80% at 85% 50%, color-mix(in srgb, var(--color-magenta) 8%, transparent), transparent 70%); }
 
-/* Interface preview: neon frame */
-.preview-stage {
-  position: relative; border: 1px solid transparent;
-  background:
-    radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--color-violet) 22%, transparent), transparent 60%) padding-box,
-    linear-gradient(140deg, var(--color-surface), var(--color-bg)) padding-box,
-    linear-gradient(120deg, var(--color-cyan), var(--color-violet) 40%, var(--color-magenta) 75%, var(--color-lime)) border-box;
-  box-shadow: 0 0 40px color-mix(in srgb, var(--color-violet) 14%, transparent);
-}
+/* Interface preview: no frame (screen-type images will be added here) */
+.preview-stage { border: 0; background: none; box-shadow: none; padding-inline: 0; border-radius: 0; }
 .preview-item figcaption {
   display: table; margin: 14px auto 0; padding: 4px 12px; border-radius: 999px; color: var(--color-ink);
   border: 1px solid var(--line-strong); background: var(--surface-low);

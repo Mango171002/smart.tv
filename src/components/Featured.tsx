@@ -45,7 +45,7 @@ export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['f
   }, []);
 
   return (
-    <section className="featured" aria-labelledby="featured-title">
+    <section id="featured" className="featured" aria-labelledby="featured-title">
       <div className="wrap">
         <div className="featured-head">
           <h2 id="featured-title" className="bar-title">{dict.title}</h2>
@@ -106,7 +106,6 @@ export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['f
             />
           ))}
         </div>
-        <p className="footnote" style={{ textAlign: 'center' }}>{dict.note}</p>
       </div>
     </section>
   );

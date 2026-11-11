@@ -7,6 +7,15 @@ const ROUTES = [
   '/en/legal/imprint', '/fr/legal/privacy',
 ];
 
+
+/** Home page; the plans island hydrates when it nears the viewport, like for a real visitor. */
+async function openHome(page: import('@playwright/test').Page, path: '/en' | '/fr') {
+  await page.goto(path);
+  await page.locator('#plans').scrollIntoViewIfNeeded();
+  await page.locator('.offers[data-ready]').waitFor();
+  await page.evaluate(() => window.scrollTo(0, 0));
+}
+
 test.describe('routing & SEO', () => {
   test('every route renders with a unique title, h1, canonical and hreflang', async ({ page }) => {
     const titles = new Set<string>();
@@ -63,7 +72,7 @@ test.describe('routing & SEO', () => {
 
 test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   test('shows the three yearly plans with Plus recommended', async ({ page }) => {
-    await page.goto('/en');
+    await openHome(page, '/en');
     await expect(page.getByTestId('tier-price-starter')).toHaveText('$49');
     await expect(page.getByTestId('tier-price-plus')).toHaveText('$59');
     await expect(page.getByTestId('tier-price-ultra')).toHaveText('$69');
@@ -72,7 +81,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   });
 
   test('simulator: plan, duration and screens update price, monthly equivalent and savings', async ({ page }) => {
-    await page.goto('/en');
+    await openHome(page, '/en');
     const price = page.getByTestId('price');
     await expect(page.getByTestId('selection')).toHaveText('Plus · 12 months · 1 device');
     await expect(price).toHaveText('$59');
@@ -95,14 +104,14 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   });
 
   test('"Choose" on a plan card selects it in the simulator', async ({ page }) => {
-    await page.goto('/en');
+    await openHome(page, '/en');
     await page.getByRole('button', { name: 'Choose Ultra' }).click();
     await expect(page.locator('.simulator [data-tier="ultra"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByTestId('price')).toHaveText('$69');
   });
 
   test('formats prices in French', async ({ page }) => {
-    await page.goto('/fr');
+    await openHome(page, '/fr');
     await expect(page.getByTestId('tier-price-starter')).toHaveText(/^49\s\$$/);
     await page.locator('[data-term="24m"]').click();
     await expect(page.getByTestId('price')).toHaveText(/^95\s\$$/);
@@ -127,7 +136,7 @@ test.describe('pre-registration', () => {
       sent = route.request().postDataJSON();
       await route.fulfill({ status: 201, json: { ok: true } });
     });
-    await page.goto('/en');
+    await openHome(page, '/en');
     await page.locator('.simulator [data-tier="ultra"]').click();
     await page.locator('[data-term="24m"]').click();
     await page.locator('[data-stream="2"]').click();
@@ -159,7 +168,7 @@ test.describe('pre-registration', () => {
   });
 
   test('requires a valid email and consent before continuing', async ({ page }) => {
-    await page.goto('/fr');
+    await openHome(page, '/fr');
     await page.getByRole('button', { name: /^Me pré-inscrire/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByRole('button', { name: /Continuer/ }).click();
@@ -172,7 +181,7 @@ test.describe('pre-registration', () => {
 
   test('dialog stays still when hovered and lives in <body> (regression)', async ({ page, isMobile }) => {
     test.skip(isMobile, 'hover only exists on desktop');
-    await page.goto('/en');
+    await openHome(page, '/en');
     await page.getByRole('button', { name: /^Pre-register/ }).click();
     const checkbox = page.getByTestId('checkout-dialog').getByRole('checkbox');
     await checkbox.hover();
@@ -184,7 +193,7 @@ test.describe('pre-registration', () => {
 
   test('shows a clear message when rate limited', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
-    await page.goto('/en');
+    await openHome(page, '/en');
     await page.getByRole('button', { name: /^Pre-register/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
@@ -198,7 +207,7 @@ test.describe('pre-registration', () => {
 
   test('traps focus and closes with Escape, restoring focus', async ({ page, isMobile }) => {
     test.skip(isMobile, 'keyboard test runs on desktop');
-    await page.goto('/en');
+    await openHome(page, '/en');
     const opener = page.getByRole('button', { name: /^Pre-register/ });
     await opener.click();
     const dialog = page.getByRole('dialog');
@@ -214,7 +223,7 @@ test.describe('pre-registration', () => {
 
 test.describe('Electric Fusion Neon design system', () => {
   test('category icons use the official colours and the primary CTA is cyan', async ({ page }) => {
-    await page.goto('/en');
+    await openHome(page, '/en');
     const expected: Record<string, string> = {
       sports: 'rgb(209, 254, 23)', // #D1FE17
       movies: 'rgb(240, 68, 196)', // #F044C4
@@ -236,7 +245,7 @@ test.describe('Electric Fusion Neon design system', () => {
 
 test.describe('home page (approved mock-up)', () => {
   test('most watched: 12 genres with region, arrows on desktop, dots everywhere', async ({ page, isMobile }) => {
-    await page.goto('/en');
+    await openHome(page, '/en');
     const carousel = page.getByRole('region', { name: 'Most watched genres' });
     await expect(carousel).toHaveAttribute('data-ready', 'true'); // wait for hydration
     await expect(carousel.getByRole('group')).toHaveCount(12);
@@ -255,14 +264,14 @@ test.describe('home page (approved mock-up)', () => {
   });
 
   test('announcement bar links to pre-registration', async ({ page }) => {
-    await page.goto('/fr');
+    await openHome(page, '/fr');
     await page.getByRole('link', { name: /S’inscrire à l’alerte/ }).click();
     await expect(page).toHaveURL(/\/fr\/help#prereg$/);
     await expect(page.locator('#prereg')).toBeVisible();
   });
 
   test('category cards lead to the content page', async ({ page }) => {
-    await page.goto('/en');
+    await openHome(page, '/en');
     await page.locator('#content .cat-card[data-category="movies"]').click();
     await expect(page).toHaveURL(/\/en\/coverage$/);
   });
@@ -282,7 +291,7 @@ test.describe('layout (fluid container)', () => {
   for (const width of [390, 768, 1280, 1440, 1920, 2560]) {
     test(`aligned edges and no horizontal scroll at ${width}px`, async ({ browser }) => {
       const page = await browser.newPage({ viewport: { width, height: 1000 } });
-      await page.goto('/fr');
+      await openHome(page, '/fr');
       const m = await page.evaluate(() => {
         const left = (s: string) => Math.round(document.querySelector(s)!.getBoundingClientRect().left);
         const g = document.querySelector('.cat-grid')!.getBoundingClientRect();
@@ -305,7 +314,7 @@ test.describe('layout (fluid container)', () => {
 test.describe('navigation', () => {
   test('mobile menu opens, navigates and closes', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'mobile only');
-    await page.goto('/en');
+    await openHome(page, '/en');
     const toggle = page.getByRole('button', { name: 'Toggle menu' });
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await toggle.click();
@@ -364,7 +373,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
   }
 
   test('checkout dialog has no violations', async ({ page }) => {
-    await page.goto('/en');
+    await openHome(page, '/en');
     await page.getByRole('button', { name: /^Pre-register/ }).click();
     await expect(page.getByRole('dialog')).toBeVisible(); // the dialog is loaded on demand
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();

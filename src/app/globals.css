@@ -1074,3 +1074,8 @@ body::after {
   -webkit-mask-image: radial-gradient(ellipse 76% 74% at 50% 45%, black 64%, transparent 100%);
   mask-image: radial-gradient(ellipse 76% 74% at 50% 45%, black 64%, transparent 100%);
 }
+/* Bigger hero banner (owner request): wider column + more overflow */
+@media (min-width: 901px) {
+
+  .hero-stage { margin: -70px -9% -50px -20%; }
+}

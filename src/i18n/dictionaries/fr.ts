@@ -99,8 +99,9 @@ const fr: Dictionary = {
   },
   plans: {
     eyebrow: 'Offres et tarifs',
-    title: 'Choisissez votre offre.',
-    sub: 'Trois offres annuelles, puis des tarifs dégressifs sur 24 mois, 36 mois ou à vie. Pré-inscription gratuite, sans paiement avant l’ouverture.',
+    title: 'Choisissez votre',
+    titleHl: 'formule',
+    sub: 'Films, séries, chaînes TV et sports en direct, en qualité HD, Full HD, 4K et HDR.',
     footnote: 'Prix de lancement prévus, en dollars américains (USD), hors taxes. Contenus et nombre de chaînes confirmés par pays avant l’ouverture.',
     perYear: '/ an',
     devicesBar: {

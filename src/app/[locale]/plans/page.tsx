@@ -20,7 +20,9 @@ export default async function PlansPage({ params }: { params: Promise<{ locale: 
     <>
       <div className="wrap page-head">
         <div className="eyebrow">{dict.plans.eyebrow}</div>
-        <h1 className="page-title">{dict.plans.title}</h1>
+        <h1 className="page-title plans-title">
+          {dict.plans.title} <span className="title-hl">{dict.plans.titleHl}</span>
+        </h1>
         <p className="sub">{dict.plans.sub}</p>
       </div>
       <section aria-label={dict.plans.eyebrow} style={{ paddingTop: 24 }}>

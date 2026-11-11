@@ -25,7 +25,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="wrap">
           <div className="plans-head">
             <div className="eyebrow">{dict.plans.eyebrow}</div>
-            <h2 id="plans-title" className="section-title">{dict.plans.title}</h2>
+            <h2 id="plans-title" className="section-title plans-title">
+              {dict.plans.title} <span className="title-hl">{dict.plans.titleHl}</span>
+            </h2>
             <p className="sub">{dict.plans.sub}</p>
           </div>
           <PlansIsland

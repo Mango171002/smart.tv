@@ -97,8 +97,9 @@ const en = {
   },
   plans: {
     eyebrow: 'Plans & pricing',
-    title: 'Choose your plan.',
-    sub: 'Three yearly plans, then lower prices over 24 months, 36 months or lifetime. Free pre-registration, no payment before launch.',
+    title: 'Choose your',
+    titleHl: 'plan',
+    sub: 'Movies, series, live TV channels and sports, in HD, Full HD, 4K and HDR quality.',
     footnote: 'Planned launch prices in US dollars (USD), before taxes. Content and number of channels confirmed per country before launch.',
     perYear: '/ year',
     devicesBar: {

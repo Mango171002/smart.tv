@@ -35,3 +35,16 @@ for (const key of CATS) {
     console.log(`cat-${key}-${w}: avif ${kb(`${OUT}cat-${key}-${w}.avif`)} KB, webp ${kb(`${OUT}cat-${key}-${w}.webp`)} KB`);
   }
 }
+
+// "Most watched" carousel artwork (assets/featured/featured-<scene>.png → public/images/featured-<scene>-<w>.avif|webp), 16:9 cover crop
+const SCENES = ['football', 'american-football', 'hockey', 'basketball', 'adventure', 'crime', 'fantasy', 'comedy', 'tennis', 'motorsport', 'family', 'docs'];
+for (const scene of SCENES) {
+  const src = fileURLToPath(new URL(`../assets/featured/featured-${scene}.png`, import.meta.url));
+  for (const w of [480, 960]) {
+    const base = sharp(src).resize({ width: w, height: Math.round((w * 9) / 16), fit: 'cover' });
+    await base.clone().avif({ quality: 50, effort: 6 }).toFile(`${OUT}featured-${scene}-${w}.avif`);
+    await base.clone().webp({ quality: 72, effort: 6 }).toFile(`${OUT}featured-${scene}-${w}.webp`);
+  }
+  const kb = (f) => (statSync(f).size / 1024).toFixed(0);
+  console.log(`featured-${scene}: avif ${kb(`${OUT}featured-${scene}-480.avif`)}/${kb(`${OUT}featured-${scene}-960.avif`)} KB`);
+}

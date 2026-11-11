@@ -7,6 +7,11 @@ import type { Locale } from '@/i18n/config';
 import { fill, type Dictionary } from '@/i18n/dictionaries';
 import { FEATURED_SCENES } from '@/components/visuals/featured-scenes';
 
+/** Generated artwork (npm run hero → public/images/featured-<scene>-<w>.avif|webp). */
+const SLIDE_SIZES = '(max-width: 580px) 82vw, (max-width: 900px) 62vw, 24vw';
+const slideSrcSet = (scene: string, ext: 'avif' | 'webp') =>
+  `/images/featured-${scene}-480.${ext} 480w, /images/featured-${scene}-960.${ext} 960w`;
+
 /** Badge colour follows the category system (item.cat): sports = lime, movies/series = magenta… */
 
 export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['featured'] }) {
@@ -73,8 +78,12 @@ export function Featured({ locale, dict }: { locale: Locale; dict: Dictionary['f
                 aria-roledescription="slide"
                 aria-label={`${fill(dict.slideLabel, { n: i + 1, total })} — ${item.title}`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element -- static decorative SVG */}
-                <img src={`/visuals/featured-${FEATURED_SCENES[i]}.svg`} alt="" width={480} height={270} loading="lazy" decoding="async" />
+                <picture>
+                  <source type="image/avif" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'avif')} sizes={SLIDE_SIZES} />
+                  <source type="image/webp" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'webp')} sizes={SLIDE_SIZES} />
+                  {/* eslint-disable-next-line @next/next/no-img-element -- decorative artwork, responsive sources above */}
+                  <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp`} alt="" width={480} height={270} loading="lazy" decoding="async" />
+                </picture>
                 <span className="slide-badge">{item.badge}</span>
                 <span className="slide-text">
                   <span className="slide-title">{item.title}</span>

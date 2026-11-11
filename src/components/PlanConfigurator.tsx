@@ -111,7 +111,6 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
   const tierName = p.tiers[tier].name;
   // Claims shown next to the simulator are computed from the price list, so they stay true.
   const bestPct = Math.max(...TIERS.map((t) => computeQuote(table, { tier: t, term: '36m', streams: 1 }).savingsPercent));
-  const SelectedTierIcon = TIER_LOOK[tier].Icon;
   const selectionLabel = `${tierName} · ${p.terms[term]} · ${plural(dict.common, 'device', streams)}`;
 
   function choose(t: Tier) {
@@ -272,15 +271,6 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
             <div className="sum-left">
               <small className="label">{p.summaryLabel}</small>
               <strong data-testid="selection">{selectionLabel}</strong>
-              <div className="sum-chips">
-                <span>
-                  <SelectedTierIcon size={16} strokeWidth={1.75} aria-hidden="true" />
-                  {fill(p.chipPlan, { plan: p.tiers[tier].name })}
-                </span>
-                <span><CalendarDays size={16} strokeWidth={1.75} aria-hidden="true" />{p.terms[term]}</span>
-                <span><Monitor size={16} strokeWidth={1.75} aria-hidden="true" />{plural(dict.common, 'device', streams)}</span>
-              </div>
-              <small className="sum-note">{p.notAnOffer}</small>
             </div>
             <div className="sum-price">
               <small className="label">{p.totalLabel}</small>

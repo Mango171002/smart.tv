@@ -1062,3 +1062,10 @@ body::after {
 /* The hero photo has a near-black background: blend it into the indigo site background */
 .hero-stage img { mix-blend-mode: lighten; }
 .hero { isolation: auto; }
+/* Owner tweaks (11/11/2026) */
+.sim-title .hl { color: var(--color-lime); }               /* "save up to 33%" stays yellow */
+#term-label .step-num, #streams-label .step-num { background: var(--color-cyan); color: var(--color-bg); } /* steps 1-2-3 in sky blue */
+.sum-left strong { margin-bottom: 0; }
+/* "How it works": narrower step cards, centred block */
+#how .wrap { text-align: center; }
+#how .steps { max-width: min(100%, 1040px); margin-inline: auto; text-align: left; }

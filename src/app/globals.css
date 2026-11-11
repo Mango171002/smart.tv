@@ -812,3 +812,7 @@ section.content-tight .cat-grid { margin-top: 0; }
 .tier-features li.is-accent { color: var(--tier); font-weight: 650; }
 .tier-features li.is-accent strong { color: var(--tier); }
 .tier-note { margin: 0; font-size: 13px; font-style: italic; color: var(--color-muted); }
+/* One benefit = one line */
+.tier-features li { white-space: nowrap; }
+.tier-features li > span { overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1180px) and (min-width: 901px) { .tier-features li { font-size: 13px; gap: 8px; } }

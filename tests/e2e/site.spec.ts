@@ -103,6 +103,24 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     await expect(page.getByTestId('savings')).toHaveCount(0);
   });
 
+  test('each plan benefit fits on one line, nothing cut off', async ({ page }) => {
+    for (const width of [390, 1024, 1280, 1440, 1920]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const path of ['/en', '/fr'] as const) {
+        await openHome(page, path);
+        const bad = await page.locator('.tier-features li').evaluateAll((els) =>
+          els
+            .filter((li) => {
+              const span = li.querySelector('span')!;
+              return li.getBoundingClientRect().height > 30 || span.scrollWidth > span.clientWidth + 1;
+            })
+            .map((li) => li.textContent),
+        );
+        expect(bad, `${path} @ ${width}px`).toEqual([]);
+      }
+    }
+  });
+
   test('"Choose" on a plan card selects it in the simulator', async ({ page }) => {
     await openHome(page, '/en');
     await page.getByRole('button', { name: 'Choose Ultra' }).click();

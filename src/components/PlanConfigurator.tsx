@@ -11,7 +11,9 @@ import {
   Headset,
   History,
   MonitorSmartphone,
+  Newspaper,
   ShieldCheck,
+  Trophy,
   Tv,
   Zap,
   type LucideIcon,
@@ -24,6 +26,8 @@ import { computeQuote, formatMoney, STREAMS, TERMS, TERM_MONTHS, TIERS, type Pri
 /** Icon per plan feature (Lucide, Outline Premium). */
 const FEATURE_ICONS: Record<string, LucideIcon> = {
   tv: Tv,
+  news: Newspaper,
+  sport: Trophy,
   globe: Globe,
   film: Clapperboard,
   quality: BadgeCheck,

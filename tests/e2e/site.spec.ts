@@ -241,7 +241,7 @@ test.describe('Electric Fusion Neon design system', () => {
       await expect(icon).toHaveCSS('color', rgb);
     }
     const cta = page.locator('.hero .btn').first();
-    await expect(cta).toHaveCSS('background-color', 'rgb(25, 211, 243)');
+    await expect(cta).toHaveCSS('background-color', 'rgb(209, 254, 23)');
     await expect(cta).toHaveCSS('color', 'rgb(7, 13, 23)');
     await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(7, 13, 23)');
   });

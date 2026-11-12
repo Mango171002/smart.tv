@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { AppWindow, ArrowRight, CirclePlay, Flame, Globe, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
+import { AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
@@ -18,17 +18,18 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
     <div className="wrap hero">
       <div className="hero-grid">
         <div className="hero-copy">
-          <div className="eyebrow has-icon">
-            <Globe size={14} strokeWidth={2} aria-hidden="true" /> {h.eyebrow.split(' — ')[0]}
-            {h.eyebrow.includes(' — ') && <span className="eyebrow-extra"> — {h.eyebrow.split(' — ')[1]}</span>}
-          </div>
-          <h1>
-            {h.titleA}
-            <span className="hl-lime">{h.titleB}</span>
+          <h1 className="hero-title">
+            <span>{h.titleA}</span>
+            <span className="hero-title-hl">{h.titleB}</span>
           </h1>
+          <p className="hero-sub">
+            {h.subA}
+            <br />
+            {h.subB}
+          </p>
           <p className="lead">{h.lead}</p>
           <div className="actions">
-            <Link className="btn" href={`/${locale}#plans`}>
+            <Link className="btn btn-lime" href={`/${locale}#plans`}>
               {h.ctaPrimary} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
             </Link>
             <Link className="btn ghost" href={`/${locale}#how`}>

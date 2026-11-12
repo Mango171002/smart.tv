@@ -495,7 +495,6 @@ const en = {
     compliance2: 'Each country opens only once broadcasting authorisations are in place.',
     legalTitle: 'Legal',
     siteTitle: 'Site',
-    brandPlaceholder: 'Brand name is a temporary placeholder.',
   },
   notFound: {
     title: 'This page does not exist.',

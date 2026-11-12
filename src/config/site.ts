@@ -6,14 +6,14 @@
  * See docs/DECISIONS.md for the list of pending decisions.
  */
 
-export const PROTOTYPE_BRAND_PLACEHOLDER = 'GlobalTV+';
+/** Brand chosen by the owner on 12/11/2026 (trademark search/registration still to do). */
+export const BRAND_NAME = 'Ultra TV+';
 
 const envBrand = process.env.NEXT_PUBLIC_BRAND_NAME?.trim();
 
 export const siteConfig = {
-  /** Brand is NOT decided. The placeholder must be replaced before launch. */
-  brandName: envBrand || PROTOTYPE_BRAND_PLACEHOLDER,
-  brandIsPlaceholder: !envBrand,
+  brandName: envBrand || BRAND_NAME,
+  brandIsPlaceholder: false as boolean,
   /** Public base URL (used for canonical URLs, sitemap, hreflang). */
   siteUrl: (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, ''),
   /** Domain not decided. */

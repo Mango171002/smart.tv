@@ -1893,3 +1893,24 @@ html { scroll-padding-top: 84px; }
   .how3-steps small { font-size: 13px; }
   .how3-cta { width: 100%; justify-content: center; }
 }
+/* Getting started: the lime highlight travels from step 01 to 04 (loop) */
+@keyframes how3-step {
+  0%, 22% { color: var(--color-lime); border-bottom-color: var(--color-lime); }
+  27%, 100% { color: color-mix(in srgb, var(--color-muted) 70%, var(--color-bg)); border-bottom-color: var(--line-strong); }
+}
+@keyframes how3-title {
+  0%, 22% { color: var(--color-ink); }
+  27%, 100% { color: color-mix(in srgb, var(--color-ink) 75%, var(--color-bg)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .how3-steps li .how3-num, .how3-steps li.is-first .how3-num { animation: how3-step 8s infinite; }
+  .how3-steps li b { animation: how3-title 8s infinite; }
+  .how3-steps li:nth-child(2) .how3-num, .how3-steps li:nth-child(2) b { animation-delay: 2s; }
+  .how3-steps li:nth-child(3) .how3-num, .how3-steps li:nth-child(3) b { animation-delay: 4s; }
+  .how3-steps li:nth-child(4) .how3-num, .how3-steps li:nth-child(4) b { animation-delay: 6s; }
+  .how3-steps li:not(:first-child) .how3-num { color: color-mix(in srgb, var(--color-muted) 70%, var(--color-bg)); }
+}
+/* Closing CTA: bigger Earth */
+.cta-banner > picture .cta-globe { width: min(80%, 980px); left: -12%; top: 6%; }
+@media (max-width: 640px) { .cta-banner > picture .cta-globe { width: 150%; left: -42%; top: 38%; } }
+@media (max-width: 640px) { .cta-banner > picture .cta-globe { opacity: .65; top: 30%; } }

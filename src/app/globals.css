@@ -1238,3 +1238,13 @@ html { scroll-padding-top: 84px; }
 .simulator .choices.choices-terms { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .sim-summary .sum-left strong { font-size: clamp(18px, 0.8vw + 11px, 22px); white-space: nowrap; }
 @media (max-width: 400px) { .sim-summary .sum-left strong { white-space: normal; } }
+/* Simulator: plan choices and the total/button follow the selected plan colour (owner request) */
+.simulator .choice[data-tier][aria-pressed='true'] {
+  border-color: var(--tier); background: color-mix(in srgb, var(--tier) 8%, var(--surface-low));
+  box-shadow: inset 0 0 0 1px var(--tier);
+}
+.simulator .choice[data-tier] .choice-check { fill: var(--tier); }
+.sim-layout[data-tier] .sim-summary { border-color: color-mix(in srgb, var(--tier) 40%, var(--line-strong)); }
+.sim-layout[data-tier] .sim-summary .price { color: var(--tier); }
+.sim-layout[data-tier] .sim-cta { background: var(--tier); color: var(--color-bg); }
+@media (hover: hover) { .sim-layout[data-tier] .sim-cta:hover { box-shadow: 0 8px 26px color-mix(in srgb, var(--tier) 30%, transparent); } }

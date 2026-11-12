@@ -266,7 +266,7 @@ const en = {
       },
       {
         q: 'How much will it cost?',
-        a: 'Three yearly plans are planned: Starter $49, Plus $59 and Ultra $69 per year (USD, before taxes), with lower prices over 24 months, 36 months and lifetime. Taxes and the final price are always displayed before any purchase.',
+        a: 'Three yearly plans are planned: Starter $49, Plus $59 and Ultra $69 per year (USD, before taxes), with lower prices over 24 and 36 months. Taxes and the final price are always displayed before any purchase.',
       },
       {
         q: 'Can I cancel?',

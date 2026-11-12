@@ -5,7 +5,8 @@ export const PAGES = ['', '/blog'] as const;
 export const LEGAL_DOCS = ['terms', 'privacy', 'cookies', 'refunds', 'imprint'] as const;
 export type LegalDoc = (typeof LEGAL_DOCS)[number];
 
-export const href = (locale: Locale, path = '') => `/${locale}${path}`;
+/** Public URLs carry no language prefix (English only): /en/* is served at /*. */
+export const href = (_locale: Locale, path = '') => path || '/';
 
 /** Every public, indexable path (without locale prefix). */
 export const ALL_PATHS: string[] = [...PAGES, ...LEGAL_DOCS.map((d) => `/legal/${d}`)];

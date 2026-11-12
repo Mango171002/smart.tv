@@ -41,7 +41,7 @@ export default async function LegalPage({ params }: { params: Params }) {
       <p className="legal-banner" role="note">{dict.legal.draftBanner}</p>
       <nav className="legal-nav" aria-label={dict.footer.legalTitle}>
         {LEGAL_DOCS.map((x) => (
-          <Link key={x} href={`/${locale}/legal/${x}`} aria-current={x === doc ? 'page' : undefined}>
+          <Link key={x} href={`/legal/${x}`} aria-current={x === doc ? 'page' : undefined}>
             {dict.legal.docs[x].title}
           </Link>
         ))}

@@ -3,7 +3,7 @@ import { siteConfig } from '@/config/site';
 import { LOCALES, type Locale } from '@/i18n/config';
 
 export function buildMetadata({
-  locale,
+  locale: _locale,
   path,
   title,
   description,
@@ -13,12 +13,12 @@ export function buildMetadata({
   title: string;
   description: string;
 }): Metadata {
-  const languages = Object.fromEntries(LOCALES.map((l) => [l, `/${l}${path}`])) as Record<string, string>;
-  languages['x-default'] = `/en${path}`;
+  const url = path || '/';
+  const languages = { en: url, 'x-default': url } as Record<string, string>;
   return {
     title,
     description,
-    alternates: { canonical: `/${locale}${path}`, languages },
+    alternates: { canonical: url, languages },
     openGraph: {
       title: `${title} | ${siteConfig.brandName}`,
       description,

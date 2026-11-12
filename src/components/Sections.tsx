@@ -14,7 +14,7 @@ const heroSrcSet = (ext: 'avif' | 'webp') => HERO_WIDTHS.map((w) => `/images/her
 /** Icons of the hero feature bar (Lucide, lime). */
 const HERO_BAR_ICONS: LucideIcon[] = [Zap, ShieldCheck, MonitorSmartphone, InfinityIcon, Headset];
 
-export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.hero;
   // Start downloading the banner (largest element on screen) as early as possible.
   preload('/images/hero-1080.avif', { as: 'image', type: 'image/avif', imageSrcSet: heroSrcSet('avif'), imageSizes: HERO_SIZES, fetchPriority: 'high' });
@@ -28,10 +28,10 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           </h1>
           <p className="lead">{h.lead}</p>
           <div className="actions">
-            <Link className="btn btn-lime" href={`/${locale}#plans`}>
+            <Link className="btn btn-lime" href={`/#plans`}>
               {h.ctaPrimary} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
             </Link>
-            <Link className="btn ghost" href={`/${locale}#how`}>
+            <Link className="btn ghost" href={`/#how`}>
               {h.ctaSecondary} <CirclePlay size={18} strokeWidth={1.75} aria-hidden="true" />
             </Link>
           </div>
@@ -91,7 +91,7 @@ const CAT_SIZES = '(max-width: 900px) 50vw, 20vw';
 const catSrcSet = (key: string, ext: 'avif' | 'webp') => `/images/cat-${key}-400.${ext} 400w, /images/cat-${key}-800.${ext} 800w`;
 
 export function ContentCategories({
-  locale,
+  locale: _locale,
   dict,
   headingLevel = 2,
   showHeading = true,
@@ -116,7 +116,7 @@ export function ContentCategories({
             const { key, icon: Icon } = CATEGORIES[i]!;
             return (
               <li key={item.title}>
-                <Link className={`cat-card cat-${key}`} href={`/${locale}#featured`} data-category={key}>
+                <Link className={`cat-card cat-${key}`} href={`/#featured`} data-category={key}>
                   <picture>
                     <source type="image/avif" srcSet={catSrcSet(key, 'avif')} sizes={CAT_SIZES} />
                     <source type="image/webp" srcSet={catSrcSet(key, 'webp')} sizes={CAT_SIZES} />
@@ -146,7 +146,7 @@ const STEP_CATS = ['live', 'movies', 'sports', 'streaming'] as const;
 
 const STEP_ICONS: LucideIcon[] = [MousePointerClick, UserPlus, MailCheck, MonitorPlay];
 
-export function HowItWorks({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function HowItWorks({ locale: _locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.how;
   return (
     <section id="how" aria-labelledby="how-title">
@@ -183,7 +183,7 @@ export function HowItWorks({ locale, dict }: { locale: Locale; dict: Dictionary 
           })}
         </ol>
         <div className="how-actions">
-          <Link className="btn btn-lime how-cta" href={`/${locale}#plans`}>
+          <Link className="btn btn-lime how-cta" href={`/#plans`}>
             {h.cta} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
           </Link>
           <RequestButton mode="support" className="link-btn">
@@ -341,7 +341,7 @@ function ComparisonTable({ dict }: { dict: Dictionary }) {
 }
 
 /** Closing call-to-action after the FAQ (owner mock-up, charter colours, honest claims). */
-export function CtaBanner({ locale, dict, fromMonthly }: { locale: Locale; dict: Dictionary; fromMonthly: string }) {
+export function CtaBanner({ locale: _locale, dict, fromMonthly }: { locale: Locale; dict: Dictionary; fromMonthly: string }) {
   const c = dict.cta;
   return (
     <section className="cta-section" aria-labelledby="cta-title">
@@ -360,7 +360,7 @@ export function CtaBanner({ locale, dict, fromMonthly }: { locale: Locale; dict:
           <p className="cta-text">{c.text.replace('{price}', fromMonthly)}</p>
           <p className="cta-text2">{c.text2}</p>
           <div className="cta-actions">
-            <Link className="btn cta-outline" href={`/${locale}#plans`}>
+            <Link className="btn cta-outline" href={`/#plans`}>
               <Play size={20} strokeWidth={2} aria-hidden="true" /> {c.choose}
             </Link>
             <RequestButton mode="trial" className="btn btn-lime">

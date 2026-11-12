@@ -21,7 +21,7 @@ const FOOTER_LEGAL = ['terms', 'privacy', 'cookies', 'imprint'] as const;
 
 const CHIP_ICONS = [MonitorSmartphone, Zap, ShieldCheck];
 
-export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function Footer({ locale: _locale, dict }: { locale: Locale; dict: Dictionary }) {
   const f = dict.footer;
   const socials = [
     ...(Object.keys(SOCIAL_ICONS) as (keyof typeof SOCIAL_ICONS)[]).map((k) => ({ key: k, ...SOCIAL_ICONS[k], href: siteConfig.social[k] })),
@@ -70,9 +70,9 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
         <nav aria-label={f.linksTitle} className="footer-col">
           <b className="footer-title">{f.linksTitle}</b>
           <ul>
-            <li><Link href={`/${locale}#plans`}>{dict.nav.plans}</Link></li>
-            <li><Link href={`/${locale}#how`}>{dict.nav.how}</Link></li>
-            <li><Link href={`/${locale}#faq`}>{f.helpFaq}</Link></li>
+            <li><Link href={`/#plans`}>{dict.nav.plans}</Link></li>
+            <li><Link href={`/#how`}>{dict.nav.how}</Link></li>
+            <li><Link href={`/#faq`}>{f.helpFaq}</Link></li>
             <li><ContactLink label={f.contact} /></li>
           </ul>
         </nav>
@@ -80,7 +80,7 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           <b className="footer-title">{f.legalTitle}</b>
           <ul>
             {FOOTER_LEGAL.map((d) => (
-              <li key={d}><Link href={`/${locale}/legal/${d}`}>{f.legalLinks[d]}</Link></li>
+              <li key={d}><Link href={`/legal/${d}`}>{f.legalLinks[d]}</Link></li>
             ))}
           </ul>
         </nav>

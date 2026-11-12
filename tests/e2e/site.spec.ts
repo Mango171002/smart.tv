@@ -2,12 +2,12 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const ROUTES = [
-  '/en', '/en/blog', '/en/legal/terms', '/en/legal/privacy', '/en/legal/cookies', '/en/legal/refunds', '/en/legal/imprint',
+  '/', '/blog', '/legal/terms', '/legal/privacy', '/legal/cookies', '/legal/refunds', '/legal/imprint',
 ];
 
 
 /** Home page; the plans island hydrates when it nears the viewport, like for a real visitor. */
-async function openHome(page: import('@playwright/test').Page, path: '/en') {
+async function openHome(page: import('@playwright/test').Page, path: '/' = '/') {
   await page.goto(path);
   await page.locator('#plans').scrollIntoViewIfNeeded();
   await page.locator('.offers[data-ready]').waitFor();
@@ -23,7 +23,7 @@ test.describe('routing & SEO', () => {
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
       await expect(page.locator('link[rel="alternate"][hreflang="fr"]')).toHaveCount(0);
-      titles.add(`${route.slice(0, 3)}:${await page.title()}`);
+      titles.add(`${route}:${await page.title()}`);
     }
     expect(titles.size).toBeGreaterThanOrEqual(ROUTES.length - 1);
   });
@@ -32,16 +32,16 @@ test.describe('routing & SEO', () => {
     const ctx = await browser.newContext({ locale: 'fr-CA', extraHTTPHeaders: { 'accept-language': 'fr-CA,fr;q=0.9' } });
     const page = await ctx.newPage();
     await page.goto('/');
-    await expect(page).toHaveURL(/\/en$/);
+    await expect(page).toHaveURL(/\/$/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await page.goto('/fr/legal/privacy');
-    await expect(page).toHaveURL(/\/en\/legal\/privacy$/);
+    await expect(page).toHaveURL(/\/legal\/privacy$/);
     await expect(page.getByRole('group', { name: 'Display language' })).toHaveCount(0);
     await ctx.close();
   });
 
   test('unknown pages return a localized 404', async ({ page }) => {
-    const res = await page.goto('/en/does-not-exist');
+    const res = await page.goto('/does-not-exist');
     expect(res?.status()).toBe(404);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('This page does not exist.');
   });
@@ -53,7 +53,7 @@ test.describe('routing & SEO', () => {
   });
 
   test('no prototype or demo wording remains', async ({ page }) => {
-    for (const route of ['/en']) {
+    for (const route of ['/']) {
       await page.goto(route);
       const text = (await page.locator('body').innerText()).toLowerCase();
       // "Simulateur / Simulator" (the price simulator) is fine; a *simulated* checkout is not.
@@ -66,7 +66,7 @@ test.describe('routing & SEO', () => {
 
 test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   test('shows the three yearly plans with Plus recommended', async ({ page }) => {
-    await openHome(page, '/en');
+    await openHome(page, '/');
     await expect(page.getByTestId('tier-price-starter')).toHaveText('$49');
     await expect(page.getByTestId('tier-price-plus')).toHaveText('$59');
     await expect(page.getByTestId('tier-price-ultra')).toHaveText('$69');
@@ -75,7 +75,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   });
 
   test('simulator: plan, duration and screens update price, monthly equivalent and savings', async ({ page }) => {
-    await openHome(page, '/en');
+    await openHome(page, '/');
     const price = page.getByTestId('price');
     await expect(page.getByTestId('selection')).toHaveText('Plus · 12 months · 1 device');
     await expect(price).toHaveText('$59');
@@ -102,7 +102,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   test('each plan benefit fits on one line, nothing cut off', async ({ page }) => {
     for (const width of [390, 1024, 1280, 1440, 1920]) {
       await page.setViewportSize({ width, height: 900 });
-      for (const path of ['/en'] as const) {
+      for (const path of ['/'] as const) {
         await openHome(page, path);
         const bad = await page.locator('.tier-features li').evaluateAll((els) =>
           els
@@ -118,14 +118,14 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   });
 
   test('"Choose" on a plan card selects it in the simulator', async ({ page }) => {
-    await openHome(page, '/en');
+    await openHome(page, '/');
     await page.getByRole('button', { name: 'Choose Ultra+' }).click();
     await expect(page.locator('.simulator [data-tier="ultra"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByTestId('price')).toHaveText('$69');
   });
 
   test('former pages redirect to their section of the one-page site', async ({ request }) => {
-    for (const [from, to] of [['/en/plans', '/en#plans'], ['/fr/help', '/en#faq'], ['/en/devices', '/en#content'], ['/fr/coverage', '/en#content']] as const) {
+    for (const [from, to] of [['/en/plans', '/#plans'], ['/fr/help', '/#faq'], ['/en/devices', '/#content'], ['/fr/coverage', '/#content'], ['/en', '/'], ['/en/blog', '/blog']] as const) {
       const res = await request.get(from, { maxRedirects: 0 });
       expect(res.status(), from).toBe(308);
       expect(res.headers()['location'], from).toMatch(new RegExp(`${to.replace('#', '\\#')}$`));
@@ -140,7 +140,7 @@ test.describe('pre-registration', () => {
       sent = route.request().postDataJSON();
       await route.fulfill({ status: 201, json: { ok: true } });
     });
-    await openHome(page, '/en');
+    await openHome(page, '/');
     await page.locator('.simulator [data-tier="ultra"]').click();
     await page.locator('[data-term="24m"]').click();
     await page.locator('[data-stream="2"]').click();
@@ -172,7 +172,7 @@ test.describe('pre-registration', () => {
   });
 
   test('requires a valid email and consent before continuing', async ({ page }) => {
-    await openHome(page, '/en');
+    await openHome(page, '/');
     await page.getByRole('button', { name: /^Free pre-registration/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByRole('button', { name: /^Continue/ }).click();
@@ -185,7 +185,7 @@ test.describe('pre-registration', () => {
 
   test('dialog stays still when hovered and lives in <body> (regression)', async ({ page, isMobile }) => {
     test.skip(isMobile, 'hover only exists on desktop');
-    await openHome(page, '/en');
+    await openHome(page, '/');
     await page.getByRole('button', { name: /^Free pre-registration/ }).click();
     const checkbox = page.getByTestId('checkout-dialog').getByRole('checkbox');
     await checkbox.hover();
@@ -197,7 +197,7 @@ test.describe('pre-registration', () => {
 
   test('shows a clear message when rate limited', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
-    await openHome(page, '/en');
+    await openHome(page, '/');
     await page.getByRole('button', { name: /^Free pre-registration/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
@@ -211,7 +211,7 @@ test.describe('pre-registration', () => {
 
   test('traps focus and closes with Escape, restoring focus', async ({ page, isMobile }) => {
     test.skip(isMobile, 'keyboard test runs on desktop');
-    await openHome(page, '/en');
+    await openHome(page, '/');
     const opener = page.getByRole('button', { name: /^Free pre-registration/ });
     await opener.click();
     const dialog = page.getByRole('dialog');
@@ -227,7 +227,7 @@ test.describe('pre-registration', () => {
 
 test.describe('Electric Fusion Neon design system', () => {
   test('category icons use the official colours and the primary CTA is cyan', async ({ page }) => {
-    await openHome(page, '/en');
+    await openHome(page, '/');
     const expected: Record<string, string> = {
       sports: 'rgb(209, 254, 23)', // #D1FE17
       movies: 'rgb(240, 68, 196)', // #F044C4
@@ -249,7 +249,7 @@ test.describe('Electric Fusion Neon design system', () => {
 
 test.describe('home page (approved mock-up)', () => {
   test('most watched: 12 genres with region, arrows on desktop, dots everywhere', async ({ page, isMobile }) => {
-    await openHome(page, '/en');
+    await openHome(page, '/');
     const carousel = page.getByRole('region', { name: 'Most watched genres' });
     await expect(carousel).toHaveAttribute('data-ready', 'true'); // wait for hydration
     await expect(carousel.getByRole('group')).toHaveCount(12);
@@ -268,13 +268,13 @@ test.describe('home page (approved mock-up)', () => {
   });
 
   test('category cards lead to the most watched genres', async ({ page }) => {
-    await openHome(page, '/en');
+    await openHome(page, '/');
     await page.locator('#content .cat-card[data-category="movies"]').click();
-    await expect(page).toHaveURL(/\/en#featured$/);
+    await expect(page).toHaveURL(/\/#featured$/);
   });
 
   test('no third-party brand names are shown', async ({ page }) => {
-    for (const route of ['/en']) {
+    for (const route of ['/']) {
       await page.goto(route);
       const text = (await page.locator('body').innerText()).toLowerCase();
       for (const word of ['uefa', 'champions league', 'nba', 'avatar', 'house of the dragon', 'f1', 'formula 1']) {
@@ -288,7 +288,7 @@ test.describe('layout (fluid container)', () => {
   for (const width of [390, 768, 1024, 1180, 1280, 1440, 1920, 2560]) {
     test(`aligned edges and no horizontal scroll at ${width}px`, async ({ browser }) => {
       const page = await browser.newPage({ viewport: { width, height: 1000 } });
-      await openHome(page, '/en');
+      await openHome(page, '/');
       const m = await page.evaluate(() => {
         const left = (s: string) => Math.round(document.querySelector(s)!.getBoundingClientRect().left);
         const g = document.querySelector('.cat-grid')!.getBoundingClientRect();
@@ -311,18 +311,18 @@ test.describe('layout (fluid container)', () => {
 test.describe('navigation', () => {
   test('mobile menu opens, navigates and closes', async ({ page, isMobile }) => {
     test.skip(!isMobile, 'mobile only');
-    await openHome(page, '/en');
+    await openHome(page, '/');
     const toggle = page.getByRole('button', { name: 'Toggle menu' });
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
     await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'How it works' }).click();
-    await expect(page).toHaveURL(/\/en#how$/);
+    await expect(page).toHaveURL(/\/#how$/);
     await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('no horizontal scrolling', async ({ page }) => {
-    for (const r of ['/en', '/en/legal/privacy']) {
+    for (const r of ['/', '/legal/privacy']) {
       await page.goto(r);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
       expect(overflow, r).toBeLessThanOrEqual(0);
@@ -332,7 +332,7 @@ test.describe('navigation', () => {
 
 test.describe('one-page navigation, trial & support requests (network mocked)', () => {
   test('header: 3 section links and 2 call-to-action buttons', async ({ page, isMobile }) => {
-    await page.goto('/en');
+    await page.goto('/');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
     await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Blog', 'Get Started']);
@@ -346,7 +346,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
       sent = route.request().postDataJSON();
       await route.fulfill({ status: 201, json: { ok: true } });
     });
-    await page.goto('/en');
+    await page.goto('/');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
     await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Request a Trial' }).click();
     const dialog = page.getByRole('dialog', { name: 'Request a Trial' });
@@ -372,7 +372,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
       sent = route.request().postDataJSON();
       await route.fulfill({ status: 201, json: { ok: true } });
     });
-    await page.goto('/en');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Contact support', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');
@@ -391,7 +391,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
 
   test('request window shows a rate-limit message', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
-    await page.goto('/en');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Contact support', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');
@@ -405,7 +405,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
 });
 
 test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
-  for (const route of ['/en', '/en/legal/privacy', '/en/legal/terms']) {
+  for (const route of ['/', '/legal/privacy', '/legal/terms']) {
     test(`no violations on ${route}`, async ({ page }) => {
       await page.goto(route);
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
@@ -414,7 +414,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
   }
 
   test('request window has no violations', async ({ page }) => {
-    await page.goto('/en');
+    await page.goto('/');
     await page.getByRole('button', { name: 'Contact support', exact: true }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();
@@ -422,7 +422,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
   });
 
   test('checkout dialog has no violations', async ({ page }) => {
-    await openHome(page, '/en');
+    await openHome(page, '/');
     await page.getByRole('button', { name: /^Free pre-registration/ }).click();
     await expect(page.getByRole('dialog')).toBeVisible(); // the dialog is loaded on demand
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();

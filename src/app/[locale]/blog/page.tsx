@@ -21,7 +21,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
       <div className="card blog-empty">
         <BookOpen size={32} strokeWidth={1.75} aria-hidden="true" />
         <p>{b.empty}</p>
-        <Link className="btn btn-lime" href={`/${locale}`}>{b.back}</Link>
+        <Link className="btn btn-lime" href="/">{b.back}</Link>
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ import type { Dictionary } from '@/i18n/dictionaries';
 import { Brand } from './Brand';
 import { openRequest } from './RequestHost';
 
-export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
+export function Header({ locale: _locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -21,16 +21,16 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
 
   // One-page site: the menu scrolls to sections of the home page.
   const links = [
-    { href: `/${locale}#plans`, label: nav.plans },
-    { href: `/${locale}#how`, label: nav.how },
-    { href: `/${locale}#faq`, label: nav.help },
-    { href: `/${locale}/blog`, label: nav.blog },
+    { href: `/#plans`, label: nav.plans },
+    { href: `/#how`, label: nav.how },
+    { href: `/#faq`, label: nav.help },
+    { href: `/blog`, label: nav.blog },
   ];
 
   return (
     <header className="header">
       <div className="wrap nav">
-        <Link href={`/${locale}`} title={nav.home} className="brand-link">
+        <Link href="/" title={nav.home} className="brand-link">
           <Brand />
         </Link>
         <nav id="navlinks" className={`links${open ? ' open' : ''}`} aria-label={nav.label}>
@@ -52,7 +52,7 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
             >
               {nav.trial}
             </button>
-            <a className="btn btn-sm btn-lime" href={`/${locale}#plans`} onClick={() => setOpen(false)}>
+            <a className="btn btn-sm btn-lime" href={`/#plans`} onClick={() => setOpen(false)}>
               {nav.getStarted}
             </a>
           </span>

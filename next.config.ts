@@ -24,19 +24,30 @@ const FORMER_PAGES: Record<string, string> = { '/plans': '#plans', '/devices': '
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // Clean URLs (owner request): the site is served at / (no /en prefix). /en/* is the internal route.
   async redirects() {
     const former = Object.entries(FORMER_PAGES).flatMap(([path, anchor]) => [
-      { source: `/:locale(en|fr)${path}`, destination: `/en${anchor}`, permanent: true },
-      { source: path, destination: `/en${anchor}`, permanent: true },
+      { source: `/:locale(en|fr)${path}`, destination: `/${anchor}`, permanent: true },
+      { source: path, destination: `/${anchor}`, permanent: true },
     ]);
     return [
       ...former,
-      { source: '/', destination: '/en', permanent: false },
-      { source: '/legal/:doc', destination: '/en/legal/:doc', permanent: false },
-      { source: '/blog', destination: '/en/blog', permanent: false },
-      { source: '/fr', destination: '/en', permanent: true },
-      { source: '/fr/:path*', destination: '/en/:path*', permanent: true },
+      { source: '/en', destination: '/', permanent: true },
+      { source: '/en/:path+', destination: '/:path+', permanent: true },
+      { source: '/fr', destination: '/', permanent: true },
+      { source: '/fr/:path*', destination: '/:path*', permanent: true },
     ];
+  },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        { source: '/', destination: '/en' },
+        { source: '/blog', destination: '/en/blog' },
+        { source: '/legal/:doc', destination: '/en/legal/:doc' },
+      ],
+      // Any other unknown path renders the site's own (styled) 404 page.
+      fallback: [{ source: '/:path((?!en(?:/|$)|_next/|api/).*)', destination: '/en/:path' }],
+    };
   },
   async headers() {
     return [

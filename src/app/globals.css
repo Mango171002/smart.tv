@@ -1860,3 +1860,9 @@ html { scroll-padding-top: 84px; }
   .cta-banner .cta-text { font-size: 14px; }
   .cta-banner .cta-text2 { font-size: 15px; margin-bottom: 14px; }
 }
+/* Terms: short version, single column */
+.terms-layout { grid-template-columns: minmax(0, 1fr); }
+.terms-body { max-width: 900px; gap: 12px; }
+.terms-section { padding: 18px 22px; }
+.terms-section h2 { margin-bottom: 8px; }
+.terms-section p { margin-bottom: 0; }

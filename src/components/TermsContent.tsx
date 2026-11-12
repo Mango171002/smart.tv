@@ -4,7 +4,7 @@ import {
   PauseCircle, PencilLine, Phone, ReceiptText, Rocket, Scale, Tag, Tv, UserRound, type LucideIcon,
 } from 'lucide-react';
 import { siteConfig } from '@/config/site';
-import { TERMS_HIGHLIGHTS, TERMS_SECTIONS, TERMS_UPDATED, type TermsSection } from '@/content/terms';
+import { TERMS_SECTIONS, TERMS_UPDATED, type TermsSection } from '@/content/terms';
 
 const ICONS: Record<TermsSection['icon'], LucideIcon> = {
   info: Info, building: Building2, rocket: Rocket, tv: Tv, user: UserRound, tag: Tag, calendar: CalendarClock,
@@ -21,30 +21,7 @@ export function TermsContent() {
     <div className="terms">
       <p className="terms-meta">Last updated: {TERMS_UPDATED} · Pre-launch version</p>
 
-      <ul className="terms-highlights">
-        {TERMS_HIGHLIGHTS.map((h, i) => {
-          const Icon = ICONS[h.icon];
-          return (
-            <li key={h.title} className={`cat-${CATS[i % CATS.length]}`}>
-              <span className="icon-box" aria-hidden="true"><Icon size={22} strokeWidth={1.75} /></span>
-              <b>{h.title}</b>
-              <small>{h.text}</small>
-            </li>
-          );
-        })}
-      </ul>
-
       <div className="terms-layout">
-        <nav className="terms-toc" aria-label="Contents">
-          <b>Contents</b>
-          <ol>
-            {TERMS_SECTIONS.map((s) => (
-              <li key={s.id}><a href={`#${s.id}`}>{s.title}</a></li>
-            ))}
-            <li><a href="#contact">Contact us</a></li>
-          </ol>
-        </nav>
-
         <div className="terms-body">
           {TERMS_SECTIONS.map((s, i) => {
             const Icon = ICONS[s.icon];

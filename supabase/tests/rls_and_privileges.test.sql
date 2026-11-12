@@ -188,6 +188,10 @@ select pg_temp.check(true, 'anon can submit support request');
 insert into public.contact_requests (kind, name, email, phone, locale, market_code, consent_given, consent_text_version)
   values ('trial_request', 'Alex', 'trial@example.test', '+14155550123', 'en', 'US', true, 'v-test');
 select pg_temp.check(true, 'anon can submit a trial request with a phone number');
+insert into public.contact_requests (kind, email, market_code, marketing_opt_in, consent_given, consent_text_version)
+  values ('launch_waitlist', 'optin@example.test', 'US', true, true, 'v-test');
+select pg_temp.check(true, 'anon can pre-register with the optional marketing consent');
+select pg_temp.expect_error($$select marketing_opt_in from public.contact_requests$$, '42501', 'anon cannot read marketing consent');
 select pg_temp.expect_error(
   $$insert into public.contact_requests (kind, name, email, consent_given, consent_text_version) values ('trial_request', 'Alex', 'trial2@example.test', true, 'v-test')$$,
   '23514', 'trial request without phone is rejected');

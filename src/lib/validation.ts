@@ -18,6 +18,8 @@ const contactBase = {
   locale: z.enum(LOCALES),
   market: z.enum(MARKET_CODES).optional(),
   consent: z.literal(true),
+  /** Optional, separate consent to receive offers and news. */
+  marketing: z.boolean().optional(),
   /** Honeypot field: must stay empty. */
   website: z.string().max(0).optional(),
 };

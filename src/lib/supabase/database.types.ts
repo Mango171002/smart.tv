@@ -47,6 +47,7 @@ export type Database = {
           message?: string | null;
           name?: string | null;
           phone?: string | null;
+          marketing_opt_in?: boolean;
           subject?: string | null;
           interest_duration_months?: number | null;
           interest_streams?: number | null;

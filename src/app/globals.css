@@ -1914,3 +1914,70 @@ html { scroll-padding-top: 84px; }
 .cta-banner > picture .cta-globe { width: min(80%, 980px); left: -12%; top: 6%; }
 @media (max-width: 640px) { .cta-banner > picture .cta-globe { width: 150%; left: -42%; top: 38%; } }
 @media (max-width: 640px) { .cta-banner > picture .cta-globe { opacity: .65; top: 30%; } }
+
+/* ==========================================================================
+   Neon dialogs (owner mock-up): pre-registration + trial/support windows
+   ========================================================================== */
+.modal-neon {
+  width: min(680px, 100%); padding: clamp(20px, 3vw, 34px); border-radius: 26px; border: 1.5px solid transparent;
+  background:
+    radial-gradient(70% 45% at 0% 0%, color-mix(in srgb, var(--color-lime) 14%, transparent), transparent 70%) padding-box,
+    radial-gradient(60% 40% at 100% 100%, color-mix(in srgb, var(--color-cyan) 10%, transparent), transparent 70%) padding-box,
+    linear-gradient(var(--color-bg), var(--color-bg)) padding-box,
+    linear-gradient(150deg, var(--color-lime), color-mix(in srgb, var(--color-lime) 25%, transparent) 40%, color-mix(in srgb, var(--color-cyan) 40%, transparent) 75%, var(--color-lime)) border-box;
+  box-shadow: 0 0 50px color-mix(in srgb, var(--color-lime) 18%, transparent), 0 30px 100px #000;
+}
+.request-modal.modal-neon { width: min(640px, 100%); }
+.neon-head { margin-bottom: 14px; }
+.modal-logo.brand-logo { height: 30px; }
+.modal-neon .close { border-radius: 12px; width: 44px; height: 44px; }
+.neon-title { margin: 0 0 6px; font-size: clamp(26px, 2vw + 16px, 40px); line-height: 1.1; letter-spacing: -0.8px; font-weight: 800; }
+.neon-title span { color: var(--color-lime); }
+.neon-sub { margin: 0 0 18px; color: var(--color-ink); opacity: .82; font-size: 16px; }
+.stepper { list-style: none; padding: 0; margin: 0 0 20px; display: flex; align-items: center; gap: 10px; }
+.stepper li { display: flex; align-items: center; gap: 10px; color: var(--color-ink); font-size: 15px; white-space: nowrap; }
+.stepper li + li::before { content: ''; width: clamp(18px, 4vw, 60px); height: 1px; background: var(--line-strong); }
+.stepper-num { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--color-ink) 50%, transparent); font-weight: 700; font-size: 14px; }
+.stepper li[aria-current='step'] { color: var(--color-lime); font-weight: 700; }
+.stepper li[aria-current='step'] .stepper-num { border: 2px solid var(--color-lime); color: var(--color-lime); box-shadow: 0 0 14px color-mix(in srgb, var(--color-lime) 40%, transparent); }
+.stepper li[data-on='true']:not([aria-current='step']) .stepper-num { background: var(--color-lime); border-color: var(--color-lime); color: var(--color-bg); }
+.offer-banner {
+  display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 16px; border: 1.5px solid var(--color-lime);
+  background: linear-gradient(100deg, color-mix(in srgb, var(--color-lime) 10%, var(--color-surface)), var(--color-surface) 70%, color-mix(in srgb, var(--color-lime) 18%, var(--color-surface)));
+  box-shadow: 0 0 22px color-mix(in srgb, var(--color-lime) 15%, transparent);
+}
+.offer-banner svg { color: var(--color-lime); flex: none; }
+.offer-banner b { display: block; color: var(--color-lime); font-size: 18px; }
+.offer-banner span { color: var(--color-ink); font-size: 15px; }
+.modal-neon .form { max-width: none; gap: 14px; }
+.modal-neon label { font-size: 14px; font-weight: 700; }
+.req { color: var(--danger); }
+.opt { color: var(--color-muted); font-weight: 400; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { display: grid; gap: 8px; min-width: 0; }
+.input-icon { position: relative; }
+.input-icon > svg { position: absolute; left: 14px; top: 50%; translate: 0 -50%; color: var(--color-ink); opacity: .85; pointer-events: none; }
+.input-icon .input { padding-left: 46px; border-radius: 12px; min-height: 52px; background: color-mix(in srgb, var(--color-surface) 80%, var(--color-bg)); }
+.textarea-icon > svg { top: 16px; translate: none; }
+.modal-neon .input:focus { border-color: var(--color-lime); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-lime) 20%, transparent); }
+.modal-neon .phone-input .phone-icon { position: absolute; left: 12px; top: 50%; translate: 0 -50%; color: var(--color-ink); opacity: .85; }
+.modal-neon .phone-input span { left: 36px; }
+.modal-neon .phone-input .input { padding-left: 84px; }
+.neon-check { font-size: 15px !important; color: var(--color-ink) !important; gap: 14px !important; }
+.neon-check input { width: 24px; height: 24px; accent-color: var(--color-lime); }
+.neon-check small { display: block; color: var(--color-muted); font-size: 13px; margin-top: 2px; }
+.neon-cta { min-height: 58px; border-radius: 16px; font-size: 18px; box-shadow: 0 0 26px color-mix(in srgb, var(--color-lime) 30%, transparent); }
+.neon-trust { list-style: none; padding: 0; margin: 8px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); }
+.neon-trust li { display: grid; justify-items: center; gap: 6px; text-align: center; font-size: 14px; color: var(--color-ink); padding: 4px 6px; }
+.neon-trust li + li { border-left: 1px solid var(--line-strong); }
+.neon-trust svg { color: var(--color-lime); }
+@media (max-width: 580px) {
+  .form-row { grid-template-columns: 1fr; }
+  .stepper { gap: 6px; }
+  .stepper-label { display: none; }
+  .stepper li[aria-current='step'] .stepper-label { display: inline; }
+  .neon-trust li { font-size: 12px; }
+  .offer-banner { padding: 12px 14px; }
+  .offer-banner b { font-size: 16px; }
+}
+@media (max-width: 580px) { .modal-logo.brand-logo { height: 22px; } .neon-title { font-size: 26px; } }

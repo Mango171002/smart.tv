@@ -126,11 +126,12 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
 
   test('section links scroll even when the address already has the same #hash', async ({ page }) => {
     await page.goto('/#plans');
-    await page.locator('.how3-cta').scrollIntoViewIfNeeded();
-    const before = await page.evaluate(() => window.scrollY);
-    await page.locator('.how3-cta').click();
-    await expect.poll(() => page.evaluate(() => Math.round(document.querySelector('#plans')!.getBoundingClientRect().top))).toBeLessThan(200);
-    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(before);
+    await page.locator('.how3-cta').evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    const plansTop = () => page.evaluate(() => Math.round(document.querySelector('#plans')!.getBoundingClientRect().top));
+    expect(await plansTop()).toBeLessThan(-200); // the plans section is above the viewport
+    await page.locator('.how3-cta').click({ position: { x: 20, y: 20 } });
+    await expect.poll(plansTop).toBeGreaterThan(-40);
+    expect(await plansTop()).toBeLessThan(200);
   });
 
   test('former pages redirect to their section of the one-page site', async ({ request }) => {
@@ -156,13 +157,13 @@ test.describe('pre-registration', () => {
     const opener = page.getByRole('button', { name: /^Free pre-registration/ });
     await opener.click();
     const dialog = page.getByTestId('checkout-dialog');
-    await expect(dialog).toHaveAccessibleName('Pre-registration');
+    await expect(dialog).toHaveAccessibleName('Complete your pre-registration');
     await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
 
     await dialog.getByLabel('Email address').fill('viewer@example.test');
     await dialog.getByLabel('Your region').selectOption('CA');
     await dialog.getByLabel('Main device').selectOption('mobile');
-    await dialog.getByRole('checkbox').check();
+    await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/Price confirmed by our server/);
     await expect(dialog.getByTestId('review-plan')).toHaveText('Ultra+ · 24 months · 2 devices');
@@ -196,7 +197,7 @@ test.describe('pre-registration', () => {
     test.skip(isMobile, 'hover only exists on desktop');
     await openHome(page, '/');
     await page.getByRole('button', { name: /^Free pre-registration/ }).click();
-    const checkbox = page.getByTestId('checkout-dialog').getByRole('checkbox');
+    const checkbox = page.getByTestId('checkout-dialog').getByLabel(/I agree to be contacted/);
     await checkbox.hover();
     const before = await checkbox.boundingBox();
     await page.waitForTimeout(400);
@@ -211,7 +212,7 @@ test.describe('pre-registration', () => {
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
     await dialog.getByLabel('Your region').selectOption('US');
-    await dialog.getByRole('checkbox').check();
+    await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/confirmed/);
     await dialog.getByRole('button', { name: /Confirm my pre-registration/ }).click();

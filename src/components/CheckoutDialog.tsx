@@ -1,6 +1,8 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Check, CircleCheck, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, CircleCheck, Gift, Mail, MapPin, Monitor, ShieldCheck, Zap, X } from 'lucide-react';
+import { siteConfig } from '@/config/site';
+import { Brand } from './Brand';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -42,6 +44,7 @@ export function CheckoutDialog({
   const [device, setDevice] = useState<(typeof DEVICE_KEYS)[number]>('smart_tv');
   const [market, setMarket] = useState<MarketCode | ''>('');
   const [consent, setConsent] = useState(false);
+  const [marketing, setMarketing] = useState(false);
   const [fieldError, setFieldError] = useState<{ email?: string; region?: string; consent?: string }>({});
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'error'>('idle');
   const [submitError, setSubmitError] = useState('');
@@ -104,6 +107,7 @@ export function CheckoutDialog({
           streams: selection.streams,
           device,
           consent: true,
+          marketing,
         }),
       });
       if (res.ok) {
@@ -161,25 +165,28 @@ export function CheckoutDialog({
     >
       <div
         ref={dialogRef}
-        className="modal"
+        className="modal modal-neon"
         role="dialog"
         aria-modal="true"
         aria-labelledby="checkout-title"
         onKeyDown={onKeyDown}
         data-testid="checkout-dialog"
       >
-        <div className="modalhead">
-          <h2 id="checkout-title" ref={titleRef} tabIndex={-1}>
-            {step === 3 ? c.doneTitle : c.title}
-          </h2>
+        <div className="modalhead neon-head">
+          <Brand className="modal-logo" />
           <button type="button" className="close" aria-label={dict.common.close} onClick={onClose}>
             <X size={18} strokeWidth={1.75} aria-hidden="true" />
           </button>
         </div>
-        <ol className="progress" aria-label={c.title}>
+        <h2 id="checkout-title" className="neon-title" ref={titleRef} tabIndex={-1}>
+          {step === 3 ? c.doneTitle : <>{c.headA} <span>{c.headHl}</span></>}
+        </h2>
+        {step !== 3 && <p className="neon-sub">{c.headSub}</p>}
+        <ol className="stepper" aria-label={c.title}>
           {c.steps.map((label, i) => (
             <li key={label} data-on={i < step} aria-current={i === step - 1 ? 'step' : undefined}>
-              {i + 1} · {label}
+              <span className="stepper-num" aria-hidden="true">{i + 1}</span>
+              <span className="stepper-label">{label}</span>
             </li>
           ))}
         </ol>
@@ -193,46 +200,71 @@ export function CheckoutDialog({
               void review();
             }}
           >
-            <p className="muted">{c.intro}</p>
-            <label htmlFor="prereg-email">{c.emailLabel}</label>
-            <input
-              className="input"
-              id="prereg-email"
-              type="email"
-              autoComplete="email"
-              maxLength={254}
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              aria-invalid={fieldError.email ? true : undefined}
-              aria-describedby={fieldError.email ? 'prereg-email-err' : undefined}
-            />
-            {fieldError.email && <span id="prereg-email-err" className="error">{fieldError.email}</span>}
-            <label htmlFor="prereg-region">{c.regionLabel}</label>
-            <select
-              className="input"
-              id="prereg-region"
-              value={market}
-              onChange={(e) => setMarket(e.target.value as MarketCode | '')}
-              aria-invalid={fieldError.region ? true : undefined}
-              aria-describedby={fieldError.region ? 'prereg-region-err' : undefined}
-            >
-              <option value="">—</option>
-              {MARKET_CODES.map((code) => (
-                <option key={code} value={code}>{MARKETS[code].flag} {dict.markets[code]}</option>
-              ))}
-            </select>
-            {fieldError.region && <span id="prereg-region-err" className="error">{fieldError.region}</span>}
-            <label htmlFor="prereg-device">{c.deviceLabel}</label>
-            <select
-              className="input"
-              id="prereg-device"
-              value={device}
-              onChange={(e) => setDevice(e.target.value as (typeof DEVICE_KEYS)[number])}
-            >
-              {c.deviceOptions.map((o, i) => <option key={o} value={DEVICE_KEYS[i]}>{o}</option>)}
-            </select>
-            <label className="consent" htmlFor="prereg-consent">
+            <div className="offer-banner">
+              <Gift size={30} strokeWidth={1.75} aria-hidden="true" />
+              <div>
+                <b>{c.offerTitle}</b>
+                <span>{c.offerText}</span>
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="field">
+                <label htmlFor="prereg-email">{c.emailLabel} <span className="req" aria-hidden="true">*</span></label>
+                <div className="input-icon">
+                  <Mail size={20} strokeWidth={1.75} aria-hidden="true" />
+                  <input
+                    className="input"
+                    id="prereg-email"
+                    type="email"
+                    autoComplete="email"
+                    maxLength={254}
+                    required
+                    placeholder={c.emailPlaceholder}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    aria-invalid={fieldError.email ? true : undefined}
+                    aria-describedby={fieldError.email ? 'prereg-email-err' : undefined}
+                  />
+                </div>
+                {fieldError.email && <span id="prereg-email-err" className="error">{fieldError.email}</span>}
+              </div>
+              <div className="field">
+                <label htmlFor="prereg-region">{c.regionLabel} <span className="req" aria-hidden="true">*</span></label>
+                <div className="input-icon">
+                  <MapPin size={20} strokeWidth={1.75} aria-hidden="true" />
+                  <select
+                    className="input"
+                    id="prereg-region"
+                    required
+                    value={market}
+                    onChange={(e) => setMarket(e.target.value as MarketCode | '')}
+                    aria-invalid={fieldError.region ? true : undefined}
+                    aria-describedby={fieldError.region ? 'prereg-region-err' : undefined}
+                  >
+                    <option value="">{c.regionPlaceholder}</option>
+                    {MARKET_CODES.map((code) => (
+                      <option key={code} value={code}>{MARKETS[code].flag} {dict.markets[code]}</option>
+                    ))}
+                  </select>
+                </div>
+                {fieldError.region && <span id="prereg-region-err" className="error">{fieldError.region}</span>}
+              </div>
+            </div>
+            <div className="field">
+              <label htmlFor="prereg-device">{c.deviceLabel} <span className="opt">{c.optional}</span></label>
+              <div className="input-icon">
+                <Monitor size={20} strokeWidth={1.75} aria-hidden="true" />
+                <select
+                  className="input"
+                  id="prereg-device"
+                  value={device}
+                  onChange={(e) => setDevice(e.target.value as (typeof DEVICE_KEYS)[number])}
+                >
+                  {c.deviceOptions.map((o, i) => <option key={o} value={DEVICE_KEYS[i]}>{o}</option>)}
+                </select>
+              </div>
+            </div>
+            <label className="consent neon-check" htmlFor="prereg-consent">
               <input
                 id="prereg-consent"
                 type="checkbox"
@@ -241,10 +273,28 @@ export function CheckoutDialog({
                 aria-invalid={fieldError.consent ? true : undefined}
                 aria-describedby={fieldError.consent ? 'prereg-consent-err' : undefined}
               />
-              <span>{c.consentLabel}</span>
+              <span>
+                {c.consentMain}
+                <small>{c.consentSub}</small>
+              </span>
             </label>
             {fieldError.consent && <span id="prereg-consent-err" className="error">{fieldError.consent}</span>}
-            <button type="submit" className="btn block">{c.review} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" /></button>
+            <label className="consent neon-check" htmlFor="prereg-marketing">
+              <input id="prereg-marketing" type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} />
+              <span className="muted">{c.marketingLabel.replace('{brand}', siteConfig.brandName)}</span>
+            </label>
+            <button type="submit" className="btn btn-lime block neon-cta">{c.review} <ArrowRight size={20} strokeWidth={2} aria-hidden="true" /></button>
+            <ul className="neon-trust">
+              {c.trust.map((t, i) => {
+                const Icon = [ShieldCheck, Zap, Mail][i] ?? ShieldCheck;
+                return (
+                  <li key={t}>
+                    <Icon size={26} strokeWidth={1.75} aria-hidden="true" />
+                    <span>{t}</span>
+                  </li>
+                );
+              })}
+            </ul>
           </form>
         )}
 
@@ -264,7 +314,7 @@ export function CheckoutDialog({
             {submitState === 'error' && <div className="alert err" role="alert">{submitError}</div>}
             <button
               type="button"
-              className="btn block"
+              className="btn btn-lime block neon-cta"
               onClick={() => void confirm()}
               disabled={quoteState === 'loading' || submitState === 'sending'}
             >

@@ -49,6 +49,7 @@ export async function POST(req: Request) {
     interest_term: input.kind === 'launch_waitlist' ? (input.term ?? null) : null,
     interest_streams: input.kind === 'launch_waitlist' ? (input.streams ?? null) : null,
     preferred_device: input.kind === 'launch_waitlist' ? (input.device ?? null) : null,
+    marketing_opt_in: input.marketing === true,
     consent_given: true,
     consent_text_version: siteConfig.consentTextVersion,
   });

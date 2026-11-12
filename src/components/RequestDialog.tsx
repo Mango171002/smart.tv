@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { CheckCircle2, X } from 'lucide-react';
+import { CheckCircle2, Mail, MessageSquareText, Phone, ShieldCheck, UserRound, Zap, X } from 'lucide-react';
+import { Brand } from './Brand';
 import countries from '@/config/countries.json';
 import type { Locale } from '@/i18n/config';
 import { fill, type Dictionary } from '@/i18n/dictionaries';
@@ -136,13 +137,16 @@ export function RequestDialog({
 
   return createPortal(
     <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={dialogRef} className="modal request-modal" role="dialog" aria-modal="true" aria-labelledby="request-title" onKeyDown={onKeyDown} data-testid="request-dialog">
-        <div className="modalhead">
-          <h2 id="request-title">{state === 'done' ? r.successTitle : title}</h2>
+      <div ref={dialogRef} className="modal request-modal modal-neon" role="dialog" aria-modal="true" aria-labelledby="request-title" onKeyDown={onKeyDown} data-testid="request-dialog">
+        <div className="modalhead neon-head">
+          <Brand className="modal-logo" />
           <button type="button" className="close" aria-label={dict.common.close} onClick={onClose}>
             <X size={18} strokeWidth={1.75} aria-hidden="true" />
           </button>
         </div>
+        <h2 id="request-title" className="neon-title" aria-label={state === 'done' ? r.successTitle : title}>
+          {state === 'done' ? r.successTitle : mode === 'trial' ? <>{r.trialHeadA} <span>{r.trialHeadHl}</span></> : <>{r.supportHeadA} <span>{r.supportHeadHl}</span></>}
+        </h2>
 
         {state === 'done' ? (
           <div className="success" role="status">
@@ -152,21 +156,32 @@ export function RequestDialog({
           </div>
         ) : (
           <form className="form" noValidate onSubmit={onSubmit}>
-            <p className="muted">{mode === 'trial' ? r.trialIntro : r.supportIntro}</p>
+            <p className="neon-sub">{mode === 'trial' ? r.trialIntro : r.supportIntro}</p>
             <div className="hp" aria-hidden="true">
               <label htmlFor="req-website">Website</label>
               <input id="req-website" name="website" tabIndex={-1} autoComplete="off" />
             </div>
 
-            <label htmlFor="req-name">{r.nameLabel}</label>
-            <input className="input" autoComplete="name" maxLength={120} {...field('name')} />
-            {err('name')}
+            <div className="form-row">
+              <div className="field">
+                <label htmlFor="req-name">{r.nameLabel} <span className="req" aria-hidden="true">*</span></label>
+                <div className="input-icon">
+                  <UserRound size={20} strokeWidth={1.75} aria-hidden="true" />
+                  <input className="input" autoComplete="name" maxLength={120} placeholder={r.namePlaceholder} {...field('name')} />
+                </div>
+                {err('name')}
+              </div>
+              <div className="field">
+                <label htmlFor="req-email">{r.emailLabel} <span className="req" aria-hidden="true">*</span></label>
+                <div className="input-icon">
+                  <Mail size={20} strokeWidth={1.75} aria-hidden="true" />
+                  <input className="input" type="email" autoComplete="email" maxLength={254} placeholder={r.emailPlaceholder} {...field('email')} />
+                </div>
+                {err('email')}
+              </div>
+            </div>
 
-            <label htmlFor="req-email">{r.emailLabel}</label>
-            <input className="input" type="email" autoComplete="email" maxLength={254} {...field('email')} />
-            {err('email')}
-
-            <label htmlFor="req-phone">{r.phoneLabel}</label>
+            <label htmlFor="req-phone">{r.phoneLabel} <span className="req" aria-hidden="true">*</span></label>
             <div className="phone-row">
               <select className="input" aria-label={r.countryLabel} value={country} onChange={(e) => setCountry(e.target.value)} autoComplete="tel-country-code">
                 {countries.map((c) => (
@@ -176,6 +191,7 @@ export function RequestDialog({
                 ))}
               </select>
               <div className="phone-input">
+                <Phone className="phone-icon" size={18} strokeWidth={1.75} aria-hidden="true" />
                 <span aria-hidden="true">+{dial}</span>
                 <input className="input" type="tel" inputMode="tel" autoComplete="tel-national" maxLength={20} placeholder={r.phonePlaceholder} {...field('phone')} />
               </div>
@@ -185,12 +201,15 @@ export function RequestDialog({
             {mode === 'support' && (
               <>
                 <label htmlFor="req-message">{r.messageLabel}</label>
-                <textarea className="input" maxLength={4000} rows={4} {...field('message')} />
+                <div className="input-icon textarea-icon">
+                  <MessageSquareText size={20} strokeWidth={1.75} aria-hidden="true" />
+                  <textarea className="input" maxLength={4000} rows={4} placeholder={r.messagePlaceholder} {...field('message')} />
+                </div>
                 {err('message')}
               </>
             )}
 
-            <label className="consent" htmlFor="req-consent">
+            <label className="consent neon-check" htmlFor="req-consent">
               <input type="checkbox" {...field('consent')} />
               <span>{dict.forms.consent}</span>
             </label>
@@ -198,9 +217,20 @@ export function RequestDialog({
 
             <div aria-live="polite" role="status">{state === 'error' && serverError && <div className="alert err">{serverError}</div>}</div>
 
-            <button type="submit" className="btn block" disabled={state === 'sending'}>
+            <button type="submit" className="btn btn-lime block neon-cta" disabled={state === 'sending'}>
               {state === 'sending' ? r.sending : r.send}
             </button>
+            <ul className="neon-trust">
+              {r.trust.map((t, i) => {
+                const Icon = [ShieldCheck, Mail, Zap][i] ?? ShieldCheck;
+                return (
+                  <li key={t}>
+                    <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
+                    <span>{t}</span>
+                  </li>
+                );
+              })}
+            </ul>
           </form>
         )}
       </div>

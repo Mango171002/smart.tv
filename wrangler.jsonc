@@ -10,6 +10,11 @@
     "binding": "ASSETS"
   },
   "observability": { "enabled": true },
+  // Custom domain bought on Cloudflare Registrar (sygmatv.com). The workers.dev URL keeps working.
+  "routes": [
+    { "pattern": "sygmatv.com", "custom_domain": true },
+    { "pattern": "www.sygmatv.com", "custom_domain": true }
+  ],
   // Non-secret runtime configuration. Secrets (SUPABASE_SECRET_KEY,
   // PAYMENT_WEBHOOK_SECRET) must be added with `wrangler secret put` — never here.
   "vars": {

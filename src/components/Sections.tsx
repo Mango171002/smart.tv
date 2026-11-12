@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { BadgeCheck, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
+import { BadgeCheck, ChevronRight, MailCheck, MonitorPlay, MousePointerClick, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
@@ -144,33 +144,51 @@ export function ContentCategories({
 /** Accent colour of each step (official category colours). */
 const STEP_CATS = ['live', 'movies', 'sports', 'streaming'] as const;
 
+const STEP_ICONS: LucideIcon[] = [MousePointerClick, UserPlus, MailCheck, MonitorPlay];
+
 export function HowItWorks({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.how;
   return (
     <section id="how" aria-labelledby="how-title">
       <div className="wrap">
         <div className="how-head">
-          <div className="eyebrow">{h.eyebrow}</div>
-          <h2 id="how-title" className="section-title">{h.title}</h2>
+          <div className="eyebrow eyebrow-lime">
+            <Zap size={14} strokeWidth={2.25} aria-hidden="true" /> {h.eyebrow}
+          </div>
+          <h2 id="how-title" className="section-title how-title">
+            {h.titleA} <span className="how-hl">{h.titleHl}</span>
+          </h2>
           <p className="sub">{h.sub}</p>
         </div>
         <ol className="steps steps-4">
-          {h.steps.map((s, i) => (
-            <li className={`card step cat-${STEP_CATS[i % STEP_CATS.length]}`} key={s.title}>
-              <div className="step-top">
-                <div className="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</div>
-                <span className="step-time">{s.time}</span>
-              </div>
-              <b>{s.title}</b>
-              <small>{s.text}</small>
-            </li>
-          ))}
+          {h.steps.map((s, i) => {
+            const Icon = STEP_ICONS[i] ?? Zap;
+            return (
+              <li className={`card step cat-${STEP_CATS[i % STEP_CATS.length]}`} key={s.title}>
+                <div className="step-top">
+                  <div className="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</div>
+                  <span className="step-icon" aria-hidden="true">
+                    <Icon size={26} strokeWidth={1.75} />
+                  </span>
+                </div>
+                <b>{s.title}</b>
+                <small>{s.text}</small>
+                {i < h.steps.length - 1 && (
+                  <span className="step-arrow" aria-hidden="true">
+                    <ChevronRight size={18} strokeWidth={2.25} />
+                  </span>
+                )}
+              </li>
+            );
+          })}
         </ol>
         <div className="how-actions">
-          <Link className="btn btn-lime" href={`/${locale}#plans`}>
+          <Link className="btn btn-lime how-cta" href={`/${locale}#plans`}>
             {h.cta} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
           </Link>
-          <RequestButton mode="support" className="link-btn">{h.help}</RequestButton>
+          <RequestButton mode="support" className="link-btn">
+            <CirclePlay size={20} strokeWidth={1.75} aria-hidden="true" /> <span>{h.help}</span>
+          </RequestButton>
         </div>
       </div>
     </section>

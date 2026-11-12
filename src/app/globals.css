@@ -1720,3 +1720,36 @@ html { scroll-padding-top: 84px; }
 }
 /* FAQ: intro starts at the top of the column (not vertically centred) */
 .faq-layout { align-items: start; }
+/* Phones: larger hero features */
+@media (max-width: 900px) {
+  .hero-bar { column-gap: 32px; row-gap: 18px; }
+  .hero-bar li { font-size: 16px; gap: 10px; font-weight: 650; }
+  .hero-bar svg { width: 24px; height: 24px; }
+}
+@media (max-width: 380px) { .hero-bar { column-gap: 18px; } .hero-bar li { font-size: 15px; } }
+/* Phones: setup guide heading aligned left; compact step cards */
+@media (max-width: 900px) {
+  .how-head { text-align: left; margin: 0; }
+  .how-head .sub { margin-inline: 0; }
+  .how-actions { justify-content: flex-start; }
+}
+@media (max-width: 560px) {
+  #how .steps.steps-4 { gap: 12px; margin-top: 22px; }
+  #how .step { padding: 16px 16px 18px; border-radius: 18px; }
+  #how .step .step-top { margin-bottom: 6px; }
+  #how .step .num { font-size: 32px; }
+  #how .step .step-icon { width: 40px; height: 40px; border-radius: 12px; }
+  #how .step .step-icon svg { width: 20px; height: 20px; }
+  #how .step b { font-size: 16px; margin: 0 0 4px; }
+  #how .step small { font-size: 13.5px; line-height: 1.45; }
+}
+@media (max-width: 560px) {
+  #how .step { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: 'num title icon' 'num text text'; column-gap: 14px; row-gap: 2px; align-items: center; padding: 14px 14px 14px 16px; }
+  #how .step .step-top { display: contents; }
+  #how .step .num { grid-area: num; align-self: start; font-size: 30px; line-height: 1; }
+  #how .step .step-icon { grid-area: icon; width: 34px; height: 34px; }
+  #how .step .step-icon svg { width: 18px; height: 18px; }
+  #how .step b { grid-area: title; margin: 0; }
+  #how .step small { grid-area: text; font-size: 13px; }
+}
+@media (max-width: 560px) { #how .step { grid-template-columns: 48px 1fr auto; } }

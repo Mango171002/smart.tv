@@ -1322,3 +1322,9 @@ html { scroll-padding-top: 84px; }
     mask-image: linear-gradient(to right, transparent 0, black 18%, black 90%, transparent 100%), linear-gradient(to bottom, black 60%, transparent 100%);
   }
 }
+/* Hero: a bit shorter (owner request) */
+@media (min-width: 901px) {
+  .hero { padding-block: 56px 28px; }
+  .hero-grid { min-height: 460px; }
+  .hero-stage { width: min(82vw, 1320px); top: -10px; }
+}

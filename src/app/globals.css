@@ -1678,3 +1678,38 @@ html { scroll-padding-top: 84px; }
   @media (hover: hover) { .tier-card.is-recommended:hover { transform: scale(1.05) translateY(-2px); } }
 }
 @media (min-width: 901px) { .tier-grid { margin-top: 30px; } }
+
+/* ==========================================================================
+   Phone tweaks (owner request 12/11/2026)
+   ========================================================================== */
+@media (max-width: 900px) {
+  /* Plans: swipeable row, slightly narrower cards */
+  .tier-grid {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; scrollbar-width: none;
+    margin-inline: calc(-1 * var(--gutter)); padding: 18px var(--gutter) 10px; scroll-padding-inline: var(--gutter);
+  }
+  .tier-grid::-webkit-scrollbar { display: none; }
+  .tier-grid > .tier-card { flex: 0 0 min(84%, 360px); scroll-snap-align: start; }
+  /* Simulator left points and FAQ highlights: hidden on phones */
+  .sim-points, .faq-highlights { display: none; }
+  /* FAQ: title + description, then the questions */
+  .faq-layout { grid-template-columns: 1fr; gap: 18px; }
+  /* Closing CTA: both buttons and the trust row on one line */
+  .cta-actions { flex-wrap: nowrap; gap: 8px; }
+  .cta-actions .btn { flex: 1 1 0; min-width: 0; padding: 0 10px; min-height: 48px; font-size: 14px; white-space: nowrap; }
+  .cta-actions .btn svg { width: 16px; height: 16px; flex: none; }
+  .cta-trust { flex-direction: row; flex-wrap: nowrap; gap: 0; font-size: 11px; }
+  .cta-trust li { padding: 0 6px; white-space: nowrap; gap: 4px; }
+  .cta-trust li + li { border-left: 1px solid color-mix(in srgb, var(--color-ink) 30%, transparent); }
+  .cta-trust svg { width: 13px; height: 13px; }
+}
+@media (max-width: 400px) {
+  .cta-actions .btn { font-size: 13px; }
+  .cta-trust { font-size: 10px; }
+  .cta-trust li { padding: 0 4px; }
+}
+@media (max-width: 580px) {
+  .tier-grid .tier-features li { font-size: 13px; gap: 8px; }
+  .tier-grid .tier-card { padding: 22px 16px; }
+}
+@media (max-width: 900px) { .tier-grid { width: auto; max-width: none; } }

@@ -71,3 +71,13 @@ for (const [device, widths] of Object.entries(SCREENS)) {
   }
   console.log(`screen-${device}: avif ${widths.map((w) => (statSync(`${OUT}screen-${device}-${w}.avif`).size / 1024).toFixed(0)).join('/')} KB`);
 }
+
+// Closing CTA earth artwork (assets/cta/cta-earth.png → public/images/cta-earth-<w>.avif|webp)
+{
+  const src = fileURLToPath(new URL('../assets/cta/cta-earth.png', import.meta.url));
+  for (const w of [640, 1200]) {
+    const base = sharp(src).resize({ width: w });
+    await base.clone().avif({ quality: 50, effort: 6 }).toFile(`${OUT}cta-earth-${w}.avif`);
+    await base.clone().webp({ quality: 72, effort: 6 }).toFile(`${OUT}cta-earth-${w}.webp`);
+  }
+}

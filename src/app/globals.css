@@ -1566,7 +1566,7 @@ html { scroll-padding-top: 84px; }
     linear-gradient(90deg, var(--color-cyan), var(--color-violet) 50%, var(--color-magenta)) border-box;
   box-shadow: 0 0 40px color-mix(in srgb, var(--color-violet) 30%, transparent), 0 0 18px color-mix(in srgb, var(--color-cyan) 20%, transparent);
 }
-.cta-banner > :not(.cta-globe):not(.cta-waves) { position: relative; z-index: 1; }
+.cta-banner > :not(picture):not(.cta-globe):not(.cta-waves) { position: relative; z-index: 1; }
 .cta-globe {
   position: absolute; z-index: 0; left: -6%; bottom: -30%; width: min(42%, 520px); height: auto; pointer-events: none; opacity: .9;
   -webkit-mask-image: radial-gradient(closest-side, black 55%, transparent 100%); mask-image: radial-gradient(closest-side, black 55%, transparent 100%);
@@ -1785,3 +1785,15 @@ html { scroll-padding-top: 84px; }
 .sim-layout[data-tier] .choice-rich .choice-badge { color: var(--tier); border-color: color-mix(in srgb, var(--tier) 50%, transparent); }
 .sim-layout[data-tier] .sim-summary .savings { color: var(--tier); }
 @media (hover: hover) { .sim-layout[data-tier] .simulator .choice:hover { border-color: color-mix(in srgb, var(--tier) 60%, transparent); } }
+/* Closing CTA: generated Earth artwork (black background blended into the card) */
+.cta-banner > picture { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.cta-banner > picture .cta-globe {
+  left: -8%; bottom: auto; top: 18%; width: min(62%, 760px); opacity: .95; mix-blend-mode: lighten;
+  -webkit-mask-image: linear-gradient(to right, black 55%, transparent 85%), linear-gradient(to bottom, transparent 0, black 25%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, black 55%, transparent 85%), linear-gradient(to bottom, transparent 0, black 25%);
+  mask-composite: intersect;
+}
+.cta-banner > :not(picture):not(.cta-waves) { position: relative; z-index: 1; }
+@media (max-width: 640px) { .cta-banner > picture .cta-globe { width: 120%; left: -30%; top: 45%; opacity: .5; } }
+.cta-banner > picture { display: block; }

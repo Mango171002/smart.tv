@@ -347,8 +347,12 @@ export function CtaBanner({ locale, dict, fromMonthly }: { locale: Locale; dict:
     <section className="cta-section" aria-labelledby="cta-title">
       <div className="wrap">
         <div className="cta-banner">
-          {/* eslint-disable-next-line @next/next/no-img-element -- decorative artwork (approved category image) */}
-          <img className="cta-globe" src="/images/cat-live-800.webp" alt="" width={800} height={533} loading="lazy" decoding="async" />
+          <picture>
+            <source type="image/avif" srcSet="/images/cta-earth-640.avif 640w, /images/cta-earth-1200.avif 1200w" sizes="(max-width: 640px) 100vw, 60vw" />
+            <source type="image/webp" srcSet="/images/cta-earth-640.webp 640w, /images/cta-earth-1200.webp 1200w" sizes="(max-width: 640px) 100vw, 60vw" />
+            { }
+            <img className="cta-globe" src="/images/cta-earth-640.webp" alt="" width={1672} height={941} loading="lazy" decoding="async" />
+          </picture>
           <span className="cta-waves" aria-hidden="true" />
           <h2 id="cta-title">
             {c.titleA} <span className="cta-hl">{c.titleHl}</span>

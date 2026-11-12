@@ -6,8 +6,8 @@
  * See docs/DECISIONS.md for the list of pending decisions.
  */
 
-/** Brand chosen by the owner on 12/11/2026 (trademark search/registration still to do). */
-export const BRAND_NAME = 'Ultra TV+';
+/** Brand chosen by the owner (Sygma TV+, domain sygmatv.com). Trademark search/registration still to do. */
+export const BRAND_NAME = 'Sygma TV+';
 
 const envBrand = process.env.NEXT_PUBLIC_BRAND_NAME?.trim();
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { BadgeCheck, ChevronRight, MailCheck, MonitorPlay, MousePointerClick, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
+import { CircleHelp, BadgeCheck, ChevronRight, MailCheck, MonitorPlay, MousePointerClick, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
@@ -195,23 +195,49 @@ export function HowItWorks({ locale, dict }: { locale: Locale; dict: Dictionary 
   );
 }
 
+const FAQ_HIGHLIGHTS: { Icon: LucideIcon; cat: string }[] = [
+  { Icon: Zap, cat: 'sports' },
+  { Icon: MonitorSmartphone, cat: 'live' },
+  { Icon: ShieldCheck, cat: 'streaming' },
+];
+
 export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
   const f = dict.faq;
   const items = limit ? f.items.slice(0, limit) : f.items;
   return (
     <section id="faq" aria-labelledby="faq-title">
       <div className="wrap faq-layout">
-        <div>
-          <div className="eyebrow">{f.eyebrow}</div>
-          <h2 id="faq-title" className="section-title">{f.title}</h2>
+        <div className="faq-intro">
+          <div className="eyebrow eyebrow-lime">
+            <CircleHelp size={15} strokeWidth={2.25} aria-hidden="true" /> {f.eyebrow}
+          </div>
+          <h2 id="faq-title" className="section-title faq-title">
+            {f.titleA} <span className="faq-hl">{f.titleHl}</span>
+          </h2>
           <p className="sub">{f.sub}</p>
+          <ul className="faq-highlights">
+            {f.highlights.map((label, i) => {
+              const { Icon, cat } = FAQ_HIGHLIGHTS[i] ?? FAQ_HIGHLIGHTS[0]!;
+              return (
+                <li key={label} className={`cat-${cat}`}>
+                  <span className="icon-box lg" aria-hidden="true">
+                    <Icon size={28} strokeWidth={1.75} />
+                  </span>
+                  <b>{label}</b>
+                </li>
+              );
+            })}
+          </ul>
         </div>
         <div className="faq">
-          {items.map((item) => (
-            <details key={item.q}>
+          {items.map((item, i) => (
+            <details key={item.q} open={i === 0}>
               <summary>
                 <span>{item.q}</span>
-                <Plus className="faq-icon" size={18} strokeWidth={2} aria-hidden="true" />
+                <span className="faq-toggle" aria-hidden="true">
+                  <Plus className="faq-plus" size={16} strokeWidth={2.25} />
+                  <Minus className="faq-minus" size={16} strokeWidth={2.25} />
+                </span>
               </summary>
               <p>{item.a}</p>
             </details>
@@ -230,7 +256,6 @@ const TRUST: { Icon: LucideIcon; cat: string }[] = [
   { Icon: RefreshCcw, cat: 'streaming' },
 ];
 
-/** Below the plan cards: comparison table, platforms bar and reassurance bar (text only, no third-party logos). */
 export function PlanExtras({ dict }: { dict: Dictionary }) {
   const p = dict.plans;
   return (

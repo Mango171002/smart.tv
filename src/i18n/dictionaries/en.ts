@@ -294,7 +294,10 @@ const en = {
   faq: {
     eyebrow: 'Answers first',
     title: 'Frequently asked questions.',
-    sub: 'Important information should be easy to find before the customer commits.',
+    titleA: 'Frequently Asked',
+    titleHl: 'Questions.',
+    sub: 'Get quick answers to the most common questions before you get started.',
+    highlights: ['Simple setup', 'Multi-device', 'Your privacy matters'],
     items: [
       {
         q: 'Can I subscribe now?',

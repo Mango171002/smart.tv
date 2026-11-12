@@ -335,9 +335,9 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     await page.goto('/en');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Get started']);
-    await expect(nav.getByRole('button', { name: 'Request a trial' })).toHaveCSS('background-color', 'rgb(25, 211, 243)');
-    await expect(nav.getByRole('link', { name: 'Get started' })).toHaveCSS('background-color', 'rgb(209, 254, 23)');
+    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Get Started']);
+    await expect(nav.getByRole('button', { name: 'Request a Trial' })).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(nav.getByRole('link', { name: 'Get Started' })).toHaveCSS('background-color', 'rgb(209, 254, 23)');
   });
 
   test('"Request a trial" opens a window: name, email, phone with country code', async ({ page, isMobile }) => {
@@ -348,8 +348,8 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     });
     await page.goto('/en');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
-    await page.getByRole('button', { name: 'Request a trial' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Request a trial' });
+    await page.getByRole('button', { name: 'Request a Trial' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Request a Trial' });
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button', { name: 'Send request' }).click();
     await expect(dialog.getByText('Enter your name.')).toBeVisible();

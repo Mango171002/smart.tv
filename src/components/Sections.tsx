@@ -2,13 +2,16 @@ import Link from 'next/link';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
+import { Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
 const HERO_WIDTHS = [640, 1080, 1440, 1920];
 const HERO_SIZES = '(max-width: 900px) 100vw, 92vw';
 const heroSrcSet = (ext: 'avif' | 'webp') => HERO_WIDTHS.map((w) => `/images/hero-${w}.${ext} ${w}w`).join(', ');
+
+/** Icons of the hero feature bar (Lucide, lime). */
+const HERO_BAR_ICONS: LucideIcon[] = [Zap, ShieldCheck, MonitorSmartphone, InfinityIcon, Headset];
 
 export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.hero;
@@ -51,8 +54,16 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
             />
           </picture>
         </div>
-        <ul className="checks hero-checks">
-          {h.checks.map((c) => <li key={c}>{c}</li>)}
+        <ul className="hero-checks hero-bar">
+          {h.checks.map((c, i) => {
+            const Icon = HERO_BAR_ICONS[i] ?? Zap;
+            return (
+              <li key={c}>
+                <Icon size={24} strokeWidth={1.75} aria-hidden="true" />
+                <span>{c}</span>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

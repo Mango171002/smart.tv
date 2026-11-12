@@ -42,7 +42,7 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
           <span className="nav-ctas">
             <button
               type="button"
-              className="btn btn-sm"
+              className="btn btn-sm btn-outline"
               aria-haspopup="dialog"
               onClick={() => {
                 setOpen(false);

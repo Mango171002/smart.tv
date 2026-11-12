@@ -1713,3 +1713,10 @@ html { scroll-padding-top: 84px; }
   .tier-grid .tier-card { padding: 22px 16px; }
 }
 @media (max-width: 900px) { .tier-grid { width: auto; max-width: none; } }
+/* Phones: hero feature bar = 4 items, centred */
+@media (max-width: 900px) {
+  .hero-bar { grid-template-columns: repeat(2, max-content); justify-content: center; column-gap: 28px; }
+  .hero-bar li:nth-child(5) { display: none; }
+}
+/* FAQ: intro starts at the top of the column (not vertically centred) */
+.faq-layout { align-items: start; }

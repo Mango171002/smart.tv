@@ -1,7 +1,7 @@
 # Deploys the site to Cloudflare Workers (OpenNext).
 # Requires ONE repository secret that you create in GitHub:
 #   CLOUDFLARE_API_TOKEN  (Cloudflare token with the "Edit Cloudflare Workers" permissions)
-# Live URL: https://sygmatv.com
+# Live URL: https://sygmatv.com (also https://sygmatv.com)
 name: Deploy to Cloudflare
 
 on:
@@ -62,7 +62,7 @@ jobs:
       - name: Lighthouse audit of the live site (mobile + desktop)
         run: |
           set -o pipefail
-          U=https://sygmatv.com/fr
+          U=https://sygmatv.com/en
           npm i --no-save lighthouse@13.6.0 >/dev/null 2>&1
           for preset in mobile desktop; do
             extra=""; [ "$preset" = desktop ] && extra="--preset=desktop"

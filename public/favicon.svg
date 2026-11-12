@@ -5,7 +5,7 @@
      role="img"
      aria-label="SYGMA TV+">
 
-  <rect width="512" height="512" fill="#000000"/>
+  <rect width="512" height="512" rx="112" fill="#000000"/>
 
   <!-- Electric Lime chevron -->
   <path

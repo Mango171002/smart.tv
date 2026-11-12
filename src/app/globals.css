@@ -1797,3 +1797,8 @@ html { scroll-padding-top: 84px; }
 .cta-banner > :not(picture):not(.cta-waves) { position: relative; z-index: 1; }
 @media (max-width: 640px) { .cta-banner > picture .cta-globe { width: 120%; left: -30%; top: 45%; opacity: .5; } }
 .cta-banner > picture { display: block; }
+/* Logo a bit smaller (owner request) */
+.brand-logo { height: 32px; }
+.brand-logo-footer { height: 38px; }
+@media (max-width: 1100px) and (min-width: 901px) { .brand-logo { height: 28px; } }
+@media (max-width: 580px) { .brand-logo { height: 24px; } .brand-logo-footer { height: 32px; } }

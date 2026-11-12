@@ -119,7 +119,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
 
   test('"Choose" on a plan card selects it in the simulator', async ({ page }) => {
     await openHome(page, '/en');
-    await page.getByRole('button', { name: 'Choose Ultra' }).click();
+    await page.getByRole('button', { name: 'Choose Ultra+' }).click();
     await expect(page.locator('.simulator [data-tier="ultra"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByTestId('price')).toHaveText('$69');
   });
@@ -156,7 +156,7 @@ test.describe('pre-registration', () => {
     await dialog.getByRole('checkbox').check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/Price confirmed by our server/);
-    await expect(dialog.getByTestId('review-plan')).toHaveText('Ultra · 24 months · 2 devices');
+    await expect(dialog.getByTestId('review-plan')).toHaveText('Ultra+ · 24 months · 2 devices');
     await expect(dialog.getByTestId('review-region')).toContainText('Canada');
     await expect(dialog.getByTestId('review-price')).toHaveText('$129 USD');
 

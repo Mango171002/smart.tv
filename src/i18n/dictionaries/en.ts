@@ -168,7 +168,7 @@ const en = {
         note: 'Our recommended plan · 4K where available.',
       },
       ultra: {
-        name: 'Ultra',
+        name: 'Ultra+',
         tagline: 'The ultimate experience',
         features: [
           { icon: 'tv', text: '**Complete** bundle', accent: true },

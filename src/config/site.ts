@@ -21,6 +21,13 @@ export const siteConfig = {
   supportEmail: null as string | null,
   /** WhatsApp support number in international format without '+' or spaces (e.g. '33612345678'). Null = the floating support button opens the contact form. */
   supportWhatsApp: null as string | null,
+  /** Official social accounts (full URLs). An icon is shown in the footer only once its URL is set. */
+  social: {
+    youtube: null as string | null,
+    instagram: null as string | null,
+    x: null as string | null,
+    telegram: null as string | null,
+  },
   supportHours: null as string | null,
   legalEntity: null as string | null,
   legalAddress: null as string | null,

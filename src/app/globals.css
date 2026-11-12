@@ -1350,3 +1350,13 @@ html { scroll-padding-top: 84px; }
   .hero-copy > h1 { margin-top: clamp(150px, 40vw, 260px); }
   .hero-copy > .actions { margin-top: 18px; }
 }
+/* Phones: zoom the photo out (more of the scene visible), same block height */
+@media (max-width: 900px) {
+  .hero-stage picture { display: block; height: 100%; }
+  .hero-stage img { height: min(82vw, 420px); object-position: 70% 20%; }
+  .hero-stage::after {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--color-bg) 25%, transparent) 0%, color-mix(in srgb, var(--color-bg) 45%, transparent) 40%, var(--color-bg) min(82vw, 420px)),
+      linear-gradient(90deg, color-mix(in srgb, var(--color-bg) 45%, transparent) 0%, transparent 65%);
+  }
+}

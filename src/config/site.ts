@@ -7,7 +7,7 @@
  */
 
 /** Brand chosen by the owner (Sygma TV+, domain sygmatv.com). Trademark search/registration still to do. */
-export const BRAND_NAME = 'Sygma TV+';
+export const BRAND_NAME = 'SYGMA TV+';
 
 const envBrand = process.env.NEXT_PUBLIC_BRAND_NAME?.trim();
 

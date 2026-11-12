@@ -25,6 +25,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: { default: `${siteConfig.brandName} — ${dict.meta.siteTitle}`, template: `%s | ${siteConfig.brandName}` },
     description: dict.meta.homeDescription,
     robots: siteConfig.allowIndexing ? undefined : { index: false, follow: false },
+    applicationName: siteConfig.brandName,
+    openGraph: { siteName: siteConfig.brandName, images: [{ url: '/brand/sygma-logo-dark-preview.png', width: 1200, height: 214, alt: siteConfig.brandName }] },
   };
 }
 

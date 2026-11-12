@@ -85,12 +85,6 @@ svg.lucide { flex: none; }
   background: var(--overlay); backdrop-filter: blur(18px) saturate(140%); border-bottom: 1px solid var(--line);
 }
 .nav { height: 70px; display: flex; align-items: center; gap: 28px; position: relative; }
-.brand { font-size: 22px; font-weight: 850; letter-spacing: -1px; white-space: nowrap; display: inline-flex; align-items: center; }
-.brand .accent { color: var(--color-cyan); }
-.brand .logo {
-  display: inline-grid; place-items: center; background: var(--color-cyan); color: var(--color-bg);
-  width: 32px; height: 29px; border-radius: 8px; margin-right: 9px;
-}
 .links { display: flex; gap: 24px; margin-left: auto; font-size: 13px; color: var(--color-muted); }
 .links a { transition: color .15s ease; }
 .links a:hover, .links a[aria-current='page'] { color: var(--color-cyan); }
@@ -333,7 +327,6 @@ textarea.input { min-height: 120px; resize: vertical; }
 }
 @media (max-width: 580px) {
   .nav { height: 64px; gap: 10px; }
-  .brand { font-size: 18px; }
   .hero h1 { font-size: 42px; }
   .hero { padding-top: 35px; }
   .lead { font-size: 15px; }
@@ -1395,8 +1388,6 @@ html { scroll-padding-top: 84px; }
   .hero-bar li { padding: 0; border-left: 0 !important; font-size: 14px; white-space: normal; }
 }
 /* Header (owner mock-up): lime logo, pill buttons — outlined "Request a Trial", lime "Get Started" */
-.brand .logo { background: none; width: auto; height: auto; margin-right: 10px; color: var(--color-lime); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--color-lime) 35%, transparent)); }
-.brand .accent { color: var(--color-lime); }
 .links .btn { border-radius: 999px; padding: 0 24px; }
 .links .btn-outline { background: transparent; color: var(--color-ink); border: 1px solid color-mix(in srgb, var(--color-ink) 30%, transparent); font-weight: 600; }
 @media (hover: hover) { .links .btn-outline:hover { color: var(--color-ink); border-color: color-mix(in srgb, var(--color-ink) 60%, transparent); box-shadow: none; } }
@@ -1411,7 +1402,6 @@ html { scroll-padding-top: 84px; }
 .support-fab svg { width: 26px; height: 26px; }
 .support-fab:focus-visible { outline-color: var(--color-ink); }
 @media (hover: hover) { .support-fab:hover { box-shadow: 0 14px 36px color-mix(in srgb, var(--color-lime) 45%, transparent), 0 0 0 6px color-mix(in srgb, var(--color-lime) 22%, transparent); } }
-.brand .logo svg { width: 34px; height: 34px; } .brand { font-size: 24px; }
 /* Hero feature bar: smaller, no frame — icons and text only */
 .hero-bar { border: 0; padding: 4px 0 0; margin-top: 4px; column-gap: 26px; }
 .hero-bar li { font-size: 13px; gap: 8px; padding: 0; }
@@ -1618,8 +1608,6 @@ html { scroll-padding-top: 84px; }
 .footer-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto auto auto; gap: clamp(24px, 3vw, 56px); align-items: start; }
 .footer-grid > * + * { padding-left: clamp(24px, 3vw, 56px); border-left: 1px solid var(--line-strong); }
 .footer-grid > .footer-top { border-left: 0; padding-left: 0; align-self: center; }
-.footer .brand { font-size: 30px; }
-.footer .brand .logo svg { width: 44px; height: 44px; }
 .footer-tagline { margin: 10px 0 18px; color: var(--color-ink); opacity: .85; }
 .footer-social { list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; }
 .footer-social a { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line-strong); opacity: 1; }
@@ -1761,3 +1749,19 @@ html { scroll-padding-top: 84px; }
 }
 @media (max-width: 360px) { .footer-chips li { font-size: 11.5px; padding: 6px 7px; } }
 @media (max-width: 900px) { .how-actions { justify-content: center; flex-direction: column; align-items: center; gap: 14px; } }
+
+/* ==========================================================================
+   SYGMA TV+ official logo (owner brief) — brand tokens + responsive sizing
+   ========================================================================== */
+:root {
+  --brand-lime: #d1fe17;      /* = --color-lime */
+  --brand-white: #ffffff;
+  --brand-black: #05070b;
+  --brand-background: #070d17; /* official site background (the brief value differs by one unit) */
+  --brand-surface: #121e2d;
+}
+.brand-link { display: inline-flex; align-items: center; flex: none; }
+.brand-logo { display: block; height: 40px; width: auto; }
+.brand-logo-footer { height: 44px; }
+@media (max-width: 1100px) and (min-width: 901px) { .brand-logo { height: 34px; } }
+@media (max-width: 580px) { .brand-logo { height: 28px; } .brand-logo-footer { height: 40px; } }

@@ -25,6 +25,7 @@ export function buildMetadata({
       locale: 'en_US',
       type: 'website',
       siteName: siteConfig.brandName,
+      images: [{ url: '/brand/sygma-logo-dark-preview.png', width: 1200, height: 214, alt: siteConfig.brandName }],
     },
     robots: siteConfig.allowIndexing ? { index: true, follow: true } : { index: false, follow: false },
   };

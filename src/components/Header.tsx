@@ -30,7 +30,7 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
   return (
     <header className="header">
       <div className="wrap nav">
-        <Link href={`/${locale}`} title={nav.home}>
+        <Link href={`/${locale}`} title={nav.home} className="brand-link">
           <Brand />
         </Link>
         <nav id="navlinks" className={`links${open ? ' open' : ''}`} aria-label={nav.label}>

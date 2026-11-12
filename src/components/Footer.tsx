@@ -31,7 +31,7 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
     <footer className="footer">
       <div className="wrap footer-grid">
         <div className="footer-brand">
-          <Brand />
+          <Brand className="brand-logo-footer" />
           <p className="footer-tagline">{f.tagline}</p>
           <ul className="footer-social" aria-label={f.social}>
             {socials.map((s) => {

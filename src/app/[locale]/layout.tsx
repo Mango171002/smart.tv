@@ -4,6 +4,7 @@ import '../globals.css';
 import { Footer } from '@/components/Footer';
 import { SupportButton } from '@/components/SupportButton';
 import { RequestHost } from '@/components/RequestHost';
+import { SectionLinkHandler } from '@/components/SectionLinkHandler';
 import { Header } from '@/components/Header';
 import { siteConfig } from '@/config/site';
 import { LOCALES, isLocale } from '@/i18n/config';
@@ -48,6 +49,7 @@ export default async function LocaleLayout({
         <main id="main" tabIndex={-1}>{children}</main>
         <Footer locale={locale} dict={dict} />
         <SupportButton nav={dict.nav} />
+        <SectionLinkHandler />
         <RequestHost locale={locale} dict={{ request: dict.request, forms: dict.forms, common: dict.common }} />
       </body>
     </html>

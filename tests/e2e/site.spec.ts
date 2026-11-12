@@ -124,6 +124,15 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     await expect(page.getByTestId('price')).toHaveText('$69');
   });
 
+  test('section links scroll even when the address already has the same #hash', async ({ page }) => {
+    await page.goto('/#plans');
+    await page.locator('.how3-cta').scrollIntoViewIfNeeded();
+    const before = await page.evaluate(() => window.scrollY);
+    await page.locator('.how3-cta').click();
+    await expect.poll(() => page.evaluate(() => Math.round(document.querySelector('#plans')!.getBoundingClientRect().top))).toBeLessThan(200);
+    expect(await page.evaluate(() => window.scrollY)).toBeLessThan(before);
+  });
+
   test('former pages redirect to their section of the one-page site', async ({ request }) => {
     for (const [from, to] of [['/en/plans', '/#plans'], ['/fr/help', '/#faq'], ['/en/devices', '/#content'], ['/fr/coverage', '/#content'], ['/en', '/'], ['/en/blog', '/blog']] as const) {
       const res = await request.get(from, { maxRedirects: 0 });

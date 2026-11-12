@@ -1849,3 +1849,14 @@ html { scroll-padding-top: 84px; }
   .terms-toc ol { grid-template-columns: 1fr; }
   .terms-section, .terms-contact { padding: 18px 16px; }
 }
+/* Closing CTA: shorter card (owner request) */
+.cta-banner { padding: clamp(26px, 3vw, 40px) clamp(20px, 4vw, 56px); }
+.cta-banner h2 { margin-bottom: 8px; }
+.cta-banner .cta-text { margin-bottom: 8px; }
+.cta-banner .cta-text2 { margin-bottom: 18px; }
+.cta-trust { margin-top: 14px; }
+@media (max-width: 640px) {
+  .cta-banner { padding: 24px 16px; }
+  .cta-banner .cta-text { font-size: 14px; }
+  .cta-banner .cta-text2 { font-size: 15px; margin-bottom: 14px; }
+}

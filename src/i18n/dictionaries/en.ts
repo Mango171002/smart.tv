@@ -452,8 +452,8 @@ const en = {
     pendingItems: 'This document will cover',
     docs: {
       terms: {
-        title: 'Terms of service',
-        intro: 'The terms that will govern the use of the service and any subscription.',
+        title: 'Terms of Service',
+        intro: 'The rules for using SYGMA TV+ — written in plain language, with your consumer rights always protected.',
         items: ['Legal seller identity and registration', 'Service description per territory', 'Renewal and cancellation', 'Liability and governing law'],
       },
       privacy: {

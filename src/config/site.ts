@@ -18,7 +18,9 @@ export const siteConfig = {
   siteUrl: (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, ''),
   /** Domain not decided. */
   domain: null as string | null,
-  supportEmail: null as string | null,
+  supportEmail: 'support@sygmatv.com' as string | null,
+  /** Temporary number until the definitive line is purchased (owner request). */
+  supportPhone: '+44 000 000 000' as string | null,
   /** WhatsApp support number in international format without '+' or spaces (e.g. '33612345678'). Null = the floating support button opens the contact form. */
   supportWhatsApp: null as string | null,
   /** Official social accounts (full URLs). An icon is shown in the footer only once its URL is set. */

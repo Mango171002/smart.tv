@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { siteConfig } from '@/config/site';
+import { TermsContent } from '@/components/TermsContent';
 import { LOCALES, isLocale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
 import { LEGAL_DOCS, type LegalDoc } from '@/lib/routes';
@@ -38,7 +39,7 @@ export default async function LegalPage({ params }: { params: Params }) {
     <div className="wrap page-head" style={{ paddingBottom: 60 }}>
       <div className="eyebrow">{dict.legal.eyebrow}</div>
       <h1 className="page-title">{d.title}</h1>
-      <p className="legal-banner" role="note">{dict.legal.draftBanner}</p>
+      {doc !== 'terms' && <p className="legal-banner" role="note">{dict.legal.draftBanner}</p>}
       <nav className="legal-nav" aria-label={dict.footer.legalTitle}>
         {LEGAL_DOCS.map((x) => (
           <Link key={x} href={`/legal/${x}`} aria-current={x === doc ? 'page' : undefined}>
@@ -47,6 +48,7 @@ export default async function LegalPage({ params }: { params: Params }) {
         ))}
       </nav>
       <p className="sub">{d.intro}</p>
+      {doc === 'terms' ? <TermsContent /> : (
       <div className="card panel-pad" style={{ marginTop: 18 }}>
         <h2 style={{ marginTop: 0 }}>{dict.legal.pendingItems}</h2>
         <ul className="list-check">
@@ -60,6 +62,7 @@ export default async function LegalPage({ params }: { params: Params }) {
           </dl>
         )}
       </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import { FeaturedIsland, PlansIsland } from '@/components/islands';
-import { Benefits, ContentCategories, PlanExtras, Faq, Hero, HowItWorks, InterfacePreview } from '@/components/Sections';
+import { Benefits, ContentCategories, PlanExtras, Faq, Hero, HowItWorks, CtaBanner } from '@/components/Sections';
 import { getDictionary } from '@/i18n/dictionaries';
 import { getPriceTable } from '@/lib/price-source';
+import { computeQuote, formatMoney } from '@/lib/pricing';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -14,6 +15,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const locale = await resolveLocale(params);
   const dict = getDictionary(locale);
   const { table } = await getPriceTable();
+  const starter = computeQuote(table, { tier: 'starter', term: '12m', streams: 1 });
+  const fromMonthly = formatMoney(starter.monthlyEquivalentMinor ?? starter.amountMinor, table.currency, locale);
   return (
     <>
       <Hero locale={locale} dict={dict} />
@@ -39,9 +42,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </PlansIsland>
         </div>
       </section>
-      <InterfacePreview dict={dict} />
-      <HowItWorks dict={dict} />
+      <HowItWorks locale={locale} dict={dict} />
       <Faq dict={dict} />
+      <CtaBanner locale={locale} dict={dict} fromMonthly={fromMonthly} />
     </>
   );
 }

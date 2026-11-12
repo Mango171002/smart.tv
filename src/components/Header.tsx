@@ -24,6 +24,7 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
     { href: `/${locale}#plans`, label: nav.plans },
     { href: `/${locale}#how`, label: nav.how },
     { href: `/${locale}#faq`, label: nav.help },
+    { href: `/${locale}/blog`, label: nav.blog },
   ];
 
   return (

@@ -1424,3 +1424,84 @@ html { scroll-padding-top: 84px; }
 .hero .lead { margin-top: 18px; }
 @media (max-width: 380px) { .hero-title { font-size: 38px; } }
 @media (max-width: 900px) { .hero .lead { margin-top: 4px; } }
+
+/* ==========================================================================
+   Owner improvements (12/11/2026): setup guide, +30 days badge, comparison
+   table, closing call-to-action banner, blog. Official colours only.
+   ========================================================================== */
+/* Setup guide (#how) */
+#how .wrap { text-align: left; }
+.how-head { max-width: 760px; margin: 0 auto; text-align: center; }
+.how-head .sub { margin-inline: auto; }
+#how .steps.steps-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: none; gap: clamp(12px, 1.4vw, 22px); }
+.step-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.step-top .num { margin: 0; }
+.step-time {
+  font-size: 12px; font-weight: 700; color: var(--cat); padding: 4px 10px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--cat) 40%, transparent); background: color-mix(in srgb, var(--cat) 8%, transparent);
+}
+.step small { display: block; line-height: 1.55; }
+.how-actions { display: flex; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap; margin-top: 30px; }
+.link-btn { background: none; border: 0; padding: 6px 2px; color: var(--color-muted); font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+.link-btn:hover { color: var(--color-ink); }
+@media (min-width: 821px) { #how .step:not(:last-child)::after { display: none; } }
+@media (max-width: 1100px) { #how .steps.steps-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { #how .steps.steps-4 { grid-template-columns: 1fr; } }
+
+/* +30 days free badge on Plus and Ultra */
+.tier-bonus {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-bottom: -4px;
+  padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 850; letter-spacing: .3px; text-transform: uppercase;
+  background: var(--tier); color: var(--color-bg);
+}
+
+/* Comparison table */
+.compare { margin-bottom: 8px; }
+.compare-title { font-size: clamp(22px, 1vw + 16px, 30px); margin: 0 0 16px; text-align: center; }
+.compare-scroll { overflow-x: auto; border-radius: 18px; border: 1px solid var(--line-strong); background: var(--color-surface); }
+.compare-table { width: 100%; border-collapse: collapse; min-width: 560px; font-size: 15px; }
+.compare-table th, .compare-table td { padding: 14px 18px; text-align: center; border-bottom: 1px solid var(--line); }
+.compare-table tbody tr:last-child th, .compare-table tbody tr:last-child td { border-bottom: 0; }
+.compare-table thead th { font-size: 17px; font-weight: 850; color: var(--tier, var(--color-ink)); background: var(--surface-low); }
+.compare-table thead th:first-child { text-align: left; color: var(--color-ink); }
+.compare-table tbody th { text-align: left; font-weight: 650; color: var(--color-ink); }
+.compare-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--color-ink) 2%, transparent); }
+.compare-table td { color: var(--color-ink); font-weight: 600; }
+.compare-table .is-recommended { background: color-mix(in srgb, var(--tier) 7%, transparent); }
+.compare-table thead .is-recommended { background: color-mix(in srgb, var(--tier) 12%, var(--surface-low)); }
+.compare-yes { color: var(--tier, var(--color-cyan)); vertical-align: middle; }
+.compare-no { color: var(--color-muted); opacity: .6; vertical-align: middle; }
+.compare .footnote { text-align: center; }
+
+/* Closing call-to-action banner (after FAQ) */
+.cta-section { padding-top: 20px; }
+.cta-banner {
+  text-align: center; padding: clamp(36px, 5vw, 64px) clamp(20px, 4vw, 56px); border-radius: 28px;
+  background:
+    radial-gradient(60% 120% at 0% 0%, color-mix(in srgb, var(--color-cyan) 55%, transparent), transparent 60%),
+    linear-gradient(110deg, var(--color-violet) 0%, var(--color-magenta) 55%, color-mix(in srgb, var(--color-magenta) 60%, var(--color-violet)) 100%);
+  box-shadow: 0 30px 80px color-mix(in srgb, var(--color-magenta) 25%, transparent);
+}
+.cta-banner h2 { margin: 0 0 12px; font-size: clamp(28px, 2.2vw + 16px, 52px); line-height: 1.08; letter-spacing: -1.2px; color: var(--color-bg); }
+.cta-banner p { margin: 0 auto 26px; max-width: 760px; color: var(--color-bg); font-size: clamp(15px, 0.3vw + 13px, 18px); font-weight: 600; }
+.cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.cta-actions .btn { border-radius: 999px; padding: 0 28px; min-height: 54px; font-size: 16px; }
+.cta-white { background: var(--color-ink); color: var(--color-bg); }
+.cta-trust { list-style: none; padding: 0; margin: 20px 0 0; display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; color: var(--color-bg); font-size: 13px; font-weight: 600; }
+.cta-trust li { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Blog */
+.blog-page { padding-bottom: 80px; }
+.blog-empty { display: grid; justify-items: center; gap: 12px; padding: 40px 20px; margin-top: 24px; text-align: center; color: var(--color-muted); }
+.blog-empty svg { color: var(--color-lime); }
+.tier-pills { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: -4px; }
+.tier-pills .tier-monthly { margin: 0; }
+.tier-bonus { margin: 0; align-self: center; padding: 5px 12px; }
+.compare-table td svg { display: inline-block; margin: 0 auto; }
+.plan-extras > *, .compare, .compare-scroll { min-width: 0; max-width: 100%; }
+@media (max-width: 640px) {
+  .compare-table { min-width: 0; font-size: 13px; }
+  .compare-table th, .compare-table td { padding: 11px 8px; }
+  .compare-table thead th { font-size: 14px; }
+  .compare-table tbody th { font-size: 12.5px; }
+}

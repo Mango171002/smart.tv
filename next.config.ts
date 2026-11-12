@@ -19,7 +19,7 @@ const csp = [
 
 // English only (owner decision): unprefixed URLs go to /en, the former French URLs to their English version.
 // Former pages (one-page site) point to their section of the home page.
-const FORMER_PAGES: Record<string, string> = { '/plans': '#plans', '/devices': '#preview', '/coverage': '#content', '/help': '#faq' };
+const FORMER_PAGES: Record<string, string> = { '/plans': '#plans', '/devices': '#content', '/coverage': '#content', '/help': '#faq' };
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
@@ -33,6 +33,7 @@ const nextConfig: NextConfig = {
       ...former,
       { source: '/', destination: '/en', permanent: false },
       { source: '/legal/:doc', destination: '/en/legal/:doc', permanent: false },
+      { source: '/blog', destination: '/en/blog', permanent: false },
       { source: '/fr', destination: '/en', permanent: true },
       { source: '/fr/:path*', destination: '/en/:path*', permanent: true },
     ];

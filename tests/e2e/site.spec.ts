@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 const ROUTES = [
-  '/en', '/en/legal/terms', '/en/legal/privacy', '/en/legal/cookies', '/en/legal/refunds', '/en/legal/imprint',
+  '/en', '/en/blog', '/en/legal/terms', '/en/legal/privacy', '/en/legal/cookies', '/en/legal/refunds', '/en/legal/imprint',
 ];
 
 
@@ -125,7 +125,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   });
 
   test('former pages redirect to their section of the one-page site', async ({ request }) => {
-    for (const [from, to] of [['/en/plans', '/en#plans'], ['/fr/help', '/en#faq'], ['/en/devices', '/en#preview'], ['/fr/coverage', '/en#content']] as const) {
+    for (const [from, to] of [['/en/plans', '/en#plans'], ['/fr/help', '/en#faq'], ['/en/devices', '/en#content'], ['/fr/coverage', '/en#content']] as const) {
       const res = await request.get(from, { maxRedirects: 0 });
       expect(res.status(), from).toBe(308);
       expect(res.headers()['location'], from).toMatch(new RegExp(`${to.replace('#', '\\#')}$`));
@@ -335,7 +335,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     await page.goto('/en');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Get Started']);
+    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Blog', 'Get Started']);
     await expect(nav.getByRole('button', { name: 'Request a Trial' })).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(nav.getByRole('link', { name: 'Get Started' })).toHaveCSS('background-color', 'rgb(209, 254, 23)');
   });
@@ -348,7 +348,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     });
     await page.goto('/en');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
-    await page.getByRole('button', { name: 'Request a Trial' }).click();
+    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Request a Trial' }).click();
     const dialog = page.getByRole('dialog', { name: 'Request a Trial' });
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button', { name: 'Send request' }).click();
@@ -373,7 +373,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
       await route.fulfill({ status: 201, json: { ok: true } });
     });
     await page.goto('/en');
-    await page.getByRole('button', { name: 'Contact support' }).click();
+    await page.getByRole('button', { name: 'Contact support', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');
     await dialog.getByLabel('Email address').fill('alex@example.test');
@@ -392,7 +392,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
   test('request window shows a rate-limit message', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
     await page.goto('/en');
-    await page.getByRole('button', { name: 'Contact support' }).click();
+    await page.getByRole('button', { name: 'Contact support', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');
     await dialog.getByLabel('Email address').fill('alex@example.test');
@@ -415,7 +415,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
 
   test('request window has no violations', async ({ page }) => {
     await page.goto('/en');
-    await page.getByRole('button', { name: 'Contact support' }).click();
+    await page.getByRole('button', { name: 'Contact support', exact: true }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();
     expect(results.violations.map((v) => v.id)).toEqual([]);

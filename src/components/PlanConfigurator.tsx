@@ -155,9 +155,12 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
               <p className="tier-price">
                 <span data-testid={`tier-price-${t}`}>{money(yearly.amountMinor)}</span> <small>{p.perYear}</small>
               </p>
-              {yearly.monthlyEquivalentMinor !== null && (
-                <p className="tier-monthly">{fill(dict.common.perMonth, { price: money(yearly.monthlyEquivalentMinor) })}</p>
-              )}
+              <div className="tier-pills">
+                {yearly.monthlyEquivalentMinor !== null && (
+                  <p className="tier-monthly">{fill(dict.common.perMonth, { price: money(yearly.monthlyEquivalentMinor) })}</p>
+                )}
+                {t !== 'starter' && <span className="tier-bonus">{p.bonus}</span>}
+              </div>
               <ul className="tier-features">
                 {catalogueLines(t, p, locale).map((line) => (
                   <li key={line.key} className="is-accent" data-testid={`catalogue-${line.key}-${t}`}>

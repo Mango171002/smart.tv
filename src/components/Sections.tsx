@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
+import { BadgeCheck, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
+import { RequestButton } from './RequestButton';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
@@ -141,24 +142,36 @@ export function ContentCategories({
 }
 
 /** Accent colour of each step (official category colours). */
-const STEP_CATS = ['live', 'movies', 'sports'] as const;
+const STEP_CATS = ['live', 'movies', 'sports', 'streaming'] as const;
 
-export function HowItWorks({ dict }: { dict: Dictionary }) {
+export function HowItWorks({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.how;
   return (
     <section id="how" aria-labelledby="how-title">
       <div className="wrap">
-        <div className="eyebrow">{h.eyebrow}</div>
-        <h2 id="how-title" className="section-title">{h.title}</h2>
-        <ol className="steps">
+        <div className="how-head">
+          <div className="eyebrow">{h.eyebrow}</div>
+          <h2 id="how-title" className="section-title">{h.title}</h2>
+          <p className="sub">{h.sub}</p>
+        </div>
+        <ol className="steps steps-4">
           {h.steps.map((s, i) => (
             <li className={`card step cat-${STEP_CATS[i % STEP_CATS.length]}`} key={s.title}>
-              <div className="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</div>
+              <div className="step-top">
+                <div className="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</div>
+                <span className="step-time">{s.time}</span>
+              </div>
               <b>{s.title}</b>
               <small>{s.text}</small>
             </li>
           ))}
         </ol>
+        <div className="how-actions">
+          <Link className="btn btn-lime" href={`/${locale}#plans`}>
+            {h.cta} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+          </Link>
+          <RequestButton mode="support" className="link-btn">{h.help}</RequestButton>
+        </div>
       </div>
     </section>
   );
@@ -191,53 +204,6 @@ export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
   );
 }
 
-/** Generated device images (npm run hero → public/images/screen-<device>-<w>.avif|webp). */
-const DEVICE_SHOTS = {
-  tv: { widths: [640, 1280], w: 1672, h: 941, sizes: '(max-width: 900px) 92vw, 40vw' },
-  laptop: { widths: [520, 1040], w: 1448, h: 1086, sizes: '(max-width: 900px) 46vw, 30vw' },
-  phone: { widths: [240, 480], w: 940, h: 1672, sizes: '(max-width: 900px) 30vw, 11vw' },
-} as const;
-
-function DeviceShot({ device }: { device: keyof typeof DEVICE_SHOTS }) {
-  const d = DEVICE_SHOTS[device];
-  const set = (ext: string) => d.widths.map((w) => `/images/screen-${device}-${w}.${ext} ${w}w`).join(', ');
-  return (
-    <picture>
-      <source type="image/avif" srcSet={set('avif')} sizes={d.sizes} />
-      <source type="image/webp" srcSet={set('webp')} sizes={d.sizes} />
-      <img className="device-shot" src={`/images/screen-${device}-${d.widths[0]}.webp`} alt="" width={d.w} height={d.h} loading="lazy" decoding="async" />
-    </picture>
-  );
-}
-
-export function InterfacePreview({ dict }: { dict: Dictionary }) {
-  const p = dict.preview;
-  return (
-    <section id="preview" aria-labelledby="preview-title">
-      <div className="wrap">
-        <div className="eyebrow">{p.eyebrow}</div>
-        <h2 id="preview-title" className="section-title">{p.title}</h2>
-        <p className="sub">{p.sub}</p>
-        <div className="preview-stage" role="img" aria-label={`${p.caption}: ${p.labels.join(', ')}`}>
-          <figure className="preview-item preview-tv">
-            <DeviceShot device="tv" />
-            <figcaption>{p.labels[0]}</figcaption>
-          </figure>
-          <figure className="preview-item preview-laptop">
-            <DeviceShot device="laptop" />
-            <figcaption>{p.labels[1]}</figcaption>
-          </figure>
-          <figure className="preview-item preview-phone">
-            <DeviceShot device="phone" />
-            <figcaption>{p.labels[2]}</figcaption>
-          </figure>
-        </div>
-        <p className="footnote" style={{ textAlign: 'center' }}>{p.caption}</p>
-      </div>
-    </section>
-  );
-}
-
 const PLATFORM_ICONS: LucideIcon[] = [Tv, TvMinimalPlay, Flame, AppWindow, Smartphone, Laptop];
 const TRUST: { Icon: LucideIcon; cat: string }[] = [
   { Icon: Zap, cat: 'sports' },
@@ -246,11 +212,12 @@ const TRUST: { Icon: LucideIcon; cat: string }[] = [
   { Icon: RefreshCcw, cat: 'streaming' },
 ];
 
-/** Below the plan cards: platforms bar + reassurance bar (text only, no third-party logos). */
+/** Below the plan cards: comparison table, platforms bar and reassurance bar (text only, no third-party logos). */
 export function PlanExtras({ dict }: { dict: Dictionary }) {
   const p = dict.plans;
   return (
     <div className="plan-extras">
+      <ComparisonTable dict={dict} />
       <div className="platforms-bar">
         <p className="platforms-title">
           <MonitorSmartphone size={34} strokeWidth={ICON_STROKE} aria-hidden="true" />
@@ -283,5 +250,86 @@ export function PlanExtras({ dict }: { dict: Dictionary }) {
         })}
       </ul>
     </div>
+  );
+}
+
+/** Plans comparison table (owner request): features from the plan cards, honest values only. */
+function ComparisonTable({ dict }: { dict: Dictionary }) {
+  const c = dict.plans.compare;
+  const tiers = ['starter', 'plus', 'ultra'] as const;
+  return (
+    <div className="compare" aria-labelledby="compare-title">
+      <h3 id="compare-title" className="compare-title">{c.title}</h3>
+      <div className="compare-scroll">
+        <table className="compare-table">
+          <thead>
+            <tr>
+              <th scope="col">{c.feature}</th>
+              {tiers.map((t) => (
+                <th scope="col" key={t} data-tier={t} className={t === 'plus' ? 'is-recommended' : undefined}>
+                  {dict.plans.tiers[t].name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {c.rows.map((row) => (
+              <tr key={row.label}>
+                <th scope="row">{row.label}</th>
+                {row.values.map((v, i) => (
+                  <td key={tiers[i]} data-tier={tiers[i]} className={tiers[i] === 'plus' ? 'is-recommended' : undefined}>
+                    {v === true ? (
+                      <BadgeCheck size={22} strokeWidth={2} aria-label={c.included} className="compare-yes" />
+                    ) : v === false ? (
+                      <Minus size={18} strokeWidth={2} aria-label={c.notIncluded} className="compare-no" />
+                    ) : (
+                      v
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="footnote">{c.note}</p>
+    </div>
+  );
+}
+
+/** Closing call-to-action after the FAQ (owner mock-up, charter colours, honest claims). */
+export function CtaBanner({ locale, dict, fromMonthly }: { locale: Locale; dict: Dictionary; fromMonthly: string }) {
+  const c = dict.cta;
+  return (
+    <section className="cta-section" aria-labelledby="cta-title">
+      <div className="wrap">
+        <div className="cta-banner">
+          <h2 id="cta-title">{c.title}</h2>
+          <p>
+            {c.text.replace('{price}', fromMonthly)}
+            <br />
+            {c.text2}
+          </p>
+          <div className="cta-actions">
+            <Link className="btn cta-white" href={`/${locale}#plans`}>
+              <Zap size={18} strokeWidth={2} aria-hidden="true" /> {c.choose}
+            </Link>
+            <RequestButton mode="trial" className="btn btn-lime">
+              <CirclePlay size={18} strokeWidth={2} aria-hidden="true" /> {c.trial}
+            </RequestButton>
+          </div>
+          <ul className="cta-trust">
+            {c.trust.map((t, i) => {
+              const Icon = [ShieldCheck, Zap, Headset][i] ?? ShieldCheck;
+              return (
+                <li key={t}>
+                  <Icon size={15} strokeWidth={2} aria-hidden="true" /> {t}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
+    </section>
   );
 }

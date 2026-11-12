@@ -1371,15 +1371,13 @@ html { scroll-padding-top: 84px; }
 }
 .hero-title span { display: block; }
 .hero-title-hl { color: var(--color-lime); }
-.hero-sub { margin: 0 0 14px; font-weight: 800; color: var(--color-ink); font-size: clamp(20px, 0.9vw + 13px, 30px); line-height: 1.2; letter-spacing: -0.01em; }
 .hero .lead { max-width: 520px; color: var(--color-muted); opacity: 1; font-size: clamp(15px, 0.25vw + 13px, 17px); }
 .hero .btn-lime:focus-visible { outline-color: var(--color-lime); }
 .hero .btn.ghost { background: color-mix(in srgb, var(--color-bg) 55%, transparent); border-color: color-mix(in srgb, var(--color-ink) 22%, transparent); color: var(--color-ink); }
 @media (hover: hover) { .hero .btn.ghost:hover { border-color: color-mix(in srgb, var(--color-ink) 45%, transparent); } }
 @media (max-width: 900px) {
-  .hero-grid { grid-template-areas: 'title' 'sub' 'lead' 'actions' 'checks'; }
+  .hero-grid { grid-template-areas: 'title' 'lead' 'actions' 'checks'; }
   .hero-copy > .hero-title { grid-area: title; margin-top: clamp(170px, 44vw, 280px); }
-  .hero-copy > .hero-sub { grid-area: sub; }
 }
 @media (max-width: 380px) { .hero-title { font-size: 40px; } }
 /* Hero feature bar (owner mock-up): lime icons, thin separators */
@@ -1420,3 +1418,9 @@ html { scroll-padding-top: 84px; }
 .hero-bar li + li { border-left: 0; }
 .hero-bar svg { width: 18px; height: 18px; }
 @media (max-width: 900px) { .hero-bar { gap: 12px; } .hero-bar li { font-size: 13px; } }
+/* Hero: back to the original title (owner request), same layout as before */
+.hero-title { text-transform: none; font-weight: 850; font-size: clamp(40px, 3.2vw + 24px, 84px); line-height: 1.04; letter-spacing: -2.2px; }
+.hero-title-hl { font-size: clamp(26px, 1.6vw + 15px, 46px); letter-spacing: -1px; margin-top: 10px; }
+.hero .lead { margin-top: 18px; }
+@media (max-width: 380px) { .hero-title { font-size: 38px; } }
+@media (max-width: 900px) { .hero .lead { margin-top: 4px; } }

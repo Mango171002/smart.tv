@@ -55,10 +55,8 @@ const en = {
     EU: 'Europe',
   },
   hero: {
-    titleA: 'Feel every',
-    titleB: 'moment.',
-    subA: 'Premium Streaming',
-    subB: 'Sports. Movies. Live TV.',
+    titleA: 'Premium streaming.',
+    titleB: 'Sports, Movies, Live TV.',
     lead: 'A complete streaming experience in preparation: live sports, on-demand movies and series, and international channels on all your screens.',
     ctaPrimary: 'See the plans',
     ctaSecondary: 'How it works',

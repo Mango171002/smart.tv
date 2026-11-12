@@ -25,11 +25,6 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
             <span>{h.titleA}</span>
             <span className="hero-title-hl">{h.titleB}</span>
           </h1>
-          <p className="hero-sub">
-            {h.subA}
-            <br />
-            {h.subB}
-          </p>
           <p className="lead">{h.lead}</p>
           <div className="actions">
             <Link className="btn btn-lime" href={`/${locale}#plans`}>

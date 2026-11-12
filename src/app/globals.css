@@ -1669,3 +1669,12 @@ html { scroll-padding-top: 84px; }
 .footer-social a, .footer-social span { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line-strong); color: var(--color-ink); }
 .footer-social span { cursor: default; }
 @media (hover: hover) { .footer-social a:hover { border-color: var(--color-lime); color: var(--color-lime); } }
+/* Plus (recommended) slightly larger to stand out; bolder benefit lines on every plan */
+.tier-features li { font-weight: 600; }
+.tier-features li.is-accent { font-weight: 750; }
+@media (min-width: 901px) {
+  .tier-grid { align-items: center; }
+  .tier-card.is-recommended { transform: scale(1.05); z-index: 2; box-shadow: 0 0 40px color-mix(in srgb, var(--tier) 30%, transparent); }
+  @media (hover: hover) { .tier-card.is-recommended:hover { transform: scale(1.05) translateY(-2px); } }
+}
+@media (min-width: 901px) { .tier-grid { margin-top: 30px; } }

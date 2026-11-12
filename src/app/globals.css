@@ -1191,3 +1191,50 @@ html { scroll-padding-top: 84px; }
   /* Benefits under "Most watched": 4 instead of 5 */
   .features-bar li:last-child { display: none; }
 }
+
+/* ==========================================================================
+   Simulator — "pro" restyle (owner request 12/11/2026)
+   Calm, neutral surfaces; ONE accent (brand cyan) for selection and action;
+   plan colours kept only as small identity marks (plan icons). No neon fills.
+   ========================================================================== */
+.simulator {
+  border: 1px solid var(--line-strong);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--color-ink) 3%, var(--color-surface)), var(--color-surface));
+  box-shadow: 0 30px 70px color-mix(in srgb, var(--color-bg) 70%, transparent), inset 0 1px 0 color-mix(in srgb, var(--color-ink) 6%, transparent);
+}
+.sim-head-icon { color: var(--color-ink); border-color: var(--line-strong); background: var(--surface-low); }
+.step-num, #term-label .step-num, #streams-label .step-num {
+  width: 24px; height: 24px; font-size: 12px; background: transparent; color: var(--color-muted);
+  border: 1px solid var(--line-strong);
+}
+.simulator .field-title { font-size: 14px; font-weight: 700; letter-spacing: .1px; }
+.choices-terms { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* choices: neutral by default, brand cyan when selected */
+.simulator .choice, .simulator .choice[data-tier] { background: var(--surface-low); border: 1px solid var(--line-strong); box-shadow: none; }
+.simulator .choice[aria-pressed='true'], .simulator .choice[data-tier][aria-pressed='true'] {
+  border-color: var(--color-cyan); background: color-mix(in srgb, var(--color-cyan) 6%, var(--surface-low));
+  box-shadow: inset 0 0 0 1px var(--color-cyan);
+}
+@media (hover: hover) { .simulator .choice:hover, .simulator .choice[data-tier]:hover { border-color: color-mix(in srgb, var(--color-ink) 35%, transparent); } }
+.simulator .choice .choice-icon, .simulator .choice .dev-stack, .simulator .choice[aria-pressed='true'] .dev-stack { color: var(--color-muted); }
+.simulator .choice[aria-pressed='true'] .choice-icon, .simulator .choice[aria-pressed='true'] .dev-stack { color: var(--color-ink); }
+.simulator .choice[data-tier] .choice-icon { color: var(--tier); } /* plan identity colour, discreet */
+.choice-check { color: var(--color-bg); fill: var(--color-cyan); }
+.choice-rich .choice-badge {
+  background: var(--color-surface); color: var(--color-lime); font-weight: 750;
+  border: 1px solid color-mix(in srgb, var(--color-lime) 45%, transparent);
+}
+
+/* summary: white price, single cyan call-to-action */
+.sim-summary { border: 1px solid var(--line-strong); background: var(--surface-low); }
+.sim-summary .price { color: var(--color-ink); }
+.sim-summary .savings { color: var(--color-lime); }
+.sim-cta { background: var(--color-cyan); color: var(--color-bg); }
+@media (hover: hover) { .sim-cta:hover { box-shadow: 0 8px 26px color-mix(in srgb, var(--color-cyan) 30%, transparent); } }
+
+/* left column points: monochrome icons */
+.sim-points .icon-box { --cat: var(--color-cyan); }
+.simulator .choices.choices-terms { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sim-summary .sum-left strong { font-size: clamp(18px, 0.8vw + 11px, 22px); white-space: nowrap; }
+@media (max-width: 400px) { .sim-summary .sum-left strong { white-space: normal; } }

@@ -90,11 +90,13 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     await expect(price).toHaveText('$159');
     await expect(page.locator('[data-stream="2"] .choice-note')).toHaveText('+$30');
     await page.locator('.simulator [data-tier="ultra"]').click();
-    await page.locator('[data-term="lifetime"]').click();
+    await page.locator('[data-term="12m"]').click();
     await page.locator('[data-stream="4"]').click();
-    await expect(price).toHaveText('$349');
-    await expect(page.locator('.price-sub')).toHaveText('One-time payment');
+    await expect(price).toHaveText('$99');
     await expect(page.getByTestId('savings')).toHaveCount(0);
+    // Lifetime is not offered in the simulator (owner decision)
+    await expect(page.locator('.simulator [data-term]')).toHaveCount(3);
+    await expect(page.locator('[data-term="lifetime"]')).toHaveCount(0);
   });
 
   test('each plan benefit fits on one line, nothing cut off', async ({ page }) => {

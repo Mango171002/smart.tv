@@ -7,7 +7,6 @@ import {
   CalendarClock,
   CalendarDays,
   CircleCheck,
-  Infinity as InfinityIcon,
   Monitor,
   Rocket,
   SlidersHorizontal,
@@ -84,6 +83,9 @@ const SIM_POINTS: { Icon: LucideIcon; cat: string }[] = [
   { Icon: ShieldCheck, cat: 'live' },
   { Icon: Rocket, cat: 'movies' },
 ];
+
+/** Durations offered in the simulator (Lifetime removed, owner decision 12/11/2026). */
+const SIM_TERMS = TERMS.filter((t) => t !== 'lifetime');
 
 const loadDialog = () => import('./CheckoutDialog').then((m) => m.CheckoutDialog);
 // Downloaded on demand (prefetched on hover/focus of the button) to keep the initial JS small.
@@ -234,17 +236,16 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
           </div>
 
           <div className="field-title" id="term-label"><span className="step-num" aria-hidden="true">2</span>{p.termLabel}</div>
-          <div className="choices" role="group" aria-labelledby="term-label">
-            {TERMS.map((tm) => {
+          <div className="choices choices-terms" role="group" aria-labelledby="term-label">
+            {SIM_TERMS.map((tm) => {
               const q = computeQuote(table, { tier, term: tm, streams });
-              const Icon = tm === 'lifetime' ? InfinityIcon : CalendarDays;
+              const Icon = CalendarDays;
               return (
                 <button key={tm} type="button" className="choice choice-rich choice-term" data-term={tm} aria-pressed={tm === term} onClick={() => setTerm(tm)}>
                   {q.savingsPercent > 0 && <span className="choice-badge">{fill(p.savePct, { pct: q.savingsPercent })}</span>}
                   <Icon className="choice-icon" size={24} strokeWidth={1.75} aria-hidden="true" />
                   <span className="choice-text">
                     <b>{p.terms[tm]}</b>
-                    {tm === 'lifetime' && <small className="choice-note">{p.oneTime}</small>}
                   </span>
                   {tm === term && <CircleCheck className="choice-check" size={20} strokeWidth={2} aria-hidden="true" />}
                 </button>

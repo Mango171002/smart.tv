@@ -1760,3 +1760,4 @@ html { scroll-padding-top: 84px; }
   .footer-chips svg { width: 15px; height: 15px; }
 }
 @media (max-width: 360px) { .footer-chips li { font-size: 11.5px; padding: 6px 7px; } }
+@media (max-width: 900px) { .how-actions { justify-content: center; flex-direction: column; align-items: center; gap: 14px; } }

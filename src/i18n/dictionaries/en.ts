@@ -276,11 +276,13 @@ const en = {
   },
   cta: {
     title: 'Ready to watch TV from around the world?',
-    text: 'Up to +35,000 channels and +200,000 movies & series, in HD to 4K HDR, from {price}/month.',
+    titleA: 'Ready to watch TV from',
+    titleHl: 'around the world?',
+    text: 'Access up to 35,000+ TV channels and 200,000+ movies & series, in HD to 4K HDR, from multiple countries — from {price}/month.',
     text2: 'Free pre-registration, no payment before launch.',
     choose: 'Choose my plan',
     trial: 'Request a trial',
-    trust: ['Data protected', 'No payment before launch', 'Email support'],
+    trust: ['No commitment', 'Secure pre-registration', 'Email support'],
   },
   blog: {
     eyebrow: 'Blog',

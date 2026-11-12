@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { CircleHelp, BadgeCheck, ChevronRight, MailCheck, MonitorPlay, MousePointerClick, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
+import { Check, Play, CircleHelp, BadgeCheck, ChevronRight, MailCheck, MonitorPlay, MousePointerClick, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
@@ -347,29 +347,28 @@ export function CtaBanner({ locale, dict, fromMonthly }: { locale: Locale; dict:
     <section className="cta-section" aria-labelledby="cta-title">
       <div className="wrap">
         <div className="cta-banner">
-          <h2 id="cta-title">{c.title}</h2>
-          <p>
-            {c.text.replace('{price}', fromMonthly)}
-            <br />
-            {c.text2}
-          </p>
+          {/* eslint-disable-next-line @next/next/no-img-element -- decorative artwork (approved category image) */}
+          <img className="cta-globe" src="/images/cat-live-800.webp" alt="" width={800} height={533} loading="lazy" decoding="async" />
+          <span className="cta-waves" aria-hidden="true" />
+          <h2 id="cta-title">
+            {c.titleA} <span className="cta-hl">{c.titleHl}</span>
+          </h2>
+          <p className="cta-text">{c.text.replace('{price}', fromMonthly)}</p>
+          <p className="cta-text2">{c.text2}</p>
           <div className="cta-actions">
-            <Link className="btn cta-white" href={`/${locale}#plans`}>
-              <Zap size={18} strokeWidth={2} aria-hidden="true" /> {c.choose}
+            <Link className="btn cta-outline" href={`/${locale}#plans`}>
+              <Play size={20} strokeWidth={2} aria-hidden="true" /> {c.choose}
             </Link>
             <RequestButton mode="trial" className="btn btn-lime">
-              <CirclePlay size={18} strokeWidth={2} aria-hidden="true" /> {c.trial}
+              <UserPlus size={20} strokeWidth={2} aria-hidden="true" /> {c.trial}
             </RequestButton>
           </div>
           <ul className="cta-trust">
-            {c.trust.map((t, i) => {
-              const Icon = [ShieldCheck, Zap, Headset][i] ?? ShieldCheck;
-              return (
-                <li key={t}>
-                  <Icon size={15} strokeWidth={2} aria-hidden="true" /> {t}
-                </li>
-              );
-            })}
+            {c.trust.map((t) => (
+              <li key={t}>
+                <Check size={18} strokeWidth={2.5} aria-hidden="true" /> {t}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

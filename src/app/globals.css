@@ -1566,3 +1566,42 @@ html { scroll-padding-top: 84px; }
 .faq details[open] .faq-toggle .faq-minus { display: block; }
 .faq p { margin: 0 22px 20px; padding-left: 16px; border-left: 2px solid var(--color-lime); color: var(--color-ink); opacity: .85; }
 @media (max-width: 900px) { .faq-highlights { justify-content: flex-start; } }
+
+/* Closing CTA v2 (owner mock-up): dark card, neon gradient border, globe left, waves right */
+.cta-banner {
+  position: relative; overflow: hidden; isolation: isolate; border: 2px solid transparent; border-radius: 30px;
+  background:
+    radial-gradient(60% 90% at 50% 0%, color-mix(in srgb, var(--color-violet) 18%, transparent), transparent 70%) padding-box,
+    linear-gradient(var(--color-bg), var(--color-bg)) padding-box,
+    linear-gradient(90deg, var(--color-cyan), var(--color-violet) 50%, var(--color-magenta)) border-box;
+  box-shadow: 0 0 40px color-mix(in srgb, var(--color-violet) 30%, transparent), 0 0 18px color-mix(in srgb, var(--color-cyan) 20%, transparent);
+}
+.cta-banner > :not(.cta-globe):not(.cta-waves) { position: relative; z-index: 1; }
+.cta-globe {
+  position: absolute; z-index: 0; left: -6%; bottom: -30%; width: min(42%, 520px); height: auto; pointer-events: none; opacity: .9;
+  -webkit-mask-image: radial-gradient(closest-side, black 55%, transparent 100%); mask-image: radial-gradient(closest-side, black 55%, transparent 100%);
+}
+.cta-waves {
+  position: absolute; z-index: 0; right: -4%; bottom: -10%; width: 40%; height: 80%; pointer-events: none;
+  background:
+    radial-gradient(70% 60% at 85% 70%, color-mix(in srgb, var(--color-magenta) 35%, transparent), transparent 70%),
+    repeating-radial-gradient(circle at 120% 120%, transparent 0 10px, color-mix(in srgb, var(--color-magenta) 22%, transparent) 10px 11px);
+  -webkit-mask-image: radial-gradient(closest-side, black 40%, transparent 100%); mask-image: radial-gradient(closest-side, black 40%, transparent 100%);
+}
+.cta-banner h2 { color: var(--color-ink); }
+.cta-hl { color: var(--color-lime); }
+.cta-banner .cta-text { color: var(--color-ink); opacity: .85; font-weight: 500; margin-bottom: 14px; }
+.cta-banner .cta-text2 { color: var(--color-lime); font-weight: 750; font-size: clamp(16px, 0.4vw + 14px, 20px); margin-bottom: 26px; }
+.cta-outline { background: transparent; color: var(--color-ink); border: 1.5px solid color-mix(in srgb, var(--color-ink) 40%, transparent); }
+@media (hover: hover) { .cta-outline:hover { border-color: var(--color-ink); box-shadow: none; } }
+.cta-actions .btn-lime { box-shadow: 0 0 26px color-mix(in srgb, var(--color-lime) 30%, transparent); }
+.cta-trust { color: var(--color-ink); font-size: 15px; gap: 0; }
+.cta-trust li { padding: 0 20px; }
+.cta-trust li + li { border-left: 1px solid color-mix(in srgb, var(--color-ink) 30%, transparent); }
+.cta-trust svg { color: var(--color-lime); }
+@media (max-width: 640px) {
+  .cta-trust { gap: 10px; flex-direction: column; align-items: center; }
+  .cta-trust li + li { border-left: 0; }
+  .cta-globe { width: 70%; bottom: -12%; opacity: .45; }
+  .cta-waves { opacity: .5; }
+}

@@ -23,9 +23,9 @@ export const siteConfig = {
   supportWhatsApp: null as string | null,
   /** Official social accounts (full URLs). An icon is shown in the footer only once its URL is set. */
   social: {
-    youtube: null as string | null,
+    facebook: null as string | null,
     instagram: null as string | null,
-    x: null as string | null,
+    tiktok: null as string | null,
     telegram: null as string | null,
   },
   supportHours: null as string | null,

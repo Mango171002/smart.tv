@@ -1414,3 +1414,9 @@ html { scroll-padding-top: 84px; }
 .support-fab:focus-visible { outline-color: var(--color-ink); }
 @media (hover: hover) { .support-fab:hover { box-shadow: 0 14px 36px color-mix(in srgb, var(--color-lime) 45%, transparent), 0 0 0 6px color-mix(in srgb, var(--color-lime) 22%, transparent); } }
 .brand .logo svg { width: 34px; height: 34px; } .brand { font-size: 24px; }
+/* Hero feature bar: smaller, no frame — icons and text only */
+.hero-bar { border: 0; padding: 4px 0 0; margin-top: 4px; column-gap: 26px; }
+.hero-bar li { font-size: 13px; gap: 8px; padding: 0; }
+.hero-bar li + li { border-left: 0; }
+.hero-bar svg { width: 18px; height: 18px; }
+@media (max-width: 900px) { .hero-bar { gap: 12px; } .hero-bar li { font-size: 13px; } }

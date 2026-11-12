@@ -639,7 +639,7 @@ section.content-tight .cat-grid { margin-top: 0; }
    Starter = violet, Plus = yellow (neon lime, recommended), Ultra = magenta.
    -------------------------------------------------------------------------- */
 .offers { gap: clamp(56px, 6vw, 110px); }
-[data-tier='starter'] { --tier: var(--color-violet); }
+[data-tier='starter'] { --tier: var(--color-cyan); }
 [data-tier='plus'] { --tier: var(--color-lime); }
 [data-tier='ultra'] { --tier: var(--color-magenta); }
 

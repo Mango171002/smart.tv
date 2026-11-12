@@ -10,7 +10,10 @@
     "binding": "ASSETS"
   },
   "observability": { "enabled": true },
-  // Custom domain bought on Cloudflare Registrar (sygmatv.com). The workers.dev URL keeps working.
+  // Served only on the custom domain (sygmatv.com): the *.workers.dev address and preview URLs
+  // are disabled (owner request — the account subdomain contains a personal name).
+  "workers_dev": false,
+  "preview_urls": false,
   "routes": [
     { "pattern": "sygmatv.com", "custom_domain": true },
     { "pattern": "www.sygmatv.com", "custom_domain": true }

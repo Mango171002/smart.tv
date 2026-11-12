@@ -9,7 +9,6 @@ import {
   CircleCheck,
   Monitor,
   Rocket,
-  SlidersHorizontal,
   Crown,
   Gem,
   MonitorPlay,
@@ -208,16 +207,6 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
         </div>
 
         <div className="card config simulator" data-testid="configurator" aria-labelledby="simulator-title">
-          <div className="sim-head">
-            <span className="sim-head-icon" aria-hidden="true">
-              <SlidersHorizontal size={24} strokeWidth={1.75} />
-            </span>
-            <div>
-              <p className="sim-head-title">{p.simulatorCardTitle}</p>
-              <p className="sim-head-sub">{p.simulatorCardSub}</p>
-            </div>
-          </div>
-
           <div className="field-title" id="tier-label"><span className="step-num" aria-hidden="true">1</span>{p.tierLabel}</div>
           <div className="choices choices-3" role="group" aria-labelledby="tier-label">
             {TIERS.map((t) => {
@@ -278,6 +267,11 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
             <div className="sum-left">
               <small className="label">{p.summaryLabel}</small>
               <strong data-testid="selection">{selectionLabel}</strong>
+              {quote.referenceMinor && quote.savingsMinor > 0 && (
+                <small className="savings" data-testid="savings">
+                  {fill(p.savings, { amount: money(quote.savingsMinor), n: (TERM_MONTHS[term] ?? 12) / 12 })}
+                </small>
+              )}
             </div>
             <div className="sum-price">
               <small className="label">{p.totalLabel}</small>
@@ -287,11 +281,6 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
                   ? fill(dict.common.perMonth, { price: money(quote.monthlyEquivalentMinor) })
                   : p.oneTime}
               </span>
-              {quote.referenceMinor && quote.savingsMinor > 0 && (
-                <small className="savings" data-testid="savings">
-                  {fill(p.savings, { amount: money(quote.savingsMinor), n: (TERM_MONTHS[term] ?? 12) / 12 })}
-                </small>
-              )}
             </div>
             <button
               ref={openerRef}

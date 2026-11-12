@@ -1270,3 +1270,17 @@ html { scroll-padding-top: 84px; }
   .sim-sub { margin-bottom: 26px; }
   .sim-points { gap: 22px; }
 }
+/* Simulator summary: selection + savings on the left, price on the right, button below (shorter card) */
+.sim-summary .savings { margin: 6px 0 0; text-align: left; max-width: none; }
+@container (max-width: 760px) {
+  .sim-summary { grid-template-columns: minmax(0, 1fr) auto; row-gap: 16px; }
+  .sum-price { border-left: 1px solid var(--line-strong); border-top: 0; padding: 0 0 0 clamp(14px, 2vw, 24px); text-align: right; }
+  .sim-summary .price, .sim-summary .price-sub { text-align: right; }
+  .sim-cta { grid-column: 1 / -1; justify-self: stretch; }
+}
+@container (max-width: 360px) {
+  .sim-summary { grid-template-columns: 1fr; }
+  .sum-price { border-left: 0; padding: 0; text-align: left; }
+  .sim-summary .price, .sim-summary .price-sub { text-align: left; }
+}
+.sim-summary .sum-left strong { white-space: normal; }

@@ -170,8 +170,6 @@ const en = {
       'Free pre-registration, no payment before launch.',
     ],
     simulatorSub: 'Choose your plan, the duration and the number of devices, and get your price instantly.',
-    simulatorCardTitle: 'Subscription simulator',
-    simulatorCardSub: 'Customise your plan in 3 steps and see your price.',
     tierLabel: 'Choose your plan',
     termLabel: 'Choose the duration',
     streamsLabel: 'Simultaneous devices',

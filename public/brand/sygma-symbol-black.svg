@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="SYGMA TV+">
+  <title>SYGMA TV+</title>
+  <rect width="512" height="512" fill="#000000"/>
+
+  <!-- Electric Lime chevron -->
+  <path
+    d="M146 88 L370 224 Q402 256 370 288 L146 424"
+    fill="none"
+    stroke="#D1FE17"
+    stroke-width="68"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- White Play triangle -->
+  <path
+    d="M150 177
+       Q150 165 163 172
+       L282 244
+       Q300 256 282 268
+       L163 340
+       Q150 347 150 335 Z"
+    fill="#FFFFFF"
+  />
+
+</svg>

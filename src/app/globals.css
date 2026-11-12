@@ -1661,3 +1661,11 @@ html { scroll-padding-top: 84px; }
   .footer-grid > * + * { padding-left: clamp(20px, 2.4vw, 48px); }
   .footer-chips li { padding: 8px 11px; font-size: 14px; }
 }
+/* Footer v3: exactly the owner mock-up (no back-to-top), chips on one row, social row */
+@media (min-width: 1101px) {
+  .footer-grid { grid-template-columns: auto minmax(0, 1fr) auto auto; }
+  .footer ul.footer-chips { flex-wrap: nowrap; }
+}
+.footer-social a, .footer-social span { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line-strong); color: var(--color-ink); }
+.footer-social span { cursor: default; }
+@media (hover: hover) { .footer-social a:hover { border-color: var(--color-lime); color: var(--color-lime); } }

@@ -1284,3 +1284,33 @@ html { scroll-padding-top: 84px; }
   .sim-summary .price, .sim-summary .price-sub { text-align: left; }
 }
 .sim-summary .sum-left strong { white-space: normal; }
+
+/* ==========================================================================
+   Hero v3 (owner decision 12/11/2026): the banner photo becomes a large
+   background behind the title on desktop (face on the left behind the text),
+   faded into the site background, with our lime light beam.
+   ========================================================================== */
+@media (min-width: 901px) {
+  .hero { position: relative; isolation: auto; }
+  .hero-grid { grid-template-columns: 1fr; grid-template-areas: 'copy' 'checks'; min-height: 520px; }
+  .hero-copy { max-width: 640px; }
+  .hero-stage {
+    position: absolute; z-index: -1; top: -10px; bottom: auto; left: auto; right: calc(50% - 50vw);
+    width: min(92vw, 1500px); aspect-ratio: 1920 / 819; margin: 0 !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, black 18%), linear-gradient(to bottom, black 60%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent 0, black 18%), linear-gradient(to bottom, black 60%, transparent 100%);
+    mask-composite: intersect;
+  }
+  .hero-stage picture, .hero-stage img { width: 100%; height: 100%; }
+  .hero-stage img { object-fit: cover; mix-blend-mode: normal; -webkit-mask-image: none; mask-image: none; }
+  .hero-stage::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--color-bg) 75%, transparent) 0%, color-mix(in srgb, var(--color-bg) 30%, transparent) 40%, transparent 65%),
+      linear-gradient(115deg, transparent 40%, color-mix(in srgb, var(--color-lime) 18%, transparent) 50%, transparent 58%);
+  }
+}
+@media (max-width: 900px) {
+  .hero-stage img { mix-blend-mode: normal; }
+}

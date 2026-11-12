@@ -6,8 +6,8 @@ import { AppWindow, ArrowRight, CirclePlay, Flame, Globe, Headset, Laptop, Monit
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
-const HERO_WIDTHS = [480, 768, 1080, 1440];
-const HERO_SIZES = '(max-width: 900px) 100vw, 48vw';
+const HERO_WIDTHS = [640, 1080, 1440, 1920];
+const HERO_SIZES = '(max-width: 900px) 100vw, 92vw';
 const heroSrcSet = (ext: 'avif' | 'webp') => HERO_WIDTHS.map((w) => `/images/hero-${w}.${ext} ${w}w`).join(', ');
 
 export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
@@ -43,8 +43,8 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
             <img
               src="/images/hero-1080.webp"
               alt={h.visualLabel}
-              width={1480}
-              height={833}
+              width={1920}
+              height={819}
               fetchPriority="high"
               decoding="async"
             />

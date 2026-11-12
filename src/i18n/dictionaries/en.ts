@@ -62,7 +62,7 @@ const en = {
     ctaPrimary: 'See the plans',
     ctaSecondary: 'How it works',
     checks: ['Free pre-registration', 'Up to 4 screens', 'Multi-device', 'Email support'],
-    visualLabel: 'Illustration: TV, phone, streaming box and remote showing the app with live sports, movies, live TV and my list',
+    visualLabel: 'A rugby team performing a war cry under neon lime light',
     stamp: 'Interface preview',
   },
   benefits: [

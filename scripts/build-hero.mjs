@@ -7,9 +7,9 @@ import { fileURLToPath } from 'node:url';
 
 const SRC = fileURLToPath(new URL('../assets/hero/hero-source.png', import.meta.url));
 const OUT = fileURLToPath(new URL('../public/images/', import.meta.url));
-const HERO_WIDTHS = [480, 768, 1080, 1440];
-// Trim the empty dark margins of the generated banner (16:9 kept) so the scene appears larger.
-const CROP = { left: 96, top: 54, width: 1480, height: 833 };
+const HERO_WIDTHS = [640, 1080, 1440, 1920];
+// Full banner (21:9), no crop.
+const CROP = { left: 0, top: 0, width: 1920, height: 819 };
 mkdirSync(OUT, { recursive: true });
 
 const meta = await sharp(SRC).metadata();

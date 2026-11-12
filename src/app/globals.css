@@ -1314,3 +1314,11 @@ html { scroll-padding-top: 84px; }
 @media (max-width: 900px) {
   .hero-stage img { mix-blend-mode: normal; }
 }
+/* Hero: banner shifted slightly to the left (owner request), right edge faded */
+@media (min-width: 901px) {
+  .hero-stage {
+    right: calc(50% - 50vw + 6vw);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, black 18%, black 90%, transparent 100%), linear-gradient(to bottom, black 60%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, black 18%, black 90%, transparent 100%), linear-gradient(to bottom, black 60%, transparent 100%);
+  }
+}

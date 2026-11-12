@@ -1866,3 +1866,30 @@ html { scroll-padding-top: 84px; }
 .terms-section { padding: 18px 22px; }
 .terms-section h2 { margin-bottom: 8px; }
 .terms-section p { margin-bottom: 0; }
+
+/* ==========================================================================
+   Getting started v3 (owner mock-up): minimal numbered steps with progress lines
+   ========================================================================== */
+.how-v3::before { display: none; }
+.how3-head { text-align: center; margin-bottom: clamp(28px, 3vw, 44px); padding-bottom: clamp(28px, 3vw, 44px); border-bottom: 1px solid var(--line-strong); }
+.how3-eyebrow { margin: 0 0 10px; color: var(--color-lime); font-size: 14px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
+.how3-title { margin: 0 0 12px; font-size: clamp(28px, 1.6vw + 18px, 44px); line-height: 1.15; letter-spacing: -0.8px; font-weight: 700; }
+.how3-title span { color: var(--color-lime); }
+.how3-sub { margin: 0; color: var(--color-muted); font-size: clamp(16px, 0.4vw + 13px, 19px); }
+.how3-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.how3-steps li { display: grid; gap: 6px; }
+.how3-num { font-size: clamp(36px, 1.6vw + 22px, 48px); font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--color-muted) 70%, var(--color-bg)); padding-bottom: 20px; margin-bottom: 18px; border-bottom: 3px solid var(--line-strong); }
+.how3-steps li.is-first .how3-num { color: var(--color-lime); border-bottom-color: var(--color-lime); }
+.how3-steps b { font-size: clamp(18px, 0.4vw + 15px, 22px); font-weight: 600; }
+.how3-steps small { color: var(--color-muted); font-size: 15px; letter-spacing: .2px; }
+.how3-actions { display: grid; justify-items: center; gap: 12px; margin-top: clamp(28px, 3vw, 44px); }
+.how3-cta { border-radius: 18px; min-height: 60px; padding: 0 40px; font-size: 18px; font-weight: 800; }
+.how3-note { margin: 0; color: var(--color-muted); font-size: 14px; }
+@media (max-width: 900px) { .how3-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; } }
+@media (max-width: 420px) {
+  .how3-steps { gap: 22px 14px; }
+  .how3-num { font-size: 34px; padding-bottom: 12px; margin-bottom: 10px; }
+  .how3-steps b { font-size: 16px; }
+  .how3-steps small { font-size: 13px; }
+  .how3-cta { width: 100%; justify-content: center; }
+}

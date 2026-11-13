@@ -62,7 +62,7 @@ const en = {
     ctaPrimary: 'See the plans',
     ctaSecondary: 'How it works',
     checks: ['Quick Setup', 'Data Protected', 'Multi-Device', 'Flexible Plans', 'Email Support'],
-    visualLabel: 'A rugby team performing a war cry under neon lime light',
+    visualLabel: 'A cheetah chasing a gazelle across the savanna at sunset',
     stamp: 'Interface preview',
   },
   benefits: [

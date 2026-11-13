@@ -8,10 +8,8 @@ import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
 const HERO_WIDTHS = [640, 1080, 1440, 1920];
-/** Owner order: haka (main image) → action → nature → F1 → horror → baseball. */
-const HERO_EXTRA_SLIDES = ['action', 'savanna', 'f1', 'horror', 'baseball'];
-/** Slides shown as a muted looping video (public/videos/hero-<name>.webm|mp4). */
-const HERO_VIDEO_SLIDES: string[] = []; // e.g. ['savanna'] once public/videos/hero-savanna.webm|mp4 exist
+/** Owner order: animated savanna (video, first) → haka → action → F1 → horror → baseball. */
+const HERO_SLIDES = ['hero', 'hero-action', 'hero-f1', 'hero-horror', 'hero-baseball'];
 const HERO_SIZES = '(max-width: 900px) 100vw, 92vw';
 const heroSrcSet = (ext: 'avif' | 'webp', name = 'hero') => HERO_WIDTHS.map((w) => `/images/${name}-${w}.${ext} ${w}w`).join(', ');
 
@@ -20,8 +18,8 @@ const HERO_BAR_ICONS: LucideIcon[] = [Zap, ShieldCheck, MonitorSmartphone, Infin
 
 export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.hero;
-  // Start downloading the banner (largest element on screen) as early as possible.
-  preload('/images/hero-1080.avif', { as: 'image', type: 'image/avif', imageSrcSet: heroSrcSet('avif'), imageSizes: HERO_SIZES, fetchPriority: 'high' });
+  // Start downloading the first banner's poster (largest element on screen) as early as possible.
+  preload('/images/hero-savanna-1080.webp', { as: 'image', type: 'image/webp', fetchPriority: 'high' });
   return (
     <div className="wrap hero">
       <div className="hero-grid">
@@ -41,47 +39,31 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
           </div>
         </div>
         <div className="hero-stage">
-          <picture>
-            <source type="image/avif" srcSet={heroSrcSet('avif')} sizes={HERO_SIZES} />
-            <source type="image/webp" srcSet={heroSrcSet('webp')} sizes={HERO_SIZES} />
-            <img
-              src="/images/hero-1080.webp"
-              alt={h.visualLabel}
-              width={1920}
-              height={819}
-              fetchPriority="high"
-              decoding="async"
-            />
-          </picture>
-          {/* Extra banners (baseball, savanna): cross-fade in turn every few seconds (CSS only) */}
-          {HERO_EXTRA_SLIDES.map((name) =>
-            HERO_VIDEO_SLIDES.includes(name) ? (
-              // Animated banner (generated video, muted loop). The photo is the poster until the video plays.
-              <video
-                key={name}
-                className="hero-slide hero-video"
-                poster={`/images/hero-${name}-1080.webp`}
-                width={1920}
-                height={819}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                aria-hidden="true"
-                tabIndex={-1}
-              >
-                <source src={`/videos/hero-${name}.webm`} type="video/webm" />
-                <source src={`/videos/hero-${name}.mp4`} type="video/mp4" />
-              </video>
-            ) : (
+          {/* 1st banner: animated savanna (generated video, muted loop). The photo is the poster until it plays. */}
+          <video
+            className="hero-video"
+            poster="/images/hero-savanna-1080.webp"
+            width={1920}
+            height={819}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-label={h.visualLabel}
+          >
+            <source src="/videos/hero-savanna-960.mp4" type="video/mp4" media="(max-width: 900px)" />
+            <source src="/videos/hero-savanna.webm" type="video/webm" />
+            <source src="/videos/hero-savanna.mp4" type="video/mp4" />
+          </video>
+          {/* Next banners cross-fade in turn every ~6 s (CSS only) */}
+          {HERO_SLIDES.map((name) => (
             <picture key={name} className="hero-slide">
-              <source type="image/avif" srcSet={heroSrcSet('avif', `hero-${name}`)} sizes={HERO_SIZES} />
-              <source type="image/webp" srcSet={heroSrcSet('webp', `hero-${name}`)} sizes={HERO_SIZES} />
-              <img src={`/images/hero-${name}-1080.webp`} alt="" width={1920} height={819} fetchPriority="low" decoding="async" />
+              <source type="image/avif" srcSet={heroSrcSet('avif', name)} sizes={HERO_SIZES} />
+              <source type="image/webp" srcSet={heroSrcSet('webp', name)} sizes={HERO_SIZES} />
+              <img src={`/images/${name}-1080.webp`} alt="" width={1920} height={819} loading="lazy" decoding="async" />
             </picture>
-            ),
-          )}
+          ))}
         </div>
         <ul className="hero-checks hero-bar">
           {h.checks.map((c, i) => {

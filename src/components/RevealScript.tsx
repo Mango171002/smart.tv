@@ -8,12 +8,13 @@
  */
 const SCRIPT = `(function(){try{
 var d=document.documentElement;
-if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.addEventListener('DOMContentLoaded',function(){var v=document.querySelector('.hero-video');if(v){v.removeAttribute('autoplay');v.pause();}});return;}
+if(!('IntersectionObserver' in window))return;
 d.classList.add('rv');
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('is-in');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -8% 0px'});
 function scan(){document.querySelectorAll('[data-reveal]:not([data-rv])').forEach(function(el){el.setAttribute('data-rv','');io.observe(el);});}
 scan();
-document.addEventListener('DOMContentLoaded',scan);
+document.addEventListener('DOMContentLoaded',function(){scan();var v=document.querySelector('.hero-video');if(v)v.addEventListener('animationiteration',function(){try{v.currentTime=0;v.play();}catch(e){}});});
 new MutationObserver(scan).observe(d,{childList:true,subtree:true});
 }catch(e){document.documentElement.classList.remove('rv');}})();`;
 

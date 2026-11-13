@@ -2014,7 +2014,7 @@ html { scroll-padding-top: 84px; }
 .price-was { display: block; color: var(--color-muted); font-size: 17px; font-weight: 600; text-decoration-thickness: 2px; text-decoration-color: color-mix(in srgb, var(--color-magenta) 80%, transparent); line-height: 1.1; margin-top: 2px; }
 .sim-summary .savings { color: var(--tier, var(--color-lime)); font-weight: 700; }
 
-/* Hero: six banners (haka / action / nature / F1 / horror / baseball) cross-fade in turn, ~6 s each (36 s loop) */
+/* Hero: six banners (savanna video / haka / action / F1 / horror / baseball) cross-fade in turn, ~6 s each (36 s loop) */
 .hero-stage > .hero-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
 @keyframes hero-cycle { 0% { opacity: 0; } 2.5%, 16.67% { opacity: 1; } 19.17%, 100% { opacity: 0; } }
 @media (prefers-reduced-motion: no-preference) {
@@ -2026,4 +2026,4 @@ html { scroll-padding-top: 84px; }
   .hero-stage > *:nth-child(5) { animation-delay: -13s; }
   .hero-stage > *:nth-child(6) { animation-delay: -7s; }
 }
-.hero-stage > video.hero-slide { height: 100%; object-fit: cover; }
+.hero-stage > video { object-fit: cover; }

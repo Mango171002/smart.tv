@@ -8,7 +8,7 @@ import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
 const HERO_WIDTHS = [640, 1080, 1440, 1920];
-const HERO_EXTRA_SLIDES = ['baseball', 'savanna'];
+const HERO_EXTRA_SLIDES = ['baseball', 'savanna', 'f1', 'horror'];
 const HERO_SIZES = '(max-width: 900px) 100vw, 92vw';
 const heroSrcSet = (ext: 'avif' | 'webp', name = 'hero') => HERO_WIDTHS.map((w) => `/images/${name}-${w}.${ext} ${w}w`).join(', ');
 

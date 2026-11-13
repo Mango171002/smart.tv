@@ -23,7 +23,7 @@ for (const w of HERO_WIDTHS) {
 console.log(`source ${meta.width}x${meta.height}`);
 
 // Extra hero slides, same frame: assets/hero/hero-<name>-source.png → public/images/hero-<name>-<w>.avif|webp
-for (const name of ['baseball', 'savanna']) {
+for (const name of ['baseball', 'savanna', 'f1', 'horror']) {
 const SRC2 = fileURLToPath(new URL(`../assets/hero/hero-${name}-source.png`, import.meta.url));
 for (const w of HERO_WIDTHS) {
   const base = sharp(SRC2).extract(CROP).resize({ width: Math.min(w, CROP.width), withoutEnlargement: true });

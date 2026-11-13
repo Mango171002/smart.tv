@@ -8,6 +8,7 @@ import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
 const HERO_WIDTHS = [640, 1080, 1440, 1920];
+const HERO_EXTRA_SLIDES = ['baseball', 'savanna'];
 const HERO_SIZES = '(max-width: 900px) 100vw, 92vw';
 const heroSrcSet = (ext: 'avif' | 'webp', name = 'hero') => HERO_WIDTHS.map((w) => `/images/${name}-${w}.${ext} ${w}w`).join(', ');
 
@@ -49,12 +50,14 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
               decoding="async"
             />
           </picture>
-          {/* Second banner (baseball): cross-fades with the first every few seconds (CSS only) */}
-          <picture className="hero-slide-2">
-            <source type="image/avif" srcSet={heroSrcSet('avif', 'hero-baseball')} sizes={HERO_SIZES} />
-            <source type="image/webp" srcSet={heroSrcSet('webp', 'hero-baseball')} sizes={HERO_SIZES} />
-            <img src="/images/hero-baseball-1080.webp" alt="" width={1920} height={819} fetchPriority="low" decoding="async" />
-          </picture>
+          {/* Extra banners (baseball, savanna): cross-fade in turn every few seconds (CSS only) */}
+          {HERO_EXTRA_SLIDES.map((name) => (
+            <picture key={name} className="hero-slide">
+              <source type="image/avif" srcSet={heroSrcSet('avif', `hero-${name}`)} sizes={HERO_SIZES} />
+              <source type="image/webp" srcSet={heroSrcSet('webp', `hero-${name}`)} sizes={HERO_SIZES} />
+              <img src={`/images/hero-${name}-1080.webp`} alt="" width={1920} height={819} fetchPriority="low" decoding="async" />
+            </picture>
+          ))}
         </div>
         <ul className="hero-checks hero-bar">
           {h.checks.map((c, i) => {

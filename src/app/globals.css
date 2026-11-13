@@ -2014,11 +2014,12 @@ html { scroll-padding-top: 84px; }
 .price-was { display: block; color: var(--color-muted); font-size: 17px; font-weight: 600; text-decoration-thickness: 2px; text-decoration-color: color-mix(in srgb, var(--color-magenta) 80%, transparent); line-height: 1.1; margin-top: 2px; }
 .sim-summary .savings { color: var(--tier, var(--color-lime)); font-weight: 700; }
 
-/* Hero: two banners (rugby / baseball) cross-fade every ~6 s */
-.hero-stage > .hero-slide-2 { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-@keyframes hero-a { 0%, 42% { opacity: 1; } 50%, 92% { opacity: 0; } 100% { opacity: 1; } }
-@keyframes hero-b { 0%, 42% { opacity: 0; } 50%, 92% { opacity: 1; } 100% { opacity: 0; } }
+/* Hero: three banners (rugby / baseball / savanna) cross-fade in turn, ~6 s each (18 s loop) */
+.hero-stage > .hero-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+@keyframes hero-cycle { 0% { opacity: 0; } 5%, 33.3% { opacity: 1; } 38.3%, 100% { opacity: 0; } }
 @media (prefers-reduced-motion: no-preference) {
-  .hero-stage > picture:first-child { animation: hero-a 13s ease-in-out infinite; }
-  .hero-stage > .hero-slide-2 { animation: hero-b 13s ease-in-out infinite; }
+  .hero-stage > picture { animation: hero-cycle 18s linear infinite; }
+  .hero-stage > picture:nth-child(1) { animation-delay: -1s; }
+  .hero-stage > picture:nth-child(2) { animation-delay: -13s; }
+  .hero-stage > picture:nth-child(3) { animation-delay: -7s; }
 }

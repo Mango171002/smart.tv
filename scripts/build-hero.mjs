@@ -22,6 +22,16 @@ for (const w of HERO_WIDTHS) {
 }
 console.log(`source ${meta.width}x${meta.height}`);
 
+// Second hero slide (baseball), same frame: assets/hero/hero-baseball-source.png → public/images/hero-baseball-<w>.avif|webp
+const SRC2 = fileURLToPath(new URL('../assets/hero/hero-baseball-source.png', import.meta.url));
+for (const w of HERO_WIDTHS) {
+  const base = sharp(SRC2).extract(CROP).resize({ width: Math.min(w, CROP.width), withoutEnlargement: true });
+  await base.clone().avif({ quality: 52, effort: 6 }).toFile(`${OUT}hero-baseball-${w}.avif`);
+  await base.clone().webp({ quality: 74, effort: 6 }).toFile(`${OUT}hero-baseball-${w}.webp`);
+  const kb = (f) => (statSync(f).size / 1024).toFixed(0);
+  console.log(`hero-baseball-${w}: avif ${kb(`${OUT}hero-baseball-${w}.avif`)} KB`);
+}
+
 // Category cards artwork (assets/categories/cat-<key>.png → public/images/cat-<key>-<w>.avif|webp)
 const CATS = ['sports', 'movies', 'live', 'streaming'];
 const CAT_WIDTHS = [400, 800];

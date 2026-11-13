@@ -2010,3 +2010,6 @@ html { scroll-padding-top: 84px; }
   .features-bar li:nth-child(4) svg { animation-delay: 1.2s; }
   .features-bar li:nth-child(5) svg { animation-delay: 1.6s; }
 }
+/* Simulator: regular price struck through above the final price */
+.price-was { display: block; color: var(--color-muted); font-size: 17px; font-weight: 600; text-decoration-thickness: 2px; text-decoration-color: color-mix(in srgb, var(--color-magenta) 80%, transparent); line-height: 1.1; margin-top: 2px; }
+.sim-summary .savings { color: var(--tier, var(--color-lime)); font-weight: 700; }

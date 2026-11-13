@@ -75,6 +75,12 @@ describe('offer structure', () => {
     expect(q('ultra', '12m').savingsMinor).toBe(0);
   });
 
+  it('long-term discounts at 1 device: 24 months ≈ −19/21%, 36 months = −33% on every plan', () => {
+    const pct = (tier: 'starter' | 'plus' | 'ultra', term: '24m' | '36m') => q(tier, term).savingsPercent;
+    expect([pct('starter', '24m'), pct('plus', '24m'), pct('ultra', '24m')]).toEqual([19, 19, 21]);
+    expect([pct('starter', '36m'), pct('plus', '36m'), pct('ultra', '36m')]).toEqual([33, 33, 33]);
+  });
+
   it('lifetime is a one-time payment without monthly equivalent or invented savings', () => {
     const l = q('ultra', 'lifetime');
     expect(TERM_MONTHS.lifetime).toBeNull();

@@ -84,7 +84,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     await expect(page.getByTestId('selection')).toHaveText('Starter · 36 months · 1 device');
     await expect(price).toHaveText('$99');
     await expect(page.locator('.price-sub')).toHaveText('≈ $2.75 / month');
-    await expect(page.getByTestId('savings')).toHaveText('Save $48 compared with 3 × 12 months');
+    await expect(page.getByTestId('savings')).toHaveText('You save $48 (−33%) vs 3 × 12 months');
     await page.locator('[data-stream="3"]').click();
     await expect(page.getByTestId('selection')).toHaveText('Starter · 36 months · 3 devices');
     await expect(price).toHaveText('$159');
@@ -119,7 +119,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
 
   test('"Choose" on a plan card selects it in the simulator', async ({ page }) => {
     await openHome(page, '/');
-    await page.getByRole('button', { name: 'Choose Ultra+' }).click();
+    await page.getByRole('button', { name: 'Pre-register for Ultra+' }).click();
     await expect(page.locator('.simulator [data-tier="ultra"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByTestId('price')).toHaveText('$69');
   });
@@ -154,7 +154,7 @@ test.describe('pre-registration', () => {
     await page.locator('.simulator [data-tier="ultra"]').click();
     await page.locator('[data-term="24m"]').click();
     await page.locator('[data-stream="2"]').click();
-    const opener = page.getByRole('button', { name: /^Free pre-registration/ });
+    const opener = page.getByRole('button', { name: /^Pre-register for free/ });
     await opener.click();
     const dialog = page.getByTestId('checkout-dialog');
     await expect(dialog).toHaveAccessibleName('Complete your pre-registration');
@@ -183,7 +183,7 @@ test.describe('pre-registration', () => {
 
   test('requires a valid email and consent before continuing', async ({ page }) => {
     await openHome(page, '/');
-    await page.getByRole('button', { name: /^Free pre-registration/ }).click();
+    await page.getByRole('button', { name: /^Pre-register for free/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByRole('button', { name: /^Continue/ }).click();
     await expect(dialog.getByText('Enter a valid email address.')).toBeVisible();
@@ -196,7 +196,7 @@ test.describe('pre-registration', () => {
   test('dialog stays still when hovered and lives in <body> (regression)', async ({ page, isMobile }) => {
     test.skip(isMobile, 'hover only exists on desktop');
     await openHome(page, '/');
-    await page.getByRole('button', { name: /^Free pre-registration/ }).click();
+    await page.getByRole('button', { name: /^Pre-register for free/ }).click();
     const checkbox = page.getByTestId('checkout-dialog').getByLabel(/I agree to be contacted/);
     await checkbox.hover();
     const before = await checkbox.boundingBox();
@@ -208,7 +208,7 @@ test.describe('pre-registration', () => {
   test('shows a clear message when rate limited', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
     await openHome(page, '/');
-    await page.getByRole('button', { name: /^Free pre-registration/ }).click();
+    await page.getByRole('button', { name: /^Pre-register for free/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
     await dialog.getByLabel('Your region').selectOption('US');
@@ -222,7 +222,7 @@ test.describe('pre-registration', () => {
   test('traps focus and closes with Escape, restoring focus', async ({ page, isMobile }) => {
     test.skip(isMobile, 'keyboard test runs on desktop');
     await openHome(page, '/');
-    const opener = page.getByRole('button', { name: /^Free pre-registration/ });
+    const opener = page.getByRole('button', { name: /^Pre-register for free/ });
     await opener.click();
     const dialog = page.getByRole('dialog');
     for (let i = 0; i < 8; i++) {
@@ -345,9 +345,9 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     await page.goto('/');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Blog', 'Get Started']);
-    await expect(nav.getByRole('button', { name: 'Request a Trial' })).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(nav.getByRole('link', { name: 'Get Started' })).toHaveCSS('background-color', 'rgb(209, 254, 23)');
+    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Blog', 'Pre-register']);
+    await expect(nav.getByRole('button', { name: 'Free trial' })).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(nav.getByRole('link', { name: 'Pre-register' })).toHaveCSS('background-color', 'rgb(209, 254, 23)');
   });
 
   test('"Request a trial" opens a window: name, email, phone with country code', async ({ page, isMobile }) => {
@@ -358,7 +358,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     });
     await page.goto('/');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
-    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Request a Trial' }).click();
+    await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Free trial' }).click();
     const dialog = page.getByRole('dialog', { name: 'Request a Trial' });
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button', { name: 'Send request' }).click();
@@ -433,7 +433,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
 
   test('checkout dialog has no violations', async ({ page }) => {
     await openHome(page, '/');
-    await page.getByRole('button', { name: /^Free pre-registration/ }).click();
+    await page.getByRole('button', { name: /^Pre-register for free/ }).click();
     await expect(page.getByRole('dialog')).toBeVisible(); // the dialog is loaded on demand
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();
     expect(results.violations.map((v) => v.id)).toEqual([]);

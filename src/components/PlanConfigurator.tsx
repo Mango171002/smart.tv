@@ -272,12 +272,18 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
               <strong data-testid="selection">{selectionLabel}</strong>
               {quote.referenceMinor && quote.savingsMinor > 0 && (
                 <small className="savings" data-testid="savings">
-                  {fill(p.savings, { amount: money(quote.savingsMinor), n: (TERM_MONTHS[term] ?? 12) / 12 })}
+                  {fill(p.savings, { amount: money(quote.savingsMinor), pct: quote.savingsPercent, n: (TERM_MONTHS[term] ?? 12) / 12 })}
                 </small>
               )}
             </div>
             <div className="sum-price">
-              <small className="label">{p.totalLabel}</small>
+              <small className="label">{quote.savingsMinor > 0 ? p.finalPrice : p.totalLabel}</small>
+              {quote.referenceMinor !== null && quote.savingsMinor > 0 && (
+                <s className="price-was" data-testid="regular-price">
+                  <span className="sr-only">{p.regularPrice}: </span>
+                  {money(quote.referenceMinor)}
+                </s>
+              )}
               <div className="price" data-testid="price" aria-live="polite">{money(quote.amountMinor)}</div>
               <span className="price-sub">
                 {quote.monthlyEquivalentMinor !== null

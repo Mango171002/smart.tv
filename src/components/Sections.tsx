@@ -111,7 +111,7 @@ export function ContentCategories({
           <H id="content-title" className="section-title">{c.title}</H>
           <p className="sub">{c.sub}</p>
         </div>
-        <ul className="cat-grid">
+        <ul className="cat-grid" data-reveal suppressHydrationWarning>
           {c.categories.map((item, i) => {
             const { key, icon: Icon } = CATEGORIES[i]!;
             return (
@@ -207,7 +207,7 @@ export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
             })}
           </ul>
         </div>
-        <div className="faq">
+        <div className="faq" data-reveal suppressHydrationWarning>
           {items.map((item, i) => (
             <details key={item.q} open={i === 0}>
               <summary>

@@ -126,7 +126,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
   return (
     <div className="offers" ref={offersRef}>
       {/* 1. The three yearly plans */}
-      <ul className="tier-grid">
+      <ul className="tier-grid" data-reveal suppressHydrationWarning>
         {TIERS.map((t) => {
           const yearly = computeQuote(table, { tier: t, term: '12m', streams: 1 });
           const info = p.tiers[t];

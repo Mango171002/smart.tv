@@ -5,6 +5,7 @@ import { Footer } from '@/components/Footer';
 import { SupportButton } from '@/components/SupportButton';
 import { RequestHost } from '@/components/RequestHost';
 import { SectionLinkHandler } from '@/components/SectionLinkHandler';
+import { RevealScript } from '@/components/RevealScript';
 import { Header } from '@/components/Header';
 import { siteConfig } from '@/config/site';
 import { LOCALES, isLocale } from '@/i18n/config';
@@ -42,8 +43,9 @@ export default async function LocaleLayout({
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body>
+        <RevealScript />
         <a className="skip-link" href="#main">{dict.common.skipToContent}</a>
         <Header locale={locale} nav={dict.nav} />
         <main id="main" tabIndex={-1}>{children}</main>

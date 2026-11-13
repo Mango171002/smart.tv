@@ -8,8 +8,8 @@ import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
 const HERO_WIDTHS = [640, 1080, 1440, 1920];
-/** Owner order: animated savanna (video, first) → haka → action → F1 → horror → baseball. */
-const HERO_SLIDES = ['hero', 'hero-action', 'hero-f1', 'hero-horror', 'hero-baseball'];
+/** Owner order: savanna video (first) → haka video → action → F1 → horror → baseball. */
+const HERO_SLIDES = ['hero-action', 'hero-f1', 'hero-horror', 'hero-baseball'];
 const HERO_SIZES = '(max-width: 900px) 100vw, 92vw';
 const heroSrcSet = (ext: 'avif' | 'webp', name = 'hero') => HERO_WIDTHS.map((w) => `/images/${name}-${w}.${ext} ${w}w`).join(', ');
 
@@ -55,6 +55,23 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             <source src="/videos/hero-chase-960.mp4" type="video/mp4" media="(max-width: 900px)" />
             <source src="/videos/hero-chase.webm" type="video/webm" />
             <source src="/videos/hero-chase.mp4" type="video/mp4" />
+          </video>
+          {/* 2nd banner: haka, live-broadcast style video (Kling 4.0, muted loop) */}
+          <video
+            className="hero-slide hero-video"
+            poster="/images/hero-haka-video-poster.webp"
+            width={1920}
+            height={819}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+          >
+            <source src="/videos/hero-haka-960.mp4" type="video/mp4" media="(max-width: 900px)" />
+            <source src="/videos/hero-haka.webm" type="video/webm" />
+            <source src="/videos/hero-haka.mp4" type="video/mp4" />
           </video>
           {/* Next banners cross-fade in turn every ~6 s (CSS only) */}
           {HERO_SLIDES.map((name) => (

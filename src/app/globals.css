@@ -2014,14 +2014,15 @@ html { scroll-padding-top: 84px; }
 .price-was { display: block; color: var(--color-muted); font-size: 17px; font-weight: 600; text-decoration-thickness: 2px; text-decoration-color: color-mix(in srgb, var(--color-magenta) 80%, transparent); line-height: 1.1; margin-top: 2px; }
 .sim-summary .savings { color: var(--tier, var(--color-lime)); font-weight: 700; }
 
-/* Hero: five banners (haka / baseball / savanna / F1 / horror) cross-fade in turn, ~6 s each (30 s loop) */
+/* Hero: six banners (haka / action / nature / F1 / horror / baseball) cross-fade in turn, ~6 s each (36 s loop) */
 .hero-stage > .hero-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-@keyframes hero-cycle { 0% { opacity: 0; } 3%, 20% { opacity: 1; } 23%, 100% { opacity: 0; } }
+@keyframes hero-cycle { 0% { opacity: 0; } 2.5%, 16.67% { opacity: 1; } 19.17%, 100% { opacity: 0; } }
 @media (prefers-reduced-motion: no-preference) {
-  .hero-stage > picture { animation: hero-cycle 30s linear infinite; }
+  .hero-stage > picture { animation: hero-cycle 36s linear infinite; }
   .hero-stage > picture:nth-child(1) { animation-delay: -1s; }
-  .hero-stage > picture:nth-child(2) { animation-delay: -25s; }
-  .hero-stage > picture:nth-child(3) { animation-delay: -19s; }
-  .hero-stage > picture:nth-child(4) { animation-delay: -13s; }
-  .hero-stage > picture:nth-child(5) { animation-delay: -7s; }
+  .hero-stage > picture:nth-child(2) { animation-delay: -31s; }
+  .hero-stage > picture:nth-child(3) { animation-delay: -25s; }
+  .hero-stage > picture:nth-child(4) { animation-delay: -19s; }
+  .hero-stage > picture:nth-child(5) { animation-delay: -13s; }
+  .hero-stage > picture:nth-child(6) { animation-delay: -7s; }
 }

@@ -10,6 +10,8 @@ import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 const HERO_WIDTHS = [640, 1080, 1440, 1920];
 /** Owner order: haka (main image) → action → nature → F1 → horror → baseball. */
 const HERO_EXTRA_SLIDES = ['action', 'savanna', 'f1', 'horror', 'baseball'];
+/** Slides shown as a muted looping video (public/videos/hero-<name>.webm|mp4). */
+const HERO_VIDEO_SLIDES: string[] = []; // e.g. ['savanna'] once public/videos/hero-savanna.webm|mp4 exist
 const HERO_SIZES = '(max-width: 900px) 100vw, 92vw';
 const heroSrcSet = (ext: 'avif' | 'webp', name = 'hero') => HERO_WIDTHS.map((w) => `/images/${name}-${w}.${ext} ${w}w`).join(', ');
 
@@ -52,13 +54,34 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             />
           </picture>
           {/* Extra banners (baseball, savanna): cross-fade in turn every few seconds (CSS only) */}
-          {HERO_EXTRA_SLIDES.map((name) => (
+          {HERO_EXTRA_SLIDES.map((name) =>
+            HERO_VIDEO_SLIDES.includes(name) ? (
+              // Animated banner (generated video, muted loop). The photo is the poster until the video plays.
+              <video
+                key={name}
+                className="hero-slide hero-video"
+                poster={`/images/hero-${name}-1080.webp`}
+                width={1920}
+                height={819}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-hidden="true"
+                tabIndex={-1}
+              >
+                <source src={`/videos/hero-${name}.webm`} type="video/webm" />
+                <source src={`/videos/hero-${name}.mp4`} type="video/mp4" />
+              </video>
+            ) : (
             <picture key={name} className="hero-slide">
               <source type="image/avif" srcSet={heroSrcSet('avif', `hero-${name}`)} sizes={HERO_SIZES} />
               <source type="image/webp" srcSet={heroSrcSet('webp', `hero-${name}`)} sizes={HERO_SIZES} />
               <img src={`/images/hero-${name}-1080.webp`} alt="" width={1920} height={819} fetchPriority="low" decoding="async" />
             </picture>
-          ))}
+            ),
+          )}
         </div>
         <ul className="hero-checks hero-bar">
           {h.checks.map((c, i) => {

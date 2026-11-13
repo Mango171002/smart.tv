@@ -5,13 +5,7 @@ import type { Dictionary } from '@/i18n/dictionaries';
 import { Check, Play, CircleHelp, BadgeCheck, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
-
-/** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
-const HERO_WIDTHS = [640, 1080, 1440, 1920];
-/** Owner order: savanna video (first) → haka video → action → F1 → horror → baseball. */
-const HERO_SLIDES = ['hero-action', 'hero-f1', 'hero-horror', 'hero-baseball'];
-const HERO_SIZES = '(max-width: 900px) 100vw, 92vw';
-const heroSrcSet = (ext: 'avif' | 'webp', name = 'hero') => HERO_WIDTHS.map((w) => `/images/${name}-${w}.${ext} ${w}w`).join(', ');
+/** Banner: two muted looping videos (savanna chase → haka); the banner photos moved to the category cards (owner, 13/11). */
 
 /** Icons of the hero feature bar (Lucide, lime). */
 const HERO_BAR_ICONS: LucideIcon[] = [Zap, ShieldCheck, MonitorSmartphone, InfinityIcon, Headset];
@@ -73,14 +67,6 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             <source src="/videos/hero-haka.webm" type="video/webm" />
             <source src="/videos/hero-haka.mp4" type="video/mp4" />
           </video>
-          {/* Next banners cross-fade in turn every ~6 s (CSS only) */}
-          {HERO_SLIDES.map((name) => (
-            <picture key={name} className="hero-slide">
-              <source type="image/avif" srcSet={heroSrcSet('avif', name)} sizes={HERO_SIZES} />
-              <source type="image/webp" srcSet={heroSrcSet('webp', name)} sizes={HERO_SIZES} />
-              <img src={`/images/${name}-1080.webp`} alt="" width={1920} height={819} loading="lazy" decoding="async" />
-            </picture>
-          ))}
         </div>
         <ul className="hero-checks hero-bar">
           {h.checks.map((c, i) => {

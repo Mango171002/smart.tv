@@ -8,7 +8,7 @@ import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 
 /** Hero banner: responsive files generated from assets/hero/hero-source.png by `npm run hero`. */
 const HERO_WIDTHS = [640, 1080, 1440, 1920];
-/** Owner order: animated savanna (video, first) → savanna documentary-style video (test) → haka → action → F1 → horror → baseball. */
+/** Owner order: animated savanna (video, first) → haka → action → F1 → horror → baseball. */
 const HERO_SLIDES = ['hero', 'hero-action', 'hero-f1', 'hero-horror', 'hero-baseball'];
 const HERO_SIZES = '(max-width: 900px) 100vw, 92vw';
 const heroSrcSet = (ext: 'avif' | 'webp', name = 'hero') => HERO_WIDTHS.map((w) => `/images/${name}-${w}.${ext} ${w}w`).join(', ');
@@ -19,7 +19,7 @@ const HERO_BAR_ICONS: LucideIcon[] = [Zap, ShieldCheck, MonitorSmartphone, Infin
 export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.hero;
   // Start downloading the first banner's poster (largest element on screen) as early as possible.
-  preload('/images/hero-savanna-1080.webp', { as: 'image', type: 'image/webp', fetchPriority: 'high' });
+  preload('/images/hero-savanna-video-poster.webp', { as: 'image', type: 'image/webp', fetchPriority: 'high' });
   return (
     <div className="wrap hero">
       <div className="hero-grid">
@@ -39,10 +39,10 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
           </div>
         </div>
         <div className="hero-stage">
-          {/* 1st banner: animated savanna (generated video, muted loop). The photo is the poster until it plays. */}
+          {/* 1st banner: savanna chase, documentary-style video (Kling 4.0, muted loop). Its first frame is the poster until it plays. */}
           <video
             className="hero-video"
-            poster="/images/hero-savanna-1080.webp"
+            poster="/images/hero-savanna-video-poster.webp"
             width={1920}
             height={819}
             autoPlay
@@ -52,26 +52,9 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             preload="auto"
             aria-label={h.visualLabel}
           >
-            <source src="/videos/hero-savanna-960.mp4" type="video/mp4" media="(max-width: 900px)" />
-            <source src="/videos/hero-savanna.webm" type="video/webm" />
-            <source src="/videos/hero-savanna.mp4" type="video/mp4" />
-          </video>
-          {/* 2nd banner (comparison test): same chase, documentary-style start frame (Kling 4.0) */}
-          <video
-            className="hero-slide hero-video"
-            poster="/images/hero-savanna-real-1080.webp"
-            width={1920}
-            height={819}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            aria-hidden="true"
-          >
-            <source src="/videos/hero-savanna-real-960.mp4" type="video/mp4" media="(max-width: 900px)" />
-            <source src="/videos/hero-savanna-real.webm" type="video/webm" />
-            <source src="/videos/hero-savanna-real.mp4" type="video/mp4" />
+            <source src="/videos/hero-chase-960.mp4" type="video/mp4" media="(max-width: 900px)" />
+            <source src="/videos/hero-chase.webm" type="video/webm" />
+            <source src="/videos/hero-chase.mp4" type="video/mp4" />
           </video>
           {/* Next banners cross-fade in turn every ~6 s (CSS only) */}
           {HERO_SLIDES.map((name) => (

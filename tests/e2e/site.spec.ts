@@ -305,9 +305,14 @@ test.describe('layout (fluid container)', () => {
         return {
           brand: left('.brand-logo'), hero: left('.hero h1'), cats: left('.cat-grid'), features: left('.features-bar'),
           width: g.width, overflow: document.documentElement.scrollWidth - innerWidth,
+          // elements sticking out of the page (shown when the check fails)
+          wide: [...document.querySelectorAll('body *')]
+            .filter((el) => el.getBoundingClientRect().right > innerWidth + 1 && !el.closest('[style*="overflow"], .slider, .featured-track, .overlay'))
+            .slice(0, 8)
+            .map((el) => `${el.tagName}.${String(el.className).slice(0, 40)} → ${Math.round(el.getBoundingClientRect().right)}`),
         };
       });
-      expect(m.overflow).toBeLessThanOrEqual(0);
+      expect(m.overflow, m.wide.join(' | ')).toBeLessThanOrEqual(0);
       // brand, hero text, cards and features bar share the same left edge
       for (const v of [m.hero, m.cats, m.features]) expect(Math.abs(v - m.brand)).toBeLessThanOrEqual(1);
       expect(m.brand).toBeGreaterThanOrEqual(16);

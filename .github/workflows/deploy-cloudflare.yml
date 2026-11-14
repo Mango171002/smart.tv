@@ -91,18 +91,24 @@ jobs:
           set -o pipefail
           U=https://sygmatv.com/en
           npm i --no-save lighthouse@13.6.0 >/dev/null 2>&1
+          # 3 runs per profile, the median run is kept (shared runners are noisy).
           for preset in mobile desktop; do
             extra=""; [ "$preset" = desktop ] && extra="--preset=desktop"
-            npx lighthouse "$U" --quiet $extra --chrome-flags="--headless=new --no-sandbox" \
-              --output=json --output-path="lh-$preset.json"
+            for i in 1 2 3; do
+              npx lighthouse "$U" --quiet $extra --chrome-flags="--headless=new --no-sandbox" \
+                --output=json --output-path="lh-$preset-$i.json"
+            done
           done
           node - <<'NODE' | tee -a "$GITHUB_STEP_SUMMARY"
           const fs = require('fs');
           let failed = false;
+          console.log('Median of 3 runs per profile.\n');
           console.log('| Profile | Performance | Accessibility | Best practices | SEO* | LCP | CLS |');
           console.log('|---|---|---|---|---|---|---|');
           for (const p of ['mobile', 'desktop']) {
-            const r = JSON.parse(fs.readFileSync(`lh-${p}.json`, 'utf8'));
+            const runs = [1, 2, 3].map((i) => JSON.parse(fs.readFileSync(`lh-${p}-${i}.json`, 'utf8')))
+              .sort((a, b) => a.categories.performance.score - b.categories.performance.score);
+            const r = runs[1]; // median performance run
             const s = (k) => Math.round(r.categories[k].score * 100);
             // GitHub runners are slower and noisier than real devices: mobile performance gate at 80.
             const min = { performance: p === 'mobile' ? 80 : 90, accessibility: 90, 'best-practices': 90 };

@@ -263,8 +263,8 @@ test.describe('home page (approved mock-up)', () => {
     const carousel = page.getByRole('region', { name: 'Most watched genres' });
     await expect(carousel).toHaveAttribute('data-ready', 'true'); // wait for hydration
     await expect(carousel.getByRole('group')).toHaveCount(12);
-    await expect(carousel.getByRole('group', { name: /American football/ })).toContainText('USA');
-    await expect(carousel.getByRole('group', { name: /Ice hockey/ })).toContainText('Canada');
+    await expect(carousel.getByRole('group', { name: /American football/ })).toContainText('International');
+    await expect(carousel.getByRole('group', { name: /Ice hockey/ })).toContainText('International');
     if (!isMobile) {
       const next = carousel.getByRole('button', { name: 'Next' });
       await expect(next).toBeVisible();

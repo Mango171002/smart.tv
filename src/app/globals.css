@@ -2075,3 +2075,10 @@ html { scroll-padding-top: 84px; }
 .featured .slide.rank-2 .slide-title { font-size: 6.4cqi; }
 .featured .slide-region { font-size: 10px; padding: 1px 7px; }
 .featured .slide-badge { top: 10px; left: 10px; font-size: 10px; padding: 3px 8px; }
+/* Most watched: slightly zoomed-out artwork (owner 14/11) — image covers the top ~80 % and fades into the dark base */
+.featured .slide { background: var(--color-bg); }
+.featured .slide picture { height: 80%; }
+.featured .slide img {
+  -webkit-mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
+}

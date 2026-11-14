@@ -232,7 +232,7 @@ const en = {
       { title: 'Live Sports', text: 'Football, basketball, motorsport and more' },
       { title: 'Movies & Series', text: 'Cinema, series and on-demand content' },
       { title: 'Live TV', text: 'International channels, organised by region' },
-      { title: 'Smart Streaming', text: 'On TV, mobile, tablet and all your devices' },
+      { title: 'Documentaries', text: 'Nature, history, science and true stories' },
     ],
   },
   devices: {

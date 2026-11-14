@@ -17,15 +17,13 @@ import {
   Laptop,
   Monitor,
   MonitorPlay,
-  MonitorSmartphone,
   Popcorn,
   RadioTower,
   ShieldCheck,
   Smartphone,
   Trophy,
   Tv,
-  type LucideIcon,
-} from 'lucide-react';
+  type LucideIcon, Binoculars } from 'lucide-react';
 
 export const ICON_STROKE = 1.75;
 
@@ -39,8 +37,8 @@ export const CATEGORIES: Array<{ key: CategoryKey; icon: LucideIcon; support: Lu
   { key: 'movies', icon: Clapperboard, support: [Film, Popcorn, CirclePlay] },
   // Live TV — tv — #19D3F3
   { key: 'live', icon: Tv, support: [RadioTower, MonitorPlay, Globe] },
-  // Smart Streaming — monitor-smartphone — #6878FF
-  { key: 'streaming', icon: MonitorSmartphone, support: [Smartphone, Monitor, Cast] },
+  // Documentaries (owner, 14/11 — replaces Smart Streaming on the cards) — binoculars — #6878FF
+  { key: 'streaming', icon: Binoculars, support: [Smartphone, Monitor, Cast] },
 ];
 
 /** Features bar (5 items, primary cyan). */

@@ -26,16 +26,26 @@ function db(): Db | null {
   return getServiceSupabase() as unknown as Db | null;
 }
 
+/** Set when the last database call failed (missing or wrong service key, network…). */
+let dbDown = false;
+
 async function call<T>(fn: string, args: Record<string, unknown> = {}): Promise<T | null> {
   const client = db();
-  if (!client) return null;
+  if (!client) {
+    dbDown = true;
+    return null;
+  }
   const { data, error } = await client.rpc(fn, args);
   if (error) {
+    dbDown = true;
     console.warn('[ops]', fn, error.message);
     return null;
   }
+  dbDown = false;
   return data as T;
 }
+
+const DB_DOWN = '⚠️ Le bot n’arrive pas à joindre la base de données (clé Supabase manquante ou invalide).';
 
 const TOPICS = ['commandes', 'paiements', 'livraisons', 'support', 'alertes'] as const;
 type Topic = (typeof TOPICS)[number];
@@ -139,7 +149,7 @@ async function handleCommand(m: TgMessage) {
 
   const role = await call<string | null>('ops_actor_role', { p_actor: from.id });
   if (!role) {
-    if (m.chat.type !== 'private') await reply(m, '⛔ Non autorisé.');
+    await reply(m, dbDown ? DB_DOWN : '⛔ Non autorisé.');
     return;
   }
   const settings = (await call<Settings>('ops_get_settings')) ?? {};
@@ -231,7 +241,7 @@ async function handleCallback(q: TgCallback) {
   if (!c || !msg) return answer('Bouton invalide');
 
   const role = await call<string | null>('ops_actor_role', { p_actor: q.from.id });
-  if (!role) return answer('⛔ Non autorisé', true);
+  if (!role) return answer(dbDown ? DB_DOWN : '⛔ Non autorisé', true);
   const settings = (await call<Settings>('ops_get_settings')) ?? {};
   const nowS = Math.floor(Date.now() / 1000);
 

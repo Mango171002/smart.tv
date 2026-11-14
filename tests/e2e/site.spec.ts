@@ -273,7 +273,7 @@ test.describe('home page (approved mock-up)', () => {
     }
     await page.getByRole('button', { name: '12 of 12', exact: true }).click();
     await expect(page.getByRole('button', { name: '12 of 12', exact: true })).toHaveAttribute('aria-current', 'true');
-    const imgs = await carousel.locator('img').evaluateAll((els) => els.map((e) => (e as HTMLImageElement).getAttribute('src')));
+    const imgs = await carousel.locator('picture img').evaluateAll((els) => els.map((e) => (e as HTMLImageElement).getAttribute('src')));
     expect(new Set(imgs).size).toBe(12);
   });
 

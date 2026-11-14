@@ -73,7 +73,7 @@ export function Featured({ dict }: { dict: Dictionary['featured'] }) {
             {dict.items.map((item, i) => (
               <div
                 key={item.title}
-                className={`slide cat-${item.cat}${i >= 9 ? ' rank-2' : ''}`}
+                className={`slide cat-${item.cat}`}
                 role="group"
                 aria-roledescription="slide"
                 aria-label={`${fill(dict.slideLabel, { n: i + 1, total })} — ${item.title}`}
@@ -84,8 +84,8 @@ export function Featured({ dict }: { dict: Dictionary['featured'] }) {
                   { }
                   <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp`} alt="" width={480} height={270} loading="lazy" decoding="async" style={{ objectPosition: `${FOCUS[FEATURED_SCENES[i]!] ?? '65%'} 50%` }} />
                 </picture>
-                <span className="slide-badge">{item.badge}</span>
-                <span className="slide-rank" aria-hidden="true">{i + 1}</span>
+                {/* eslint-disable-next-line @next/next/no-img-element -- static vector logo */}
+                <img className="slide-logo" src="/brand/sygma-logo.svg" alt="" width={308} height={40} loading="lazy" decoding="async" />
                 <span className="slide-text">
                   <span className="slide-title">{item.title}</span>
                   <span className="slide-region">{item.region}</span>

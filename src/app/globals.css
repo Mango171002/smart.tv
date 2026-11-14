@@ -2082,3 +2082,12 @@ html { scroll-padding-top: 84px; }
   -webkit-mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 62%, transparent 100%);
 }
+/* Most watched (owner 14/11): SYGMA TV+ logo top-left instead of the category badge, no rank numbers,
+   title centred at the bottom */
+.featured .slide .slide-logo {
+  position: absolute; z-index: 2; top: 6cqi; left: 6cqi; width: 42cqi; height: auto; mask-image: none; -webkit-mask-image: none;
+  filter: drop-shadow(0 2px 6px rgb(0 0 0 / .6));
+}
+.featured .slide-text { left: 6cqi; right: 6cqi; bottom: 7cqi; justify-items: center; text-align: center; gap: 7px; }
+.featured .slide-title { font-size: 9cqi; line-height: 1; letter-spacing: .4px; }
+.featured .slide-region { justify-self: center; }

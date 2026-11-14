@@ -6,14 +6,33 @@ import { Brand } from './Brand';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { MARKETS, MARKET_CODES, type MarketCode } from '@/config/markets';
+import countries from '@/config/countries.json';
+import type { MarketCode } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
 import { formatMoney, type PlanSelection } from '@/lib/pricing';
 
 type Step = 1 | 2 | 3;
 
-const DEVICE_KEYS = ['smart_tv', 'streaming_device', 'mobile', 'computer'] as const;
+/** Device choices (most used first) and the stored category of each — same order as dict.checkout.deviceOptions. */
+const DEVICE_CHOICES = [
+  ['smart_tv', 'smart_tv'],
+  ['android_tv', 'streaming_device'],
+  ['fire_tv', 'streaming_device'],
+  ['apple_tv', 'streaming_device'],
+  ['tv_box', 'streaming_device'],
+  ['android_mobile', 'mobile'],
+  ['ios_mobile', 'mobile'],
+  ['computer', 'computer'],
+  ['browser', 'computer'],
+] as const;
+type DeviceChoice = (typeof DEVICE_CHOICES)[number][0];
+const EU = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']);
+const COUNTRIES = [...countries].sort((a, b) => a.name.localeCompare(b.name, 'en'));
+/** Flag emoji from an ISO 3166-1 alpha-2 code. */
+const flag = (code: string) => String.fromCodePoint(...[...code].map((ch) => 0x1f1a5 + ch.charCodeAt(0)));
+/** Stored market of a country (prices are in USD everywhere; the region only helps the team). */
+const marketOf = (code: string): MarketCode | undefined => (code === 'US' || code === 'CA' ? code : EU.has(code) ? 'EU' : undefined);
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 interface ServerQuote {
@@ -41,8 +60,8 @@ export function CheckoutDialog({
   const [quote, setQuote] = useState<ServerQuote | null>(null);
   const [quoteState, setQuoteState] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [email, setEmail] = useState('');
-  const [device, setDevice] = useState<(typeof DEVICE_KEYS)[number]>('smart_tv');
-  const [market, setMarket] = useState<MarketCode | ''>('');
+  const [device, setDevice] = useState<DeviceChoice>('smart_tv');
+  const [country, setCountry] = useState('');
   const [consent, setConsent] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [fieldError, setFieldError] = useState<{ email?: string; region?: string; consent?: string }>({});
@@ -101,11 +120,11 @@ export function CheckoutDialog({
           kind: 'launch_waitlist',
           email: email.trim(),
           locale,
-          market,
+          market: marketOf(country),
           tier: selection.tier,
           term: selection.term,
           streams: selection.streams,
-          device,
+          device: DEVICE_CHOICES.find(([k]) => k === device)?.[1],
           consent: true,
           marketing,
         }),
@@ -126,7 +145,7 @@ export function CheckoutDialog({
   async function review() {
     const errors: { email?: string; region?: string; consent?: string } = {};
     if (!EMAIL_RE.test(email.trim())) errors.email = c.errors.email;
-    if (!market) errors.region = c.errors.region;
+    if (!country) errors.region = c.errors.region;
     if (!consent) errors.consent = c.errors.consent;
     setFieldError(errors);
     if (Object.keys(errors).length) {
@@ -150,7 +169,8 @@ export function CheckoutDialog({
     }
   }
 
-  const regionLabel = market ? `${MARKETS[market].flag} ${dict.markets[market]}` : '';
+  const countryName = COUNTRIES.find((x) => x.code === country)?.name;
+  const regionLabel = countryName ? `${flag(country)} ${countryName}` : '';
   const planLabel = `${dict.plans.tiers[selection.tier].name} · ${dict.plans.terms[selection.term]} · ${plural(dict.common, 'device', selection.streams)}`;
   const subtotal = quote ? `${formatMoney(quote.amountMinor, quote.currency, locale)} ${quote.currency}` : clientPrice;
 
@@ -236,14 +256,14 @@ export function CheckoutDialog({
                     className="input"
                     id="prereg-region"
                     required
-                    value={market}
-                    onChange={(e) => setMarket(e.target.value as MarketCode | '')}
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
                     aria-invalid={fieldError.region ? true : undefined}
                     aria-describedby={fieldError.region ? 'prereg-region-err' : undefined}
                   >
                     <option value="">{c.regionPlaceholder}</option>
-                    {MARKET_CODES.map((code) => (
-                      <option key={code} value={code}>{MARKETS[code].flag} {dict.markets[code]}</option>
+                    {COUNTRIES.map((x) => (
+                      <option key={x.code} value={x.code}>{flag(x.code)} {x.name}</option>
                     ))}
                   </select>
                 </div>
@@ -258,9 +278,9 @@ export function CheckoutDialog({
                   className="input"
                   id="prereg-device"
                   value={device}
-                  onChange={(e) => setDevice(e.target.value as (typeof DEVICE_KEYS)[number])}
+                  onChange={(e) => setDevice(e.target.value as DeviceChoice)}
                 >
-                  {c.deviceOptions.map((o, i) => <option key={o} value={DEVICE_KEYS[i]}>{o}</option>)}
+                  {c.deviceOptions.map((o, i) => <option key={o} value={DEVICE_CHOICES[i]?.[0]}>{o}</option>)}
                 </select>
               </div>
             </div>
@@ -310,7 +330,7 @@ export function CheckoutDialog({
               {quoteState === 'ok' && <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><Check size={14} strokeWidth={2} aria-hidden="true" /> {c.verified}</span>}
               {quoteState === 'error' && c.quoteError}
             </p>
-            <p className="footnote">{c.productionNote}</p>
+            <p className="footnote production-note">{c.productionNote}</p>
             {submitState === 'error' && <div className="alert err" role="alert">{submitError}</div>}
             <button
               type="button"
@@ -330,7 +350,7 @@ export function CheckoutDialog({
           <div className="success">
             <div className="checkmark" aria-hidden="true"><CircleCheck size={56} strokeWidth={1.75} /></div>
             <p className="muted">{fill(c.doneText, { email: email.trim() })}</p>
-            <button type="button" className="btn" onClick={onClose}>{c.returnToSite}</button>
+            <button type="button" className="btn btn-lime" onClick={onClose}>{c.returnToSite}</button>
           </div>
         )}
       </div>

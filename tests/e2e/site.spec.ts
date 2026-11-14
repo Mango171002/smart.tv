@@ -161,8 +161,8 @@ test.describe('pre-registration', () => {
     await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
 
     await dialog.getByLabel('Email address').fill('viewer@example.test');
-    await dialog.getByLabel('Your region').selectOption('CA');
-    await dialog.getByLabel('Main device').selectOption('mobile');
+    await dialog.getByLabel('Your country').selectOption('CA');
+    await dialog.getByLabel('Main device').selectOption('ios_mobile');
     await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/Price confirmed by our server/);
@@ -188,7 +188,7 @@ test.describe('pre-registration', () => {
     await dialog.getByRole('button', { name: /^Continue/ }).click();
     await expect(dialog.getByText('Enter a valid email address.')).toBeVisible();
     await expect(dialog.getByText('Please accept to be contacted about the launch.')).toBeVisible();
-    await expect(dialog.getByText('Choose your region.')).toBeVisible();
+    await expect(dialog.getByText('Choose your country.')).toBeVisible();
     await expect(dialog.getByLabel('Email address')).toHaveAttribute('aria-invalid', 'true');
     await expect(dialog.getByTestId('quote-status')).toHaveCount(0);
   });
@@ -211,7 +211,7 @@ test.describe('pre-registration', () => {
     await page.getByRole('button', { name: /^Pre-register for free/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
-    await dialog.getByLabel('Your region').selectOption('US');
+    await dialog.getByLabel('Your country').selectOption('US');
     await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/confirmed/);
@@ -376,14 +376,16 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     expect(sent).toMatchObject({ kind: 'trial_request', name: 'Alex Martin', email: 'alex@example.test', phone: '+33612345678', market: 'EU', consent: true });
   });
 
-  test('floating support button opens WhatsApp; footer Contact opens the support window (question required)', async ({ page }) => {
+  test('floating support button and footer Contact open the support window (question required)', async ({ page }) => {
     let sent: Record<string, unknown> | null = null;
     await page.route('**/api/contact', async (route) => {
       sent = route.request().postDataJSON();
       await route.fulfill({ status: 201, json: { ok: true } });
     });
     await page.goto('/');
-    await expect(page.getByRole('link', { name: 'Contact support', exact: true })).toHaveAttribute('href', 'https://wa.me/447412857594');
+    await page.getByRole('button', { name: 'Contact support', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Contact support' })).toBeVisible();
+    await page.keyboard.press('Escape');
     await page.locator('footer .footer-link-btn').click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');

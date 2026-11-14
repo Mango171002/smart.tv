@@ -2184,3 +2184,15 @@ html { scroll-padding-top: 84px; }
     -webkit-mask-composite: source-over; mask-composite: add;
   }
 }
+/* Dialogs (owner request 14/11): lime success screens, roomier spacing, own select chevron */
+.success .checkmark { color: var(--color-lime); filter: drop-shadow(0 0 14px color-mix(in srgb, var(--color-lime) 40%, transparent)); }
+.success p { margin-bottom: 0; }
+.success .btn { margin-top: 28px; min-width: 200px; }
+.footnote.production-note { margin-bottom: 22px; }
+.input-icon select.input, select.input {
+  appearance: none; -webkit-appearance: none; padding-right: 48px;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 26px) 50%, calc(100% - 20px) 50%;
+  background-size: 6px 6px, 6px 6px; background-repeat: no-repeat;
+}
+select.input option { background: var(--color-bg); color: var(--color-ink); }

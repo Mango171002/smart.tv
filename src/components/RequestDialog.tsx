@@ -152,7 +152,7 @@ export function RequestDialog({
           <div className="success" role="status">
             <span className="checkmark"><CheckCircle2 size={44} strokeWidth={1.75} aria-hidden="true" /></span>
             <p>{fill(r.successText, { name: doneName })}</p>
-            <button type="button" className="btn" onClick={onClose}>{dict.common.close}</button>
+            <button type="button" className="btn btn-lime" onClick={onClose}>{dict.common.close}</button>
           </div>
         ) : (
           <form className="form" noValidate onSubmit={onSubmit}>

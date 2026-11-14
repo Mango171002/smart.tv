@@ -2174,3 +2174,12 @@ html { scroll-padding-top: 84px; }
   color: #ffffff; border-color: var(--sc); background: var(--sc); transform: translateY(-2px);
   box-shadow: 0 6px 18px color-mix(in srgb, var(--sc) 45%, transparent);
 }
+/* Phones (owner 14/11): slightly larger "Most watched" cards, and a larger, clearer Earth in the closing CTA */
+@media (max-width: 580px) { .featured .carousel-track { grid-auto-columns: calc((100% - 12px) / 1.7); } }
+@media (max-width: 640px) {
+  .cta-banner > picture .cta-globe {
+    width: 135%; left: -18%; top: auto; bottom: -8%; opacity: .9;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 35%); mask-image: linear-gradient(to bottom, transparent 0, black 35%);
+    -webkit-mask-composite: source-over; mask-composite: add;
+  }
+}

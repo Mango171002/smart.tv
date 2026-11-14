@@ -2092,3 +2092,17 @@ html { scroll-padding-top: 84px; }
 .featured .slide-text { left: 7cqi; right: 6cqi; bottom: 7cqi; justify-items: start; text-align: left; gap: 7px; }
 .featured .slide-title { font-size: 6.6cqi; line-height: 1.1; letter-spacing: .3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .featured .slide-region { justify-self: start; }
+/* Category cards (owner 14/11): the photo fills more of the card, the left side no longer looks empty */
+@media (min-width: 581px) {
+  .cat-art {
+    width: 100%; opacity: 1;
+    -webkit-mask-image: radial-gradient(150% 135% at 100% 0%, black 42%, transparent 92%);
+    mask-image: radial-gradient(150% 135% at 100% 0%, black 42%, transparent 92%);
+  }
+}
+.cat-card .cat-title, .cat-card .cat-desc { text-shadow: 0 1px 10px rgb(0 0 0 / .75); }
+/* Soft dark veil behind the title/description (bottom-left) so the text stays readable over the larger photos */
+.cat-card::after {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(to top, color-mix(in srgb, var(--color-bg) 82%, transparent) 0%, color-mix(in srgb, var(--color-bg) 35%, transparent) 45%, transparent 70%);
+}

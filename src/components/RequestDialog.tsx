@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { CheckCircle2, Mail, MessageSquareText, Phone, ShieldCheck, UserRound, Zap, X } from 'lucide-react';
 import { Brand } from './Brand';
 import countries from '@/config/countries.json';
+import { CountryPicker } from './CountryPicker';
 import type { Locale } from '@/i18n/config';
 import { fill, type Dictionary } from '@/i18n/dictionaries';
 
@@ -13,7 +14,6 @@ export type RequestMode = 'trial' | 'support';
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const EU = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']);
-const flag = (code: string) => String.fromCodePoint(...[...code].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65));
 
 /** Builds an E.164 number (+<calling code><national number without trunk 0>). */
 export function toE164(dial: string, national: string): string | null {
@@ -183,13 +183,15 @@ export function RequestDialog({
 
             <label htmlFor="req-phone">{r.phoneLabel} <span className="req" aria-hidden="true">*</span></label>
             <div className="phone-row">
-              <select className="input" aria-label={r.countryLabel} value={country} onChange={(e) => setCountry(e.target.value)} autoComplete="tel-country-code">
-                {countries.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {flag(c.code)} {c.name} (+{c.dial})
-                  </option>
-                ))}
-              </select>
+              <CountryPicker
+                value={country}
+                onChange={setCountry}
+                ariaLabel={r.countryLabel}
+                withDial
+                searchLabel={dict.common.countrySearch}
+                noResult={dict.common.countryNoResult}
+                listLabel={dict.common.countryList}
+              />
               <div className="phone-input">
                 <Phone className="phone-icon" size={18} strokeWidth={1.75} aria-hidden="true" />
                 <span aria-hidden="true">+{dial}</span>

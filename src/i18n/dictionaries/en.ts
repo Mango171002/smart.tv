@@ -17,6 +17,9 @@ const en = {
     notFoundTitle: 'Page not found',
   },
   common: {
+    countrySearch: 'Type a country…',
+    countryNoResult: 'No country found',
+    countryList: 'Countries',
     skipToContent: 'Skip to content',
     prototypeNotice: 'LAUNCHING SOON · Free pre-registration · No payment is taken before launch',
     illustrative: 'Planned price',

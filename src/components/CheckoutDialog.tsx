@@ -6,7 +6,7 @@ import { Brand } from './Brand';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import countries from '@/config/countries.json';
+import { CountryPicker, countryByCode, countryFlag } from './CountryPicker';
 import type { MarketCode } from '@/config/markets';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
@@ -28,9 +28,6 @@ const DEVICE_CHOICES = [
 ] as const;
 type DeviceChoice = (typeof DEVICE_CHOICES)[number][0];
 const EU = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']);
-const COUNTRIES = [...countries].sort((a, b) => a.name.localeCompare(b.name, 'en'));
-/** Flag emoji from an ISO 3166-1 alpha-2 code. */
-const flag = (code: string) => String.fromCodePoint(...[...code].map((ch) => 0x1f1a5 + ch.charCodeAt(0)));
 /** Stored market of a country (prices are in USD everywhere; the region only helps the team). */
 const marketOf = (code: string): MarketCode | undefined => (code === 'US' || code === 'CA' ? code : EU.has(code) ? 'EU' : undefined);
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -169,8 +166,8 @@ export function CheckoutDialog({
     }
   }
 
-  const countryName = COUNTRIES.find((x) => x.code === country)?.name;
-  const regionLabel = countryName ? `${flag(country)} ${countryName}` : '';
+  const countryName = countryByCode(country)?.name;
+  const regionLabel = countryName ? `${countryFlag(country)} ${countryName}` : '';
   const planLabel = `${dict.plans.tiers[selection.tier].name} · ${dict.plans.terms[selection.term]} · ${plural(dict.common, 'device', selection.streams)}`;
   const subtotal = quote ? `${formatMoney(quote.amountMinor, quote.currency, locale)} ${quote.currency}` : clientPrice;
 
@@ -250,23 +247,18 @@ export function CheckoutDialog({
               </div>
               <div className="field">
                 <label htmlFor="prereg-region">{c.regionLabel} <span className="req" aria-hidden="true">*</span></label>
-                <div className="input-icon">
-                  <MapPin size={20} strokeWidth={1.75} aria-hidden="true" />
-                  <select
-                    className="input"
-                    id="prereg-region"
-                    required
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    aria-invalid={fieldError.region ? true : undefined}
-                    aria-describedby={fieldError.region ? 'prereg-region-err' : undefined}
-                  >
-                    <option value="">{c.regionPlaceholder}</option>
-                    {COUNTRIES.map((x) => (
-                      <option key={x.code} value={x.code}>{flag(x.code)} {x.name}</option>
-                    ))}
-                  </select>
-                </div>
+                <CountryPicker
+                  id="prereg-region"
+                  value={country}
+                  onChange={setCountry}
+                  placeholder={c.regionPlaceholder}
+                  searchLabel={dict.common.countrySearch}
+                  noResult={dict.common.countryNoResult}
+                  listLabel={dict.common.countryList}
+                  icon={<MapPin size={20} strokeWidth={1.75} aria-hidden="true" />}
+                  invalid={!!fieldError.region}
+                  describedBy={fieldError.region ? 'prereg-region-err' : undefined}
+                />
                 {fieldError.region && <span id="prereg-region-err" className="error">{fieldError.region}</span>}
               </div>
             </div>

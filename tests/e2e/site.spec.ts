@@ -161,7 +161,9 @@ test.describe('pre-registration', () => {
     await expect(dialog.getByRole('button', { name: 'Close' })).toBeFocused();
 
     await dialog.getByLabel('Email address').fill('viewer@example.test');
-    await dialog.getByLabel('Your country').selectOption('CA');
+    await dialog.getByLabel('Your country').click();
+    await dialog.getByRole('combobox', { name: 'Type a country…' }).fill('cana');
+    await page.keyboard.press('Enter');
     await dialog.getByLabel('Main device').selectOption('ios_mobile');
     await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
@@ -211,7 +213,8 @@ test.describe('pre-registration', () => {
     await page.getByRole('button', { name: /^Pre-register for free/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
-    await dialog.getByLabel('Your country').selectOption('US');
+    await dialog.getByLabel('Your country').click();
+    await dialog.getByRole('option', { name: /United States$/ }).click();
     await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/confirmed/);
@@ -376,9 +379,12 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     await dialog.getByRole('button', { name: 'Send request' }).click();
     await expect(dialog.getByText('Enter your name.')).toBeVisible();
     await expect(dialog.getByText('Enter a valid phone number.')).toBeVisible();
-    const countries = dialog.getByRole('combobox', { name: 'Country calling code' });
-    expect(await countries.locator('option').count()).toBeGreaterThan(200);
-    await countries.selectOption('FR');
+    await dialog.getByRole('button', { name: 'Country calling code' }).click();
+    expect(await dialog.getByRole('option').count()).toBeGreaterThan(200);
+    await dialog.getByRole('combobox', { name: 'Type a country…' }).fill('fran');
+    await expect(dialog.getByRole('option').first()).toHaveText(/France/);
+    await page.keyboard.press('Enter');
+    await expect(dialog.getByRole('button', { name: 'Country calling code' })).toHaveText(/France \(\+33\)/);
     await dialog.getByLabel('Full name').fill('Alex Martin');
     await dialog.getByLabel('Email address').fill('alex@example.test');
     await dialog.getByLabel('Phone number').fill('06 12 34 56 78');

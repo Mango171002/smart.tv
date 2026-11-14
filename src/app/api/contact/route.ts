@@ -57,7 +57,12 @@ export async function POST(req: Request) {
 
   if (error) {
     // Duplicate waitlist entry: answer success to avoid revealing who is registered.
-    if (error.code === '23505') return NextResponse.json({ ok: true });
+    if (error.code === '23505') {
+      // Still tell the team: the card of the existing pre-registration gets a "repeat" notice.
+      const planLabel = input.kind === 'launch_waitlist' ? [input.tier, input.term, input.streams ? `${input.streams} device(s)` : null].filter(Boolean).join(' · ') : null;
+      after(() => notifyNewRequest(input.kind, input.email, { repeat: true, planLabel }).catch((e) => console.warn('[contact] telegram', (e as Error).message)));
+      return NextResponse.json({ ok: true });
+    }
     if (error.code === 'PT429') return jsonError(429, 'rate_limited');
     console.error('[contact] insert failed', error.code);
     return jsonError(502, 'storage_failed');

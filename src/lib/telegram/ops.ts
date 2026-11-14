@@ -56,20 +56,48 @@ function tz(s: Settings): string {
 }
 
 // ---------------------------------------------------------------- new request → live card
-export async function notifyNewRequest(kind: 'launch_waitlist' | 'trial_request' | 'support', email: string): Promise<void> {
+export interface NotifyOptions {
+  /** The same e-mail pre-registered again (the website keeps a single row per e-mail). */
+  repeat?: boolean;
+  /** Plan chosen this time, shown on the repeat notice. */
+  planLabel?: string | null;
+}
+
+export async function notifyNewRequest(
+  kind: 'launch_waitlist' | 'trial_request' | 'support',
+  email: string,
+  opts: NotifyOptions = {},
+): Promise<void> {
   const settings = await call<Settings>('ops_get_settings');
   if (!settings || typeof settings.chat_id !== 'number') return; // bot not configured yet
-  const requestId = await call<string>('ops_find_request', { p_kind: kind, p_email: email });
+  const requestId = await call<string>(opts.repeat ? 'ops_find_request_any' : 'ops_find_request', { p_kind: kind, p_email: email });
   if (!requestId) return;
   const data = await call<CardData>('ops_card_open', { p_request: requestId });
-  if (!data || data.card.message_id) return; // already posted
+  if (!data) return;
   const topic: Topic = kind === 'support' ? 'support' : 'commandes';
   const thread = typeof settings[`thread_${topic}`] === 'number' ? (settings[`thread_${topic}`] as number) : undefined;
+  const notice = opts.repeat
+    ? `🔁 <b>Nouvelle pré-inscription de la même personne</b>${opts.planLabel ? ` · ${escapeHtml(opts.planLabel)}` : ''}`
+    : null;
+
+  if (data.card.message_id && data.card.chat_id) {
+    // Card already in the group: answer it so the team sees the new attempt in context.
+    if (notice) {
+      await tg('sendMessage', {
+        chat_id: data.card.chat_id,
+        message_thread_id: data.card.thread_id ?? undefined,
+        text: notice,
+        parse_mode: 'HTML',
+        reply_parameters: { message_id: data.card.message_id, allow_sending_without_reply: true },
+      });
+    }
+    return;
+  }
   const view = renderCard(data, tz(settings));
   const sent = await tg<{ message_id: number }>('sendMessage', {
     chat_id: settings.chat_id,
     message_thread_id: thread,
-    text: view.text,
+    text: notice ? `${notice}\n\n${view.text}` : view.text,
     parse_mode: 'HTML',
     reply_markup: view.reply_markup,
     link_preview_options: { is_disabled: true },

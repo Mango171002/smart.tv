@@ -45,11 +45,10 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             playsInline
             preload="none"
             aria-label={h.visualLabel}
-          >
-            <source src="/videos/hero-chase-960.mp4" type="video/mp4" media="(max-width: 900px)" />
-            <source src="/videos/hero-chase.webm" type="video/webm" />
-            <source src="/videos/hero-chase.mp4" type="video/mp4" />
-          </video>
+            data-src-sm="/videos/hero-chase-960.mp4"
+            data-src-webm="/videos/hero-chase.webm"
+            data-src-mp4="/videos/hero-chase.mp4"
+          />
           {/* 2nd banner: action film scene, cinematic video (Kling 4.0, muted loop) */}
           <video
             className="hero-slide hero-video"
@@ -61,11 +60,10 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             playsInline
             preload="none"
             aria-hidden="true"
-          >
-            <source src="/videos/hero-action-v1-960.mp4" type="video/mp4" media="(max-width: 900px)" />
-            <source src="/videos/hero-action-v1.webm" type="video/webm" />
-            <source src="/videos/hero-action-v1.mp4" type="video/mp4" />
-          </video>
+            data-src-sm="/videos/hero-action-v1-960.mp4"
+            data-src-webm="/videos/hero-action-v1.webm"
+            data-src-mp4="/videos/hero-action-v1.mp4"
+          />
           {/* 3rd banner: night street race through a corner (owner prompt, Kling 4.0) (Kling 4.0, muted loop) */}
           <video
             className="hero-slide hero-video"
@@ -77,11 +75,10 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             playsInline
             preload="none"
             aria-hidden="true"
-          >
-            <source src="/videos/hero-race-v2-960.mp4" type="video/mp4" media="(max-width: 900px)" />
-            <source src="/videos/hero-race-v2.webm" type="video/webm" />
-            <source src="/videos/hero-race-v2.mp4" type="video/mp4" />
-          </video>
+            data-src-sm="/videos/hero-race-v2-960.mp4"
+            data-src-webm="/videos/hero-race-v2.webm"
+            data-src-mp4="/videos/hero-race-v2.mp4"
+          />
         </div>
         <ul className="hero-checks hero-bar">
           {h.checks.map((c, i) => {

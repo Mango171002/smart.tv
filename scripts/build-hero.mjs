@@ -31,7 +31,7 @@ for (const scene of SCENES) {
   const src = fileURLToPath(new URL(`../assets/featured/featured-${scene}.png`, import.meta.url));
   for (const w of [480, 960]) {
     const base = sharp(src).resize({ width: w, height: Math.round((w * 9) / 16), fit: 'cover' });
-    await base.clone().avif({ quality: 50, effort: 6 }).toFile(`${OUT}featured-${scene}-${w}.avif`);
+    await base.clone().avif({ quality: 42, effort: 7 }).toFile(`${OUT}featured-${scene}-${w}.avif`);
     await base.clone().webp({ quality: 72, effort: 6 }).toFile(`${OUT}featured-${scene}-${w}.webp`);
   }
   const kb = (f) => (statSync(f).size / 1024).toFixed(0);
@@ -41,7 +41,7 @@ for (const scene of SCENES) {
 // Plan cards artwork (assets/plans/plan-<tier>.png → public/images/plan-<tier>-<w>.avif|webp)
 for (const tier of ['starter', 'plus', 'ultra']) {
   const src = fileURLToPath(new URL(`../assets/plans/plan-${tier}.png`, import.meta.url));
-  for (const w of [480, 960]) {
+  for (const w of [480, 640, 960]) {
     const base = sharp(src).resize({ width: w });
     await base.clone().avif({ quality: 50, effort: 6 }).toFile(`${OUT}plan-${tier}-${w}.avif`);
     await base.clone().webp({ quality: 72, effort: 6 }).toFile(`${OUT}plan-${tier}-${w}.webp`);

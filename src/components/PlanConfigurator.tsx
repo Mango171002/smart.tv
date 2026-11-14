@@ -72,8 +72,9 @@ const TIER_LOOK: Record<Tier, { Icon: LucideIcon }> = {
   ultra: { Icon: Gem },
 };
 /** Generated plan artwork (npm run hero → public/images/plan-<tier>-<w>.avif|webp). */
-const PLAN_ART_SIZES = '(max-width: 900px) 90vw, 26vw';
-const planSrcSet = (tier: Tier, ext: 'avif' | 'webp') => `/images/plan-${tier}-480.${ext}?v=20261114 480w, /images/plan-${tier}-960.${ext}?v=20261114 960w`;
+const PLAN_ART_SIZES = '(max-width: 900px) 78vw, 24vw';
+const planSrcSet = (tier: Tier, ext: 'avif' | 'webp') =>
+  `/images/plan-${tier}-480.${ext}?v=20261114c 480w, /images/plan-${tier}-640.${ext}?v=20261114c 640w, /images/plan-${tier}-960.${ext}?v=20261114c 960w`;
 
 /** Left-hand points of the simulator (icon colour = official category colour). */
 const SIM_POINTS: { Icon: LucideIcon; cat: string }[] = [
@@ -141,7 +142,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
               <picture>
                 <source type="image/avif" srcSet={planSrcSet(t, 'avif')} sizes={PLAN_ART_SIZES} />
                 <source type="image/webp" srcSet={planSrcSet(t, 'webp')} sizes={PLAN_ART_SIZES} />
-                <img className="tier-art" src={`/images/plan-${t}-480.webp?v=20261114`} alt="" width={1672} height={941} loading="lazy" decoding="async" />
+                <img className="tier-art" src={`/images/plan-${t}-480.webp?v=20261114c`} alt="" width={1672} height={941} loading="lazy" decoding="async" />
               </picture>
               <div className="tier-head">
                 <span className="tier-icon" aria-hidden="true">

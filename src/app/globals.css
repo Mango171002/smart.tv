@@ -2008,12 +2008,13 @@ html { scroll-padding-top: 84px; }
 }
 
 @keyframes icon-float {
-  0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 transparent); }
-  50% { transform: translateY(-4px) scale(1.06); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-cyan) 60%, transparent)); }
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.06); }
 }
+.features-bar svg { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-lime) 35%, transparent)); will-change: transform; }
 @keyframes icon-glow {
-  0%, 100% { filter: drop-shadow(0 0 0 transparent); }
-  50% { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-cyan) 60%, transparent)); }
+  0%, 100% { opacity: .75; }
+  50% { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .features-bar svg { animation-name: icon-glow !important; } /* glow only, no movement */

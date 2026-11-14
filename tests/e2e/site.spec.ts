@@ -240,8 +240,8 @@ test.describe('Electric Fusion Neon design system', () => {
     await openHome(page, '/');
     const expected: Record<string, string> = {
       sports: 'rgb(209, 254, 23)', // #D1FE17
-      movies: 'rgb(240, 68, 196)', // #F044C4
-      live: 'rgb(25, 211, 243)', // #19D3F3
+      movies: 'rgb(25, 211, 243)', // cyan on the cards (owner 14/11)
+      live: 'rgb(240, 68, 196)', // magenta on the cards (owner 14/11)
       streaming: 'rgb(104, 120, 255)', // #6878FF
     };
     const cards = page.locator('#content .cat-card');

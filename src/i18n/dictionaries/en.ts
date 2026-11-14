@@ -230,8 +230,8 @@ const en = {
     sub: 'Content categories planned for launch. The detailed catalogue will be published for each region before subscriptions open.',
     categories: [
       { title: 'Live Sports', text: 'Football, basketball, motorsport and more' },
-      { title: 'Live TV', text: 'International channels, organised by region' },
       { title: 'Movies & Series', text: 'Cinema, series and on-demand content' },
+      { title: 'Live TV', text: 'International channels, organised by region' },
       { title: 'Documentaries', text: 'Nature, history, science and true stories' },
     ],
   },

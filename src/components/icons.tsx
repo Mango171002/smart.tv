@@ -33,10 +33,10 @@ export type CategoryKey = 'sports' | 'movies' | 'live' | 'streaming';
 export const CATEGORIES: Array<{ key: CategoryKey; icon: LucideIcon; support: LucideIcon[] }> = [
   // Live Sports — trophy — #D1FE17 (Lucide no longer ships the "dribbble" brand icon)
   { key: 'sports', icon: Trophy, support: [Trophy, FlagTriangleRight] },
-  // Live TV — tv — #19D3F3
-  { key: 'live', icon: Tv, support: [RadioTower, MonitorPlay, Globe] },
   // Movies & Series — clapperboard — #F044C4
   { key: 'movies', icon: Clapperboard, support: [Film, Popcorn, CirclePlay] },
+  // Live TV — tv — #19D3F3
+  { key: 'live', icon: Tv, support: [RadioTower, MonitorPlay, Globe] },
   // Documentaries (owner, 14/11 — replaces Smart Streaming on the cards) — binoculars — #6878FF
   { key: 'streaming', icon: Binoculars, support: [Smartphone, Monitor, Cast] },
 ];

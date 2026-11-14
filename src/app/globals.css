@@ -2106,3 +2106,6 @@ html { scroll-padding-top: 84px; }
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit;
   background: linear-gradient(to top, color-mix(in srgb, var(--color-bg) 82%, transparent) 0%, color-mix(in srgb, var(--color-bg) 35%, transparent) 45%, transparent 70%);
 }
+/* Category cards (owner 14/11): Movies & Series in cyan and Live TV in magenta, so the cyan and violet cards are not side by side */
+#content .cat-card.cat-movies { --cat: var(--color-cyan); }
+#content .cat-card.cat-live { --cat: var(--color-magenta); }

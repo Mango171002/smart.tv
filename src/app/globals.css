@@ -2123,3 +2123,39 @@ html { scroll-padding-top: 84px; }
 }
 .featured .slide::after { inset: 62% 0 0; background: linear-gradient(transparent, color-mix(in srgb, var(--color-bg) 70%, transparent) 75%, color-mix(in srgb, var(--color-bg) 85%, transparent)); }
 .featured .slide-title { text-shadow: 0 2px 12px rgb(0 0 0 / .9); }
+
+/* ==========================================================================
+   Official brand accent = lime (owner 14/11): the generic UI accents of the lower
+   page switch from sky blue to lime. Plan colours (Starter cyan) and the
+   category colours (Live TV) are kept.
+   ========================================================================== */
+:focus-visible { outline-color: var(--color-lime); }
+.eyebrow, #devices .eyebrow { --eb: var(--color-lime); }
+.hl { color: var(--color-lime); }
+.bar-title { border-left-color: var(--color-lime); }
+.see-all, .links a:hover, .links a:not(.btn):hover, .footer a:hover { color: var(--color-lime); }
+.dot[aria-current='true']::before { background: var(--color-lime); }
+@media (hover: hover) { .carousel-btn:not(:disabled):hover, .close:hover { border-color: var(--color-lime); color: var(--color-lime); } }
+.faq details[open] { border-color: color-mix(in srgb, var(--color-lime) 35%, transparent); }
+.title-hl {
+  color: var(--color-lime);
+  background: linear-gradient(90deg, var(--color-lime), color-mix(in srgb, var(--color-lime) 70%, var(--color-ink)));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.features-bar svg, .platforms-title svg, .platforms-bar li svg { color: var(--color-lime); }
+.sim-points .icon-box { --cat: var(--color-lime); }
+.sim-head-icon { color: var(--color-lime); border-color: color-mix(in srgb, var(--color-lime) 35%, transparent); background: color-mix(in srgb, var(--color-lime) 9%, transparent); }
+.simulator {
+  background:
+    linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
+    linear-gradient(140deg, var(--tier, var(--color-lime)), color-mix(in srgb, var(--tier, var(--color-lime)) 30%, transparent) 50%, var(--tier, var(--color-lime))) border-box;
+}
+.cta-banner {
+  background:
+    radial-gradient(60% 90% at 50% 0%, color-mix(in srgb, var(--color-lime) 10%, transparent), transparent 70%) padding-box,
+    linear-gradient(var(--color-bg), var(--color-bg)) padding-box,
+    linear-gradient(90deg, var(--color-lime), color-mix(in srgb, var(--color-lime) 35%, transparent) 50%, var(--color-lime)) border-box;
+  box-shadow: 0 0 40px color-mix(in srgb, var(--color-lime) 16%, transparent);
+}
+.consent input { accent-color: var(--color-lime); }
+.skip-link { background: var(--color-lime); }

@@ -125,7 +125,7 @@ export function Benefits({ dict }: { dict: Dictionary }) {
 /** The four official category cards (neon outline style). */
 /** Generated category artwork (npm run hero → public/images/cat-<key>-<w>.avif|webp). */
 const CAT_SIZES = '(max-width: 900px) 50vw, 20vw';
-const catSrcSet = (key: string, ext: 'avif' | 'webp') => `/images/cat-${key}-400.${ext} 400w, /images/cat-${key}-800.${ext} 800w`;
+const catSrcSet = (key: string, ext: 'avif' | 'webp') => `/images/cat-${key}-400.${ext}?v=20261114 400w, /images/cat-${key}-800.${ext}?v=20261114 800w`;
 
 export function ContentCategories({
   locale: _locale,
@@ -158,7 +158,7 @@ export function ContentCategories({
                     <source type="image/avif" srcSet={catSrcSet(key, 'avif')} sizes={CAT_SIZES} />
                     <source type="image/webp" srcSet={catSrcSet(key, 'webp')} sizes={CAT_SIZES} />
                     { }
-                    <img className="cat-art" src={`/images/cat-${key}-400.webp`} alt="" width={1536} height={1024} loading="lazy" decoding="async" />
+                    <img className="cat-art" src={`/images/cat-${key}-400.webp?v=20261114`} alt="" width={1536} height={1024} loading="lazy" decoding="async" />
                   </picture>
                   <span className="cat-icon" aria-hidden="true">
                     <Icon size={40} strokeWidth={ICON_STROKE} />

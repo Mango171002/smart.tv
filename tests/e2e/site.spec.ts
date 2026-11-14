@@ -391,6 +391,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     await page.getByRole('button', { name: 'Contact support', exact: true }).click();
     await expect(page.getByRole('dialog', { name: 'Contact support' })).toBeVisible();
     await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
     await page.locator('footer .footer-link-btn').click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');

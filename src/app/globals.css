@@ -2196,3 +2196,5 @@ html { scroll-padding-top: 84px; }
   background-size: 6px 6px, 6px 6px; background-repeat: no-repeat;
 }
 select.input option { background: var(--color-bg); color: var(--color-ink); }
+/* Cards entering from the right must not widen the page (no sideways scroll on phones during the animation) */
+#main { overflow-x: clip; }

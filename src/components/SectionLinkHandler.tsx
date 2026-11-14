@@ -18,7 +18,20 @@ export function SectionLinkHandler() {
       if (!target) return;
       e.preventDefault();
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      const behavior: ScrollBehavior = reduce ? 'auto' : 'smooth';
+      target.scrollIntoView({ behavior, block: 'start' });
+      // Content above can change height during the smooth scroll (images, entrance animations):
+      // once the scroll ends, land exactly on the section (one correction at most).
+      const settle = () => {
+        window.removeEventListener('scrollend', settle);
+        clearTimeout(timer);
+        const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+        const off = target.getBoundingClientRect().top - margin;
+        const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+        if (Math.abs(off) > 8 && !(off > 0 && atBottom)) target.scrollIntoView({ behavior, block: 'start' });
+      };
+      const timer = setTimeout(settle, 1500);
+      window.addEventListener('scrollend', settle);
       if (location.hash !== url.hash) history.pushState(null, '', url.hash);
       window.dispatchEvent(new HashChangeEvent('hashchange'));
     };

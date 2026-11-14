@@ -130,8 +130,8 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     const plansTop = () => page.evaluate(() => Math.round(document.querySelector('#plans')!.getBoundingClientRect().top));
     expect(await plansTop()).toBeLessThan(-200); // the plans section is above the viewport
     await page.locator('.how3-cta').click({ position: { x: 20, y: 20 } });
-    await expect.poll(plansTop).toBeGreaterThan(-40);
-    expect(await plansTop()).toBeLessThan(200);
+    // lands on the section once the scroll has settled
+    await expect.poll(async () => { const t = await plansTop(); return t > -40 && t < 200; }, { timeout: 6000 }).toBe(true);
   });
 
   test('former pages redirect to their section of the one-page site', async ({ request }) => {

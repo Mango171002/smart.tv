@@ -121,6 +121,12 @@ describe('input validation', () => {
     expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'en', consent: true, tier: 'plus', term: '36m', market: 'CA' }).success).toBe(true);
     expect(contactSchema.safeParse({ kind: 'launch_waitlist', email: 'a@b.co', locale: 'en', consent: true, tier: 'gold' }).success).toBe(false);
   });
+  it('accepts an exact country and a precise device, rejects anything else', () => {
+    const w = { kind: 'launch_waitlist', email: 'a@b.co', locale: 'en', consent: true };
+    expect(contactSchema.safeParse({ ...w, country: 'MA', device: 'streaming_device', deviceDetail: 'fire_tv' }).success).toBe(true);
+    expect(contactSchema.safeParse({ ...w, country: 'Morocco' }).success).toBe(false);
+    expect(contactSchema.safeParse({ ...w, deviceDetail: 'toaster' }).success).toBe(false);
+  });
   it('rejects oversized fields and unknown locales', () => {
     expect(contactSchema.safeParse({ ...support, message: 'x'.repeat(4001) }).success).toBe(false);
     expect(contactSchema.safeParse({ ...support, locale: 'de' }).success).toBe(false);

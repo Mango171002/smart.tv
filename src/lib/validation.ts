@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { MARKET_CODES } from '@/config/markets';
+import { DEVICE_DETAIL_KEYS } from '@/config/devices';
+export { DEVICE_DETAILS, DEVICE_DETAIL_KEYS, type DeviceDetail } from '@/config/devices';
 import { STREAMS, TERMS, TIERS } from '@/lib/pricing';
 import { LOCALES } from '@/i18n/config';
 
@@ -17,6 +19,8 @@ const contactBase = {
   email,
   locale: z.enum(LOCALES),
   market: z.enum(MARKET_CODES).optional(),
+  /** Exact country (ISO 3166-1 alpha-2). */
+  country: z.string().regex(/^[A-Z]{2}$/).optional(),
   consent: z.literal(true),
   /** Optional, separate consent to receive offers and news. */
   marketing: z.boolean().optional(),
@@ -52,6 +56,7 @@ export const contactSchema = z.discriminatedUnion('kind', [
     term: z.enum(TERMS).optional(),
     streams: streamCount.optional(),
     device: z.enum(DEVICE_KEYS).optional(),
+    deviceDetail: z.enum(DEVICE_DETAIL_KEYS).optional(),
     ...contactBase,
   }),
 ]);

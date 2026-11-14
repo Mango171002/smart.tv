@@ -1,3 +1,5 @@
+import countries from '@/config/countries.json';
+
 /**
  * Live "cards" of the SYGMA Operations Bot: one Telegram message per request, edited in place.
  * Pure functions (no I/O) so they can be unit-tested.
@@ -26,12 +28,14 @@ export interface CardData {
     email: string;
     phone: string | null;
     market: string | null;
+    country?: string | null;
     subject: string | null;
     message: string | null;
     tier: string | null;
     term: string | null;
     streams: number | null;
     device: string | null;
+    device_detail?: string | null;
     marketing: boolean | null;
     created_at: string;
   };
@@ -93,7 +97,17 @@ const DEVICE_NAME: Record<string, string> = {
   streaming_device: 'Box / clé TV',
   mobile: 'Mobile / tablette',
   computer: 'Ordinateur',
+  android_tv: 'Android TV / Google TV',
+  fire_tv: 'Fire TV',
+  apple_tv: 'Apple TV',
+  tv_box: 'Autre box ou clé TV',
+  android_mobile: 'Téléphone / tablette Android',
+  ios_mobile: 'iPhone / iPad',
+  browser: 'Navigateur web',
 };
+
+const COUNTRY_NAME = new Map(countries.map((c) => [c.code, c.name]));
+const flag = (code: string) => String.fromCodePoint(...[...code].map((ch) => 0x1f1a5 + ch.charCodeAt(0)));
 
 /** Actions that ask for a confirmation first (heavy or hard to explain to a customer). */
 export function needsConfirmation(action: Action, lastEventAt: number | null, now: number): boolean {
@@ -179,14 +193,16 @@ export function renderCard(data: CardData, tz: string, now = Date.now()): { text
   if (r.name) lines.push(`👤 ${escapeHtml(r.name)}`);
   lines.push(`✉️ ${escapeHtml(r.email)}`);
   if (r.phone) lines.push(`📞 ${escapeHtml(r.phone)}`);
-  if (r.market) lines.push(`🌍 Région : ${escapeHtml(r.market)}`);
+  if (r.country) lines.push(`🌍 Pays : ${flag(r.country)} ${escapeHtml(COUNTRY_NAME.get(r.country) ?? r.country)}${r.market ? ` (${escapeHtml(r.market)})` : ''}`);
+  else if (r.market) lines.push(`🌍 Région : ${escapeHtml(r.market)}`);
   if (r.tier) {
     const plan = [TIER_NAME[r.tier] ?? r.tier, r.term ? (TERM_NAME[r.term] ?? r.term) : null, r.streams ? `${r.streams} appareil${r.streams > 1 ? 's' : ''}` : null]
       .filter(Boolean)
       .join(' · ');
     lines.push(`📦 Plan : ${escapeHtml(plan)}`);
   }
-  if (r.device) lines.push(`📺 Appareil : ${escapeHtml(DEVICE_NAME[r.device] ?? r.device)}`);
+  const device = r.device_detail ?? r.device;
+  if (device) lines.push(`📺 Appareil : ${escapeHtml(DEVICE_NAME[device] ?? device)}`);
   if (r.kind !== 'support') lines.push(`📣 Offres marketing : ${r.marketing ? 'oui' : 'non'}`);
   if (r.subject) lines.push(`🏷 ${escapeHtml(r.subject)}`);
   if (r.message) {

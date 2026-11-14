@@ -8,25 +8,16 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CountryPicker, countryByCode, countryFlag } from './CountryPicker';
 import type { MarketCode } from '@/config/markets';
+import { DEVICE_DETAILS, DEVICE_DETAIL_KEYS, type DeviceDetail } from '@/config/devices';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
 import { formatMoney, type PlanSelection } from '@/lib/pricing';
 
 type Step = 1 | 2 | 3;
 
-/** Device choices (most used first) and the stored category of each — same order as dict.checkout.deviceOptions. */
-const DEVICE_CHOICES = [
-  ['smart_tv', 'smart_tv'],
-  ['android_tv', 'streaming_device'],
-  ['fire_tv', 'streaming_device'],
-  ['apple_tv', 'streaming_device'],
-  ['tv_box', 'streaming_device'],
-  ['android_mobile', 'mobile'],
-  ['ios_mobile', 'mobile'],
-  ['computer', 'computer'],
-  ['browser', 'computer'],
-] as const;
-type DeviceChoice = (typeof DEVICE_CHOICES)[number][0];
+/** Device choices, most used first — same order as dict.checkout.deviceOptions. */
+const DEVICE_CHOICES = DEVICE_DETAIL_KEYS;
+type DeviceChoice = DeviceDetail;
 const EU = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']);
 /** Stored market of a country (prices are in USD everywhere; the region only helps the team). */
 const marketOf = (code: string): MarketCode | undefined => (code === 'US' || code === 'CA' ? code : EU.has(code) ? 'EU' : undefined);
@@ -118,10 +109,12 @@ export function CheckoutDialog({
           email: email.trim(),
           locale,
           market: marketOf(country),
+          country,
           tier: selection.tier,
           term: selection.term,
           streams: selection.streams,
-          device: DEVICE_CHOICES.find(([k]) => k === device)?.[1],
+          device: DEVICE_DETAILS[device],
+          deviceDetail: device,
           consent: true,
           marketing,
         }),
@@ -272,7 +265,7 @@ export function CheckoutDialog({
                   value={device}
                   onChange={(e) => setDevice(e.target.value as DeviceChoice)}
                 >
-                  {c.deviceOptions.map((o, i) => <option key={o} value={DEVICE_CHOICES[i]?.[0]}>{o}</option>)}
+                  {c.deviceOptions.map((o, i) => <option key={o} value={DEVICE_CHOICES[i]}>{o}</option>)}
                 </select>
               </div>
             </div>

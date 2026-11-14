@@ -65,6 +65,14 @@ describe('rendering', () => {
     expect(view.text).toContain('Contacté — Sara');
     expect(view.reply_markup.inline_keyboard.flat().map((b) => b.text)).toContain('↩️ Annuler la dernière action');
   });
+  it('shows the exact country (flag + name) and the precise device', () => {
+    const d = base('new');
+    d.request = { ...d.request, kind: 'launch_waitlist', market: null, country: 'MA', device: 'streaming_device', device_detail: 'fire_tv' };
+    const { text } = renderCard(d, 'Africa/Casablanca');
+    expect(text).toContain('🌍 Pays : 🇲🇦 Morocco');
+    expect(text).toContain('📺 Appareil : Fire TV');
+    expect(text).not.toContain('Région');
+  });
   it('confirmation keyboard carries a timestamp and a cancel button', () => {
     const k = confirmKeyboard({ op: 'q', requestId: ID, version: 3, action: 'lose' }, 1_800_000_000);
     const [yes, no] = k.inline_keyboard[0]!;

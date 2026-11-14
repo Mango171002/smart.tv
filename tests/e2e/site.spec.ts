@@ -176,7 +176,7 @@ test.describe('pre-registration', () => {
     await expect(dialog.getByRole('heading', { name: 'You are pre-registered!' })).toBeVisible();
     await expect(dialog).toContainText('viewer@example.test');
     expect(sent).toMatchObject({
-      kind: 'launch_waitlist', email: 'viewer@example.test', market: 'CA', tier: 'ultra', term: '24m', streams: 2, device: 'mobile', consent: true,
+      kind: 'launch_waitlist', email: 'viewer@example.test', market: 'CA', country: 'CA', tier: 'ultra', term: '24m', streams: 2, device: 'mobile', deviceDetail: 'ios_mobile', consent: true,
     });
     await dialog.getByRole('button', { name: 'Back to the website' }).click();
     await expect(dialog).toBeHidden();
@@ -391,7 +391,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     await dialog.getByRole('checkbox').check();
     await dialog.getByRole('button', { name: 'Send request' }).click();
     await expect(page.getByRole('dialog', { name: 'Request sent!' })).toContainText('Thank you, Alex Martin.');
-    expect(sent).toMatchObject({ kind: 'trial_request', name: 'Alex Martin', email: 'alex@example.test', phone: '+33612345678', market: 'EU', consent: true });
+    expect(sent).toMatchObject({ kind: 'trial_request', name: 'Alex Martin', email: 'alex@example.test', phone: '+33612345678', market: 'EU', country: 'FR', consent: true });
   });
 
   test('floating support button and footer Contact open the support window (question required)', async ({ page }) => {

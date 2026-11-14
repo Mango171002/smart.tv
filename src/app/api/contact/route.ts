@@ -4,7 +4,7 @@ import { checkSameOrigin, clientIp, jsonError, readJson } from '@/lib/http';
 import { isContactFormEnabled } from '@/lib/features';
 import { createRateLimiter } from '@/lib/rate-limit';
 import { getPublicSupabase } from '@/lib/supabase/server';
-import { contactSchema } from '@/lib/validation';
+import { contactSchema, DEVICE_DETAILS } from '@/lib/validation';
 import { notifyNewRequest } from '@/lib/telegram/ops';
 
 const limiter = createRateLimiter({ limit: 5, windowMs: 10 * 60_000 });
@@ -44,12 +44,15 @@ export async function POST(req: Request) {
     phone: input.kind === 'launch_waitlist' ? null : (input.phone ?? null),
     locale: input.locale,
     market_code: input.market ?? null,
+    country_code: input.country ?? null,
     subject: input.kind === 'support' ? input.subject : null,
     message: input.kind === 'support' ? input.message : null,
     interest_tier: input.kind === 'launch_waitlist' ? (input.tier ?? null) : null,
     interest_term: input.kind === 'launch_waitlist' ? (input.term ?? null) : null,
     interest_streams: input.kind === 'launch_waitlist' ? (input.streams ?? null) : null,
-    preferred_device: input.kind === 'launch_waitlist' ? (input.device ?? null) : null,
+    // The category always follows the precise device when one is given.
+    preferred_device: input.kind === 'launch_waitlist' ? (input.deviceDetail ? DEVICE_DETAILS[input.deviceDetail] : (input.device ?? null)) : null,
+    device_detail: input.kind === 'launch_waitlist' ? (input.deviceDetail ?? null) : null,
     marketing_opt_in: input.marketing === true,
     consent_given: true,
     consent_text_version: siteConfig.consentTextVersion,

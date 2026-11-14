@@ -28,6 +28,8 @@ export type Database = {
           kind: 'support' | 'launch_waitlist' | 'trial_request';
           locale: string;
           market_code: string | null;
+          country_code: string | null;
+          device_detail: string | null;
           message: string | null;
           name: string | null;
           phone: string | null;
@@ -44,6 +46,8 @@ export type Database = {
           kind: 'support' | 'launch_waitlist' | 'trial_request';
           locale?: string;
           market_code?: string | null;
+          country_code?: string | null;
+          device_detail?: string | null;
           message?: string | null;
           name?: string | null;
           phone?: string | null;

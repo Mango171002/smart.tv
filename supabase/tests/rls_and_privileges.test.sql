@@ -192,6 +192,16 @@ insert into public.contact_requests (kind, email, market_code, marketing_opt_in,
   values ('launch_waitlist', 'optin@example.test', 'US', true, true, 'v-test');
 select pg_temp.check(true, 'anon can pre-register with the optional marketing consent');
 select pg_temp.expect_error($$select marketing_opt_in from public.contact_requests$$, '42501', 'anon cannot read marketing consent');
+insert into public.contact_requests (kind, email, market_code, country_code, preferred_device, device_detail, consent_given, consent_text_version)
+  values ('launch_waitlist', 'country@example.test', null, 'MA', 'streaming_device', 'fire_tv', true, 'v-test');
+select pg_temp.check(true, 'anon can pre-register with an exact country and a precise device');
+select pg_temp.expect_error($$select country_code from public.contact_requests$$, '42501', 'anon cannot read the country');
+select pg_temp.expect_error(
+  $$insert into public.contact_requests (kind, email, country_code, consent_given, consent_text_version) values ('launch_waitlist', 'c2@example.test', 'Morocco', true, 'v-test')$$,
+  '23514', 'country must be a 2-letter code');
+select pg_temp.expect_error(
+  $$insert into public.contact_requests (kind, email, device_detail, consent_given, consent_text_version) values ('launch_waitlist', 'c3@example.test', 'toaster', true, 'v-test')$$,
+  '23514', 'device detail must be a known value');
 select pg_temp.expect_error(
   $$insert into public.contact_requests (kind, name, email, consent_given, consent_text_version) values ('trial_request', 'Alex', 'trial2@example.test', true, 'v-test')$$,
   '23514', 'trial request without phone is rejected');

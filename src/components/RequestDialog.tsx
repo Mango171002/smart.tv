@@ -108,8 +108,8 @@ export function RequestDialog({
     const market = country === 'US' || country === 'CA' ? country : EU.has(country) ? 'EU' : undefined;
     const payload =
       mode === 'trial'
-        ? { kind: 'trial_request', name, email, phone, locale, market, consent: true, website: data.get('website') || undefined }
-        : { kind: 'support', name, email, phone, subject: r.supportSubject, message, locale, market, consent: true, website: data.get('website') || undefined };
+        ? { kind: 'trial_request', name, email, phone, locale, market, country, consent: true, website: data.get('website') || undefined }
+        : { kind: 'support', name, email, phone, subject: r.supportSubject, message, locale, market, country, consent: true, website: data.get('website') || undefined };
     try {
       const res = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
       if (res.ok) {

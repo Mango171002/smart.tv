@@ -166,7 +166,19 @@ async function handleCommand(m: TgMessage) {
       p_chat: m.chat.id,
       p_thread: m.message_thread_id ?? null,
     });
-    await reply(m, res?.ok ? `✅ Sujet « ${topic} » enregistré.` : `⛔ ${res?.code === 'forbidden' ? 'Réservé aux admins.' : 'Échec.'}`);
+    const inTopic = Boolean(m.is_topic_message && m.message_thread_id);
+    await reply(
+      m,
+      res?.ok
+        ? inTopic
+          ? `✅ Sujet « ${topic} » enregistré : les fiches « ${topic} » arriveront ici.`
+          : `✅ « ${topic} » enregistré dans la discussion générale du groupe.\nPour un sujet séparé : activez les « Sujets » du groupe (Paramètres → Sujets), créez le sujet, puis écrivez <code>/setup ${topic}</code> à l’intérieur.`
+        : res?.code === 'forbidden'
+          ? '⛔ Réservé aux admins.'
+          : dbDown
+            ? DB_DOWN
+            : '⚠️ Échec, réessayez.',
+    );
     return;
   }
   if (cmd === '/attente') {

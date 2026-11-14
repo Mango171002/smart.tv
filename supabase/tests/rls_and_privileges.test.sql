@@ -82,16 +82,16 @@ select pg_temp.check(not exists (select 1 from public.markets where licensed or 
 select pg_temp.check(not exists (select 1 from public.prices where status = 'approved'), 'no approved prices');
 select pg_temp.check(
   (select amount_minor from public.prices pr join public.plans p on p.id = pr.plan_id
-    where pr.market_code = 'US' and p.tier_code = 'starter' and p.term = '12m' and p.streams = 1 and pr.valid_to is null) = 4900,
-  'Starter 12 months, 1 screen = 49.00 USD');
+    where pr.market_code = 'US' and p.tier_code = 'starter' and p.term = '12m' and p.streams = 1 and pr.valid_to is null) = 5900,
+  'Starter 12 months, 1 screen = 59.00 USD');
 select pg_temp.check(
   (select amount_minor from public.prices pr join public.plans p on p.id = pr.plan_id
-    where pr.market_code = 'US' and p.tier_code = 'ultra' and p.term = 'lifetime' and p.streams = 1 and pr.valid_to is null) = 19900,
+    where pr.market_code = 'US' and p.tier_code = 'ultra' and p.term = 'lifetime' and p.streams = 1 and pr.valid_to is null) = 23699,
   'Ultra lifetime, 1 screen = 236.99 USD');
 select pg_temp.check(
   (select amount_minor from public.prices pr join public.plans p on p.id = pr.plan_id
-    where pr.market_code = 'US' and p.tier_code = 'ultra' and p.term = 'lifetime' and p.streams = 4 and pr.valid_to is null) = 34900,
-  'Ultra lifetime, 4 screens = 349.00 USD');
+    where pr.market_code = 'US' and p.tier_code = 'ultra' and p.term = 'lifetime' and p.streams = 4 and pr.valid_to is null) = 29699,
+  'Ultra lifetime, 4 screens = 296.99 USD');
 
 -- ---------- Integrity constraints ----------
 select pg_temp.expect_error($$update public.markets set sales_enabled = true where code = 'US'$$,
@@ -117,7 +117,7 @@ select '10000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-00000000
   from public.prices pr join public.plans p on p.id = pr.plan_id
  where pr.market_code = 'US' and p.tier_code = 'starter' and p.term = '12m' and p.streams = 1 and pr.valid_to is null;
 
-select pg_temp.check((select total_minor = 4900 from public.orders where id = '10000000-0000-4000-8000-000000000001'),
+select pg_temp.check((select total_minor = 5900 from public.orders where id = '10000000-0000-4000-8000-000000000001'),
   'order total computed by database');
 select pg_temp.check((select count(*) = 1 from public.order_events where order_id = '10000000-0000-4000-8000-000000000001'),
   'order creation audited');

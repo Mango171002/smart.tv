@@ -2198,3 +2198,9 @@ html { scroll-padding-top: 84px; }
 select.input option { background: var(--color-bg); color: var(--color-ink); }
 /* Cards entering from the right must not widen the page (no sideways scroll on phones during the animation) */
 #main { overflow-x: clip; }
+/* Footer on phones/tablets: the two link columns may shrink and their links wrap (never wider than the screen) */
+@media (max-width: 1100px) {
+  .footer-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .footer-col a, .footer-link-btn { overflow-wrap: anywhere; }
+}
+.footer { overflow-x: clip; }

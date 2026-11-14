@@ -376,14 +376,15 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     expect(sent).toMatchObject({ kind: 'trial_request', name: 'Alex Martin', email: 'alex@example.test', phone: '+33612345678', market: 'EU', consent: true });
   });
 
-  test('floating support button opens the support window (question required)', async ({ page }) => {
+  test('floating support button opens WhatsApp; footer Contact opens the support window (question required)', async ({ page }) => {
     let sent: Record<string, unknown> | null = null;
     await page.route('**/api/contact', async (route) => {
       sent = route.request().postDataJSON();
       await route.fulfill({ status: 201, json: { ok: true } });
     });
     await page.goto('/');
-    await page.getByRole('button', { name: 'Contact support', exact: true }).click();
+    await expect(page.getByRole('link', { name: 'Contact support', exact: true })).toHaveAttribute('href', 'https://wa.me/447412857594');
+    await page.locator('footer .footer-link-btn').click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');
     await dialog.getByLabel('Email address').fill('alex@example.test');
@@ -402,7 +403,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
   test('request window shows a rate-limit message', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
     await page.goto('/');
-    await page.getByRole('button', { name: 'Contact support', exact: true }).click();
+    await page.locator('footer .footer-link-btn').click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');
     await dialog.getByLabel('Email address').fill('alex@example.test');
@@ -425,7 +426,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
 
   test('request window has no violations', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('button', { name: 'Contact support', exact: true }).click();
+    await page.locator('footer .footer-link-btn').click();
     await expect(page.getByRole('dialog')).toBeVisible();
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();
     expect(results.violations.map((v) => v.id)).toEqual([]);

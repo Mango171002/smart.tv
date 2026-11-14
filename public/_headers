@@ -1,0 +1,8 @@
+# Cloudflare static-asset caching (videos and images never change under the same URL:
+# a new file gets a new name or a new ?v= query).
+/videos/*
+  Cache-Control: public, max-age=31536000, immutable
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+/brand/*
+  Cache-Control: public, max-age=604800

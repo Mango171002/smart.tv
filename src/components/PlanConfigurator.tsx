@@ -72,7 +72,7 @@ const TIER_LOOK: Record<Tier, { Icon: LucideIcon }> = {
   ultra: { Icon: Gem },
 };
 /** Generated plan artwork (npm run hero → public/images/plan-<tier>-<w>.avif|webp). */
-const PLAN_ART_SIZES = '(max-width: 900px) 90vw, 30vw';
+const PLAN_ART_SIZES = '(max-width: 900px) 90vw, 26vw';
 const planSrcSet = (tier: Tier, ext: 'avif' | 'webp') => `/images/plan-${tier}-480.${ext}?v=20261114 480w, /images/plan-${tier}-960.${ext}?v=20261114 960w`;
 
 /** Left-hand points of the simulator (icon colour = official category colour). */

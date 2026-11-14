@@ -19,9 +19,35 @@ export function HeroVideoToggle({ pauseLabel, playLabel }: { pauseLabel: string;
       v.addEventListener('play', sync);
       v.addEventListener('pause', sync);
     });
-    const t = window.setTimeout(sync, 1500); // autoplay refused → show "play"
+    // Performance: the videos are not downloaded with the page (preload="none", no autoplay), so the
+    // poster image paints first. Once the page has loaded and the browser is idle, the first video
+    // starts; the next ones are fetched a few seconds later, before their turn in the cross-fade.
+    let t2 = 0;
+    const startAll = () => {
+      const [first, ...rest] = videos;
+      if (first) { first.preload = 'auto'; void first.play().catch(() => undefined); }
+      t2 = window.setTimeout(
+        () =>
+          rest.forEach((v) => {
+            // Hidden banners get their poster late, so it does not compete with the first paint.
+            if (v.dataset.poster && !v.poster) v.poster = v.dataset.poster;
+            v.preload = 'auto';
+            void v.play().catch(() => undefined);
+          }),
+        3000,
+      );
+    };
+    const kick = () => {
+      if (typeof window.requestIdleCallback === 'function') window.requestIdleCallback(startAll, { timeout: 2500 });
+      else setTimeout(startAll, 1200);
+    };
+    if (document.readyState === 'complete') kick();
+    else window.addEventListener('load', kick, { once: true });
+    const t = window.setTimeout(sync, 8000); // autoplay refused → show "play"
     return () => {
       window.clearTimeout(t);
+      window.clearTimeout(t2);
+      window.removeEventListener('load', kick);
       videos.forEach((v) => {
         v.removeEventListener('play', sync);
         v.removeEventListener('pause', sync);

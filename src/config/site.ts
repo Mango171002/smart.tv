@@ -22,7 +22,7 @@ export const siteConfig = {
   /** Official support line (owner, 14/11/2026). */
   supportPhone: '+44 7412 857594' as string | null,
   /** WhatsApp support number in international format without '+' or spaces (e.g. '33612345678'). Null = the floating support button opens the contact form. */
-  supportWhatsApp: null as string | null,
+  supportWhatsApp: '447412857594' as string | null,
   /** Official social accounts (full URLs). An icon is shown in the footer only once its URL is set. */
   social: {
     facebook: 'https://www.facebook.com/share/14unqXhVYRr/' as string | null,

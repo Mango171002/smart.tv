@@ -14,7 +14,7 @@ const HERO_BAR_ICONS: LucideIcon[] = [Zap, ShieldCheck, MonitorSmartphone, Infin
 export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictionary }) {
   const h = dict.hero;
   // Start downloading the first banner's poster (largest element on screen) as early as possible.
-  preload('/images/hero-savanna-video-poster.webp', { as: 'image', type: 'image/webp', fetchPriority: 'high' });
+  preload('/images/hero-savanna-video-poster-s.webp', { as: 'image', type: 'image/webp', fetchPriority: 'high' });
   return (
     <div className="wrap hero">
       <div className="hero-grid">
@@ -37,14 +37,13 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
           {/* 1st banner: savanna chase, documentary-style video (Kling 4.0, muted loop). Its first frame is the poster until it plays. */}
           <video
             className="hero-video"
-            poster="/images/hero-savanna-video-poster.webp"
+            poster="/images/hero-savanna-video-poster-s.webp"
             width={1920}
             height={819}
-            autoPlay
             muted
             loop
             playsInline
-            preload="auto"
+            preload="none"
             aria-label={h.visualLabel}
           >
             <source src="/videos/hero-chase-960.mp4" type="video/mp4" media="(max-width: 900px)" />
@@ -54,14 +53,13 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
           {/* 2nd banner: action film scene, cinematic video (Kling 4.0, muted loop) */}
           <video
             className="hero-slide hero-video"
-            poster="/images/hero-action-v1-poster.webp"
+            data-poster="/images/hero-action-v1-poster-s.webp"
             width={1920}
             height={819}
-            autoPlay
             muted
             loop
             playsInline
-            preload="auto"
+            preload="none"
             aria-hidden="true"
           >
             <source src="/videos/hero-action-v1-960.mp4" type="video/mp4" media="(max-width: 900px)" />
@@ -71,14 +69,13 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
           {/* 3rd banner: night street race through a corner (owner prompt, Kling 4.0) (Kling 4.0, muted loop) */}
           <video
             className="hero-slide hero-video"
-            poster="/images/hero-race-v2-poster.webp"
+            data-poster="/images/hero-race-v2-poster-s.webp"
             width={1920}
             height={819}
-            autoPlay
             muted
             loop
             playsInline
-            preload="auto"
+            preload="none"
             aria-hidden="true"
           >
             <source src="/videos/hero-race-v2-960.mp4" type="video/mp4" media="(max-width: 900px)" />

@@ -6,7 +6,7 @@ import { fill, type Dictionary } from '@/i18n/dictionaries';
 import { FEATURED_SCENES } from '@/components/visuals/featured-scenes';
 
 /** Generated artwork (npm run hero → public/images/featured-<scene>-<w>.avif|webp). */
-const SLIDE_SIZES = '(max-width: 580px) 90vw, (max-width: 900px) 60vw, 34vw';
+const SLIDE_SIZES = '(max-width: 580px) 58vw, (max-width: 900px) 38vw, 19vw';
 /** Portrait "Top 10" cards cut a vertical slice of the 16:9 artwork: horizontal focus per scene. */
 const FOCUS: Record<string, string> = {
   football: '59%', adventure: '74%', hockey: '78%', family: '62%', 'american-football': '71%', crime: '93%',
@@ -83,7 +83,7 @@ export function Featured({ dict }: { dict: Dictionary['featured'] }) {
                   <source type="image/avif" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'avif')} sizes={SLIDE_SIZES} />
                   <source type="image/webp" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'webp')} sizes={SLIDE_SIZES} />
                   { }
-                  <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp?v=20261114b`} alt="" width={480} height={270} loading="lazy" decoding="async" style={{ objectPosition: `${FOCUS[FEATURED_SCENES[i]!] ?? '65%'} 50%` }} />
+                  <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp?v=20261114b`} alt="" width={480} height={270} loading="lazy" decoding="async" fetchPriority="low" style={{ objectPosition: `${FOCUS[FEATURED_SCENES[i]!] ?? '65%'} 50%` }} />
                 </picture>
                 {/* eslint-disable-next-line @next/next/no-img-element -- static vector logo */}
                 <img className="slide-logo" src="/brand/sygma-logo.svg" alt="" width={308} height={40} loading="lazy" decoding="async" />

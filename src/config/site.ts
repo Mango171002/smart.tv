@@ -28,7 +28,7 @@ export const siteConfig = {
     facebook: 'https://www.facebook.com/share/14unqXhVYRr/' as string | null,
     instagram: 'https://www.instagram.com/sygmatv' as string | null,
     youtube: 'https://www.youtube.com/@SYGMATV' as string | null,
-    tiktok: null as string | null,
+    tiktok: 'https://www.tiktok.com/@sygma.tv' as string | null,
     telegram: 'https://t.me/+2ee4Cu9x-nw1ZWVk' as string | null,
     whatsapp: 'https://whatsapp.com/channel/0029Vb96DpII1rchcsE0tC0V' as string | null,
   },

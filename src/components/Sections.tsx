@@ -6,7 +6,7 @@ import { Check, Play, CircleHelp, BadgeCheck, UserPlus, Minus, Infinity as Infin
 import { RequestButton } from './RequestButton';
 import { HeroVideoToggle } from './HeroVideoToggle';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
-/** Banner: three muted looping videos — savanna chase → action film scene → night street race. */
+/** Banner: four muted looping videos — savanna chase → action film scene → street race v1 → street race v2 (comparison). */
 
 /** Icons of the hero feature bar (Lucide, lime). */
 const HERO_BAR_ICONS: LucideIcon[] = [Zap, ShieldCheck, MonitorSmartphone, InfinityIcon, Headset];
@@ -84,6 +84,23 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             <source src="/videos/hero-race-v1-960.mp4" type="video/mp4" media="(max-width: 900px)" />
             <source src="/videos/hero-race-v1.webm" type="video/webm" />
             <source src="/videos/hero-race-v1.mp4" type="video/mp4" />
+          </video>
+          {/* 4th banner (comparison): owner-prompt race through the corner (Kling 4.0, muted loop) */}
+          <video
+            className="hero-slide hero-video"
+            poster="/images/hero-race-v2-poster.webp"
+            width={1920}
+            height={819}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+          >
+            <source src="/videos/hero-race-v2-960.mp4" type="video/mp4" media="(max-width: 900px)" />
+            <source src="/videos/hero-race-v2.webm" type="video/webm" />
+            <source src="/videos/hero-race-v2.mp4" type="video/mp4" />
           </video>
         </div>
         <ul className="hero-checks hero-bar">

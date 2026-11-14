@@ -2116,3 +2116,10 @@ html { scroll-padding-top: 84px; }
   mask-image: linear-gradient(to bottom, black 72%, transparent 100%);
 }
 .featured .slide::after { inset: 50% 0 0; background: linear-gradient(transparent, color-mix(in srgb, var(--color-bg) 85%, transparent) 85%); }
+/* Most watched (owner 14/11, round 2): only a thin dark band at the very bottom */
+.featured .slide img {
+  -webkit-mask-image: linear-gradient(to bottom, black 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 88%, transparent 100%);
+}
+.featured .slide::after { inset: 62% 0 0; background: linear-gradient(transparent, color-mix(in srgb, var(--color-bg) 70%, transparent) 75%, color-mix(in srgb, var(--color-bg) 85%, transparent)); }
+.featured .slide-title { text-shadow: 0 2px 12px rgb(0 0 0 / .9); }

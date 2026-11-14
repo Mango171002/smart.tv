@@ -307,7 +307,14 @@ test.describe('layout (fluid container)', () => {
           width: g.width, overflow: document.documentElement.scrollWidth - innerWidth,
           // elements sticking out of the page (shown when the check fails)
           wide: [...document.querySelectorAll('body *')]
-            .filter((el) => el.getBoundingClientRect().right > innerWidth + 1 && !el.closest('.carousel-track, .overlay'))
+            .filter((el) => {
+              if (el.getBoundingClientRect().right <= innerWidth + 1) return false;
+              // ignore elements inside a scrolling or clipping box (they cannot widen the page)
+              for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
+                if (getComputedStyle(a).overflowX !== 'visible') return false;
+              }
+              return true;
+            })
             .slice(0, 8)
             .map((el) => `${el.tagName}.${String(el.className).slice(0, 40)} → ${Math.round(el.getBoundingClientRect().right)}`),
         };

@@ -6,7 +6,12 @@ import { fill, type Dictionary } from '@/i18n/dictionaries';
 import { FEATURED_SCENES } from '@/components/visuals/featured-scenes';
 
 /** Generated artwork (npm run hero → public/images/featured-<scene>-<w>.avif|webp). */
-const SLIDE_SIZES = '(max-width: 580px) 82vw, (max-width: 900px) 62vw, 24vw';
+const SLIDE_SIZES = '(max-width: 580px) 90vw, (max-width: 900px) 60vw, 34vw';
+/** Portrait "Top 10" cards cut a vertical slice of the 16:9 artwork: horizontal focus per scene. */
+const FOCUS: Record<string, string> = {
+  football: '72%', adventure: '74%', hockey: '52%', family: '62%', 'american-football': '78%', crime: '48%',
+  basketball: '84%', docs: '70%', tennis: '56%', fantasy: '82%', motorsport: '72%', comedy: '76%',
+};
 const slideSrcSet = (scene: string, ext: 'avif' | 'webp') =>
   `/images/featured-${scene}-480.${ext} 480w, /images/featured-${scene}-960.${ext} 960w`;
 
@@ -68,7 +73,7 @@ export function Featured({ dict }: { dict: Dictionary['featured'] }) {
             {dict.items.map((item, i) => (
               <div
                 key={item.title}
-                className={`slide cat-${item.cat}`}
+                className={`slide cat-${item.cat}${i >= 9 ? ' rank-2' : ''}`}
                 role="group"
                 aria-roledescription="slide"
                 aria-label={`${fill(dict.slideLabel, { n: i + 1, total })} — ${item.title}`}
@@ -77,9 +82,10 @@ export function Featured({ dict }: { dict: Dictionary['featured'] }) {
                   <source type="image/avif" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'avif')} sizes={SLIDE_SIZES} />
                   <source type="image/webp" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'webp')} sizes={SLIDE_SIZES} />
                   { }
-                  <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp`} alt="" width={480} height={270} loading="lazy" decoding="async" />
+                  <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp`} alt="" width={480} height={270} loading="lazy" decoding="async" style={{ objectPosition: `${FOCUS[FEATURED_SCENES[i]!] ?? '65%'} 50%` }} />
                 </picture>
                 <span className="slide-badge">{item.badge}</span>
+                <span className="slide-rank" aria-hidden="true">{i + 1}</span>
                 <span className="slide-text">
                   <span className="slide-title">{item.title}</span>
                   <span className="slide-region">{item.region}</span>

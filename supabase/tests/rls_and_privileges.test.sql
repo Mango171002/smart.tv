@@ -256,5 +256,52 @@ reset role;
 select pg_temp.check((select full_name = 'Alice A.' from public.customers where id = '00000000-0000-4000-8000-000000000001'),
   'bob cannot update alice profile');
 
+
+-- ---------------------------------------------------------------- Operations bot (Telegram)
+reset role;
+insert into private.ops_admins (telegram_id, name, role) values (111, 'Sara', 'seller'), (222, 'Omar', 'admin');
+insert into public.contact_requests (id, kind, name, email, phone, locale, consent_given, consent_text_version)
+values ('20000000-0000-4000-8000-000000000001', 'trial_request', 'Lead L.', 'lead@example.test', '+14155550123', 'en', true, 'test');
+
+set role anon;
+select pg_temp.expect_error($$select public.ops_get_settings()$$, '42501', 'anon cannot call ops functions');
+select pg_temp.expect_error($$select * from private.ops_cards$$, '42501', 'anon cannot read ops cards');
+reset role;
+set role authenticated;
+select pg_temp.expect_error($$select public.ops_apply('20000000-0000-4000-8000-000000000001', 1, 'contact', 222, 'x')$$, '42501',
+  'authenticated users cannot drive the bot');
+reset role;
+
+set role service_role;
+select pg_temp.check((public.ops_card_open('20000000-0000-4000-8000-000000000001') -> 'card' ->> 'status') = 'new', 'card opens as new');
+select pg_temp.check((public.ops_card_open('20000000-0000-4000-8000-000000000001') -> 'card' ->> 'version') = '1', 'opening twice is idempotent');
+select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000001', 1, 'contact', 999, 'Intruder') ->> 'code') = 'forbidden',
+  'unknown Telegram user is refused');
+select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000001', 1, 'contact', 111, 'Sara') -> 'card' -> 'card' ->> 'status') = 'contacted',
+  'seller marks the lead as contacted');
+select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000001', 1, 'convert', 111, 'Sara') ->> 'code') = 'stale',
+  'a stale button (double click) changes nothing');
+select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000001', 2, 'answer', 111, 'Sara') ->> 'code') = 'not_allowed',
+  'transitions outside the state machine are refused');
+select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000001', 2, 'undo', 111, 'Sara') -> 'card' -> 'card' ->> 'status') = 'new',
+  'a recent action can be undone');
+select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000001', 3, 'undo', 111, 'Sara') ->> 'code') = 'nothing_to_undo',
+  'an undo cannot be undone into a loop');
+select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000001', 3, 'convert', 111, 'Sara') -> 'card' -> 'card' ->> 'status') = 'converted',
+  'lead converted');
+select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000001', 4, 'reopen', 111, 'Sara') ->> 'code') = 'not_allowed',
+  'only an admin can reopen a converted lead');
+reset role;
+update private.ops_events set created_at = now() where false; -- no-op: journal stays untouched
+select pg_temp.expect_error($$update private.ops_events set reason = 'x'$$, '42501', 'the journal is append-only');
+select pg_temp.expect_error($$delete from private.ops_events$$, '42501', 'the journal cannot be deleted');
+set role service_role;
+select pg_temp.check((public.ops_set_topic(111, 'support', -100123, 7) ->> 'code') = 'forbidden', 'only admins configure topics');
+select pg_temp.check((public.ops_set_topic(222, 'support', -100123, 7) ->> 'ok') = 'true', 'admin configures a topic');
+select pg_temp.check((public.ops_get_settings() ->> 'thread_support') = '7', 'topic thread id is stored');
+select pg_temp.check((select count(*) = 4 from jsonb_array_elements(public.ops_card_get('20000000-0000-4000-8000-000000000001') -> 'events')),
+  'every action is in the journal');
+reset role;
+
 select 'PASSED: ' || count(*) || ' assertions' as result from _t;
 rollback;

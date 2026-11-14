@@ -54,6 +54,33 @@ jobs:
       - run: npm test
       - name: Build and deploy
         run: npx opennextjs-cloudflare build && npx opennextjs-cloudflare deploy
+      - name: Operations bot (Telegram) — secrets and webhook
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          SB_SECRET: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          # Optional: skipped until the TELEGRAM_BOT_TOKEN secret exists in GitHub.
+          if [ -z "$TG_TOKEN" ]; then echo "No TELEGRAM_BOT_TOKEN secret: bot not configured."; exit 0; fi
+          TG_TOKEN="$(printf '%s' "$TG_TOKEN" | tr -d '[:space:]')"
+          echo "::add-mask::$TG_TOKEN"
+          printf '%s' "$TG_TOKEN" | npx wrangler secret put TELEGRAM_BOT_TOKEN >/dev/null
+          if [ -n "$SB_SECRET" ]; then
+            SB_SECRET="$(printf '%s' "$SB_SECRET" | tr -d '[:space:]')"
+            echo "::add-mask::$SB_SECRET"
+            printf '%s' "$SB_SECRET" | npx wrangler secret put SUPABASE_SECRET_KEY >/dev/null
+          else
+            echo "::warning::Add the SUPABASE_SECRET_KEY secret so the bot can read and update requests."
+          fi
+          HOOK_SECRET="$(TG_TOKEN="$TG_TOKEN" node -e "const c=require('crypto');process.stdout.write(c.createHash('sha256').update(process.env.TG_TOKEN+':sygma-ops-webhook').digest('hex').slice(0,48))")"
+          echo "::add-mask::$HOOK_SECRET"
+          node -e "process.stdout.write(JSON.stringify({url:'https://sygmatv.com/api/telegram/webhook',secret_token:process.argv[1],allowed_updates:['message','callback_query'],drop_pending_updates:false}))" "$HOOK_SECRET" > hook.json
+          curl -fsS -X POST -H 'content-type: application/json' --data @hook.json "https://api.telegram.org/bot$TG_TOKEN/setWebhook" | grep -q '"ok":true' && echo "Webhook registered."
+          rm -f hook.json
+          cat > cmds.json <<'JSON'
+          {"commands":[{"command":"id","description":"Mon identifiant Telegram"},{"command":"attente","description":"Demandes en attente"},{"command":"stats","description":"Activité des dernières 24 h"},{"command":"setup","description":"Enregistrer ce sujet (admins)"},{"command":"aide","description":"Aide"}]}
+          JSON
+          curl -fsS -X POST -H 'content-type: application/json' --data @cmds.json "https://api.telegram.org/bot$TG_TOKEN/setMyCommands" >/dev/null && echo "Commands set."
+          rm -f cmds.json
       - name: Smoke test
         run: |
           sleep 10

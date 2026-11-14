@@ -1,10 +1,11 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { siteConfig } from '@/config/site';
 import { checkSameOrigin, clientIp, jsonError, readJson } from '@/lib/http';
 import { isContactFormEnabled } from '@/lib/features';
 import { createRateLimiter } from '@/lib/rate-limit';
 import { getPublicSupabase } from '@/lib/supabase/server';
 import { contactSchema } from '@/lib/validation';
+import { notifyNewRequest } from '@/lib/telegram/ops';
 
 const limiter = createRateLimiter({ limit: 5, windowMs: 10 * 60_000 });
 
@@ -61,5 +62,7 @@ export async function POST(req: Request) {
     console.error('[contact] insert failed', error.code);
     return jsonError(502, 'storage_failed');
   }
+  // Operations bot: post a live card in the team's Telegram group, after the response is sent.
+  after(() => notifyNewRequest(input.kind, input.email).catch((e) => console.warn('[contact] telegram', (e as Error).message)));
   return NextResponse.json({ ok: true }, { status: 201 });
 }

@@ -317,7 +317,9 @@ function ComparisonTable({ dict }: { dict: Dictionary }) {
   const tiers = ['starter', 'plus', 'ultra'] as const;
   return (
     <div className="compare" aria-labelledby="compare-title">
-      <h3 id="compare-title" className="compare-title">{c.title}</h3>
+      <h3 id="compare-title" className="section-title plans-title compare-title">
+        {c.titleA} <span className="title-hl">{c.titleHl}</span>
+      </h3>
       <div className="compare-scroll">
         <table className="compare-table">
           <thead>

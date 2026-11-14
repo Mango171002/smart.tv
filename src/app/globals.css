@@ -2159,3 +2159,18 @@ html { scroll-padding-top: 84px; }
 }
 .consent input { accent-color: var(--color-lime); }
 .skip-link { background: var(--color-lime); }
+/* "Compare the plans": same size and lime italic highlight as "Choose your plan" */
+.compare-title.section-title { font-size: clamp(27px, 1.4vw + 19px, 46px); margin: 46px 0 22px; text-align: center; }
+
+/* Footer social buttons: each lights up in its network colour on hover, tap and keyboard focus */
+.footer-social a { transition: color .18s ease, border-color .18s ease, background-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+.footer-social .social-facebook { --sc: #1877f2; }
+.footer-social .social-instagram { --sc: #e1306c; }
+.footer-social .social-youtube { --sc: #ff0000; }
+.footer-social .social-tiktok { --sc: #25f4ee; }
+.footer-social .social-telegram { --sc: #2aabee; }
+.footer-social .social-whatsapp { --sc: #25d366; }
+.footer-social a:is(:hover, :focus-visible, :active) {
+  color: #ffffff; border-color: var(--sc); background: var(--sc); transform: translateY(-2px);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--sc) 45%, transparent);
+}

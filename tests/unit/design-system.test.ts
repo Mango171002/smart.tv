@@ -15,7 +15,9 @@ const OFFICIAL = {
 };
 // Non-brand exceptions: semantic error colour for form validation, and pure black for shadows/bezels.
 // SYGMA TV+ logo colours (owner brief): pure white wordmark and near-black TV+ lettering.
-const ALLOWED_EXTRA = ['#ff8a8a', '#000', '#0009', '#000c', '#000b', '#000d', '#ffffff', '#05070b'];
+const ALLOWED_EXTRA = ['#ff8a8a', '#000', '#0009', '#000c', '#000b', '#000d', '#ffffff', '#05070b',
+  // Official social-network brand colours (footer buttons on hover only)
+  '#1877f2', '#e1306c', '#ff0000', '#25f4ee', '#2aabee', '#25d366'];
 
 const hexes = (text: string) => [...text.matchAll(/#[0-9a-fA-F]{3,8}\b/g)].map((m) => m[0].toLowerCase());
 

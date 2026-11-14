@@ -109,6 +109,8 @@ const en = {
     compare: {
       eyebrow: 'Compare',
       title: 'Compare the plans',
+      titleA: 'Compare the',
+      titleHl: 'plans',
       feature: 'Feature',
       included: 'Included',
       notIncluded: 'Not included',

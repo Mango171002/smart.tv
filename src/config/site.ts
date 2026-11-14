@@ -25,10 +25,12 @@ export const siteConfig = {
   supportWhatsApp: null as string | null,
   /** Official social accounts (full URLs). An icon is shown in the footer only once its URL is set. */
   social: {
-    facebook: null as string | null,
-    instagram: null as string | null,
+    facebook: 'https://www.facebook.com/share/14unqXhVYRr/' as string | null,
+    instagram: 'https://www.instagram.com/sygmatv' as string | null,
+    youtube: 'https://www.youtube.com/@SYGMATV' as string | null,
     tiktok: null as string | null,
-    telegram: null as string | null,
+    telegram: 'https://t.me/+2ee4Cu9x-nw1ZWVk' as string | null,
+    whatsapp: 'https://whatsapp.com/channel/0029Vb96DpII1rchcsE0tC0V' as string | null,
   },
   supportHours: null as string | null,
   legalEntity: null as string | null,

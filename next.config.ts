@@ -2,14 +2,15 @@ import type { NextConfig } from 'next';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-// The browser only talks to this origin: Supabase is called from the server.
+// The browser only talks to this origin (Supabase is called from the server), plus Cloudflare Web
+// Analytics (owner decision 14/11/2026): cookie-less visit statistics, beacon script + its endpoint.
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com${isDev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'self' https://cloudflareinsights.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

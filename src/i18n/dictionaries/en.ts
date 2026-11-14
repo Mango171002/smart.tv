@@ -490,12 +490,12 @@ const en = {
       privacy: {
         title: 'Privacy policy',
         intro: 'How personal data is collected, used, stored and protected (GDPR, PIPEDA, US state laws).',
-        items: ['Data controller and contact', 'Purposes and legal bases', 'Retention periods (proposed: 12 months for contact requests)', 'Data subject rights and processors'],
+        items: ['Data controller and contact', 'Purposes and legal bases', 'Retention periods (proposed: 12 months for contact requests)', 'Data subject rights', 'Processors: Cloudflare (hosting and cookie-less visit statistics), Supabase (database), Telegram (internal notifications to our team)'],
       },
       cookies: {
         title: 'Cookie policy',
-        intro: 'This website sets no tracking or analytics cookies.',
-        items: ['Inventory of cookies if analytics are added', 'Consent mechanism (ePrivacy)'],
+        intro: 'This website sets no tracking or analytics cookies. Visits are counted anonymously with Cloudflare Web Analytics, which uses no cookies and does not follow you across other websites.',
+        items: ['Visit statistics: Cloudflare Web Analytics (cookie-less, aggregated pages, countries and devices)', 'Consent mechanism (ePrivacy) if cookies are ever added'],
       },
       refunds: {
         title: 'Refunds & cancellations',

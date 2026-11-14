@@ -9,8 +9,8 @@ import { FEATURED_SCENES } from '@/components/visuals/featured-scenes';
 const SLIDE_SIZES = '(max-width: 580px) 90vw, (max-width: 900px) 60vw, 34vw';
 /** Portrait "Top 10" cards cut a vertical slice of the 16:9 artwork: horizontal focus per scene. */
 const FOCUS: Record<string, string> = {
-  football: '59%', adventure: '74%', hockey: '52%', family: '62%', 'american-football': '71%', crime: '48%',
-  basketball: '67%', docs: '70%', tennis: '56%', fantasy: '82%', motorsport: '72%', comedy: '47%',
+  football: '59%', adventure: '74%', hockey: '52%', family: '62%', 'american-football': '71%', crime: '93%',
+  basketball: '38%', docs: '70%', tennis: '56%', fantasy: '82%', motorsport: '72%', comedy: '47%',
 };
 const slideSrcSet = (scene: string, ext: 'avif' | 'webp') =>
   `/images/featured-${scene}-480.${ext} 480w, /images/featured-${scene}-960.${ext} 960w`;

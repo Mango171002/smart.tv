@@ -203,7 +203,8 @@ export function renderCard(data: CardData, tz: string, now = Date.now()): { text
   }
   const device = r.device_detail ?? r.device;
   if (device) lines.push(`📺 Appareil : ${escapeHtml(DEVICE_NAME[device] ?? device)}`);
-  if (r.kind !== 'support') lines.push(`📣 Offres marketing : ${r.marketing ? 'oui' : 'non'}`);
+  // Only shown when the customer opted in (owner request: no « non » line).
+  if (r.marketing) lines.push('📣 Accepte de recevoir nos offres');
   if (r.subject) lines.push(`🏷 ${escapeHtml(r.subject)}`);
   if (r.message) {
     const msg = r.message.length > 700 ? `${r.message.slice(0, 700)}…` : r.message;

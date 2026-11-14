@@ -73,6 +73,12 @@ describe('rendering', () => {
     expect(text).toContain('📺 Appareil : Fire TV');
     expect(text).not.toContain('Région');
   });
+  it('mentions marketing consent only when the customer opted in', () => {
+    expect(renderCard(base('new'), 'UTC').text).not.toContain('📣');
+    const d = base('new');
+    d.request = { ...d.request, kind: 'launch_waitlist', marketing: true };
+    expect(renderCard(d, 'UTC').text).toContain('📣 Accepte de recevoir nos offres');
+  });
   it('confirmation keyboard carries a timestamp and a cancel button', () => {
     const k = confirmKeyboard({ op: 'q', requestId: ID, version: 3, action: 'lose' }, 1_800_000_000);
     const [yes, no] = k.inline_keyboard[0]!;

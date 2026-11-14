@@ -307,7 +307,7 @@ test.describe('layout (fluid container)', () => {
           width: g.width, overflow: document.documentElement.scrollWidth - innerWidth,
           // elements sticking out of the page (shown when the check fails)
           wide: [...document.querySelectorAll('body *')]
-            .filter((el) => el.getBoundingClientRect().right > innerWidth + 1 && !el.closest('[style*="overflow"], .slider, .featured-track, .overlay'))
+            .filter((el) => el.getBoundingClientRect().right > innerWidth + 1 && !el.closest('.carousel-track, .overlay'))
             .slice(0, 8)
             .map((el) => `${el.tagName}.${String(el.className).slice(0, 40)} → ${Math.round(el.getBoundingClientRect().right)}`),
         };

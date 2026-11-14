@@ -62,9 +62,11 @@ h1, h2, h3 { text-wrap: balance; font-weight: 750; }
 h1 { font-weight: 800; }
 svg.lucide { flex: none; }
 
+/* Reduced motion (often switched on by phone battery savers): no smooth scroll, near-instant
+   transitions; the site's few animations switch to gentle, movement-free variants (see "Motion"). */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
 }
 
 .wrap { width: 100%; max-width: calc(var(--container) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
@@ -1902,7 +1904,8 @@ html { scroll-padding-top: 84px; }
   0%, 22% { color: var(--color-ink); }
   27%, 100% { color: color-mix(in srgb, var(--color-ink) 75%, var(--color-bg)); }
 }
-@media (prefers-reduced-motion: no-preference) {
+/* Colour change only (no movement): runs for everyone, reduced motion included */
+@media all {
   .how3-steps li .how3-num, .how3-steps li.is-first .how3-num { animation: how3-step 8s infinite; }
   .how3-steps li b { animation: how3-title 8s infinite; }
   .how3-steps li:nth-child(2) .how3-num, .how3-steps li:nth-child(2) b { animation-delay: 2s; }
@@ -1998,12 +2001,24 @@ html { scroll-padding-top: 84px; }
 .rv [data-reveal].is-in > :nth-child(5) { animation-delay: .56s; }
 .rv [data-reveal].is-in > :nth-child(6) { animation-delay: .70s; }
 .rv [data-reveal].is-in > :nth-child(n+7) { animation-delay: .84s; }
+/* Reduced motion: the cards simply fade in, one after the other (no sliding) */
+@keyframes rv-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .rv [data-reveal].is-in > * { animation-name: rv-fade; animation-duration: .6s; }
+}
 
 @keyframes icon-float {
   0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 0 transparent); }
   50% { transform: translateY(-4px) scale(1.06); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-cyan) 60%, transparent)); }
 }
-@media (prefers-reduced-motion: no-preference) {
+@keyframes icon-glow {
+  0%, 100% { filter: drop-shadow(0 0 0 transparent); }
+  50% { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--color-cyan) 60%, transparent)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .features-bar svg { animation-name: icon-glow !important; } /* glow only, no movement */
+}
+@media all {
   .features-bar svg { animation: icon-float 3.2s ease-in-out infinite; }
   .features-bar li:nth-child(2) svg { animation-delay: .4s; }
   .features-bar li:nth-child(3) svg { animation-delay: .8s; }
@@ -2017,9 +2032,19 @@ html { scroll-padding-top: 84px; }
 /* Hero: two video banners (savanna chase / action) cross-fade in turn, ~6 s each (12 s loop) */
 .hero-stage > .hero-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
 @keyframes hero-cycle { 0% { opacity: 0; } 7.5%, 50% { opacity: 1; } 57.5%, 100% { opacity: 0; } }
-@media (prefers-reduced-motion: no-preference) {
-  .hero-stage > * { animation: hero-cycle 12s linear infinite; }
-  .hero-stage > *:nth-child(1) { animation-delay: -1s; }
-  .hero-stage > *:nth-child(2) { animation-delay: -7s; }
+.hero-stage > video { animation: hero-cycle 12s linear infinite; }
+.hero-stage > video:nth-of-type(1) { animation-delay: -1s; }
+.hero-stage > video:nth-of-type(2) { animation-delay: -7s; }
+.hero-stage.is-paused > video { animation-play-state: paused; }
+/* Pause / play the banner videos (WCAG 2.2.2: moving content can be stopped) */
+.hero-pause {
+  position: absolute; z-index: 5; display: grid; place-items: center;
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--color-ink) 35%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 55%, transparent); color: var(--color-ink); cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
+.hero-pause:hover { border-color: var(--color-lime); color: var(--color-lime); }
+.hero { position: relative; }
+@media (max-width: 900px) { .hero-pause { right: var(--gutter); top: 14px; } }
+@media (min-width: 901px) { .hero-pause { right: var(--gutter); top: 18px; } }
 .hero-stage > video { object-fit: cover; }

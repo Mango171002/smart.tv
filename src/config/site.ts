@@ -19,8 +19,8 @@ export const siteConfig = {
   /** Domain not decided. */
   domain: null as string | null,
   supportEmail: 'support@sygmatv.com' as string | null,
-  /** Temporary number until the definitive line is purchased (owner request). */
-  supportPhone: '+44 000 000 000' as string | null,
+  /** Official support line (owner, 14/11/2026). */
+  supportPhone: '+44 7412 857594' as string | null,
   /** WhatsApp support number in international format without '+' or spaces (e.g. '33612345678'). Null = the floating support button opens the contact form. */
   supportWhatsApp: null as string | null,
   /** Official social accounts (full URLs). An icon is shown in the footer only once its URL is set. */

@@ -63,6 +63,8 @@ const en = {
     ctaSecondary: 'How it works',
     checks: ['Quick Setup', 'Data Protected', 'Multi-Device', 'Flexible Plans', 'Email Support'],
     visualLabel: 'A cheetah chasing a gazelle across the savanna at sunset',
+    pauseVideo: 'Pause the banner video',
+    playVideo: 'Play the banner video',
     stamp: 'Interface preview',
   },
   benefits: [

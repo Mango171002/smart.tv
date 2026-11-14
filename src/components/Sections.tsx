@@ -4,6 +4,7 @@ import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { Check, Play, CircleHelp, BadgeCheck, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
+import { HeroVideoToggle } from './HeroVideoToggle';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
 /** Banner: two muted looping videos — savanna chase → action film scene (haka video removed by the owner, 14/11). */
 
@@ -80,6 +81,7 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
           })}
         </ul>
       </div>
+      <HeroVideoToggle pauseLabel={h.pauseVideo} playLabel={h.playVideo} />
     </div>
   );
 }

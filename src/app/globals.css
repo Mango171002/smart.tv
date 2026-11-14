@@ -2014,12 +2014,6 @@ html { scroll-padding-top: 84px; }
 .price-was { display: block; color: var(--color-muted); font-size: 17px; font-weight: 600; text-decoration-thickness: 2px; text-decoration-color: color-mix(in srgb, var(--color-magenta) 80%, transparent); line-height: 1.1; margin-top: 2px; }
 .sim-summary .savings { color: var(--tier, var(--color-lime)); font-weight: 700; }
 
-/* Hero: two video banners (savanna chase / haka) cross-fade in turn, ~6 s each (12 s loop) */
+/* Hero: a single video banner for now (savanna chase); slides cross-fade only when there are several. */
 .hero-stage > .hero-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-@keyframes hero-cycle { 0% { opacity: 0; } 7.5%, 50% { opacity: 1; } 57.5%, 100% { opacity: 0; } }
-@media (prefers-reduced-motion: no-preference) {
-  .hero-stage > * { animation: hero-cycle 12s linear infinite; }
-  .hero-stage > *:nth-child(1) { animation-delay: -1s; }
-  .hero-stage > *:nth-child(2) { animation-delay: -7s; }
-}
 .hero-stage > video { object-fit: cover; }

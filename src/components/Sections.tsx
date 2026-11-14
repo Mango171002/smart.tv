@@ -5,7 +5,7 @@ import type { Dictionary } from '@/i18n/dictionaries';
 import { Check, Play, CircleHelp, BadgeCheck, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
-/** Banner: two muted looping videos (savanna chase → haka); the banner photos moved to the category cards (owner, 13/11). */
+/** Banner: muted looping video(s) — savanna chase (the haka video was removed by the owner, 14/11). */
 
 /** Icons of the hero feature bar (Lucide, lime). */
 const HERO_BAR_ICONS: LucideIcon[] = [Zap, ShieldCheck, MonitorSmartphone, InfinityIcon, Headset];
@@ -49,23 +49,6 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             <source src="/videos/hero-chase-960.mp4" type="video/mp4" media="(max-width: 900px)" />
             <source src="/videos/hero-chase.webm" type="video/webm" />
             <source src="/videos/hero-chase.mp4" type="video/mp4" />
-          </video>
-          {/* 2nd banner: haka, live-broadcast style video (Kling 4.0, muted loop) */}
-          <video
-            className="hero-slide hero-video"
-            poster="/images/hero-haka-video-poster.webp"
-            width={1920}
-            height={819}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            aria-hidden="true"
-          >
-            <source src="/videos/hero-haka-960.mp4" type="video/mp4" media="(max-width: 900px)" />
-            <source src="/videos/hero-haka.webm" type="video/webm" />
-            <source src="/videos/hero-haka.mp4" type="video/mp4" />
           </video>
         </div>
         <ul className="hero-checks hero-bar">

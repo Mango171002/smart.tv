@@ -87,7 +87,8 @@ export function computeQuote(t: PriceTable, sel: PlanSelection): Quote {
     monthlyEquivalentMinor: months ? Math.round(amount / months) : null,
     referenceMinor: reference,
     savingsMinor: savings,
-    savingsPercent: reference ? Math.round((savings / reference) * 100) : 0,
+    // Rounded down: the advertised discount is never larger than the real one.
+    savingsPercent: reference ? Math.floor((savings / reference) * 100 + 1e-9) : 0,
     status: t.status,
     taxMinor: null,
     // Planned (illustrative) prices can never be charged.

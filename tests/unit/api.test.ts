@@ -24,7 +24,7 @@ describe('POST /api/quote', () => {
     const res = await POST(post('/api/quote', { tier: 'starter', term: '12m', streams: 1 }));
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.quote.amountMinor).toBe(4900);
+    expect(json.quote.amountMinor).toBe(5900);
     expect(json.chargeable).toBe(false);
     expect(json.taxes.calculated).toBe(false);
     expect(json.source).toBe('static');
@@ -32,7 +32,7 @@ describe('POST /api/quote', () => {
   it('ignores any client-supplied price', async () => {
     const { POST } = await import('@/app/api/quote/route');
     const res = await POST(post('/api/quote', { tier: 'starter', term: '12m', streams: 1, amountMinor: 1 }));
-    expect((await res.json()).quote.amountMinor).toBe(4900);
+    expect((await res.json()).quote.amountMinor).toBe(5900);
   });
   it('rejects invalid input, bad JSON and cross-origin calls', async () => {
     const { POST } = await import('@/app/api/quote/route');

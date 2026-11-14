@@ -67,9 +67,9 @@ test.describe('routing & SEO', () => {
 test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   test('shows the three yearly plans with Plus recommended', async ({ page }) => {
     await openHome(page, '/');
-    await expect(page.getByTestId('tier-price-starter')).toHaveText('$49');
-    await expect(page.getByTestId('tier-price-plus')).toHaveText('$59');
-    await expect(page.getByTestId('tier-price-ultra')).toHaveText('$69');
+    await expect(page.getByTestId('tier-price-starter')).toHaveText('$59');
+    await expect(page.getByTestId('tier-price-plus')).toHaveText('$69');
+    await expect(page.getByTestId('tier-price-ultra')).toHaveText('$99');
     await expect(page.locator('.tier-card.is-recommended')).toHaveAttribute('data-tier', 'plus');
     await expect(page.locator('.tier-card.is-recommended .tier-badge')).toHaveText('Recommended');
   });
@@ -78,21 +78,21 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     await openHome(page, '/');
     const price = page.getByTestId('price');
     await expect(page.getByTestId('selection')).toHaveText('Plus · 12 months · 1 device');
-    await expect(price).toHaveText('$59');
+    await expect(price).toHaveText('$69');
     await page.locator('.simulator [data-tier="starter"]').click();
     await page.locator('[data-term="36m"]').click();
     await expect(page.getByTestId('selection')).toHaveText('Starter · 36 months · 1 device');
-    await expect(price).toHaveText('$99');
-    await expect(page.locator('.price-sub')).toHaveText('≈ $2.75 / month');
-    await expect(page.getByTestId('savings')).toHaveText('You save $48 (−33%) vs 3 × 12 months');
+    await expect(price).toHaveText('$122.99');
+    await expect(page.locator('.price-sub')).toHaveText('≈ $3.42 / month');
+    await expect(page.getByTestId('savings')).toHaveText('You save $54.01 (−30%) vs 3 × 12 months');
     await page.locator('[data-stream="3"]').click();
     await expect(page.getByTestId('selection')).toHaveText('Starter · 36 months · 3 devices');
-    await expect(price).toHaveText('$159');
-    await expect(page.locator('[data-stream="2"] .choice-note')).toHaveText('+$30');
+    await expect(price).toHaveText('$160.99');
+    await expect(page.locator('[data-stream="2"] .choice-note')).toHaveText('+$21');
     await page.locator('.simulator [data-tier="ultra"]').click();
     await page.locator('[data-term="12m"]').click();
     await page.locator('[data-stream="4"]').click();
-    await expect(price).toHaveText('$99');
+    await expect(price).toHaveText('$124');
     await expect(page.getByTestId('savings')).toHaveCount(0);
     // Lifetime is not offered in the simulator (owner decision)
     await expect(page.locator('.simulator [data-term]')).toHaveCount(3);
@@ -121,7 +121,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     await openHome(page, '/');
     await page.getByRole('button', { name: 'Pre-register for Ultra+' }).click();
     await expect(page.locator('.simulator [data-tier="ultra"]')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.getByTestId('price')).toHaveText('$69');
+    await expect(page.getByTestId('price')).toHaveText('$99');
   });
 
   test('section links scroll even when the address already has the same #hash', async ({ page }) => {
@@ -168,7 +168,7 @@ test.describe('pre-registration', () => {
     await expect(dialog.getByTestId('quote-status')).toHaveText(/Price confirmed by our server/);
     await expect(dialog.getByTestId('review-plan')).toHaveText('Ultra+ · 24 months · 2 devices');
     await expect(dialog.getByTestId('review-region')).toContainText('Canada');
-    await expect(dialog.getByTestId('review-price')).toHaveText('$129 USD');
+    await expect(dialog.getByTestId('review-price')).toHaveText('$173.99 USD');
 
     await dialog.getByRole('button', { name: /Confirm my pre-registration/ }).click();
     await expect(dialog.getByRole('heading', { name: 'You are pre-registered!' })).toBeVisible();

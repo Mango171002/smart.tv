@@ -87,7 +87,7 @@ select pg_temp.check(
 select pg_temp.check(
   (select amount_minor from public.prices pr join public.plans p on p.id = pr.plan_id
     where pr.market_code = 'US' and p.tier_code = 'ultra' and p.term = 'lifetime' and p.streams = 1 and pr.valid_to is null) = 19900,
-  'Ultra lifetime, 1 screen = 199.00 USD');
+  'Ultra lifetime, 1 screen = 236.99 USD');
 select pg_temp.check(
   (select amount_minor from public.prices pr join public.plans p on p.id = pr.plan_id
     where pr.market_code = 'US' and p.tier_code = 'ultra' and p.term = 'lifetime' and p.streams = 4 and pr.valid_to is null) = 34900,

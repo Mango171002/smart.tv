@@ -2031,12 +2031,11 @@ html { scroll-padding-top: 84px; }
 
 /* Hero: three video banners (savanna chase / action / street race) cross-fade in turn, ~6 s each (18 s loop) */
 .hero-stage > .hero-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
-@keyframes hero-cycle { 0% { opacity: 0; } 3.75%, 25% { opacity: 1; } 28.75%, 100% { opacity: 0; } }
-.hero-stage > video { animation: hero-cycle 24s linear infinite; }
+@keyframes hero-cycle { 0% { opacity: 0; } 5%, 33.3% { opacity: 1; } 38.3%, 100% { opacity: 0; } }
+.hero-stage > video { animation: hero-cycle 18s linear infinite; }
 .hero-stage > video:nth-of-type(1) { animation-delay: -1s; }
-.hero-stage > video:nth-of-type(2) { animation-delay: -19s; }
-.hero-stage > video:nth-of-type(3) { animation-delay: -13s; }
-.hero-stage > video:nth-of-type(4) { animation-delay: -7s; }
+.hero-stage > video:nth-of-type(2) { animation-delay: -13s; }
+.hero-stage > video:nth-of-type(3) { animation-delay: -7s; }
 .hero-stage.is-paused > video { animation-play-state: paused; }
 /* Pause / play the banner videos (WCAG 2.2.2: moving content can be stopped) */
 .hero-pause {

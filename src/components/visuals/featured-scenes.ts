@@ -1,4 +1,4 @@
-/** Display order of the "Most watched" cards (colours mixed); artwork files (public/visuals/featured-<scene>.svg), matching dict.featured.items. */
+/** Display order of the "Most watched" cards (mixed genres); artwork files public/images/featured-<scene>-<w>.avif|webp, matching dict.featured.items. */
 export const FEATURED_SCENES = [
   'football',
   'anime',

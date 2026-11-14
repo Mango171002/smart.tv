@@ -49,7 +49,7 @@ for (const key of CATS) {
 }
 
 // "Most watched" carousel artwork (assets/featured/featured-<scene>.png → public/images/featured-<scene>-<w>.avif|webp), 16:9 cover crop
-const SCENES = ['football', 'american-football', 'hockey', 'basketball', 'adventure', 'crime', 'fantasy', 'comedy', 'tennis', 'motorsport', 'family', 'docs'];
+const SCENES = ['football', 'american-football', 'hockey', 'basketball', 'adventure', 'crime', 'fantasy', 'comedy', 'tennis', 'motorsport', 'family', 'docs', 'animation', 'anime', 'family-fantasy'];
 for (const scene of SCENES) {
   const src = fileURLToPath(new URL(`../assets/featured/featured-${scene}.png`, import.meta.url));
   for (const w of [480, 960]) {

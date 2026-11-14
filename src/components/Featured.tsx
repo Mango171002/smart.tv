@@ -11,6 +11,7 @@ const SLIDE_SIZES = '(max-width: 580px) 90vw, (max-width: 900px) 60vw, 34vw';
 const FOCUS: Record<string, string> = {
   football: '59%', adventure: '74%', hockey: '78%', family: '62%', 'american-football': '71%', crime: '93%',
   basketball: '38%', docs: '70%', tennis: '56%', fantasy: '82%', motorsport: '72%', comedy: '47%',
+  animation: '80%', anime: '59%', 'family-fantasy': '50%',
 };
 const slideSrcSet = (scene: string, ext: 'avif' | 'webp') =>
   `/images/featured-${scene}-480.${ext}?v=20261114b 480w, /images/featured-${scene}-960.${ext}?v=20261114b 960w`;

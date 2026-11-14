@@ -12,5 +12,8 @@ export const FEATURED_SCENES = [
   'fantasy',
   'motorsport',
   'comedy',
+  'animation',
+  'anime',
+  'family-fantasy',
 ] as const;
 export type FeaturedScene = (typeof FEATURED_SCENES)[number];

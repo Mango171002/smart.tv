@@ -93,6 +93,9 @@ const en = {
       { cat: 'movies', badge: 'SERIES', title: 'Fantasy series', region: 'International' },
       { cat: 'sports', badge: 'SPORTS', title: 'Motorsport', region: 'International' },
       { cat: 'movies', badge: 'MOVIES', title: 'Comedy', region: 'International' },
+      { cat: 'streaming', badge: 'ANIMATION', title: 'Animation', region: 'International' },
+      { cat: 'movies', badge: 'ANIME', title: 'Anime', region: 'International' },
+      { cat: 'live', badge: 'FAMILY', title: 'Family fantasy', region: 'International' },
     ],
   },
   plans: {

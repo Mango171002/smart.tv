@@ -2109,3 +2109,10 @@ html { scroll-padding-top: 84px; }
 /* Category cards (owner 14/11): Movies & Series in cyan and Live TV in magenta, so the cyan and violet cards are not side by side */
 #content .cat-card.cat-movies { --cat: var(--color-cyan); }
 #content .cat-card.cat-live { --cat: var(--color-magenta); }
+/* Most watched (owner 14/11): the image runs further down the card, fading just behind the title */
+.featured .slide picture { height: 100%; }
+.featured .slide img {
+  -webkit-mask-image: linear-gradient(to bottom, black 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 72%, transparent 100%);
+}
+.featured .slide::after { inset: 50% 0 0; background: linear-gradient(transparent, color-mix(in srgb, var(--color-bg) 85%, transparent) 85%); }

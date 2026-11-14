@@ -403,6 +403,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     await page.goto('/');
     await page.getByRole('button', { name: 'Contact support', exact: true }).click();
     await expect(page.getByRole('dialog', { name: 'Contact support' })).toBeVisible();
+    await expect(page.getByRole('dialog').getByLabel('Full name')).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await page.locator('footer .footer-link-btn').click();

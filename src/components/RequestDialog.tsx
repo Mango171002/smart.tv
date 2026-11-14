@@ -49,7 +49,8 @@ export function RequestDialog({
   const dial = useMemo(() => countries.find((c) => c.code === country)?.dial ?? '1', [country]);
 
   useEffect(() => {
-    dialogRef.current?.querySelector<HTMLElement>('input')?.focus();
+    // First visible field (never the hidden anti-spam field).
+    dialogRef.current?.querySelector<HTMLElement>('input.input')?.focus();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
@@ -62,13 +63,19 @@ export function RequestDialog({
     if (state === 'done') dialogRef.current?.querySelector<HTMLElement>('.success .btn')?.focus();
   }, [state]);
 
+  // Escape closes the window wherever the keyboard focus is (even before it has moved inside).
+  useEffect(() => {
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      e.preventDefault();
+      onClose();
+    };
+    document.addEventListener('keydown', onEsc);
+    return () => document.removeEventListener('keydown', onEsc);
+  }, [onClose]);
+
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        onClose();
-        return;
-      }
       if (e.key !== 'Tab' || !dialogRef.current) return;
       const nodes = Array.from(dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE));
       const first = nodes[0];

@@ -73,13 +73,19 @@ export function CheckoutDialog({
     if (step > 1) titleRef.current?.focus();
   }, [step]);
 
+  // Escape closes the window wherever the keyboard focus is (even before it has moved inside).
+  useEffect(() => {
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      e.preventDefault();
+      onClose();
+    };
+    document.addEventListener('keydown', onEsc);
+    return () => document.removeEventListener('keydown', onEsc);
+  }, [onClose]);
+
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation();
-        onClose();
-        return;
-      }
       if (e.key !== 'Tab' || !dialogRef.current) return;
       const nodes = Array.from(dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE));
       if (nodes.length === 0) return;

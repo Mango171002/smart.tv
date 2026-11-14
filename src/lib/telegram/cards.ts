@@ -49,7 +49,7 @@ export const UNDO_WINDOW_MS = 10 * 60_000;
 /** A confirmation button expires after this delay. */
 export const CONFIRM_TTL_S = 60;
 
-const STATUS_LABEL: Record<string, string> = {
+export const STATUS_LABEL: Record<string, string> = {
   new: '🟡 Nouveau',
   contacted: '🔵 Contacté',
   converted: '🟢 Converti',

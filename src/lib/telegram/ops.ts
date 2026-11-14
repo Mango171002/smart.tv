@@ -9,6 +9,7 @@ import {
   renderCard,
   RESULT_TOAST,
   shortRef,
+  STATUS_LABEL,
   type CardData,
 } from './cards';
 
@@ -188,7 +189,7 @@ async function handleCommand(m: TgMessage) {
       return;
     }
     const rows = list.map((x) => {
-      const label = `#${shortRef(x.id)} · ${escapeHtml(x.name ?? x.email)} · ${x.status}`;
+      const label = `#${shortRef(x.id)} · ${escapeHtml(x.name ?? x.email)} · ${STATUS_LABEL[x.status] ?? x.status}`;
       return x.chat_id && x.message_id ? `• <a href="${messageLink(x.chat_id, x.message_id)}">${label}</a>` : `• ${label}`;
     });
     await reply(m, `<b>En attente (${list.length})</b>\n${rows.join('\n')}`);
@@ -290,7 +291,7 @@ async function handleCallback(q: TgCallback) {
     await tg('sendMessage', {
       chat_id: settings.chat_id,
       message_thread_id: settings.thread_alertes,
-      text: `#${shortRef(r.id)} · ${escapeHtml(displayName(q.from))} · ${c.action === 'undo' ? '↩️ annulation' : c.action} → <b>${res.card.card.status}</b>`,
+      text: `#${shortRef(r.id)} · ${escapeHtml(displayName(q.from))} · ${c.action === 'undo' ? '↩️ annulation' : c.action} → <b>${STATUS_LABEL[res.card.card.status] ?? res.card.card.status}</b>`,
       parse_mode: 'HTML',
       disable_notification: true,
     });

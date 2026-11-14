@@ -9,11 +9,11 @@ import { FEATURED_SCENES } from '@/components/visuals/featured-scenes';
 const SLIDE_SIZES = '(max-width: 580px) 90vw, (max-width: 900px) 60vw, 34vw';
 /** Portrait "Top 10" cards cut a vertical slice of the 16:9 artwork: horizontal focus per scene. */
 const FOCUS: Record<string, string> = {
-  football: '59%', adventure: '74%', hockey: '52%', family: '62%', 'american-football': '71%', crime: '93%',
+  football: '59%', adventure: '74%', hockey: '78%', family: '62%', 'american-football': '71%', crime: '93%',
   basketball: '38%', docs: '70%', tennis: '56%', fantasy: '82%', motorsport: '72%', comedy: '47%',
 };
 const slideSrcSet = (scene: string, ext: 'avif' | 'webp') =>
-  `/images/featured-${scene}-480.${ext}?v=20261114 480w, /images/featured-${scene}-960.${ext}?v=20261114 960w`;
+  `/images/featured-${scene}-480.${ext}?v=20261114b 480w, /images/featured-${scene}-960.${ext}?v=20261114b 960w`;
 
 /** Badge colour follows the category system (item.cat): sports = lime, movies/series = magenta… */
 
@@ -82,7 +82,7 @@ export function Featured({ dict }: { dict: Dictionary['featured'] }) {
                   <source type="image/avif" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'avif')} sizes={SLIDE_SIZES} />
                   <source type="image/webp" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'webp')} sizes={SLIDE_SIZES} />
                   { }
-                  <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp?v=20261114`} alt="" width={480} height={270} loading="lazy" decoding="async" style={{ objectPosition: `${FOCUS[FEATURED_SCENES[i]!] ?? '65%'} 50%` }} />
+                  <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp?v=20261114b`} alt="" width={480} height={270} loading="lazy" decoding="async" style={{ objectPosition: `${FOCUS[FEATURED_SCENES[i]!] ?? '65%'} 50%` }} />
                 </picture>
                 {/* eslint-disable-next-line @next/next/no-img-element -- static vector logo */}
                 <img className="slide-logo" src="/brand/sygma-logo.svg" alt="" width={308} height={40} loading="lazy" decoding="async" />

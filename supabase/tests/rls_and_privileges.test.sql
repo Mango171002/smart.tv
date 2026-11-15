@@ -195,6 +195,11 @@ select pg_temp.expect_error($$select marketing_opt_in from public.contact_reques
 insert into public.contact_requests (kind, email, market_code, country_code, preferred_device, device_detail, consent_given, consent_text_version)
   values ('launch_waitlist', 'country@example.test', null, 'MA', 'streaming_device', 'fire_tv', true, 'v-test');
 select pg_temp.check(true, 'anon can pre-register with an exact country and a precise device');
+insert into public.contact_requests (kind, email, phone, interest_tier, consent_given, consent_text_version)
+  values ('launch_waitlist', 'country@example.test', '+212600000000', 'plus', true, 'v-test');
+select pg_temp.check(true, 'the same customer can place a second pre-registration (with a WhatsApp number)');
+select pg_temp.expect_error($$select invoice_number from public.contact_requests$$, '42501', 'anon cannot read invoice numbers');
+select pg_temp.expect_error($$update public.contact_requests set invoice_number = 'X'$$, '42501', 'anon cannot set invoice numbers');
 select pg_temp.expect_error($$select country_code from public.contact_requests$$, '42501', 'anon cannot read the country');
 select pg_temp.expect_error(
   $$insert into public.contact_requests (kind, email, country_code, consent_given, consent_text_version) values ('launch_waitlist', 'c2@example.test', 'Morocco', true, 'v-test')$$,
@@ -311,6 +316,15 @@ select pg_temp.check((public.ops_set_topic(222, 'support', -100123, 7) ->> 'ok')
 select pg_temp.check((public.ops_get_settings() ->> 'thread_support') = '7', 'topic thread id is stored');
 select pg_temp.check((select count(*) = 4 from jsonb_array_elements(public.ops_card_get('20000000-0000-4000-8000-000000000001') -> 'events')),
   'every action is in the journal');
+reset role;
+set role anon;
+select pg_temp.expect_error($$select public.ops_invoice('20000000-0000-4000-8000-000000000001')$$, '42501', 'anon cannot issue invoices');
+reset role;
+set role service_role;
+select pg_temp.check((public.ops_invoice('20000000-0000-4000-8000-000000000001') ->> 'new') = 'true', 'first convert issues an invoice number');
+select pg_temp.check((public.ops_invoice('20000000-0000-4000-8000-000000000001') ->> 'new') = 'false', 'the invoice number is given once');
+select pg_temp.check((public.ops_invoice('20000000-0000-4000-8000-000000000001') ->> 'number') ~ '^SYG-[0-9]{4}-[0-9]{4,}$', 'invoice number format SYG-YYYY-NNNN');
+select pg_temp.check((public.ops_invoice('00000000-0000-4000-8000-000000000000') ->> 'code') = 'not_found', 'unknown request has no invoice');
 reset role;
 
 select 'PASSED: ' || count(*) || ' assertions' as result from _t;

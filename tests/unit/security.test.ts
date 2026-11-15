@@ -125,6 +125,8 @@ describe('input validation', () => {
     const w = { kind: 'launch_waitlist', email: 'a@b.co', locale: 'en', consent: true };
     expect(contactSchema.safeParse({ ...w, country: 'MA', device: 'streaming_device', deviceDetail: 'fire_tv' }).success).toBe(true);
     expect(contactSchema.safeParse({ ...w, country: 'Morocco' }).success).toBe(false);
+    expect(contactSchema.safeParse({ ...w, phone: '+212600000000' }).success).toBe(true);
+    expect(contactSchema.safeParse({ ...w, phone: '0600' }).success).toBe(false);
     expect(contactSchema.safeParse({ ...w, deviceDetail: 'toaster' }).success).toBe(false);
   });
   it('rejects oversized fields and unknown locales', () => {

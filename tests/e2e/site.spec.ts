@@ -164,19 +164,22 @@ test.describe('pre-registration', () => {
     await dialog.getByLabel('Your country').click();
     await dialog.getByRole('combobox', { name: 'Type a country…' }).fill('cana');
     await page.keyboard.press('Enter');
+    await expect(dialog.getByRole('button', { name: 'Country calling code' })).toHaveText(/Canada \(\+1\)/);
+    await dialog.getByLabel('WhatsApp number').fill('(415) 555-0123');
     await dialog.getByLabel('Main device').selectOption('ios_mobile');
     await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/Price confirmed by our server/);
     await expect(dialog.getByTestId('review-plan')).toHaveText('Ultra+ · 24 months · 2 devices');
     await expect(dialog.getByTestId('review-region')).toContainText('Canada');
+    await expect(dialog.getByTestId('review-phone')).toHaveText('+14155550123');
     await expect(dialog.getByTestId('review-price')).toHaveText('$173.99 USD');
 
     await dialog.getByRole('button', { name: /Confirm my pre-registration/ }).click();
     await expect(dialog.getByRole('heading', { name: 'You are pre-registered!' })).toBeVisible();
     await expect(dialog).toContainText('viewer@example.test');
     expect(sent).toMatchObject({
-      kind: 'launch_waitlist', email: 'viewer@example.test', market: 'CA', country: 'CA', tier: 'ultra', term: '24m', streams: 2, device: 'mobile', deviceDetail: 'ios_mobile', consent: true,
+      kind: 'launch_waitlist', email: 'viewer@example.test', market: 'CA', country: 'CA', phone: '+14155550123', tier: 'ultra', term: '24m', streams: 2, device: 'mobile', deviceDetail: 'ios_mobile', consent: true,
     });
     await dialog.getByRole('button', { name: 'Back to the website' }).click();
     await expect(dialog).toBeHidden();
@@ -191,6 +194,7 @@ test.describe('pre-registration', () => {
     await expect(dialog.getByText('Enter a valid email address.')).toBeVisible();
     await expect(dialog.getByText('Please accept to be contacted about the launch.')).toBeVisible();
     await expect(dialog.getByText('Choose your country.')).toBeVisible();
+    await expect(dialog.getByText('Enter a valid WhatsApp number.')).toBeVisible();
     await expect(dialog.getByLabel('Email address')).toHaveAttribute('aria-invalid', 'true');
     await expect(dialog.getByTestId('quote-status')).toHaveCount(0);
   });
@@ -215,6 +219,7 @@ test.describe('pre-registration', () => {
     await dialog.getByLabel('Email address').fill('viewer@example.test');
     await dialog.getByLabel('Your country').click();
     await dialog.getByRole('option', { name: /United States$/ }).click();
+    await dialog.getByLabel('WhatsApp number').fill('4155550123');
     await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
     await expect(dialog.getByTestId('quote-status')).toHaveText(/confirmed/);

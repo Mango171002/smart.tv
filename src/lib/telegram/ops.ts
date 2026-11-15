@@ -1,5 +1,8 @@
 import 'server-only';
 import { sendCustomerEmail } from '@/lib/email/send';
+import type { InvoiceData } from '@/lib/email/templates';
+import { getPriceTable } from '@/lib/price-source';
+import { computeQuote, isStreamCount, isTerm, isTier } from '@/lib/pricing';
 import { getServiceSupabase } from '@/lib/supabase/server';
 import { tg } from './api';
 import {
@@ -311,19 +314,10 @@ async function handleCallback(q: TgCallback) {
   });
   if (!res) return answer('Erreur, réessayez', true);
   if (res.card) await editCard(msg.chat.id, msg.message_id, res.card, settings);
-  // « Converti » sends the confirmation e-mail to the customer (once per request: not again after an undo + convert).
+  // « Converti » sends the thank-you e-mail to the customer, with an invoice when the plan is known.
   let mail = '';
   if (res.ok && res.card && c.action === 'convert' && res.card.request.kind !== 'support') {
-    const converts = res.card.events.filter((e) => e.action === 'convert').length;
-    if (converts <= 1) {
-      const r = res.card.request;
-      const sent = await sendCustomerEmail(
-        'request_confirmed',
-        r.email,
-        { name: r.name, phone: r.phone, tier: r.tier, term: r.term, streams: r.streams },
-      );
-      mail = sent === 'sent' ? ' · 📧 e-mail envoyé au client' : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
-    }
+    mail = await sendConversionEmail(res.card);
   }
   const toast = res.ok ? `✅ Fait${mail}` : (RESULT_TOAST[res.code ?? ''] ?? 'Action impossible');
   await answer(toast, !res.ok && res.code !== 'stale');
@@ -339,6 +333,34 @@ async function handleCallback(q: TgCallback) {
       disable_notification: true,
     });
   }
+}
+
+/**
+ * Thank-you e-mail after « Converti ». With a known plan: invoice with a sequential number given once per
+ * request (an undo + new « Converti » does not send it again). Returns the suffix of the toast.
+ */
+async function sendConversionEmail(card: CardData): Promise<string> {
+  const r = card.request;
+  const base = { name: r.name, email: r.email, phone: r.phone, tier: r.tier, term: r.term, streams: r.streams };
+  if (isTier(r.tier) && isTerm(r.term) && isStreamCount(r.streams)) {
+    const inv = await call<{ ok: boolean; number?: string; issued_at?: string; new?: boolean }>('ops_invoice', { p_request: r.id });
+    if (!inv?.ok || !inv.number || !inv.issued_at) return ' · ⚠️ facture non créée';
+    if (!inv.new) return ` · facture ${inv.number} déjà envoyée`;
+    let invoice: InvoiceData;
+    try {
+      const { table } = await getPriceTable();
+      const q = computeQuote(table, { tier: r.tier, term: r.term, streams: r.streams });
+      invoice = { number: inv.number, issuedAt: inv.issued_at, amountMinor: q.amountMinor, currency: q.currency };
+    } catch {
+      return ' · ⚠️ prix introuvable, e-mail non envoyé';
+    }
+    const sent = await sendCustomerEmail('request_confirmed', r.email, { ...base, invoice });
+    return sent === 'sent' ? ` · 📧 facture ${inv.number} envoyée` : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
+  }
+  // No plan (e.g. trial request): thank-you e-mail without invoice, once.
+  if (card.events.filter((e) => e.action === 'convert').length > 1) return '';
+  const sent = await sendCustomerEmail('request_confirmed', r.email, base);
+  return sent === 'sent' ? ' · 📧 e-mail envoyé (sans facture : plan inconnu)' : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
 }
 
 export async function handleUpdate(update: TgUpdate): Promise<void> {

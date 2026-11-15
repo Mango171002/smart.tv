@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     kind: input.kind,
     email: input.email,
     name: input.name ?? null,
-    phone: input.kind === 'launch_waitlist' ? null : (input.phone ?? null),
+    phone: input.phone ?? null,
     locale: input.locale,
     market_code: input.market ?? null,
     country_code: input.country ?? null,

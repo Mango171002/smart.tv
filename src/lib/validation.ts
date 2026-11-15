@@ -55,6 +55,8 @@ export const contactSchema = z.discriminatedUnion('kind', [
     tier: z.enum(TIERS).optional(),
     term: z.enum(TERMS).optional(),
     streams: streamCount.optional(),
+    /** WhatsApp number (E.164) so the team can contact the customer. */
+    phone: phone.optional(),
     device: z.enum(DEVICE_KEYS).optional(),
     deviceDetail: z.enum(DEVICE_DETAIL_KEYS).optional(),
     ...contactBase,

@@ -2234,3 +2234,4 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
 .cpick-list li[data-active] { background: color-mix(in srgb, var(--color-lime) 14%, transparent); }
 .cpick-list li[aria-selected="true"] { color: var(--color-lime); font-weight: 700; }
 .cpick-list li.cpick-empty { color: var(--color-muted); cursor: default; }
+.form .phone-row + .hint, .form .phone-row ~ .error { display: block; margin-top: 6px; }

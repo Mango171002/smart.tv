@@ -5,8 +5,19 @@
 
 export type EmailKind = 'trial_received' | 'preregistration_received' | 'request_confirmed';
 
+export interface InvoiceData {
+  number: string;
+  /** ISO date-time of issue. */
+  issuedAt: string;
+  amountMinor: number;
+  currency: string;
+}
+
 export interface EmailData {
   name?: string | null;
+  /** Customer e-mail (shown in the invoice « Billed to »). */
+  email?: string | null;
+  invoice?: InvoiceData | null;
   phone?: string | null;
   tier?: string | null;
   term?: string | null;
@@ -23,6 +34,40 @@ const SITE = 'https://sygmatv.com';
 const SUPPORT = 'support@sygmatv.com';
 const LOGO = `${SITE}/brand/sygma-logo-512.png`;
 const C = { bg: '#070d17', card: '#0e1826', line: '#1f2c3d', ink: '#f2f5f9', muted: '#9aa7b8', lime: '#d1fe17' };
+
+function money(minor: number, currency: string): string {
+  return `${new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(minor / 100)} ${currency}`;
+}
+
+function invoiceDate(iso: string): string {
+  return new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(iso));
+}
+
+function invoiceHtml(inv: InvoiceData, d: EmailData, plan: string | null): string {
+  const cell = 'padding:10px 14px;font-size:14px;';
+  const line = `border-top:1px solid ${'#1f2c3d'};`;
+  const billed = [d.name ? esc(d.name.slice(0, 120)) : null, d.email ? esc(d.email) : null, d.phone ? esc(d.phone) : null].filter(Boolean).join('<br>');
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 22px;border:1px solid #1f2c3d;border-radius:12px;">
+<tr><td colspan="2" style="${cell}padding-top:14px;"><span style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#d1fe17;font-weight:800;">Invoice</span><br><b style="font-size:17px;color:#f2f5f9;">${esc(inv.number)}</b></td></tr>
+<tr><td style="${cell}${line}color:#9aa7b8;">Date</td><td align="right" style="${cell}${line}color:#f2f5f9;">${esc(invoiceDate(inv.issuedAt))}</td></tr>
+<tr><td valign="top" style="${cell}${line}color:#9aa7b8;">Billed to</td><td align="right" style="${cell}${line}color:#f2f5f9;">${billed || '—'}</td></tr>
+<tr><td valign="top" style="${cell}${line}color:#9aa7b8;">From</td><td align="right" style="${cell}${line}color:#f2f5f9;">SYGMA TV+<br>${SUPPORT}<br>sygmatv.com</td></tr>
+<tr><td style="${cell}${line}color:#f2f5f9;">SYGMA TV+ subscription${plan ? `<br><span style="color:#9aa7b8;">${esc(plan)}</span>` : ''}</td><td align="right" style="${cell}${line}color:#f2f5f9;">${esc(money(inv.amountMinor, inv.currency))}</td></tr>
+<tr><td style="${cell}${line}color:#9aa7b8;">Taxes</td><td align="right" style="${cell}${line}color:#f2f5f9;">${esc(money(0, inv.currency))}</td></tr>
+<tr><td style="${cell}${line}font-weight:800;color:#f2f5f9;">Total</td><td align="right" style="${cell}${line}font-weight:800;font-size:17px;color:#d1fe17;">${esc(money(inv.amountMinor, inv.currency))}</td></tr>
+</table>`;
+}
+
+function invoiceText(inv: InvoiceData, d: EmailData, plan: string | null): string {
+  return [
+    `Invoice ${inv.number} — ${invoiceDate(inv.issuedAt)}`,
+    `Billed to: ${[d.name, d.email, d.phone].filter(Boolean).join(', ')}`,
+    'From: SYGMA TV+, support@sygmatv.com, sygmatv.com',
+    `SYGMA TV+ subscription${plan ? ` (${plan})` : ''}: ${money(inv.amountMinor, inv.currency)}`,
+    `Taxes: ${money(0, inv.currency)}`,
+    `Total: ${money(inv.amountMinor, inv.currency)}`,
+  ].join('\n');
+}
 
 const TIER: Record<string, string> = { starter: 'Starter', plus: 'Plus', ultra: 'Ultra+' };
 const TERM: Record<string, string> = { '12m': '12 months', '24m': '24 months', '36m': '36 months', lifetime: 'Lifetime' };
@@ -47,6 +92,9 @@ export function planLabel(d: EmailData): string | null {
 interface Block {
   title: string;
   intro: string[];
+  /** Raw HTML block (already escaped) placed after the intro. */
+  extra?: string;
+  extraText?: string;
   rows?: [string, string][];
   steps?: string[];
   note?: string;
@@ -77,7 +125,7 @@ function layout(b: Block, hello: string): string {
 <tr><td style="padding:0 6px 22px;"><a href="${SITE}"><img src="${LOGO}" width="200" height="26" alt="SYGMA TV+" style="display:block;border:0;"></a></td></tr>
 <tr><td bgcolor="${C.card}" style="background:${C.card};border:1px solid ${C.line};border-top:3px solid ${C.lime};border-radius:16px;padding:30px 26px;">
 <h1 style="margin:0 0 18px;font-size:24px;line-height:1.25;color:${C.ink};">${esc(b.title)}</h1>
-${p(hello)}${b.intro.map(p).join('')}${rows}${steps}
+${p(hello)}${b.intro.map(p).join('')}${b.extra ?? ''}${rows}${steps}
 ${b.note ? `<p style="margin:0 0 18px;font-size:13px;line-height:1.5;color:${C.muted};">${b.note}</p>` : ''}
 <table role="presentation" cellpadding="0" cellspacing="0"><tr><td bgcolor="${C.lime}" style="border-radius:10px;"><a href="${SITE}" style="display:inline-block;padding:13px 24px;font-size:15px;font-weight:800;color:${C.bg};text-decoration:none;">Visit SYGMA TV+</a></td></tr></table>
 </td></tr>
@@ -92,6 +140,7 @@ function plain(b: Block, hello: string): string {
     '',
     hello,
     ...b.intro.map(strip),
+    ...(b.extraText ? [b.extraText] : []),
     ...(b.rows ?? []).map(([k, v]) => `${k}: ${v}`),
     ...(b.steps ?? []).map((s, i) => `${i + 1}. ${strip(s)}`),
     b.note ? strip(b.note) : '',
@@ -124,24 +173,32 @@ export function renderEmail(kind: EmailKind, d: EmailData): RenderedEmail {
       note: 'Did not request a trial? You can ignore this e-mail.',
     };
   } else if (kind === 'preregistration_received') {
-    subject = 'Your pre-registration is confirmed — SYGMA TV+';
+    subject = 'We received your order — SYGMA TV+';
     b = {
-      title: 'You are pre-registered!',
-      intro: ['Thank you for pre-registering with SYGMA TV+. Your place is saved.', 'We will e-mail you as soon as subscriptions open in your country.'],
-      rows: plan ? [['Plan of interest', plan], ['Payment', 'None today']] : [['Payment', 'None today']],
-      note: 'No payment has been taken and nothing is due. The final price, taxes and terms are always shown before any purchase.',
-    };
-  } else {
-    subject = 'Your request is confirmed — SYGMA TV+';
-    b = {
-      title: 'Welcome to SYGMA TV+',
+      title: 'Your order is received',
       intro: [
-        'Good news: your request is confirmed by our team.',
+        'Thank you for your order with SYGMA TV+. We have received it.',
         phone
-          ? `We will send you the activation steps on <b>WhatsApp</b> at <b>${phone}</b> or by e-mail.`
-          : 'We will send you the activation steps on <b>WhatsApp</b> or by e-mail.',
+          ? `Our team will contact you very soon on <b>WhatsApp</b> at <b>${phone}</b> to confirm your order and give you the activation steps.`
+          : 'Our team will contact you very soon to confirm your order and give you the activation steps.',
       ],
       rows: plan ? [['Your plan', plan]] : undefined,
+      note: 'No payment has been taken on the website. Our team confirms the details with you before activation.',
+    };
+  } else {
+    const inv = d.invoice;
+    subject = inv ? `Thank you for your order — invoice ${inv.number} — SYGMA TV+` : 'Your order is confirmed — SYGMA TV+';
+    b = {
+      title: 'Thank you for choosing SYGMA TV+',
+      intro: [
+        'Your order is confirmed. Thank you for your trust!',
+        phone
+          ? `Our team sends you the activation steps on <b>WhatsApp</b> at <b>${phone}</b> or by e-mail.`
+          : 'Our team sends you the activation steps on <b>WhatsApp</b> or by e-mail.',
+      ],
+      extra: inv ? invoiceHtml(inv, d, plan) : undefined,
+      extraText: inv ? invoiceText(inv, d, plan) : undefined,
+      rows: !inv && plan ? [['Your plan', plan]] : undefined,
       steps: ['Watch for our message with your activation steps.', 'Install the app on your device as explained.', 'Start watching.'],
       note: 'Need help at any step? Reply to this e-mail: our support team answers you.',
     };

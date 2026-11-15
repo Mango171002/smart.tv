@@ -15,12 +15,8 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const EU = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']);
 
-/** Builds an E.164 number (+<calling code><national number without trunk 0>). */
-export function toE164(dial: string, national: string): string | null {
-  const digits = national.replace(/\D/g, '').replace(/^0+/, '');
-  const full = `${dial}${digits}`;
-  return /^[1-9]\d{6,14}$/.test(full) ? `+${full}` : null;
-}
+import { toE164 } from '@/lib/phone';
+export { toE164 };
 
 function guessCountry(): string {
   if (typeof navigator === 'undefined') return 'US';

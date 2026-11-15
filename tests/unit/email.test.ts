@@ -10,17 +10,31 @@ describe('customer e-mail templates', () => {
     expect(m.html).toContain('<b>WhatsApp</b> at <b>+33612345678</b>');
     expect(m.text).toContain('activation steps');
   });
-  it('pre-registration: plan recap and no payment', () => {
-    const m = renderEmail('preregistration_received', { tier: 'ultra', term: '24m', streams: 2 });
+  it('order received: plan recap and WhatsApp contact', () => {
+    const m = renderEmail('preregistration_received', { tier: 'ultra', term: '24m', streams: 2, phone: '+212600000000' });
+    expect(m.subject).toBe('We received your order — SYGMA TV+');
     expect(m.html).toContain('Ultra+ · 24 months · 2 devices');
-    expect(m.text).toContain('Payment: None today');
+    expect(m.html).toContain('<b>WhatsApp</b> at <b>+212600000000</b>');
     expect(m.html).toContain('Hello,');
   });
-  it('confirmation (Converti): plan, no invoice and no amount', () => {
-    const m = renderEmail('request_confirmed', { name: 'Sara', tier: 'plus', term: '12m', streams: 1, phone: '+212600000000' });
-    expect(m.subject).toBe('Your request is confirmed — SYGMA TV+');
+  it('« Converti » with a plan: thank-you + invoice (number, date, billed to, total, taxes 0)', () => {
+    const m = renderEmail('request_confirmed', {
+      name: 'Sara Alaoui', email: 'sara@example.test', phone: '+212600000000', tier: 'plus', term: '12m', streams: 1,
+      invoice: { number: 'SYG-2026-0001', issuedAt: '2026-11-15T10:00:00Z', amountMinor: 6900, currency: 'USD' },
+    });
+    expect(m.subject).toBe('Thank you for your order — invoice SYG-2026-0001 — SYGMA TV+');
+    expect(m.html).toContain('SYG-2026-0001');
+    expect(m.html).toContain('15 November 2026');
+    expect(m.html).toContain('Sara Alaoui<br>sara@example.test<br>+212600000000');
     expect(m.html).toContain('Plus · 12 months · 1 device');
-    expect(m.html).not.toMatch(/invoice|\$\d/i);
+    expect(m.html).toContain('$69.00 USD');
+    expect(m.html).toContain('$0.00 USD');
+    expect(m.text).toContain('Total: $69.00 USD');
+  });
+  it('« Converti » without a plan: thank-you without invoice', () => {
+    const m = renderEmail('request_confirmed', { name: 'Sara', phone: '+212600000000' });
+    expect(m.subject).toBe('Your order is confirmed — SYGMA TV+');
+    expect(m.html).not.toContain('Invoice');
   });
   it('never puts free text that is not a plain first name in the e-mail', () => {
     expect(greetingName('Élodie Durand')).toBe('Élodie');
@@ -52,7 +66,7 @@ describe('sending through Brevo', () => {
     expect((init.headers as Record<string, string>)['api-key']).toBe('xkeysib-test');
     const body = JSON.parse(String(init.body));
     expect(body).toMatchObject({ sender: { email: 'support@sygmatv.com' }, to: [{ email: 'a@b.co' }], replyTo: { email: 'support@sygmatv.com' } });
-    expect(body.htmlContent).toContain('Welcome to SYGMA TV+');
+    expect(body.htmlContent).toContain('Thank you for choosing SYGMA TV+');
   });
   it('reports a failure without throwing', async () => {
     vi.stubEnv('BREVO_API_KEY', 'xkeysib-test');

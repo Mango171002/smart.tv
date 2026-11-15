@@ -1,6 +1,7 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Check, CircleCheck, Gift, Mail, MapPin, Monitor, ShieldCheck, Zap, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, CircleCheck, Gift, Mail, MapPin, Monitor, Phone, ShieldCheck, Zap, X } from 'lucide-react';
+import { toE164 } from '@/lib/phone';
 import { siteConfig } from '@/config/site';
 import { Brand } from './Brand';
 
@@ -50,12 +51,18 @@ export function CheckoutDialog({
   const [email, setEmail] = useState('');
   const [device, setDevice] = useState<DeviceChoice>('smart_tv');
   const [country, setCountry] = useState('');
+  // WhatsApp number: calling code follows the chosen country until the visitor picks another one.
+  const [dialCountry, setDialCountry] = useState('');
+  const [phoneNational, setPhoneNational] = useState('');
   const [consent, setConsent] = useState(false);
   const [marketing, setMarketing] = useState(false);
-  const [fieldError, setFieldError] = useState<{ email?: string; region?: string; consent?: string }>({});
+  const [fieldError, setFieldError] = useState<{ email?: string; region?: string; phone?: string; consent?: string }>({});
   const [submitState, setSubmitState] = useState<'idle' | 'sending' | 'error'>('idle');
   const [submitError, setSubmitError] = useState('');
   const dialogRef = useRef<HTMLDivElement>(null);
+  const dialIso = dialCountry || country;
+  const dialCode = countryByCode(dialIso || 'US')?.dial ?? '1';
+  const phoneE164 = toE164(dialCode, phoneNational);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   // Focus management: move focus into the dialog, trap Tab, close on Escape.
@@ -116,6 +123,7 @@ export function CheckoutDialog({
           locale,
           market: marketOf(country),
           country,
+          phone: phoneE164 ?? undefined,
           tier: selection.tier,
           term: selection.term,
           streams: selection.streams,
@@ -139,9 +147,10 @@ export function CheckoutDialog({
   }
 
   async function review() {
-    const errors: { email?: string; region?: string; consent?: string } = {};
+    const errors: { email?: string; region?: string; phone?: string; consent?: string } = {};
     if (!EMAIL_RE.test(email.trim())) errors.email = c.errors.email;
     if (!country) errors.region = c.errors.region;
+    if (!phoneE164) errors.phone = c.errors.phone;
     if (!consent) errors.consent = c.errors.consent;
     setFieldError(errors);
     if (Object.keys(errors).length) {
@@ -262,6 +271,40 @@ export function CheckoutDialog({
               </div>
             </div>
             <div className="field">
+              <label htmlFor="prereg-phone">{c.phoneLabel} <span className="req" aria-hidden="true">*</span></label>
+              <div className="phone-row">
+                <CountryPicker
+                  value={dialIso}
+                  onChange={setDialCountry}
+                  placeholder="+"
+                  ariaLabel={c.phoneCountry}
+                  withDial
+                  searchLabel={dict.common.countrySearch}
+                  noResult={dict.common.countryNoResult}
+                  listLabel={dict.common.countryList}
+                />
+                <div className="phone-input">
+                  <Phone className="phone-icon" size={18} strokeWidth={1.75} aria-hidden="true" />
+                  <span aria-hidden="true">+{dialCode}</span>
+                  <input
+                    className="input"
+                    id="prereg-phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel-national"
+                    maxLength={20}
+                    required
+                    placeholder={c.phonePlaceholder}
+                    value={phoneNational}
+                    onChange={(e) => setPhoneNational(e.target.value)}
+                    aria-invalid={fieldError.phone ? true : undefined}
+                    aria-describedby={fieldError.phone ? 'prereg-phone-err' : 'prereg-phone-hint'}
+                  />
+                </div>
+              </div>
+              {fieldError.phone ? <span id="prereg-phone-err" className="error">{fieldError.phone}</span> : <span id="prereg-phone-hint" className="hint">{c.phoneHint}</span>}
+            </div>
+            <div className="field">
               <label htmlFor="prereg-device">{c.deviceLabel} <span className="opt">{c.optional}</span></label>
               <div className="input-icon">
                 <Monitor size={20} strokeWidth={1.75} aria-hidden="true" />
@@ -313,6 +356,7 @@ export function CheckoutDialog({
           <div>
             <p className="muted">{c.reviewIntro}</p>
             <div className="orderline"><span>{c.region}</span><b data-testid="review-region">{regionLabel}</b></div>
+            <div className="orderline"><span>{c.whatsapp}</span><b data-testid="review-phone">{phoneE164}</b></div>
             <div className="orderline"><span>{c.plan}</span><b data-testid="review-plan">{planLabel}</b></div>
             <div className="orderline"><span>{c.subtotal}</span><b data-testid="review-price">{subtotal}</b></div>
             <div className="orderline"><span>{c.taxes}</span><b>{c.taxesValue}</b></div>

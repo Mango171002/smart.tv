@@ -70,7 +70,7 @@ export function analyticsHostAllowed(): boolean {
 let gaLoaded = false;
 let clarityLoaded = false;
 let gtmLoaded = false;
-let consentModeSent = false;
+let consentUpdated = false;
 let lastPageView = '';
 
 function ensureGtag(): Gtag {
@@ -82,16 +82,27 @@ function ensureGtag(): Gtag {
   return window.gtag;
 }
 
-/** Google Consent Mode: « default » before the first Google tag, « update » afterwards. */
+const ALL_DENIED = { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied' } as const;
+
+/**
+ * Google Consent Mode: the default (all denied) is set in <head> by CONSENT_DEFAULT_SCRIPT; the
+ * visitor's choice is sent as an « update » before any Google tag loads.
+ */
 function applyGoogleConsent(state: ConsentState): void {
   const g = ensureGtag();
-  g('consent', consentModeSent ? 'update' : 'default', {
+  const w = window as Window & { __sygmaConsentDefault?: boolean };
+  if (!w.__sygmaConsentDefault) {
+    // Fallback (inline script missing): never let a Google tag start without a « denied » default.
+    g('consent', 'default', { ...ALL_DENIED, wait_for_update: 500 });
+    w.__sygmaConsentDefault = true;
+  }
+  g('consent', 'update', {
     analytics_storage: state.analytics,
     ad_storage: state.marketing,
     ad_user_data: state.marketing,
     ad_personalization: state.marketing,
   });
-  consentModeSent = true;
+  consentUpdated = true;
 }
 
 function inject(src: string, tag?: string): void {
@@ -187,7 +198,7 @@ export function saveConsent(next: ConsentState): void {
   }
   const lostAnalytics = previous?.analytics === 'granted' && next.analytics === 'denied';
   const lostMarketing = previous?.marketing === 'granted' && next.marketing === 'denied';
-  if (consentModeSent) applyGoogleConsent(next);
+  if (consentUpdated) applyGoogleConsent(next);
   if (lostAnalytics || lostMarketing) {
     if (lostAnalytics) {
       window.clarity?.('consentv2', { ad_Storage: 'denied', analytics_Storage: 'denied' });

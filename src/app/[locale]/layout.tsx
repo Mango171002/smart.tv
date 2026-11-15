@@ -13,6 +13,7 @@ import { siteConfig } from '@/config/site';
 import { LOCALES, isLocale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
 import { OG_IMAGE } from '@/lib/seo';
+import { CONSENT_DEFAULT_SCRIPT } from '@/lib/consent-default';
 
 export const dynamicParams = false;
 
@@ -48,6 +49,11 @@ export default async function LocaleLayout({
   const dict = getDictionary(locale);
   return (
     <html lang={locale} suppressHydrationWarning>
+      <head>
+        {/* Google Consent Mode: everything denied by default, before any Google tag can load.
+            The visitor's choice is sent later with gtag('consent', 'update', …) (src/lib/analytics.ts). */}
+        <script id="consent-default" dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULT_SCRIPT }} />
+      </head>
       <body>
         <RevealScript />
         <a className="skip-link" href="#main">{dict.common.skipToContent}</a>

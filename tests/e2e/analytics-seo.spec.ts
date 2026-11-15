@@ -71,7 +71,7 @@ test.describe('cookie consent', () => {
     await expect(banner.getByRole('button', { name: 'Accept all' })).toBeVisible();
     await page.waitForTimeout(1500);
     expect(hits).toEqual([]);
-    expect(await page.evaluate(() => typeof window.gtag)).toBe('undefined');
+    expect(await page.evaluate(() => document.querySelector('script[src*="googletagmanager.com/gtag/js"]') === null)).toBe(true);
     await banner.getByRole('button', { name: 'Decline all' }).click();
     await expect(banner).toBeHidden();
     await page.reload();
@@ -122,12 +122,13 @@ test.describe('cookie consent', () => {
     await stubThirdParties(page);
     await prepare(page, 'granted');
     await page.goto('/');
-    await expect.poll(() => page.evaluate(() => typeof window.gtag)).toBe('function');
+    await expect.poll(() => page.evaluate(() => document.querySelector('script[data-sygma="ga4"]') !== null)).toBe(true);
     await context.addCookies([{ name: '_ga', value: 'GA1.1.1', url: page.url() }, { name: '_clck', value: 'x', url: page.url() }]);
     await page.locator('footer').getByRole('button', { name: 'Cookie settings' }).click();
     await page.getByTestId('consent-banner').getByRole('button', { name: 'Decline all' }).click();
     // The page reloads: the scripts are gone.
-    await expect.poll(() => page.evaluate(() => typeof window.gtag).catch(() => 'reloading'), { timeout: 10_000 }).toBe('undefined');
+    await page.waitForTimeout(500);
+    await expect.poll(() => page.evaluate(() => document.querySelector('script[src*="googletagmanager.com/gtag/js"]') === null).catch(() => false), { timeout: 10_000 }).toBe(true);
     expect((await context.cookies(page.url())).map((c) => c.name)).not.toContain('_ga');
     expect((await context.cookies(page.url())).map((c) => c.name)).not.toContain('_clck');
   });
@@ -270,8 +271,10 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
     await expect.poll(() => hits.some((h) => h.includes('gtag/js'))).toBe(true);
     await page.waitForTimeout(1000);
     expect(hits.some((h) => h.includes('gtm.js'))).toBe(false);
-    const [first] = await consentCalls(page);
-    expect(first).toEqual({ mode: 'default', state: { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' } });
+    const calls = await consentCalls(page);
+    expect(calls[0]).toEqual({ mode: 'default', state: { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 } });
+    expect(calls.filter((c) => c.mode === 'default')).toHaveLength(1);
+    expect(calls.at(-1)).toEqual({ mode: 'update', state: { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' } });
   });
 
   test('Customize → Marketing only: GTM loads, GA4 and Clarity stay off; ad events carry an event_id', async ({ page }) => {
@@ -285,8 +288,9 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
     await expect.poll(() => hits.filter((h) => h.includes('gtm.js?id=GTM-MGCLXP5L')).length).toBe(1);
     await page.waitForTimeout(1000);
     expect(hits.some((h) => h.includes('gtag/js') || h.includes('clarity.ms'))).toBe(false);
-    const [first] = await consentCalls(page);
-    expect(first).toEqual({ mode: 'default', state: { analytics_storage: 'denied', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' } });
+    const calls = await consentCalls(page);
+    expect(calls[0]).toMatchObject({ mode: 'default', state: { ad_storage: 'denied', analytics_storage: 'denied' } });
+    expect(calls.at(-1)).toEqual({ mode: 'update', state: { analytics_storage: 'denied', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' } });
     // An advertising event reaches the dataLayer for GTM; nothing is sent to GA4 (no gtag events).
     await page.locator('.tier-grid').scrollIntoViewIfNeeded();
     await expect.poll(async () => (await adEvents(page)).filter((e) => e.event === 'sygma.view_item').length).toBeGreaterThan(0);
@@ -362,7 +366,7 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
     });
     await page.goto('/');
     await expect(page.getByTestId('consent-banner')).toBeVisible();
-    expect(await page.evaluate(() => typeof window.gtag)).toBe('undefined');
+    expect(await page.evaluate(() => document.querySelector('script[src*="googletagmanager.com/gtag/js"]') === null)).toBe(true);
   });
 
   test('the Customize view has no accessibility violations', async ({ page }) => {
@@ -372,5 +376,55 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
     await page.getByTestId('consent-banner').getByRole('button', { name: 'Customize' }).click();
     const r = await new AxeBuilder({ page }).include('[data-testid="consent-banner"]').withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
     expect(r.violations).toEqual([]);
+  });
+});
+
+test.describe('Google Consent Mode default and CSP (corrections 1 and 2)', () => {
+  const consentCalls = (page: Page) =>
+    page.evaluate(() =>
+      (window.dataLayer ?? []).map((a) => Array.from(a as ArrayLike<unknown>)).filter((a) => a[0] === 'consent').map((a) => ({ mode: a[1], state: a[2] as Record<string, unknown> })),
+    );
+  const DENIED = { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 };
+
+  for (const [label, consent, expected] of [
+    ['no choice yet', undefined, null],
+    ['Decline all', 'denied', null],
+    ['Analytics only', { analytics: 'granted', marketing: 'denied' }, { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' }],
+    ['Accept all', 'granted', { analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' }],
+  ] as const) {
+    test(`${label}: default « denied » is the very first dataLayer entry, then the matching update`, async ({ page }) => {
+      const hits = await stubThirdParties(page);
+      await prepare(page, consent as Parameters<typeof prepare>[1]);
+      await page.goto('/');
+      await page.waitForTimeout(2500);
+      const first = await page.evaluate(() => Array.from((window.dataLayer ?? [])[0] as ArrayLike<unknown>));
+      expect(first).toEqual(['consent', 'default', DENIED]);
+      const calls = await consentCalls(page);
+      if (expected === null) {
+        // No choice / refusal: the default stays « denied » and nothing Google or Clarity is requested.
+        expect(calls).toEqual([{ mode: 'default', state: DENIED }]);
+        expect(hits).toEqual([]);
+      } else {
+        expect(calls.at(-1)).toEqual({ mode: 'update', state: expected });
+      }
+    });
+  }
+
+  test('the update reaches Google before the first tag request (order in the dataLayer)', async ({ page }) => {
+    await stubThirdParties(page);
+    await prepare(page, 'granted');
+    await page.goto('/');
+    await expect.poll(() => page.evaluate(() => document.querySelector('script[data-sygma="ga4"]') !== null)).toBe(true);
+    const order = await page.evaluate(() => (window.dataLayer ?? []).map((a) => { const x = Array.from(a as ArrayLike<unknown>); return x.length ? `${x[0]}:${x[1]}` : (a as { event?: string }).event ?? '?'; }));
+    expect(order.indexOf('consent:update')).toBeGreaterThan(order.indexOf('consent:default'));
+    expect(order.indexOf('consent:update')).toBeLessThan(order.indexOf('config:G-258WWPPN8Y'));
+    expect(order.indexOf('consent:update')).toBeLessThan(order.indexOf('gtm.js'));
+  });
+
+  test('CSP allows GA4 hits to analytics.google.com', async ({ page }) => {
+    await page.route('https://analytics.google.com/**', (route) => route.fulfill({ status: 204, body: '' }));
+    await page.goto('/');
+    const ok = await page.evaluate(() => fetch('https://analytics.google.com/g/collect?v=2', { method: 'POST', mode: 'no-cors' }).then(() => true).catch(() => false));
+    expect(ok).toBe(true);
   });
 });

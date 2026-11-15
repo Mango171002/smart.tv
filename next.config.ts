@@ -7,7 +7,9 @@ const isDev = process.env.NODE_ENV !== 'production';
 // - Google Analytics 4 and Microsoft Clarity, loaded only after Analytics consent;
 // - Google Tag Manager and the advertising platforms it will load (Google Ads, Meta, TikTok — configured
 //   in GTM, phase 2), loaded only after Marketing consent. Allowed here so that phase 2 needs no deploy.
-const GA = ['https://www.googletagmanager.com', 'https://*.google-analytics.com', 'https://*.analytics.google.com'];
+// GA4 hits go to www.google-analytics.com, region1.google-analytics.com… and, when ad consent is granted,
+// to analytics.google.com itself (a wildcard does not cover the bare domain).
+const GA = ['https://www.googletagmanager.com', 'https://*.google-analytics.com', 'https://analytics.google.com', 'https://*.analytics.google.com'];
 const CLARITY = ['https://www.clarity.ms', 'https://*.clarity.ms', 'https://c.bing.com'];
 const ADS_SCRIPTS = ['https://www.googleadservices.com', 'https://googleads.g.doubleclick.net', 'https://connect.facebook.net', 'https://analytics.tiktok.com'];
 const ADS_HITS = [

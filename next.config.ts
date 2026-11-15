@@ -4,16 +4,26 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 // The browser only talks to this origin (Supabase is called from the server), plus:
 // - Cloudflare Web Analytics (cookie-less, owner decision 14/11/2026);
-// - Google Analytics 4 and Microsoft Clarity, which the page loads only after cookie consent.
+// - Google Analytics 4 and Microsoft Clarity, loaded only after Analytics consent;
+// - Google Tag Manager and the advertising platforms it will load (Google Ads, Meta, TikTok — configured
+//   in GTM, phase 2), loaded only after Marketing consent. Allowed here so that phase 2 needs no deploy.
 const GA = ['https://www.googletagmanager.com', 'https://*.google-analytics.com', 'https://*.analytics.google.com'];
 const CLARITY = ['https://www.clarity.ms', 'https://*.clarity.ms', 'https://c.bing.com'];
+const ADS_SCRIPTS = ['https://www.googleadservices.com', 'https://googleads.g.doubleclick.net', 'https://connect.facebook.net', 'https://analytics.tiktok.com'];
+const ADS_HITS = [
+  'https://www.googleadservices.com', 'https://googleads.g.doubleclick.net', 'https://*.doubleclick.net', 'https://www.google.com',
+  'https://pagead2.googlesyndication.com', 'https://www.facebook.com', 'https://connect.facebook.net', 'https://analytics.tiktok.com', 'https://*.tiktok.com',
+];
+// Google Tag Manager preview / Tag Assistant (debugging the container).
+const GTM_PREVIEW = ['https://tagassistant.google.com'];
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms${isDev ? " 'unsafe-eval'" : ''}`,
-  "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: ${[...GA, ...CLARITY].join(' ')}`,
+  `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms ${[...ADS_SCRIPTS, ...GTM_PREVIEW].join(' ')}${isDev ? " 'unsafe-eval'" : ''}`,
+  `style-src 'self' 'unsafe-inline' ${GTM_PREVIEW.join(' ')}`,
+  `img-src 'self' data: ${[...GA, ...CLARITY, ...ADS_HITS, ...GTM_PREVIEW].join(' ')}`,
   "font-src 'self'",
-  `connect-src 'self' https://cloudflareinsights.com ${[...GA, ...CLARITY].join(' ')}`,
+  `connect-src 'self' https://cloudflareinsights.com ${[...GA, ...CLARITY, ...ADS_HITS, ...GTM_PREVIEW].join(' ')}`,
+  `frame-src https://td.doubleclick.net https://www.googletagmanager.com ${GTM_PREVIEW.join(' ')}`,
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",

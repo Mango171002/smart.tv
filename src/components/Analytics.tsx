@@ -12,9 +12,9 @@ export function Analytics() {
   const pathname = usePathname();
 
   useEffect(() => {
-    let started = false;
+    // Loads whatever the visitor accepted; safe to call several times (each script loads once).
     const start = () => {
-      if (!started && startAnalytics()) started = true;
+      startAnalytics();
     };
     // Already consented: load after the page is ready, when the browser is idle (never blocks rendering).
     const later = () => {
@@ -23,10 +23,8 @@ export function Analytics() {
     };
     if (document.readyState === 'complete') later();
     else window.addEventListener('load', later, { once: true });
-    // Consent given now: start immediately.
-    const onConsent = (e: Event) => {
-      if ((e as CustomEvent<string>).detail === 'granted') start();
-    };
+    // A choice was just saved: start what it allows immediately.
+    const onConsent = () => start();
     window.addEventListener(CONSENT_EVENT, onConsent);
     // WhatsApp contact clicks (chat links and the WhatsApp channel). Only the link type is sent.
     const onClick = (e: MouseEvent) => {

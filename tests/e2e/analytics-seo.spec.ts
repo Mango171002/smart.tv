@@ -15,12 +15,26 @@ async function stubThirdParties(page: Page) {
   return hits;
 }
 
-/** Allows analytics on the local test host (QA flag) and optionally pre-sets a consent choice. */
-async function prepare(page: Page, consent?: 'granted' | 'denied') {
+/** Allows analytics on the local test host (QA flag) and optionally pre-sets the consent choices. */
+async function prepare(page: Page, consent?: 'granted' | 'denied' | { analytics: 'granted' | 'denied'; marketing: 'granted' | 'denied' }) {
+  const state = consent === undefined ? null : typeof consent === 'string' ? { analytics: consent, marketing: consent } : consent;
   await page.addInitScript((c) => {
     localStorage.setItem('sygma_analytics_force', '1');
-    if (c) localStorage.setItem('sygma_consent', JSON.stringify({ v: 1, analytics: c, ts: new Date().toISOString() }));
-  }, consent ?? null);
+    // Only once per tab: a reload (e.g. after withdrawing consent) must keep the visitor's new choice.
+    if (c && !sessionStorage.getItem('sygma_prepared')) {
+      localStorage.setItem('sygma_consent', JSON.stringify({ v: 2, ...c, ts: new Date().toISOString() }));
+      sessionStorage.setItem('sygma_prepared', '1');
+    }
+  }, state);
+}
+
+/** Advertising messages pushed for GTM ({ event: 'sygma.<name>', event_id, sygma }). */
+async function adEvents(page: Page) {
+  return page.evaluate(() =>
+    (window.dataLayer ?? [])
+      .filter((a): a is { event: string; event_id: string; sygma: Record<string, unknown> } => typeof (a as { event?: unknown }).event === 'string' && (a as { event: string }).event.startsWith('sygma.'))
+      .map((a) => ({ event: a.event, event_id: a.event_id, sygma: a.sygma })),
+  );
 }
 
 /** GA4 events pushed by the site (gtag('event', name, params)). */
@@ -48,17 +62,17 @@ test.describe('cookie consent', () => {
     await dialog.getByRole('button', { name: 'Close' }).click({ trial: true });
   });
 
-  test('nothing loads before a choice; Decline keeps everything off', async ({ page }) => {
+  test('nothing loads before a choice; Decline all keeps everything off', async ({ page }) => {
     const hits = await stubThirdParties(page);
     await prepare(page);
     await page.goto('/');
     const banner = page.getByTestId('consent-banner');
     await expect(banner).toBeVisible();
-    await expect(banner.getByRole('button', { name: 'Accept' })).toBeVisible();
+    await expect(banner.getByRole('button', { name: 'Accept all' })).toBeVisible();
     await page.waitForTimeout(1500);
     expect(hits).toEqual([]);
     expect(await page.evaluate(() => typeof window.gtag)).toBe('undefined');
-    await banner.getByRole('button', { name: 'Decline' }).click();
+    await banner.getByRole('button', { name: 'Decline all' }).click();
     await expect(banner).toBeHidden();
     await page.reload();
     await expect(page.getByTestId('consent-banner')).toHaveCount(0);
@@ -67,11 +81,11 @@ test.describe('cookie consent', () => {
     expect(await page.evaluate(() => document.cookie)).not.toMatch(/_ga|_clck/);
   });
 
-  test('Accept loads GA4 and Clarity once, with one page view per path', async ({ page }) => {
+  test('Accept all loads GA4, Clarity and GTM once, with one page view per path', async ({ page }) => {
     const hits = await stubThirdParties(page);
     await prepare(page);
     await page.goto('/');
-    await page.getByTestId('consent-banner').getByRole('button', { name: 'Accept' }).click();
+    await page.getByTestId('consent-banner').getByRole('button', { name: 'Accept all' }).click();
     await expect.poll(() => hits.some((h) => h.includes('gtag/js?id=G-258WWPPN8Y'))).toBe(true);
     await expect.poll(() => hits.some((h) => h.includes('clarity.ms/tag/ze1jvwh69q'))).toBe(true);
     // The first page view is GA's own (config); the site sends only in-site navigations.
@@ -90,6 +104,7 @@ test.describe('cookie consent', () => {
     expect(views).toEqual(['/legal/terms']);
     expect(hits.filter((h) => h.includes('gtag/js')).length).toBe(1);
     expect(hits.filter((h) => h.includes('clarity.ms/tag/')).length).toBe(1);
+    expect(hits.filter((h) => h.includes('gtm.js?id=GTM-MGCLXP5L')).length).toBe(1);
     const consent = await page.evaluate(() => (window.clarity?.q ?? []).map((a) => Array.from(a as ArrayLike<unknown>)[0]));
     expect(consent).toContain('consentv2');
   });
@@ -110,7 +125,7 @@ test.describe('cookie consent', () => {
     await expect.poll(() => page.evaluate(() => typeof window.gtag)).toBe('function');
     await context.addCookies([{ name: '_ga', value: 'GA1.1.1', url: page.url() }, { name: '_clck', value: 'x', url: page.url() }]);
     await page.locator('footer').getByRole('button', { name: 'Cookie settings' }).click();
-    await page.getByTestId('consent-banner').getByRole('button', { name: 'Decline' }).click();
+    await page.getByTestId('consent-banner').getByRole('button', { name: 'Decline all' }).click();
     // The page reloads: the scripts are gone.
     await expect.poll(() => page.evaluate(() => typeof window.gtag).catch(() => 'reloading'), { timeout: 10_000 }).toBe('undefined');
     expect((await context.cookies(page.url())).map((c) => c.name)).not.toContain('_ga');
@@ -235,5 +250,127 @@ test.describe('technical SEO', () => {
     const res = await request.get('/legal/terms?x=1', { headers: { host: 'www.sygmatv.com' }, maxRedirects: 0 });
     expect(res.status()).toBe(308);
     expect(res.headers()['location']).toBe('https://sygmatv.com/legal/terms?x=1');
+  });
+});
+
+test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
+  const consentCalls = (page: Page) =>
+    page.evaluate(() =>
+      (window.dataLayer ?? []).map((a) => Array.from(a as ArrayLike<unknown>)).filter((a) => a[0] === 'consent').map((a) => ({ mode: a[1], state: a[2] as Record<string, string> })),
+    );
+
+  test('Customize → Analytics only: GA4 + Clarity, no GTM, ads consent denied', async ({ page }) => {
+    const hits = await stubThirdParties(page);
+    await prepare(page);
+    await page.goto('/');
+    const banner = page.getByTestId('consent-banner');
+    await banner.getByRole('button', { name: 'Customize' }).click();
+    await banner.getByRole('checkbox', { name: /Analytics/ }).check();
+    await banner.getByRole('button', { name: 'Save my choices' }).click();
+    await expect.poll(() => hits.some((h) => h.includes('gtag/js'))).toBe(true);
+    await page.waitForTimeout(1000);
+    expect(hits.some((h) => h.includes('gtm.js'))).toBe(false);
+    const [first] = await consentCalls(page);
+    expect(first).toEqual({ mode: 'default', state: { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' } });
+  });
+
+  test('Customize → Marketing only: GTM loads, GA4 and Clarity stay off; ad events carry an event_id', async ({ page }) => {
+    const hits = await stubThirdParties(page);
+    await prepare(page);
+    await page.goto('/');
+    const banner = page.getByTestId('consent-banner');
+    await banner.getByRole('button', { name: 'Customize' }).click();
+    await banner.getByRole('checkbox', { name: /Marketing/ }).check();
+    await banner.getByRole('button', { name: 'Save my choices' }).click();
+    await expect.poll(() => hits.filter((h) => h.includes('gtm.js?id=GTM-MGCLXP5L')).length).toBe(1);
+    await page.waitForTimeout(1000);
+    expect(hits.some((h) => h.includes('gtag/js') || h.includes('clarity.ms'))).toBe(false);
+    const [first] = await consentCalls(page);
+    expect(first).toEqual({ mode: 'default', state: { analytics_storage: 'denied', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' } });
+    // An advertising event reaches the dataLayer for GTM; nothing is sent to GA4 (no gtag events).
+    await page.locator('.tier-grid').scrollIntoViewIfNeeded();
+    await expect.poll(async () => (await adEvents(page)).filter((e) => e.event === 'sygma.view_item').length).toBeGreaterThan(0);
+    expect((await gaEvents(page)).length).toBe(0);
+  });
+
+  test('Accept all: ad events for view, checkout and lead — unique event_id, no personal data, GA4 unchanged', async ({ page }) => {
+    await stubThirdParties(page);
+    await prepare(page, 'granted');
+    await page.route('**/api/contact', (route) => route.fulfill({ status: 201, json: { ok: true } }));
+    await page.goto('/');
+    await page.locator('#plans').scrollIntoViewIfNeeded();
+    await page.locator('.offers[data-ready]').waitFor();
+    await page.locator('.tier-grid').scrollIntoViewIfNeeded();
+    await page.locator('.sim-layout [data-tier="ultra"]').click();
+    await page.getByRole('button', { name: /^Pre-register for free/ }).click();
+    const dialog = page.getByTestId('checkout-dialog');
+    await dialog.getByLabel('Email address').fill('ads.qa@example.test');
+    await dialog.getByLabel('Your country').click();
+    await dialog.getByRole('combobox', { name: 'Type a country…' }).fill('fran');
+    await page.keyboard.press('Enter');
+    await dialog.getByLabel('WhatsApp number').fill('0612345678');
+    await dialog.getByLabel(/I agree to be contacted/).check();
+    await dialog.getByRole('button', { name: /Continue/ }).click();
+    await dialog.getByRole('button', { name: /Confirm my pre-registration/ }).click();
+    await expect(dialog.getByRole('heading', { name: 'You are pre-registered!' })).toBeVisible();
+
+    const ads = await adEvents(page);
+    const names = ads.map((e) => e.event);
+    expect(names).toContain('sygma.view_item');
+    expect(names.filter((n) => n === 'sygma.begin_checkout')).toHaveLength(1);
+    expect(names.filter((n) => n === 'sygma.generate_lead')).toHaveLength(1);
+    expect(names).not.toContain('sygma.select_item');
+    expect(names.some((n) => n.includes('purchase'))).toBe(false);
+    const ids = ads.map((e) => e.event_id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const id of ids) expect(id).toMatch(/^[0-9a-f-]{36}$/);
+    expect(ads.find((e) => e.event === 'sygma.generate_lead')!.sygma).toEqual({ event_name: 'generate_lead', lead_type: 'order', currency: 'USD', value: expect.any(Number), item_id: 'ultra-12m-1' });
+    expect(JSON.stringify(ads)).not.toMatch(/ads\.qa|example\.test|612345678/);
+    // GA4 events are unchanged: same names, no event_id added.
+    const ga = await gaEvents(page);
+    expect(ga.filter((e) => e.name === 'generate_lead')).toHaveLength(1);
+    expect(JSON.stringify(ga)).not.toContain('event_id');
+  });
+
+  test('withdrawing Marketing only: GTM unloaded, ad cookies removed, Analytics kept', async ({ page, context }) => {
+    const hits = await stubThirdParties(page);
+    await prepare(page, 'granted');
+    await page.goto('/');
+    await expect.poll(() => hits.some((h) => h.includes('gtm.js'))).toBe(true);
+    await context.addCookies([{ name: '_fbp', value: 'fb.1.1', url: page.url() }, { name: '_gcl_au', value: '1.1', url: page.url() }, { name: '_ga', value: 'GA1.1.1', url: page.url() }]);
+    await page.locator('footer').getByRole('button', { name: 'Cookie settings' }).click();
+    const banner = page.getByTestId('consent-banner');
+    await expect(banner.getByRole('checkbox', { name: /Marketing/ })).toBeChecked();
+    await banner.getByRole('checkbox', { name: /Marketing/ }).uncheck();
+    hits.length = 0;
+    await banner.getByRole('button', { name: 'Save my choices' }).click();
+    await expect.poll(() => page.evaluate(() => document.querySelector('script[data-sygma="gtm"]') === null).catch(() => false), { timeout: 10_000 }).toBe(true);
+    await page.waitForTimeout(2500);
+    const names = (await context.cookies(page.url())).map((c) => c.name);
+    expect(names).not.toContain('_fbp');
+    expect(names).not.toContain('_gcl_au');
+    expect(names).toContain('_ga');
+    expect(hits.some((h) => h.includes('gtm.js'))).toBe(false);
+    expect(hits.some((h) => h.includes('gtag/js'))).toBe(true);
+  });
+
+  test('a choice made under the previous policy (Analytics only) is asked again', async ({ page }) => {
+    await stubThirdParties(page);
+    await page.addInitScript(() => {
+      localStorage.setItem('sygma_analytics_force', '1');
+      localStorage.setItem('sygma_consent', JSON.stringify({ v: 1, analytics: 'granted', ts: '2026-11-15T00:00:00Z' }));
+    });
+    await page.goto('/');
+    await expect(page.getByTestId('consent-banner')).toBeVisible();
+    expect(await page.evaluate(() => typeof window.gtag)).toBe('undefined');
+  });
+
+  test('the Customize view has no accessibility violations', async ({ page }) => {
+    await stubThirdParties(page);
+    await prepare(page);
+    await page.goto('/');
+    await page.getByTestId('consent-banner').getByRole('button', { name: 'Customize' }).click();
+    const r = await new AxeBuilder({ page }).include('[data-testid="consent-banner"]').withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
+    expect(r.violations).toEqual([]);
   });
 });

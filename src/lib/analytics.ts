@@ -1,14 +1,24 @@
 /**
- * Consent + analytics (Google Analytics 4 and Microsoft Clarity), client side.
+ * Consent + measurement, client side.
  *
- * - Nothing is loaded and no cookie is set before the visitor accepts (« Accept » in ConsentBanner).
- * - Each script is injected once; page views are sent manually on route changes (no duplicates
- *   from hash links). Business events go through `track()`, which only sends when allowed.
- * - Events never carry personal data (no name, e-mail, phone): only plan, price and form type.
+ * Two independent consents:
+ * - Analytics → Google Analytics 4 (gtag) and Microsoft Clarity — unchanged events.
+ * - Marketing → Google Tag Manager (advertising platforms only, configured in GTM — phase 2).
+ *
+ * - Nothing loads and no cookie is set before the matching consent. Google Consent Mode follows both
+ *   choices (analytics_storage ← Analytics; ad_storage, ad_user_data, ad_personalization ← Marketing).
+ * - Each script is injected once. Withdrawing a consent removes its cookies and reloads the page.
+ * - GA4 events are unchanged. Advertising events are pushed to the dataLayer under their own names
+ *   (`sygma.<event>`) with a unique `event_id`, so GA4 never counts them twice.
+ * - No personal data (name, e-mail, phone) in any event: only plan, price, currency and form type.
  */
 import { ANALYTICS } from '@/config/analytics';
 
 export type ConsentChoice = 'granted' | 'denied';
+export interface ConsentState {
+  analytics: ConsentChoice;
+  marketing: ConsentChoice;
+}
 
 type Gtag = (...args: unknown[]) => void;
 type Clarity = ((...args: unknown[]) => void) & { q?: unknown[] };
@@ -31,32 +41,26 @@ function safeGet(key: string): string | null {
   }
 }
 
-/** The stored choice, or null when the visitor has not decided yet (or the policy version changed). */
-export function readConsent(): ConsentChoice | null {
+const choice = (v: unknown): ConsentChoice | null => (v === 'granted' ? 'granted' : v === 'denied' ? 'denied' : null);
+
+/** The stored choices, or null when the visitor has not decided yet (or the policy version changed). */
+export function readConsentState(): ConsentState | null {
   const raw = safeGet(ANALYTICS.consentKey);
   if (!raw) return null;
   try {
-    const v = JSON.parse(raw) as { v?: number; analytics?: string };
+    const v = JSON.parse(raw) as { v?: number; analytics?: string; marketing?: string };
     if (v.v !== ANALYTICS.consentVersion) return null;
-    return v.analytics === 'granted' ? 'granted' : v.analytics === 'denied' ? 'denied' : null;
+    const analytics = choice(v.analytics);
+    const marketing = choice(v.marketing);
+    return analytics && marketing ? { analytics, marketing } : null;
   } catch {
     return null;
   }
 }
 
-export function saveConsent(choice: ConsentChoice): void {
-  const previous = readConsent();
-  try {
-    window.localStorage.setItem(ANALYTICS.consentKey, JSON.stringify({ v: ANALYTICS.consentVersion, analytics: choice, ts: new Date().toISOString() }));
-  } catch {
-    // Storage blocked: the choice applies to this page view only.
-  }
-  window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: choice }));
-  if (choice === 'denied' && previous === 'granted') {
-    revokeAnalytics();
-    // Fully unload the scripts already running in this page (nothing more is sent after the choice).
-    window.location.reload();
-  }
+/** Analytics choice (GA4 + Clarity). */
+export function readConsent(): ConsentChoice | null {
+  return readConsentState()?.analytics ?? null;
 }
 
 export function analyticsHostAllowed(): boolean {
@@ -65,36 +69,53 @@ export function analyticsHostAllowed(): boolean {
 
 let gaLoaded = false;
 let clarityLoaded = false;
+let gtmLoaded = false;
+let consentModeSent = false;
 let lastPageView = '';
 
-function inject(src: string): void {
+function ensureGtag(): Gtag {
+  window.dataLayer = window.dataLayer || [];
+  if (!window.gtag) {
+    // eslint-disable-next-line prefer-rest-params -- the official gtag stub pushes the `arguments` object
+    window.gtag = function gtag() { window.dataLayer!.push(arguments); };
+  }
+  return window.gtag;
+}
+
+/** Google Consent Mode: « default » before the first Google tag, « update » afterwards. */
+function applyGoogleConsent(state: ConsentState): void {
+  const g = ensureGtag();
+  g('consent', consentModeSent ? 'update' : 'default', {
+    analytics_storage: state.analytics,
+    ad_storage: state.marketing,
+    ad_user_data: state.marketing,
+    ad_personalization: state.marketing,
+  });
+  consentModeSent = true;
+}
+
+function inject(src: string, tag?: string): void {
   const s = document.createElement('script');
   s.async = true;
   s.src = src;
+  if (tag) s.dataset.sygma = tag;
   document.head.appendChild(s);
 }
 
 function loadGa(): void {
   if (gaLoaded || document.querySelector('script[data-sygma="ga4"]')) return;
   gaLoaded = true;
-  window.dataLayer = window.dataLayer || [];
-  // eslint-disable-next-line prefer-rest-params -- the official gtag stub pushes the `arguments` object
-  window.gtag = function gtag() { window.dataLayer!.push(arguments); };
-  window.gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
-  window.gtag('js', new Date());
+  const g = ensureGtag();
+  g('js', new Date());
   const debug = new URLSearchParams(window.location.search).has('analytics_debug');
-  window.gtag('config', ANALYTICS.ga4MeasurementId, {
+  g('config', ANALYTICS.ga4MeasurementId, {
     // GA sends the first page view itself; in-site navigations are sent by trackPageView()
     // (Next.js navigations are not seen by GA's own history detection; #hash links are not page views).
     allow_google_signals: false,
     allow_ad_personalization_signals: false,
     ...(debug ? { debug_mode: true } : {}),
   });
-  const s = document.createElement('script');
-  s.async = true;
-  s.dataset.sygma = 'ga4';
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS.ga4MeasurementId}`;
-  document.head.appendChild(s);
+  inject(`https://www.googletagmanager.com/gtag/js?id=${ANALYTICS.ga4MeasurementId}`, 'ga4');
 }
 
 function loadClarity(): void {
@@ -110,31 +131,74 @@ function loadClarity(): void {
   window.clarity('consentv2', { ad_Storage: 'denied', analytics_Storage: 'granted' });
 }
 
-/** Loads GA4 + Clarity once, if consent is granted and the host is allowed. */
+/** Google Tag Manager (advertising platforms). Official snippet, without the <noscript> iframe (it cannot respect consent). */
+function loadGtm(): void {
+  if (gtmLoaded || !ANALYTICS.gtmEnabled || document.querySelector('script[data-sygma="gtm"]')) return;
+  gtmLoaded = true;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+  inject(`https://www.googletagmanager.com/gtm.js?id=${ANALYTICS.gtmContainerId}`, 'gtm');
+}
+
+/** Loads what the visitor accepted (idempotent): GA4 + Clarity for Analytics, GTM for Marketing. */
 export function startAnalytics(): boolean {
-  if (readConsent() !== 'granted' || !analyticsHostAllowed()) return false;
-  // The current page is counted by GA's own initial page view.
-  if (!gaLoaded) lastPageView = window.location.pathname + window.location.search;
-  loadGa();
-  loadClarity();
-  return true;
+  const state = readConsentState();
+  if (!state || !analyticsHostAllowed()) return false;
+  const wantsGa = state.analytics === 'granted' && !gaLoaded;
+  const wantsGtm = state.marketing === 'granted' && !gtmLoaded && ANALYTICS.gtmEnabled;
+  if (wantsGa || wantsGtm) applyGoogleConsent(state);
+  if (wantsGa) {
+    // The current page is counted by GA's own initial page view.
+    lastPageView = window.location.pathname + window.location.search;
+    loadGa();
+    loadClarity();
+  }
+  if (wantsGtm) loadGtm();
+  return gaLoaded || gtmLoaded;
 }
 
 export function analyticsActive(): boolean {
   return gaLoaded && readConsent() === 'granted';
 }
 
-/** Consent withdrawn: stop collection, tell both tools, remove their cookies. */
-function revokeAnalytics(): void {
-  window.gtag?.('consent', 'update', { analytics_storage: 'denied' });
-  window.clarity?.('consentv2', { ad_Storage: 'denied', analytics_Storage: 'denied' });
-  window.clarity?.('consent', false);
+export function marketingActive(): boolean {
+  return gtmLoaded && readConsentState()?.marketing === 'granted';
+}
+
+function removeCookies(pattern: RegExp): void {
   const host = window.location.hostname.replace(/^www\./, '');
   for (const name of document.cookie.split(';').map((c) => c.split('=')[0]!.trim())) {
-    if (/^(_ga|_gid|_gat|_clck|_clsk|CLID|ANONCHK|MR|MUID|SM)/.test(name)) {
-      for (const domain of ['', `; domain=.${host}`, `; domain=${host}`]) document.cookie = `${name}=; Max-Age=0; path=/${domain}`;
-    }
+    if (!name || !pattern.test(name)) continue;
+    for (const domain of ['', `; domain=.${host}`, `; domain=${host}`]) document.cookie = `${name}=; Max-Age=0; path=/${domain}`;
   }
+}
+
+const ANALYTICS_COOKIES = /^(_ga|_gid|_gat|_clck|_clsk|CLID|ANONCHK|MR|MUID|SM)/;
+// Google Ads, Meta, TikTok, Microsoft Ads first-party cookies (set later by GTM tags, phase 2).
+const MARKETING_COOKIES = /^(_gcl_|_gac_|_fbp|_fbc|_ttp|_tt_|ttcsid|_uet)/;
+
+/** Saves both choices; withdrawing a consent removes its cookies and reloads the page (scripts fully unloaded). */
+export function saveConsent(next: ConsentState): void {
+  const previous = readConsentState();
+  try {
+    window.localStorage.setItem(ANALYTICS.consentKey, JSON.stringify({ v: ANALYTICS.consentVersion, ...next, ts: new Date().toISOString() }));
+  } catch {
+    // Storage blocked: the choice applies to this page view only.
+  }
+  const lostAnalytics = previous?.analytics === 'granted' && next.analytics === 'denied';
+  const lostMarketing = previous?.marketing === 'granted' && next.marketing === 'denied';
+  if (consentModeSent) applyGoogleConsent(next);
+  if (lostAnalytics || lostMarketing) {
+    if (lostAnalytics) {
+      window.clarity?.('consentv2', { ad_Storage: 'denied', analytics_Storage: 'denied' });
+      window.clarity?.('consent', false);
+      removeCookies(ANALYTICS_COOKIES);
+    }
+    if (lostMarketing) removeCookies(MARKETING_COOKIES);
+    window.location.reload();
+    return;
+  }
+  window.dispatchEvent(new CustomEvent(CONSENT_EVENT, { detail: next }));
 }
 
 /** One page view per in-site navigation (path + query); hash-only changes (section links) are not page views. */
@@ -171,15 +235,53 @@ export function planItem(tier: string, tierName: string, term: string, termLabel
   };
 }
 
-/** Sends a business event to GA4 (and a matching Clarity custom event) when analytics is active. */
+/**
+ * Advertising events pushed to the dataLayer for GTM (phase 2 tags). `purchase` is reserved for the
+ * server (sent only after a confirmed payment — phase 3), never from the browser.
+ */
+export const AD_EVENTS = ['view_item', 'begin_checkout', 'generate_lead', 'contact_whatsapp'] as const;
+const AD_PARAMS = ['currency', 'value', 'items', 'item_id', 'lead_type', 'link_type', 'placement'] as const;
+const ITEM_KEYS = ['item_id', 'item_name', 'item_category', 'item_variant', 'price', 'quantity'] as const;
+
+export function newEventId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+/** Allow-list of non-personal parameters (anything else, e.g. a future field with personal data, is dropped). */
+export function adPayload(params: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const k of AD_PARAMS) {
+    if (params[k] === undefined) continue;
+    out[k] =
+      k === 'items' && Array.isArray(params.items)
+        ? (params.items as Record<string, unknown>[]).map((it) => Object.fromEntries(ITEM_KEYS.filter((ik) => it[ik] !== undefined).map((ik) => [ik, it[ik]])))
+        : params[k];
+  }
+  return out;
+}
+
+function pushAdEvent(event: string, params: Record<string, unknown>): void {
+  window.dataLayer = window.dataLayer || [];
+  // Clear the previous event's data (GTM merges dataLayer objects), then push the new one.
+  window.dataLayer.push({ sygma: null, event_id: null });
+  window.dataLayer.push({ event: `sygma.${event}`, event_id: newEventId(), sygma: { event_name: event, ...adPayload(params) } });
+}
+
+/**
+ * Sends a business event: to GA4 (+ Clarity) with Analytics consent — unchanged — and, for the
+ * advertising events, to the dataLayer for GTM with Marketing consent.
+ */
 export function track(event: string, params: Record<string, unknown> = {}): void {
-  // Consent already given but the deferred loading has not run yet: start now so the event is not lost.
-  // Never let analytics break the site (orders, forms): any error here is swallowed.
+  // Never let measurement break the site (orders, forms): any error here is swallowed.
   try {
-    if (!gaLoaded) startAnalytics();
-    if (!analyticsActive()) return;
-    window.gtag!('event', event, params);
-    window.clarity?.('event', event);
+    // Consent already given but the deferred loading has not run yet: start now so the event is not lost.
+    startAnalytics();
+    if (analyticsActive()) {
+      window.gtag!('event', event, params);
+      window.clarity?.('event', event);
+    }
+    if (marketingActive() && (AD_EVENTS as readonly string[]).includes(event)) pushAdEvent(event, params);
   } catch {
     // ignore
   }

@@ -54,15 +54,15 @@ jobs:
       - run: npm test
       - name: Build and deploy
         run: npx opennextjs-cloudflare build && npx opennextjs-cloudflare deploy
-      - name: Customer e-mails (Resend) — API key
+      - name: Customer e-mails (Brevo) — API key
         env:
-          RESEND_KEY: ${{ secrets.RESEND_API_KEY }}
+          BREVO_KEY: ${{ secrets.BREVO_API_KEY }}
         run: |
-          # Optional: customer e-mails stay off until the RESEND_API_KEY secret exists in GitHub.
-          if [ -z "$RESEND_KEY" ]; then echo "::notice::No RESEND_API_KEY secret: customer e-mails are not sent yet."; exit 0; fi
-          RESEND_KEY="$(printf '%s' "$RESEND_KEY" | tr -d '[:space:]')"
-          echo "::add-mask::$RESEND_KEY"
-          printf '%s' "$RESEND_KEY" | npx wrangler secret put RESEND_API_KEY >/dev/null && echo "RESEND_API_KEY set."
+          # Optional: customer e-mails stay off until the BREVO_API_KEY secret exists in GitHub.
+          if [ -z "$BREVO_KEY" ]; then echo "::notice::No BREVO_API_KEY secret: customer e-mails are not sent yet."; exit 0; fi
+          BREVO_KEY="$(printf '%s' "$BREVO_KEY" | tr -d '[:space:]')"
+          echo "::add-mask::$BREVO_KEY"
+          printf '%s' "$BREVO_KEY" | npx wrangler secret put BREVO_API_KEY >/dev/null && echo "BREVO_API_KEY set."
       - name: Operations bot (Telegram) — secrets and webhook
         env:
           TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

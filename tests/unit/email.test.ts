@@ -30,32 +30,33 @@ describe('customer e-mail templates', () => {
   });
 });
 
-describe('sending through Resend', () => {
+describe('sending through Brevo', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
   });
   it('does nothing without the API key', async () => {
-    vi.stubEnv('RESEND_API_KEY', '');
+    vi.stubEnv('BREVO_API_KEY', '');
     const f = vi.fn();
     vi.stubGlobal('fetch', f);
     expect(await sendCustomerEmail('trial_received', 'a@b.co', {})).toBe('not_configured');
     expect(f).not.toHaveBeenCalled();
   });
-  it('sends from support@sygmatv.com with reply-to and idempotency key', async () => {
-    vi.stubEnv('RESEND_API_KEY', 're_test');
-    const f = vi.fn().mockResolvedValue(new Response('{"id":"1"}', { status: 200 }));
+  it('sends from support@sygmatv.com with reply-to support', async () => {
+    vi.stubEnv('BREVO_API_KEY', 'xkeysib-test');
+    const f = vi.fn().mockResolvedValue(new Response('{"messageId":"1"}', { status: 201 }));
     vi.stubGlobal('fetch', f);
-    expect(await sendCustomerEmail('request_confirmed', 'a@b.co', {}, 'confirmed-1')).toBe('sent');
+    expect(await sendCustomerEmail('request_confirmed', 'a@b.co', {})).toBe('sent');
     const [url, init] = f.mock.calls[0] as [string, RequestInit];
-    expect(url).toBe('https://api.resend.com/emails');
+    expect(url).toBe('https://api.brevo.com/v3/smtp/email');
+    expect((init.headers as Record<string, string>)['api-key']).toBe('xkeysib-test');
     const body = JSON.parse(String(init.body));
-    expect(body).toMatchObject({ from: 'SYGMA TV+ <support@sygmatv.com>', to: ['a@b.co'], reply_to: 'support@sygmatv.com' });
-    expect((init.headers as Record<string, string>)['idempotency-key']).toBe('confirmed-1');
+    expect(body).toMatchObject({ sender: { email: 'support@sygmatv.com' }, to: [{ email: 'a@b.co' }], replyTo: { email: 'support@sygmatv.com' } });
+    expect(body.htmlContent).toContain('Welcome to SYGMA TV+');
   });
   it('reports a failure without throwing', async () => {
-    vi.stubEnv('RESEND_API_KEY', 're_test');
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('no', { status: 422 })));
+    vi.stubEnv('BREVO_API_KEY', 'xkeysib-test');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('no', { status: 401 })));
     expect(await sendCustomerEmail('trial_received', 'a@b.co', {})).toBe('failed');
   });
 });

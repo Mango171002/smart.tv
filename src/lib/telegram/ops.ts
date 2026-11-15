@@ -321,7 +321,6 @@ async function handleCallback(q: TgCallback) {
         'request_confirmed',
         r.email,
         { name: r.name, phone: r.phone, tier: r.tier, term: r.term, streams: r.streams },
-        `confirmed-${r.id}`,
       );
       mail = sent === 'sent' ? ' · 📧 e-mail envoyé au client' : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
     }

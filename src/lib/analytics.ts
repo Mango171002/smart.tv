@@ -174,8 +174,13 @@ export function planItem(tier: string, tierName: string, term: string, termLabel
 /** Sends a business event to GA4 (and a matching Clarity custom event) when analytics is active. */
 export function track(event: string, params: Record<string, unknown> = {}): void {
   // Consent already given but the deferred loading has not run yet: start now so the event is not lost.
-  if (!gaLoaded) startAnalytics();
-  if (!analyticsActive()) return;
-  window.gtag!('event', event, params);
-  window.clarity?.('event', event);
+  // Never let analytics break the site (orders, forms): any error here is swallowed.
+  try {
+    if (!gaLoaded) startAnalytics();
+    if (!analyticsActive()) return;
+    window.gtag!('event', event, params);
+    window.clarity?.('event', event);
+  } catch {
+    // ignore
+  }
 }

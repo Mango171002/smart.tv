@@ -6,6 +6,7 @@ import { createRateLimiter } from '@/lib/rate-limit';
 import { getPublicSupabase } from '@/lib/supabase/server';
 import { contactSchema, DEVICE_DETAILS } from '@/lib/validation';
 import { notifyNewRequest } from '@/lib/telegram/ops';
+import { sendCustomerEmail } from '@/lib/email/send';
 
 const limiter = createRateLimiter({ limit: 5, windowMs: 10 * 60_000 });
 
@@ -72,5 +73,13 @@ export async function POST(req: Request) {
   }
   // Operations bot: post a live card in the team's Telegram group, after the response is sent.
   after(() => notifyNewRequest(input.kind, input.email).catch((e) => console.warn('[contact] telegram', (e as Error).message)));
+  // Acknowledgement e-mail to the customer (trial request / pre-registration; support answers come from the team).
+  if (input.kind === 'trial_request') {
+    after(() => sendCustomerEmail('trial_received', input.email, { name: input.name, phone: input.phone }).then(() => undefined));
+  } else if (input.kind === 'launch_waitlist') {
+    after(() =>
+      sendCustomerEmail('preregistration_received', input.email, { name: input.name, tier: input.tier, term: input.term, streams: input.streams }).then(() => undefined),
+    );
+  }
   return NextResponse.json({ ok: true }, { status: 201 });
 }

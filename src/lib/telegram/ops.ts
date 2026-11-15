@@ -1,4 +1,5 @@
 import 'server-only';
+import { sendCustomerEmail } from '@/lib/email/send';
 import { getServiceSupabase } from '@/lib/supabase/server';
 import { tg } from './api';
 import {
@@ -310,7 +311,22 @@ async function handleCallback(q: TgCallback) {
   });
   if (!res) return answer('Erreur, réessayez', true);
   if (res.card) await editCard(msg.chat.id, msg.message_id, res.card, settings);
-  const toast = res.ok ? '✅ Fait' : (RESULT_TOAST[res.code ?? ''] ?? 'Action impossible');
+  // « Converti » sends the confirmation e-mail to the customer (once per request: not again after an undo + convert).
+  let mail = '';
+  if (res.ok && res.card && c.action === 'convert' && res.card.request.kind !== 'support') {
+    const converts = res.card.events.filter((e) => e.action === 'convert').length;
+    if (converts <= 1) {
+      const r = res.card.request;
+      const sent = await sendCustomerEmail(
+        'request_confirmed',
+        r.email,
+        { name: r.name, phone: r.phone, tier: r.tier, term: r.term, streams: r.streams },
+        `confirmed-${r.id}`,
+      );
+      mail = sent === 'sent' ? ' · 📧 e-mail envoyé au client' : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
+    }
+  }
+  const toast = res.ok ? `✅ Fait${mail}` : (RESULT_TOAST[res.code ?? ''] ?? 'Action impossible');
   await answer(toast, !res.ok && res.code !== 'stale');
 
   // Silent one-line journal in the "alertes" topic for every successful action.

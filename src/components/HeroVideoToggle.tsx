@@ -35,9 +35,20 @@ export function HeroVideoToggle({ pauseLabel, playLabel }: { pauseLabel: string;
     // starts; the next ones are fetched a few seconds later, before their turn in the cross-fade.
     let t2 = 0;
     let t3 = 0;
+    let t4 = 0;
+    // The cross-fade (CSS) starts only when banner 2 can show a picture, so it is never displayed empty.
+    const startCycle = () => stage?.classList.add('is-cycling');
+    const second = videos[1];
+    if (!second) startCycle();
+    else {
+      second.addEventListener('loadeddata', startCycle, { once: true });
+      second.addEventListener('error', startCycle, { once: true });
+    }
     const startAll = () => {
       const [first, ...rest] = videos;
       if (first) { ensureSrc(first); first.preload = 'auto'; void first.play().catch(() => undefined); }
+      // Safety net: whatever happens (autoplay refused, slow network), the banners cycle on their posters.
+      t4 = window.setTimeout(startCycle, 12000);
       t2 = window.setTimeout(
         () =>
           rest.forEach((v) => {
@@ -64,6 +75,9 @@ export function HeroVideoToggle({ pauseLabel, playLabel }: { pauseLabel: string;
       window.clearTimeout(t);
       window.clearTimeout(t2);
       window.clearTimeout(t3);
+      window.clearTimeout(t4);
+      second?.removeEventListener('loadeddata', startCycle);
+      second?.removeEventListener('error', startCycle);
       window.removeEventListener('load', kick);
       videos.forEach((v) => {
         v.removeEventListener('play', sync);
@@ -86,6 +100,7 @@ export function HeroVideoToggle({ pauseLabel, playLabel }: { pauseLabel: string;
         void v.play().catch(() => undefined);
       });
       stage?.classList.remove('is-paused');
+      stage?.classList.add('is-cycling');
       setPlaying(true);
     }
   };

@@ -2038,6 +2038,9 @@ html { scroll-padding-top: 84px; }
 .hero-stage > video:nth-of-type(2) { animation-delay: -13s; }
 .hero-stage > video:nth-of-type(3) { animation-delay: -7s; }
 .hero-stage.is-paused > video { animation-play-state: paused; }
+/* The cross-fade waits on banner 1 until banner 2 is ready (HeroVideoToggle adds .is-cycling):
+   on slow phones banner 2 was shown before its video and poster had loaded, i.e. empty. */
+.hero-stage:not(.is-cycling) > video { animation-play-state: paused; }
 /* Pause / play the banner videos (WCAG 2.2.2: moving content can be stopped) */
 .hero-pause {
   position: absolute; z-index: 5; display: grid; place-items: center;

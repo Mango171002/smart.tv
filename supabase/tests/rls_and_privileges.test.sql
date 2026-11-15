@@ -326,6 +326,18 @@ select pg_temp.check((public.ops_invoice('20000000-0000-4000-8000-000000000001')
 select pg_temp.check((public.ops_invoice('20000000-0000-4000-8000-000000000001') ->> 'number') ~ '^SYG-[0-9]{4}-[0-9]{4,}$', 'invoice number format SYG-YYYY-NNNN');
 select pg_temp.check((public.ops_invoice('00000000-0000-4000-8000-000000000000') ->> 'code') = 'not_found', 'unknown request has no invoice');
 reset role;
+set role anon;
+select pg_temp.expect_error($$select public.ops_review_claim_due()$$, '42501', 'anon cannot claim review invitations');
+select pg_temp.expect_error($$select review_invite_sent_at from public.contact_requests$$, '42501', 'anon cannot read review invitation dates');
+reset role;
+set role service_role;
+-- the card 2000…0001 was converted just now: not due yet with a 3-day delay, due with no delay
+select pg_temp.check(jsonb_array_length(public.ops_review_claim_due(interval '3 days')) = 0, 'no review invitation before 3 days');
+select pg_temp.check(public.ops_review_claim_due(interval '0 seconds') @> '[{"id": "20000000-0000-4000-8000-000000000001"}]', 'converted request is invited once due');
+select pg_temp.check(jsonb_array_length(public.ops_review_claim_due(interval '0 seconds')) = 0, 'a request is invited only once');
+select public.ops_review_release('20000000-0000-4000-8000-000000000001');
+select pg_temp.check(jsonb_array_length(public.ops_review_claim_due(interval '0 seconds')) = 1, 'a failed send is retried');
+reset role;
 
 select 'PASSED: ' || count(*) || ' assertions' as result from _t;
 rollback;

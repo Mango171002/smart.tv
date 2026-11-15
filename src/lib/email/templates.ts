@@ -4,7 +4,7 @@
  * Wording of e-mails 2 and 3: owner's texts (15/11/2026).
  */
 
-export type EmailKind = 'trial_received' | 'preregistration_received' | 'request_confirmed';
+export type EmailKind = 'trial_received' | 'preregistration_received' | 'request_confirmed' | 'review_invite';
 
 /** Order data attached to the « Converti » e-mail (number given once per request by the database). */
 export interface InvoiceData {
@@ -38,6 +38,8 @@ const SUPPORT = 'support@sygmatv.com';
 const SUPPORT_WHATSAPP = '+44 7412 857594';
 const SUPPORT_WHATSAPP_LINK = 'https://wa.me/447412857594';
 const TAGLINE = 'One World. Endless Entertainment.';
+/** Trustpilot « write a review » page (owner's profile: trustpilot.com/review/sygmatv.com). */
+export const TRUSTPILOT_REVIEW_URL = 'https://www.trustpilot.com/evaluate/sygmatv.com';
 const LOGO = `${SITE}/brand/sygma-logo-512.png`;
 const C = { bg: '#070d17', card: '#0e1826', line: '#1f2c3d', ink: '#f2f5f9', muted: '#9aa7b8', lime: '#d1fe17' };
 
@@ -75,7 +77,7 @@ type Part =
   | { steps: string[] }
   | { note: string }
   | { help: true }
-  | { cta: true };
+  | { cta: true; label?: string; href?: string };
 
 interface Mail {
   subject: string;
@@ -113,7 +115,7 @@ WhatsApp: <a href="${SUPPORT_WHATSAPP_LINK}" style="${a}">${SUPPORT_WHATSAPP}</a
 Email: <a href="mailto:${SUPPORT}" style="${a}">${SUPPORT}</a><br>
 Website: <a href="${SITE}" style="${a}">${SITE}</a></td></tr></table>`;
   }
-  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 4px;"><tr><td bgcolor="${C.lime}" style="border-radius:10px;"><a href="${SITE}" style="display:inline-block;padding:13px 24px;font-size:15px;font-weight:800;color:${C.bg};text-decoration:none;">Visit SYGMA TV+</a></td></tr></table>`;
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 18px;"><tr><td bgcolor="${C.lime}" style="border-radius:10px;"><a href="${part.href ?? SITE}" style="display:inline-block;padding:13px 24px;font-size:15px;font-weight:800;color:${C.bg};text-decoration:none;">${esc(part.label ?? 'Visit SYGMA TV+')}</a></td></tr></table>`;
 }
 
 function partText(part: Part): string {
@@ -124,7 +126,7 @@ function partText(part: Part): string {
   if ('steps' in part) return part.steps.map((s, i) => `${i + 1}. ${strip(s)}`).join('\n');
   if ('note' in part) return strip(part.note);
   if ('help' in part) return `Need assistance? Our support team is here to help.\nWhatsApp: ${SUPPORT_WHATSAPP}\nEmail: ${SUPPORT}\nWebsite: ${SITE}`;
-  return SITE;
+  return part.label ? `${part.label}: ${part.href ?? SITE}` : SITE;
 }
 
 function layout(m: Mail): string {
@@ -184,6 +186,23 @@ function buildMail(kind: EmailKind, d: EmailData): Mail {
         ...(plan ? [{ rows: [['Your plan', plan]] as [string, string][] }] : []),
         { p: 'Please keep an eye on your WhatsApp messages.', strong: true },
         { p: 'Our team will contact you shortly via WhatsApp to guide you through the activation process.' },
+      ],
+      signature: true,
+    };
+  }
+
+  if (kind === 'review_invite') {
+    // Sent to every activated customer (no filtering on satisfaction, no incentive: Trustpilot rules).
+    return {
+      subject: 'How is your SYGMA TV+ experience?',
+      title: 'How is your SYGMA TV+ experience?',
+      parts: [
+        { p: hello },
+        { p: 'Thank you for choosing SYGMA TV+! You have been enjoying your subscription for a few days now, and we would love to hear what you think.' },
+        { p: 'Your honest review helps other viewers choose with confidence and helps us improve. It only takes a minute.' },
+        { cta: true, label: 'Leave a review on Trustpilot', href: TRUSTPILOT_REVIEW_URL },
+        { help: true },
+        { p: 'Thank you for your trust!', strong: true },
       ],
       signature: true,
     };

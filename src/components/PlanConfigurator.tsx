@@ -153,7 +153,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
   const selectionLabel = `${tierName} · ${p.terms[term]} · ${plural(dict.common, 'device', streams)}`;
 
   function choose(t: Tier) {
-    track('select_item', { item_list_id: 'plans', item_list_name: 'Plans', items: [itemFor(t, term, streams)] });
+    if (t !== tier) track('select_item', { item_list_id: 'plans', item_list_name: 'Plans', items: [itemFor(t, term, streams)] });
     setTier(t);
     simulatorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     simulatorRef.current?.focus({ preventScroll: true });
@@ -177,7 +177,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
               <picture>
                 <source type="image/avif" srcSet={planSrcSet(t, 'avif')} sizes={PLAN_ART_SIZES} />
                 <source type="image/webp" srcSet={planSrcSet(t, 'webp')} sizes={PLAN_ART_SIZES} />
-                <img className="tier-art" src={`/images/plan-${t}-480.webp?v=20261114c`} alt="" width={1672} height={941} loading="lazy" decoding="async" />
+                <img className="tier-art" src={`/images/plan-${t}-480.webp?v=20261114c`} alt={info.artAlt} width={1672} height={941} loading="lazy" decoding="async" />
               </picture>
               <div className="tier-head">
                 <span className="tier-icon" aria-hidden="true">

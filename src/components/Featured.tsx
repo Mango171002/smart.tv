@@ -83,7 +83,7 @@ export function Featured({ dict }: { dict: Dictionary['featured'] }) {
                   <source type="image/avif" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'avif')} sizes={SLIDE_SIZES} />
                   <source type="image/webp" srcSet={slideSrcSet(FEATURED_SCENES[i]!, 'webp')} sizes={SLIDE_SIZES} />
                   { }
-                  <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp?v=20261114c`} alt="" width={480} height={270} loading="lazy" decoding="async" fetchPriority="low" style={{ objectPosition: `${FOCUS[FEATURED_SCENES[i]!] ?? '65%'} 50%` }} />
+                  <img src={`/images/featured-${FEATURED_SCENES[i]}-480.webp?v=20261114c`} alt={item.alt} width={480} height={270} loading="lazy" decoding="async" fetchPriority="low" style={{ objectPosition: `${FOCUS[FEATURED_SCENES[i]!] ?? '65%'} 50%` }} />
                 </picture>
                 {/* eslint-disable-next-line @next/next/no-img-element -- static vector logo */}
                 <img className="slide-logo" src="/brand/sygma-logo.svg" alt="" width={308} height={40} loading="lazy" decoding="async" />

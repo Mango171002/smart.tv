@@ -152,7 +152,7 @@ export function ContentCategories({
                     <source type="image/avif" srcSet={catSrcSet(key, 'avif')} sizes={CAT_SIZES} />
                     <source type="image/webp" srcSet={catSrcSet(key, 'webp')} sizes={CAT_SIZES} />
                     { }
-                    <img className="cat-art" src={`/images/cat-${key}-400.webp?v=20261114`} alt="" width={1536} height={1024} loading="lazy" decoding="async" />
+                    <img className="cat-art" src={`/images/cat-${key}-400.webp?v=20261114`} alt={item.alt} width={1536} height={1024} loading="lazy" decoding="async" />
                   </picture>
                   <span className="cat-icon" aria-hidden="true">
                     <Icon size={40} strokeWidth={ICON_STROKE} />
@@ -362,7 +362,7 @@ export function CtaBanner({ locale: _locale, dict, fromMonthly }: { locale: Loca
             <source type="image/avif" srcSet="/images/cta-earth-640.avif 640w, /images/cta-earth-1200.avif 1200w" sizes="(max-width: 640px) 100vw, 60vw" />
             <source type="image/webp" srcSet="/images/cta-earth-640.webp 640w, /images/cta-earth-1200.webp 1200w" sizes="(max-width: 640px) 100vw, 60vw" />
             { }
-            <img className="cta-globe" src="/images/cta-earth-640.webp" alt="" width={1672} height={941} loading="lazy" decoding="async" />
+            <img className="cta-globe" src="/images/cta-earth-640.webp" alt={c.globeAlt} width={1672} height={941} loading="lazy" decoding="async" />
           </picture>
           <span className="cta-waves" aria-hidden="true" />
           <h2 id="cta-title">

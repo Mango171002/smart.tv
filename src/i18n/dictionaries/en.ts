@@ -92,21 +92,21 @@ const en = {
     carouselLabel: 'Most watched genres',
     slideLabel: '{n} of {total}',
     items: [
-      { cat: 'sports', badge: 'SPORTS', title: 'Football night', region: 'International' },
-      { cat: 'movies', badge: 'ANIME', title: 'Anime', region: 'International' },
-      { cat: 'sports', badge: 'SPORTS', title: 'Basketball', region: 'International' },
-      { cat: 'live', badge: 'FAMILY', title: 'Family fantasy', region: 'International' },
-      { cat: 'movies', badge: 'MOVIES', title: 'Comedy', region: 'International' },
-      { cat: 'sports', badge: 'SPORTS', title: 'American football', region: 'International' },
-      { cat: 'streaming', badge: 'ANIMATION', title: 'Animation', region: 'International' },
-      { cat: 'movies', badge: 'SERIES', title: 'Crime series', region: 'International' },
-      { cat: 'sports', badge: 'SPORTS', title: 'Ice hockey', region: 'International' },
-      { cat: 'movies', badge: 'SERIES', title: 'Fantasy series', region: 'International' },
-      { cat: 'sports', badge: 'SPORTS', title: 'Motorsport', region: 'International' },
-      { cat: 'live', badge: 'DOCS', title: 'Documentaries', region: 'International' },
-      { cat: 'sports', badge: 'SPORTS', title: 'Tennis', region: 'International' },
-      { cat: 'movies', badge: 'MOVIES', title: 'Adventure film', region: 'International' },
-      { cat: 'streaming', badge: 'FAMILY', title: 'Kids & family', region: 'International' },
+      { cat: 'sports', badge: 'SPORTS', title: 'Football night', region: 'International', alt: 'Two football players in red and blue kits fighting for the ball in a floodlit stadium' },
+      { cat: 'movies', badge: 'ANIME', title: 'Anime', region: 'International', alt: 'Anime heroine with a glowing sword on a rooftop above a city at night' },
+      { cat: 'sports', badge: 'SPORTS', title: 'Basketball', region: 'International', alt: 'Two basketball players leaping for a dunk under the hoop in an arena' },
+      { cat: 'live', badge: 'FAMILY', title: 'Family fantasy', region: 'International', alt: 'Smiling child receiving a glowing gift from a friendly furry creature' },
+      { cat: 'movies', badge: 'MOVIES', title: 'Comedy', region: 'International', alt: 'Two men pulling funny faces on a sunny city street' },
+      { cat: 'sports', badge: 'SPORTS', title: 'American football', region: 'International', alt: 'American football players in orange and green kits tackling on the field' },
+      { cat: 'streaming', badge: 'ANIMATION', title: 'Animation', region: 'International', alt: 'Cute 3D robot and fox watching lanterns rise over a fantasy valley' },
+      { cat: 'movies', badge: 'SERIES', title: 'Crime series', region: 'International', alt: 'Abandoned clown mask on a rainy, dark street at night' },
+      { cat: 'sports', badge: 'SPORTS', title: 'Ice hockey', region: 'International', alt: 'Two ice hockey players in red and navy jerseys battling for the puck' },
+      { cat: 'movies', badge: 'SERIES', title: 'Fantasy series', region: 'International', alt: 'Warrior in front of a stormy castle with a dragon in the sky' },
+      { cat: 'sports', badge: 'SPORTS', title: 'Motorsport', region: 'International', alt: 'Black and lime race car cornering at speed on a circuit' },
+      { cat: 'live', badge: 'DOCS', title: 'Documentaries', region: 'International', alt: 'Humpback whale breaching the ocean at sunset' },
+      { cat: 'sports', badge: 'SPORTS', title: 'Tennis', region: 'International', alt: 'Tennis player stretching for a backhand on a clay court' },
+      { cat: 'movies', badge: 'MOVIES', title: 'Adventure film', region: 'International', alt: 'Rafting crew paddling through white water below a waterfall' },
+      { cat: 'streaming', badge: 'FAMILY', title: 'Kids & family', region: 'International', alt: 'Family laughing together on the sofa while watching TV' },
     ],
   },
   plans: {
@@ -158,6 +158,7 @@ const en = {
     tiers: {
       starter: {
         name: 'Starter',
+        artAlt: 'Viewer relaxing with a warm drink in front of the TV',
         tagline: 'The essentials to get started',
         features: [
           { icon: 'tv', text: '**Essential** bundle' },
@@ -172,6 +173,7 @@ const en = {
       },
       plus: {
         name: 'Plus',
+        artAlt: 'Friends cheering in front of the TV with popcorn',
         tagline: 'The best balance',
         features: [
           { icon: 'tv', text: '**Extended** bundle', accent: true },
@@ -187,6 +189,7 @@ const en = {
       },
       ultra: {
         name: 'Ultra+',
+        artAlt: 'Viewer captivated by the screen in a dark home cinema',
         tagline: 'The ultimate experience',
         features: [
           { icon: 'tv', text: '**Complete** bundle', accent: true },
@@ -245,10 +248,10 @@ const en = {
     title: 'Content for every interest.',
     sub: 'Content categories planned for launch. The detailed catalogue will be published for each region before subscriptions open.',
     categories: [
-      { title: 'Live Sports', text: 'Football, basketball, motorsport and more' },
-      { title: 'Movies & Series', text: 'Cinema, series and on-demand content' },
-      { title: 'Live TV', text: 'International channels, organised by region' },
-      { title: 'Documentaries', text: 'Nature, history, science and true stories' },
+      { title: 'Live Sports', text: 'Football, basketball, motorsport and more', alt: 'Baseball player sliding into base under stadium lights' },
+      { title: 'Movies & Series', text: 'Cinema, series and on-demand content', alt: 'Frightened woman in a dark corridor lit in red, thriller scene' },
+      { title: 'Live TV', text: 'International channels, organised by region', alt: 'News presenter with a microphone in a TV studio' },
+      { title: 'Documentaries', text: 'Nature, history, science and true stories', alt: 'Lion family resting on a rock at sunset in the savanna' },
     ],
   },
   devices: {
@@ -296,6 +299,7 @@ const en = {
   },
   cta: {
     title: 'Ready to watch TV from around the world?',
+    globeAlt: 'Earth at night seen from space, city lights across the continents',
     titleA: 'Ready to watch TV from',
     titleHl: 'around the world?',
     text: 'Access up to 35,000+ TV channels and 200,000+ movies & series, in HD to 4K HDR, from multiple countries — from {price}/month.',

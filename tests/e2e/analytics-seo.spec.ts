@@ -34,6 +34,20 @@ async function gaEvents(page: Page) {
 }
 
 test.describe('cookie consent', () => {
+  test('the banner never covers the order window or its buttons', async ({ page }) => {
+    await stubThirdParties(page);
+    await prepare(page);
+    await page.goto('/');
+    await expect(page.getByTestId('consent-banner')).toBeVisible();
+    await page.locator('#plans').scrollIntoViewIfNeeded();
+    await page.locator('.offers[data-ready]').waitFor();
+    await page.getByRole('button', { name: /^Pre-register for free/ }).click();
+    const dialog = page.getByTestId('checkout-dialog');
+    // Clickable = not covered by the banner (Playwright checks what receives the click).
+    await dialog.getByRole('button', { name: /Continue/ }).click({ trial: true });
+    await dialog.getByRole('button', { name: 'Close' }).click({ trial: true });
+  });
+
   test('nothing loads before a choice; Decline keeps everything off', async ({ page }) => {
     const hits = await stubThirdParties(page);
     await prepare(page);
@@ -114,6 +128,23 @@ test.describe('cookie consent', () => {
 });
 
 test.describe('analytics events (consent granted)', () => {
+  test('view_item counts each plan once, even when scrolling back and forth', async ({ page }) => {
+    await stubThirdParties(page);
+    await prepare(page, 'granted');
+    await page.goto('/');
+    for (let i = 0; i < 3; i++) {
+      await page.locator('.tier-grid').scrollIntoViewIfNeeded();
+      await page.waitForTimeout(400);
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForTimeout(300);
+    }
+    await page.locator('.tier-grid').scrollIntoViewIfNeeded();
+    await expect.poll(async () => (await gaEvents(page)).filter((e) => e.name === 'view_item').length).toBeGreaterThan(0);
+    const ids = (await gaEvents(page)).filter((e) => e.name === 'view_item').map((e) => (e.params.items as { item_id: string }[])[0]!.item_id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids.length).toBeLessThanOrEqual(3);
+  });
+
   test('plan view, plan selection, checkout and lead — without personal data', async ({ page }) => {
     await stubThirdParties(page);
     await prepare(page, 'granted');

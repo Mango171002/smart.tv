@@ -40,6 +40,7 @@ const SUPPORT_WHATSAPP_LINK = 'https://wa.me/447412857594';
 const TAGLINE = 'One World. Endless Entertainment.';
 /** Trustpilot « write a review » page (owner's profile: trustpilot.com/review/sygmatv.com). */
 export const TRUSTPILOT_REVIEW_URL = 'https://www.trustpilot.com/evaluate/sygmatv.com';
+const TRUSTPILOT_GREEN = '#00b67a';
 const LOGO = `${SITE}/brand/sygma-logo-512.png`;
 const C = { bg: '#070d17', card: '#0e1826', line: '#1f2c3d', ink: '#f2f5f9', muted: '#9aa7b8', lime: '#d1fe17' };
 
@@ -77,6 +78,8 @@ type Part =
   | { steps: string[] }
   | { note: string }
   | { help: true }
+  | { helpShort: true }
+  | { trustpilot: true }
   | { cta: true; label?: string; href?: string };
 
 interface Mail {
@@ -107,6 +110,18 @@ function partHtml(part: Part): string {
       .join('')}</table>`;
   }
   if ('note' in part) return `<p style="margin:0 0 18px;font-size:13px;line-height:1.5;color:${C.muted};">${part.note}</p>`;
+  if ('trustpilot' in part) {
+    // Official Trustpilot brand assets (logo + 5 stars), unmodified, linking to our review page.
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 22px;border:1px solid ${C.line};border-radius:14px;background:${C.bg};"><tr><td align="center" style="padding:22px 16px;">
+<a href="${TRUSTPILOT_REVIEW_URL}" style="text-decoration:none;"><img src="${SITE}/brand/trustpilot-logo-white.png" width="140" height="34" alt="Trustpilot" style="display:block;border:0;margin:0 auto 12px;"></a>
+<a href="${TRUSTPILOT_REVIEW_URL}" style="text-decoration:none;"><img src="${SITE}/brand/trustpilot-stars-5.png" width="128" height="24" alt="Rate us on Trustpilot" style="display:block;border:0;margin:0 auto 18px;"></a>
+<table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr><td bgcolor="${TRUSTPILOT_GREEN}" style="border-radius:10px;"><a href="${TRUSTPILOT_REVIEW_URL}" style="display:inline-block;padding:13px 26px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">Write a review</a></td></tr></table>
+</td></tr></table>`;
+  }
+  if ('helpShort' in part) {
+    const a = `color:${C.lime};text-decoration:none;`;
+    return `<p style="margin:0 0 6px;font-size:14px;line-height:1.6;color:${C.muted};">Need help? WhatsApp <a href="${SUPPORT_WHATSAPP_LINK}" style="${a}">${SUPPORT_WHATSAPP}</a> · <a href="mailto:${SUPPORT}" style="${a}">${SUPPORT}</a></p>`;
+  }
   if ('help' in part) {
     const a = `color:${C.lime};text-decoration:none;`;
     return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;border-left:3px solid ${C.lime};"><tr><td style="padding:4px 0 4px 14px;font-size:15px;line-height:1.7;color:${C.ink};">
@@ -125,6 +140,8 @@ function partText(part: Part): string {
   if ('rows' in part) return part.rows.map(([k, v]) => `${k}: ${v}`).join('\n');
   if ('steps' in part) return part.steps.map((s, i) => `${i + 1}. ${strip(s)}`).join('\n');
   if ('note' in part) return strip(part.note);
+  if ('trustpilot' in part) return `Write a review on Trustpilot: ${TRUSTPILOT_REVIEW_URL}`;
+  if ('helpShort' in part) return `Need help? WhatsApp ${SUPPORT_WHATSAPP} · ${SUPPORT}`;
   if ('help' in part) return `Need assistance? Our support team is here to help.\nWhatsApp: ${SUPPORT_WHATSAPP}\nEmail: ${SUPPORT}\nWebsite: ${SITE}`;
   return part.label ? `${part.label}: ${part.href ?? SITE}` : SITE;
 }
@@ -198,11 +215,9 @@ function buildMail(kind: EmailKind, d: EmailData): Mail {
       title: 'How is your SYGMA TV+ experience?',
       parts: [
         { p: hello },
-        { p: 'Thank you for choosing SYGMA TV+! You have been enjoying your subscription for a few days now, and we would love to hear what you think.' },
-        { p: 'Your honest review helps other viewers choose with confidence and helps us improve. It only takes a minute.' },
-        { cta: true, label: 'Leave a review on Trustpilot', href: TRUSTPILOT_REVIEW_URL },
-        { help: true },
-        { p: 'Thank you for your trust!', strong: true },
+        { p: 'Enjoying SYGMA TV+? Share your honest opinion on Trustpilot. It only takes a minute.' },
+        { trustpilot: true },
+        { helpShort: true },
       ],
       signature: true,
     };

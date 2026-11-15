@@ -15,9 +15,11 @@ describe('Trustpilot review invitation e-mail', () => {
     expect(m.subject).toBe('How is your SYGMA TV+ experience?');
     expect(m.html).toContain('Hello Sara,');
     expect(m.html).toContain(`href="${TRUSTPILOT_REVIEW_URL}"`);
-    expect(m.html).toContain('Leave a review on Trustpilot');
+    expect(m.html).toContain('Write a review');
+    expect(m.html).toContain('/brand/trustpilot-logo-white.png');
+    expect(m.html).toContain('/brand/trustpilot-stars-5.png');
     expect(m.html).not.toMatch(/discount|free month|gift|reward/i);
-    expect(m.text).toContain(`Leave a review on Trustpilot: ${TRUSTPILOT_REVIEW_URL}`);
+    expect(m.text).toContain(`Write a review on Trustpilot: ${TRUSTPILOT_REVIEW_URL}`);
   });
 });
 

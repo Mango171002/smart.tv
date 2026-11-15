@@ -336,31 +336,30 @@ async function handleCallback(q: TgCallback) {
 }
 
 /**
- * Thank-you e-mail after « Converti ». With a known plan: invoice with a sequential number given once per
- * request (an undo + new « Converti » does not send it again). Returns the suffix of the toast.
+ * « Converti » = payment received and subscription activated: e-mail « Your subscription is now active »
+ * with an order number given once per request (an undo + new « Converti » does not send it again)
+ * and the amount when the plan is known. Returns the suffix of the toast.
  */
 async function sendConversionEmail(card: CardData): Promise<string> {
   const r = card.request;
-  const base = { name: r.name, email: r.email, phone: r.phone, tier: r.tier, term: r.term, streams: r.streams };
+  const inv = await call<{ ok: boolean; number?: string; issued_at?: string; new?: boolean }>('ops_invoice', { p_request: r.id });
+  if (!inv?.ok || !inv.number || !inv.issued_at) return ' · ⚠️ n° de commande non créé, e-mail non envoyé';
+  if (!inv.new) return ` · confirmation ${inv.number} déjà envoyée`;
+  const invoice: InvoiceData = { number: inv.number, issuedAt: inv.issued_at };
   if (isTier(r.tier) && isTerm(r.term) && isStreamCount(r.streams)) {
-    const inv = await call<{ ok: boolean; number?: string; issued_at?: string; new?: boolean }>('ops_invoice', { p_request: r.id });
-    if (!inv?.ok || !inv.number || !inv.issued_at) return ' · ⚠️ facture non créée';
-    if (!inv.new) return ` · facture ${inv.number} déjà envoyée`;
-    let invoice: InvoiceData;
     try {
       const { table } = await getPriceTable();
       const q = computeQuote(table, { tier: r.tier, term: r.term, streams: r.streams });
-      invoice = { number: inv.number, issuedAt: inv.issued_at, amountMinor: q.amountMinor, currency: q.currency };
+      invoice.amountMinor = q.amountMinor;
+      invoice.currency = q.currency;
     } catch {
-      return ' · ⚠️ prix introuvable, e-mail non envoyé';
+      // Price not found: the e-mail is sent without the amount.
     }
-    const sent = await sendCustomerEmail('request_confirmed', r.email, { ...base, invoice });
-    return sent === 'sent' ? ` · 📧 facture ${inv.number} envoyée` : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
   }
-  // No plan (e.g. trial request): thank-you e-mail without invoice, once.
-  if (card.events.filter((e) => e.action === 'convert').length > 1) return '';
-  const sent = await sendCustomerEmail('request_confirmed', r.email, base);
-  return sent === 'sent' ? ' · 📧 e-mail envoyé (sans facture : plan inconnu)' : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
+  const sent = await sendCustomerEmail('request_confirmed', r.email, {
+    name: r.name, email: r.email, phone: r.phone, tier: r.tier, term: r.term, streams: r.streams, invoice,
+  });
+  return sent === 'sent' ? ` · 📧 confirmation ${inv.number} envoyée au client` : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
 }
 
 export async function handleUpdate(update: TgUpdate): Promise<void> {

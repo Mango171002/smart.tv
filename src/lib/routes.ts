@@ -8,5 +8,5 @@ export type LegalDoc = (typeof LEGAL_DOCS)[number];
 /** Public URLs carry no language prefix (English only): /en/* is served at /*. */
 export const href = (_locale: Locale, path = '') => path || '/';
 
-/** Every public, indexable path (without locale prefix). */
-export const ALL_PATHS: string[] = [...PAGES, ...LEGAL_DOCS.map((d) => `/legal/${d}`)];
+/** Every public, indexable path (without locale prefix). The blog joins once it has articles (noindex until then). */
+export const ALL_PATHS: string[] = ['', ...LEGAL_DOCS.map((d) => `/legal/${d}`)];

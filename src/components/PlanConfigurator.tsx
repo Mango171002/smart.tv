@@ -28,6 +28,7 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react';
+import { planItem, track } from '@/lib/analytics';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
@@ -111,6 +112,39 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
   const simulatorRef = useRef<HTMLDivElement>(null);
 
   const p = dict.plans;
+  // Analytics item for a plan (GA4 e-commerce format, no personal data).
+  const itemFor = (t: Tier, tm: Term, n: StreamCount) =>
+    planItem(t, p.tiers[t].name, tm, p.terms[tm], n, computeQuote(table, { tier: t, term: tm, streams: n }).amountMinor);
+
+  // view_item: each plan card counts once per page view, when at least half of it is visible.
+  useEffect(() => {
+    const root = offersRef.current;
+    if (!root || typeof IntersectionObserver === 'undefined') return;
+    const seen = new Set<string>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const t = (e.target as HTMLElement).dataset.tier as Tier | undefined;
+          if (!e.isIntersecting || !t || seen.has(t)) continue;
+          seen.add(t);
+          io.unobserve(e.target);
+          const item = itemFor(t, '12m', 1);
+          track('view_item', { currency: table.currency, value: item.price, items: [item] });
+        }
+      },
+      { threshold: 0.5 },
+    );
+    root.querySelectorAll<HTMLElement>('.tier-card[data-tier]').forEach((el) => io.observe(el));
+    return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- observe once; prices come from the static table
+  }, []);
+
+  function selectTier(t: Tier) {
+    setTier(t);
+    if (t === tier) return;
+    track('select_item', { item_list_id: 'plans', item_list_name: 'Plans', items: [itemFor(t, term, streams)] });
+  }
+
   const money = (minor: number) => formatMoney(minor, table.currency, locale);
   const quote = computeQuote(table, { tier, term, streams });
   const tierName = p.tiers[tier].name;
@@ -119,6 +153,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
   const selectionLabel = `${tierName} · ${p.terms[term]} · ${plural(dict.common, 'device', streams)}`;
 
   function choose(t: Tier) {
+    track('select_item', { item_list_id: 'plans', item_list_name: 'Plans', items: [itemFor(t, term, streams)] });
     setTier(t);
     simulatorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     simulatorRef.current?.focus({ preventScroll: true });
@@ -216,7 +251,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
             {TIERS.map((t) => {
               const Icon = TIER_LOOK[t].Icon;
               return (
-                <button key={t} type="button" className="choice choice-rich" data-tier={t} aria-pressed={t === tier} onClick={() => setTier(t)}>
+                <button key={t} type="button" className="choice choice-rich" data-tier={t} aria-pressed={t === tier} onClick={() => selectTier(t)}>
                   <Icon className="choice-icon" size={28} strokeWidth={1.75} aria-hidden="true" />
                   <span className="choice-text">
                     <b>{p.tiers[t].name}</b>
@@ -296,7 +331,11 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
               ref={openerRef}
               type="button"
               className="btn sim-cta"
-              onClick={() => setCheckoutOpen(true)}
+              onClick={() => {
+                const item = itemFor(tier, term, streams);
+                track('begin_checkout', { currency: table.currency, value: item.price, items: [item] });
+                setCheckoutOpen(true);
+              }}
               onPointerEnter={() => void loadDialog()}
               onFocus={() => void loadDialog()}
               aria-haspopup="dialog"

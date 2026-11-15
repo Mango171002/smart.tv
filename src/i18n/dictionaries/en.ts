@@ -1,9 +1,9 @@
 const en = {
   meta: {
-    siteTitle: 'International streaming',
-    homeTitle: 'International streaming — launching soon',
+    siteTitle: 'International Streaming Subscription',
+    homeTitle: 'SYGMA TV+ — International Streaming Subscription',
     homeDescription:
-      'Premium international streaming for the United States, Canada and Europe: region-aware plans and multi-device setup. Pre-register free of charge for the launch.',
+      'SYGMA TV+: One World. Endless Entertainment. International streaming plans for 1 to 4 devices on Smart TV, mobile and computer. Order online in minutes.',
     plansTitle: 'Plans & pricing',
     plansDescription:
       'Compare subscription lengths and simultaneous streams for the United States, Canada and Europe. Planned launch prices.',
@@ -15,6 +15,14 @@ const en = {
     helpDescription: 'Answers to common questions, support requests and pre-registration.',
     legalTitle: 'Legal',
     notFoundTitle: 'Page not found',
+  },
+  consent: {
+    title: 'Cookies & analytics',
+    text: 'We use cookies to measure our audience and improve the site (Google Analytics, Microsoft Clarity). They are only set if you accept. You can change your choice at any time in « Cookie settings ».',
+    policy: 'Cookie policy',
+    accept: 'Accept',
+    decline: 'Decline',
+    settings: 'Cookie settings',
   },
   common: {
     countrySearch: 'Type a country…',
@@ -303,7 +311,7 @@ const en = {
     empty: 'No articles yet — come back soon.',
     back: 'Back to home',
     metaTitle: 'Blog',
-    metaDescription: 'Setup guides, streaming tips and launch news.',
+    metaDescription: 'SYGMA TV+ blog: setup guides, streaming tips and news. First articles coming soon.',
   },
   faq: {
     eyebrow: 'Answers first',
@@ -496,12 +504,18 @@ const en = {
       privacy: {
         title: 'Privacy policy',
         intro: 'How personal data is collected, used, stored and protected (GDPR, PIPEDA, US state laws).',
-        items: ['Data controller and contact', 'Purposes and legal bases', 'Retention periods (proposed: 12 months for contact requests)', 'Data subject rights', 'Processors: Cloudflare (hosting and cookie-less visit statistics), Supabase (database), Telegram (internal notifications to our team)'],
+        items: ['Data controller and contact', 'Purposes and legal bases', 'Retention periods (proposed: 12 months for contact requests)', 'Data subject rights', 'Processors: Cloudflare (hosting and cookie-less visit statistics), Supabase (database), Brevo (e-mails), Telegram (internal notifications to our team), and — only if you accept analytics cookies — Google (Google Analytics) and Microsoft (Clarity)'],
       },
       cookies: {
         title: 'Cookie policy',
-        intro: 'This website sets no tracking or analytics cookies. Visits are counted anonymously with Cloudflare Web Analytics, which uses no cookies and does not follow you across other websites.',
-        items: ['Visit statistics: Cloudflare Web Analytics (cookie-less, aggregated pages, countries and devices)', 'Consent mechanism (ePrivacy) if cookies are ever added'],
+        intro: 'Analytics cookies are only set if you click « Accept » in the cookie banner. If you decline, no analytics cookie is set. You can change your choice at any time with « Cookie settings » at the bottom of every page.',
+        items: [
+          'Your choice: stored in your browser (localStorage « sygma_consent »), no cookie',
+          'Google Analytics 4 (Google), only with your consent: _ga and _ga_* cookies (up to 2 years) — audience measurement; IP addresses are not stored by Google Analytics; no advertising features',
+          'Microsoft Clarity (Microsoft), only with your consent: _clck (up to 1 year) and _clsk (1 day) cookies — anonymised usage and session replays to improve the site; form fields and personal details are masked',
+          'Cloudflare Web Analytics: cookie-less visit statistics (pages, countries, devices), always on',
+          'Withdrawing consent removes the analytics cookies and stops the collection immediately',
+        ],
       },
       refunds: {
         title: 'Refunds & cancellations',

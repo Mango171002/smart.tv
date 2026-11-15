@@ -411,7 +411,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     await expect(page.getByRole('dialog').getByLabel('Full name')).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toHaveCount(0);
-    await page.locator('footer .footer-link-btn').click();
+    await page.locator('footer').getByRole('button', { name: 'Contact', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');
     await dialog.getByLabel('Email address').fill('alex@example.test');
@@ -430,7 +430,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
   test('request window shows a rate-limit message', async ({ page }) => {
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
     await page.goto('/');
-    await page.locator('footer .footer-link-btn').click();
+    await page.locator('footer').getByRole('button', { name: 'Contact', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Contact support' });
     await dialog.getByLabel('Full name').fill('Alex');
     await dialog.getByLabel('Email address').fill('alex@example.test');
@@ -453,7 +453,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
 
   test('request window has no violations', async ({ page }) => {
     await page.goto('/');
-    await page.locator('footer .footer-link-btn').click();
+    await page.locator('footer').getByRole('button', { name: 'Contact', exact: true }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();
     expect(results.violations.map((v) => v.id)).toEqual([]);

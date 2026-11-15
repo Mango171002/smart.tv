@@ -6,7 +6,8 @@ import { buildMetadata, resolveLocale } from '@/lib/seo';
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await resolveLocale(params);
   const b = getDictionary(locale).blog;
-  return buildMetadata({ locale, path: '/blog', title: b.metaTitle, description: b.metaDescription });
+  // No articles yet: kept out of search results (and of the sitemap) until the first article is published.
+  return buildMetadata({ locale, path: '/blog', title: b.metaTitle, description: b.metaDescription, noindex: true });
 }
 
 /** Blog index. No articles yet: nothing is invented, the page says so. */

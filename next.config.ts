@@ -2,15 +2,18 @@ import type { NextConfig } from 'next';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-// The browser only talks to this origin (Supabase is called from the server), plus Cloudflare Web
-// Analytics (owner decision 14/11/2026): cookie-less visit statistics, beacon script + its endpoint.
+// The browser only talks to this origin (Supabase is called from the server), plus:
+// - Cloudflare Web Analytics (cookie-less, owner decision 14/11/2026);
+// - Google Analytics 4 and Microsoft Clarity, which the page loads only after cookie consent.
+const GA = ['https://www.googletagmanager.com', 'https://*.google-analytics.com', 'https://*.analytics.google.com'];
+const CLARITY = ['https://www.clarity.ms', 'https://*.clarity.ms', 'https://c.bing.com'];
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com${isDev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms${isDev ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
+  `img-src 'self' data: ${[...GA, ...CLARITY].join(' ')}`,
   "font-src 'self'",
-  "connect-src 'self' https://cloudflareinsights.com",
+  `connect-src 'self' https://cloudflareinsights.com ${[...GA, ...CLARITY].join(' ')}`,
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -32,6 +35,8 @@ const nextConfig: NextConfig = {
       { source: path, destination: `/${anchor}`, permanent: true },
     ]);
     return [
+      // One canonical host: www.sygmatv.com → sygmatv.com (same path and query).
+      { source: '/:path*', has: [{ type: 'host', value: 'www.sygmatv.com' }], destination: 'https://sygmatv.com/:path*', permanent: true },
       ...former,
       { source: '/en', destination: '/', permanent: true },
       { source: '/en/:path+', destination: '/:path+', permanent: true },
@@ -63,7 +68,7 @@ const nextConfig: NextConfig = {
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
         ],
       },
-      { source: '/api/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }] },
+      { source: '/api/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }, { key: 'X-Robots-Tag', value: 'noindex' }] },
     ];
   },
 };

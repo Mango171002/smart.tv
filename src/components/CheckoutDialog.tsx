@@ -2,6 +2,7 @@
 
 import { ArrowLeft, ArrowRight, Check, CircleCheck, Gift, Mail, MapPin, Monitor, Phone, ShieldCheck, Zap, X } from 'lucide-react';
 import { toE164 } from '@/lib/phone';
+import { track } from '@/lib/analytics';
 import { siteConfig } from '@/config/site';
 import { Brand } from './Brand';
 
@@ -136,6 +137,14 @@ export function CheckoutDialog({
       if (res.ok) {
         setSubmitState('idle');
         setStep(3);
+        // Order request sent (not paid): a lead, never a purchase. No personal data in the event.
+        const amount = quote?.amountMinor;
+        track('generate_lead', {
+          lead_type: 'order',
+          currency: quote?.currency ?? 'USD',
+          ...(amount ? { value: amount / 100 } : {}),
+          item_id: `${selection.tier}-${selection.term}-${selection.streams}`,
+        });
         return;
       }
       setSubmitState('error');
@@ -196,6 +205,7 @@ export function CheckoutDialog({
         aria-labelledby="checkout-title"
         onKeyDown={onKeyDown}
         data-testid="checkout-dialog"
+        data-clarity-mask="true"
       >
         <div className="modalhead neon-head">
           <Brand className="modal-logo" />

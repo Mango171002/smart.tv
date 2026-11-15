@@ -2,32 +2,48 @@ import type { Metadata } from 'next';
 import { siteConfig } from '@/config/site';
 import { LOCALES, type Locale } from '@/i18n/config';
 
+/** Social sharing image (1200×630). */
+export const OG_IMAGE = { url: '/brand/og-image.jpg', width: 1200, height: 630, alt: 'SYGMA TV+ — One World. Endless Entertainment.' };
+
+/**
+ * Page metadata: unique title + description, canonical URL (no language prefix), Open Graph and X
+ * cards. English only: no hreflang alternates (there are no translated pages).
+ */
 export function buildMetadata({
   locale: _locale,
   path,
   title,
   description,
+  absoluteTitle = false,
+  noindex = false,
 }: {
   locale: Locale;
   path: string;
   title: string;
   description: string;
+  /** The home page title already contains the brand: no « | SYGMA TV+ » suffix. */
+  absoluteTitle?: boolean;
+  /** Pages without content yet (kept out of search results and of the sitemap). */
+  noindex?: boolean;
 }): Metadata {
   const url = path || '/';
-  const languages = { en: url, 'x-default': url } as Record<string, string>;
+  const fullTitle = absoluteTitle ? title : `${title} | ${siteConfig.brandName}`;
+  const indexable = siteConfig.allowIndexing && !noindex;
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
-    alternates: { canonical: url, languages },
+    alternates: { canonical: url },
     openGraph: {
-      title: `${title} | ${siteConfig.brandName}`,
+      title: fullTitle,
       description,
+      url,
       locale: 'en_US',
       type: 'website',
       siteName: siteConfig.brandName,
-      images: [{ url: '/brand/sygma-logo-dark-preview.png', width: 1200, height: 214, alt: siteConfig.brandName }],
+      images: [OG_IMAGE],
     },
-    robots: siteConfig.allowIndexing ? { index: true, follow: true } : { index: false, follow: false },
+    twitter: { card: 'summary_large_image', title: fullTitle, description, images: [OG_IMAGE.url] },
+    robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
   };
 }
 

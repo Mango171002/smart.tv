@@ -16,6 +16,7 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const EU = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']);
 
 import { toE164 } from '@/lib/phone';
+import { track } from '@/lib/analytics';
 export { toE164 };
 
 function guessCountry(): string {
@@ -116,6 +117,9 @@ export function RequestDialog({
     try {
       const res = await fetch('/api/contact', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
       if (res.ok) {
+        // Trial request = lead; support question = custom event. No personal data in the events.
+        if (mode === 'trial') track('generate_lead', { lead_type: 'trial' });
+        else track('contact_support', { method: 'form' });
         setDoneName(name);
         setState('done');
         return;
@@ -140,7 +144,7 @@ export function RequestDialog({
 
   return createPortal(
     <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={dialogRef} className="modal request-modal modal-neon" role="dialog" aria-modal="true" aria-labelledby="request-title" onKeyDown={onKeyDown} data-testid="request-dialog">
+      <div ref={dialogRef} className="modal request-modal modal-neon" role="dialog" aria-modal="true" aria-labelledby="request-title" onKeyDown={onKeyDown} data-testid="request-dialog" data-clarity-mask="true">
         <div className="modalhead neon-head">
           <Brand className="modal-logo" />
           <button type="button" className="close" aria-label={dict.common.close} onClick={onClose}>

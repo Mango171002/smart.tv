@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CookieSettingsButton } from './ConsentBanner';
 import { MonitorSmartphone, ShieldCheck, Zap } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import type { Locale } from '@/i18n/config';
@@ -84,6 +85,7 @@ export function Footer({ locale: _locale, dict }: { locale: Locale; dict: Dictio
             {FOOTER_LEGAL.map((d) => (
               <li key={d}><Link href={`/legal/${d}`}>{f.legalLinks[d]}</Link></li>
             ))}
+            <li><CookieSettingsButton label={dict.consent.settings} /></li>
           </ul>
         </nav>
       </div>

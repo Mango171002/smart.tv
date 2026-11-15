@@ -4,11 +4,12 @@ import { getDictionary } from '@/i18n/dictionaries';
 import { getPriceTable } from '@/lib/price-source';
 import { computeQuote, formatMoney } from '@/lib/pricing';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
+import { StructuredData } from '@/components/StructuredData';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await resolveLocale(params);
   const d = getDictionary(locale).meta;
-  return buildMetadata({ locale, path: '', title: d.homeTitle, description: d.homeDescription });
+  return buildMetadata({ locale, path: '', title: d.homeTitle, description: d.homeDescription, absoluteTitle: true });
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -19,6 +20,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const fromMonthly = formatMoney(starter.monthlyEquivalentMinor ?? starter.amountMinor, table.currency, locale);
   return (
     <>
+      <StructuredData description={dict.meta.homeDescription} />
       <Hero locale={locale} dict={dict} />
       <ContentCategories locale={locale} dict={dict} showHeading={false} />
       {/* Below-the-fold islands hydrate only when they come near the viewport. */}

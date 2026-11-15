@@ -162,7 +162,18 @@ const HELP = [
   '/stats — activité des dernières 24 h',
   '/addadmin &lt;id&gt; &lt;admin|vendeur&gt; &lt;nom&gt; — ajouter un membre (admin)',
   '/removeadmin &lt;id&gt; — retirer un membre (admin)',
+  '/testemail &lt;avis|commande|essai|actif|tous&gt; — e-mail de test vers support@sygmatv.com (admin)',
 ].join('\n');
+
+/** Test e-mails (sample data) — always sent to the team's own mailbox, never to a customer. */
+const TEST_EMAIL_TO = 'support@sygmatv.com';
+const SAMPLE = { name: 'Test SYGMA', email: TEST_EMAIL_TO, phone: '+447412857594', tier: 'ultra', term: '12m', streams: 1 };
+const TEST_EMAILS = [
+  { key: 'essai', label: 'Demande d’essai reçue', kind: 'trial_received', data: SAMPLE },
+  { key: 'commande', label: 'Commande reçue', kind: 'preregistration_received', data: SAMPLE },
+  { key: 'actif', label: 'Abonnement actif (Converti)', kind: 'request_confirmed', data: { ...SAMPLE, invoice: { number: 'SYG-TEST-0000', issuedAt: new Date(0).toISOString(), amountMinor: 9900, currency: 'USD' } } },
+  { key: 'avis', label: 'Invitation avis Trustpilot', kind: 'review_invite', data: SAMPLE },
+] as const;
 
 async function handleCommand(m: TgMessage) {
   const text = (m.text ?? '').trim();
@@ -234,6 +245,25 @@ async function handleCommand(m: TgMessage) {
       m,
       `<b>Dernières 24 h</b>\n📝 Pré-inscriptions : ${s.waitlist}\n🎁 Demandes d’essai : ${s.trials}\n🛟 Tickets support : ${s.support}\n📞 Contactés : ${s.contacted}\n🎉 Convertis : ${s.converted}\n⏳ En attente (total) : ${s.pending}`,
     );
+    return;
+  }
+  if (cmd === '/testemail') {
+    if (role !== 'admin') {
+      await reply(m, '⛔ Réservé aux admins.');
+      return;
+    }
+    const which = (args[0] ?? '').toLowerCase();
+    const kinds = TEST_EMAILS.filter((t) => which === 'tous' || t.key === which);
+    if (!kinds.length) {
+      await reply(m, `Utilisation : <code>/testemail avis</code> (${TEST_EMAILS.map((t) => t.key).join(', ')}, tous). Envoi vers ${TEST_EMAIL_TO} uniquement.`);
+      return;
+    }
+    const results: string[] = [];
+    for (const t of kinds) {
+      const r = await sendCustomerEmail(t.kind, TEST_EMAIL_TO, t.data);
+      results.push(`${r === 'sent' ? '✅' : r === 'failed' ? '⚠️' : '⏸'} ${t.label}`);
+    }
+    await reply(m, `<b>E-mails de test → ${TEST_EMAIL_TO}</b>\n${results.join('\n')}`);
     return;
   }
   if (cmd === '/addadmin') {

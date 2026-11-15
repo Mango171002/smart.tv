@@ -310,6 +310,7 @@ reset role;
 update private.ops_events set created_at = now() where false; -- no-op: journal stays untouched
 select pg_temp.expect_error($$update private.ops_events set reason = 'x'$$, '42501', 'the journal is append-only');
 select pg_temp.expect_error($$delete from private.ops_events$$, '42501', 'the journal cannot be deleted');
+select pg_temp.check((select proconfig @> array['search_path=""'] from pg_proc where oid = 'private.ops_events_append_only()'::regprocedure), 'journal trigger function has a fixed search_path');
 set role service_role;
 select pg_temp.check((public.ops_set_topic(111, 'support', -100123, 7) ->> 'code') = 'forbidden', 'only admins configure topics');
 select pg_temp.check((public.ops_set_topic(222, 'support', -100123, 7) ->> 'ok') = 'true', 'admin configures a topic');

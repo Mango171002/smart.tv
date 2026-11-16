@@ -17,7 +17,16 @@ export function StructuredData({ description }: { description: string }) {
         image: `${url}${OG_IMAGE.url}`,
         slogan: 'One World. Endless Entertainment.',
         description,
+        ...(siteConfig.legalEntity ? { legalName: siteConfig.legalEntity } : {}),
         ...(siteConfig.supportEmail ? { email: siteConfig.supportEmail } : {}),
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '1209 Mountain Road Pl NE, Ste H',
+          addressLocality: 'Albuquerque',
+          addressRegion: 'NM',
+          postalCode: '87110',
+          addressCountry: 'US',
+        },
         contactPoint: [
           {
             '@type': 'ContactPoint',

@@ -36,12 +36,12 @@ export const siteConfig = {
   },
   supportHours: null as string | null,
   /** Operator shown in the Legal notice / Privacy policy (company only — never a personal name). */
-  legalEntity: null as string | null,
-  legalAddress: null as string | null,
-  legalCountry: null as string | null,
-  /** Company registration number (e.g. Companies House, RC, ICE). */
-  companyNumber: null as string | null,
-  vatNumber: null as string | null,
+  /** Owner, 16/11/2026. */
+  legalEntity: 'Sygma TV LLC' as string | null,
+  legalAddress: '1209 Mountain Road Pl NE, Ste H, Albuquerque, NM 87110, United States' as string | null,
+  legalCountry: 'United States (New Mexico)' as string | null,
+  /** U.S. Employer Identification Number (federal tax ID), owner 16/11/2026. */
+  companyNumber: '98-1836592' as string | null,
   /** ISO market codes with VERIFIED written redistribution rights. None yet. */
   licensedTerritories: [] as string[],
   /** Licensed catalogue source. None yet: categories shown are illustrative. */

@@ -105,7 +105,7 @@ const PRIVACY: LegalSection[] = [
     icon: 'globe',
     title: 'International transfers',
     body: [
-      { p: 'Some providers process data outside your country, including in the United States. Where this happens, the transfer is covered by an adequacy decision (such as the EU-U.S. Data Privacy Framework) or by Standard Contractual Clauses approved by the European Commission and the UK, together with the providers’ security measures.' },
+      { p: 'We are based in the United States, and some of our providers process data in other countries. When your data leaves your country (for example from the EU or the UK to the United States), the transfer relies on an adequacy decision (such as the EU-U.S. Data Privacy Framework), on Standard Contractual Clauses approved by the European Commission and the UK, or on the necessity of the transfer to answer your request and perform your contract, together with appropriate security measures.' },
     ],
   },
   {
@@ -293,11 +293,10 @@ const IMPRINT: LegalSection[] = [
     title: 'Website publisher',
     body: [
       { facts: [
-        ['Company', siteConfig.legalEntity],
+        ['Company', siteConfig.legalEntity ? `${siteConfig.legalEntity} (limited liability company)` : null],
         ['Registered address', siteConfig.legalAddress],
-        ['Country of registration', siteConfig.legalCountry],
-        ['Registration number', siteConfig.companyNumber],
-        ['VAT number', siteConfig.vatNumber],
+        ['State and country of registration', siteConfig.legalCountry],
+        ['Employer Identification Number (EIN)', siteConfig.companyNumber],
         ['E-mail', siteConfig.supportEmail],
         ['Phone / WhatsApp', siteConfig.supportPhone],
       ] },

@@ -5,7 +5,7 @@
  * no payment, no contract until a purchase is confirmed. Must be reviewed by a
  * lawyer before subscriptions open (operator identity, governing law, taxes).
  */
-export const TERMS_UPDATED = '13 November 2026';
+export const TERMS_UPDATED = '16 November 2026';
 
 export type TermsBlock = { p: string } | { list: string[] };
 
@@ -78,7 +78,7 @@ export const TERMS_SECTIONS: TermsSection[] = [
     icon: 'gavel',
     title: 'Privacy and governing law',
     body: [
-      { p: 'Your personal data is handled as described in our Privacy policy. These Terms are governed by the law of the country where the operator is established; as a consumer, you also keep the protection of the mandatory rules of your country of residence.' },
+      { p: 'Your personal data is handled as described in our Privacy policy. These Terms are governed by the laws of the State of New Mexico, United States; as a consumer, you also keep the protection of the mandatory rules of your country of residence and can bring a claim before its courts.' },
     ],
   },
 ];

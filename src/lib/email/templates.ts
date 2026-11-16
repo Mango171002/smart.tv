@@ -4,7 +4,7 @@
  * Wording of e-mails 2 and 3: owner's texts (15/11/2026).
  */
 
-export type EmailKind = 'trial_received' | 'preregistration_received' | 'request_confirmed' | 'review_invite';
+export type EmailKind = 'trial_received' | 'trial_started' | 'preregistration_received' | 'request_confirmed' | 'review_invite';
 
 /** Order data attached to the « Converti » e-mail (number given once per request by the database). */
 export interface InvoiceData {
@@ -25,6 +25,10 @@ export interface EmailData {
   term?: string | null;
   streams?: number | null;
   invoice?: InvoiceData | null;
+  /** « Trial started » e-mail: trial length as told by the team (e.g. « 24 hours »), shown only when known. */
+  trialDuration?: string | null;
+  /** Lowest yearly price already formatted (e.g. « $59 »), from the price table. */
+  fromPrice?: string | null;
 }
 
 export interface RenderedEmail {
@@ -203,6 +207,43 @@ function buildMail(kind: EmailKind, d: EmailData): Mail {
         ...(plan ? [{ rows: [['Your plan', plan]] as [string, string][] }] : []),
         { p: 'Please keep an eye on your WhatsApp messages.', strong: true },
         { p: 'Our team will contact you shortly via WhatsApp to guide you through the activation process.' },
+      ],
+      signature: true,
+    };
+  }
+
+  if (kind === 'trial_started') {
+    // Sent when the team has given the trial on WhatsApp (activation), not when the request is received.
+    const duration = d.trialDuration ? esc(d.trialDuration) : null;
+    return {
+      subject: 'Your SYGMA TV+ trial is active — enjoy!',
+      title: 'Enjoy your trial!',
+      parts: [
+        { p: hello },
+        { p: 'Great news: your SYGMA TV+ trial is now active.' },
+        {
+          p: phone
+            ? `Your access details and setup instructions have been sent to you on <b>WhatsApp</b> at <b>${phone}</b>.`
+            : 'Your access details and setup instructions have been sent to you on <b>WhatsApp</b>.',
+        },
+        ...(duration ? [{ rows: [['Trial length', d.trialDuration!]] as [string, string][] }] : []),
+        { h: 'Get started in 3 steps' },
+        {
+          steps: [
+            'Open our WhatsApp message with your access details.',
+            'Install the app on your device (Smart TV, Fire TV, Android TV, mobile or computer) as explained.',
+            'Sign in and start watching.',
+          ],
+        },
+        { h: 'Enjoying it?' },
+        {
+          p: d.fromPrice
+            ? `When your trial ends, keep watching with the plan that suits you — from <b>${esc(d.fromPrice)} per year</b>, up to 4 screens.`
+            : 'When your trial ends, keep watching with the plan that suits you — up to 4 screens.',
+        },
+        { cta: true, label: 'See the plans', href: `${SITE}/#plans` },
+        { help: true },
+        { p: 'Thank you for your trust!', strong: true },
       ],
       signature: true,
     };

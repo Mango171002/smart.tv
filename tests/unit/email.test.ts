@@ -77,3 +77,25 @@ describe('sending through Brevo', () => {
     expect(await sendCustomerEmail('trial_received', 'a@b.co', {})).toBe('failed');
   });
 });
+
+describe('trial e-mails (activation and 24 h follow-up)', () => {
+  it('trial started: WhatsApp, trial length, support contacts — no plans', () => {
+    const m = renderEmail('trial_started', { name: 'Sara', phone: '+212600000000', trialDuration: '24 hours' });
+    expect(m.subject).toBe('Your SYGMA TV+ trial is active — enjoy!');
+    expect(m.html).toContain('<b>WhatsApp</b> at <b>+212600000000</b>');
+    expect(m.html).toContain('24 hours');
+    expect(m.html).toContain('+44 7412 857594');
+    expect(m.html).not.toMatch(/per year|See the plans/);
+  });
+  it('trial follow-up: the three plans in their colours and a link to the plans', () => {
+    const plans = [
+      { name: 'Starter', tagline: 'a', price: '$59', highlights: ['x'], color: '#19d3f3', image: 'https://sygmatv.com/images/email/plan-starter.jpg' },
+      { name: 'Plus', tagline: 'b', price: '$69', highlights: ['y'], color: '#d1fe17', image: 'https://sygmatv.com/images/email/plan-plus.jpg', recommended: true },
+      { name: 'Ultra+', tagline: 'c', price: '$99', highlights: ['z'], color: '#f044c4', image: 'https://sygmatv.com/images/email/plan-ultra.jpg' },
+    ];
+    const m = renderEmail('trial_followup', { name: 'Sara', plans });
+    expect(m.subject).toBe('How was your SYGMA TV+ trial?');
+    for (const t of ['$59', '$69', '$99', 'RECOMMENDED', 'border:2px solid #f044c4', 'https://sygmatv.com/#plans', 'Choose my plan']) expect(m.html).toContain(t);
+    expect(m.text).toContain('Plus (recommended) — $69 / year');
+  });
+});

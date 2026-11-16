@@ -1,5 +1,6 @@
 import 'server-only';
 import { sendCustomerEmail } from '@/lib/email/send';
+import { emailPlans } from '@/lib/email/plans';
 import type { InvoiceData } from '@/lib/email/templates';
 import { getPriceTable } from '@/lib/price-source';
 import { computeQuote, isStreamCount, isTerm, isTier } from '@/lib/pricing';
@@ -162,7 +163,7 @@ const HELP = [
   '/stats — activité des dernières 24 h',
   '/addadmin &lt;id&gt; &lt;admin|vendeur&gt; &lt;nom&gt; — ajouter un membre (admin)',
   '/removeadmin &lt;id&gt; — retirer un membre (admin)',
-  '/testemail &lt;avis|commande|essai|actif|tous&gt; — e-mail de test vers support@sygmatv.com (admin)',
+  '/testemail &lt;essai|essai-actif|suivi|commande|actif|avis|tous&gt; — e-mail de test vers support@sygmatv.com (admin)',
 ].join('\n');
 
 /** Test e-mails (sample data) — always sent to the team's own mailbox, never to a customer. */
@@ -173,6 +174,8 @@ const TEST_EMAILS = [
   { key: 'commande', label: 'Commande reçue', kind: 'preregistration_received', data: SAMPLE },
   { key: 'actif', label: 'Abonnement actif (Converti)', kind: 'request_confirmed', data: { ...SAMPLE, invoice: { number: 'SYG-TEST-0000', issuedAt: new Date(0).toISOString(), amountMinor: 9900, currency: 'USD' } } },
   { key: 'avis', label: 'Invitation avis Trustpilot', kind: 'review_invite', data: SAMPLE },
+  { key: 'essai-actif', label: 'Essai activé', kind: 'trial_started', data: { ...SAMPLE, trialDuration: '24 hours' } },
+  { key: 'suivi', label: 'Suivi 24 h après l’essai (3 offres)', kind: 'trial_followup', data: SAMPLE },
 ] as const;
 
 async function handleCommand(m: TgMessage) {
@@ -260,7 +263,9 @@ async function handleCommand(m: TgMessage) {
     }
     const results: string[] = [];
     for (const t of kinds) {
-      const r = await sendCustomerEmail(t.kind, TEST_EMAIL_TO, t.data);
+      // The follow-up e-mail shows the three plans with the site's current prices.
+      const data = t.kind === 'trial_followup' ? { ...t.data, plans: await emailPlans() } : t.data;
+      const r = await sendCustomerEmail(t.kind, TEST_EMAIL_TO, data);
       results.push(`${r === 'sent' ? '✅' : r === 'failed' ? '⚠️' : '⏸'} ${t.label}`);
     }
     await reply(m, `<b>E-mails de test → ${TEST_EMAIL_TO}</b>\n${results.join('\n')}`);

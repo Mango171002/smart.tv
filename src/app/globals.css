@@ -1032,12 +1032,41 @@ body::after {
   -webkit-mask-image: radial-gradient(45% 50% at 100% 100%, black, transparent 75%), radial-gradient(30% 35% at 0% 0%, black, transparent 75%);
   mask-image: radial-gradient(45% 50% at 100% 100%, black, transparent 75%), radial-gradient(30% 35% at 0% 0%, black, transparent 75%);
 }
+/* Phones: indigo background with visible colour (owner request 16/11/2026). On a phone the content
+   covers almost the whole width, so the glows are spread over the screen height instead of
+   hiding in the top-left corner, and the tech grid shows on both sides. */
 @media (max-width: 640px) {
   body::before {
+    /* Fallback for browsers without color-mix() (iOS < 16.2, old Android Chrome): same look in plain rgba */
     background:
-      radial-gradient(90% 45% at -10% -5%, color-mix(in srgb, var(--color-violet) 32%, transparent), transparent 70%),
-      radial-gradient(70% 35% at 110% 0%, color-mix(in srgb, var(--color-magenta) 10%, transparent), transparent 72%),
-      linear-gradient(180deg, color-mix(in srgb, var(--color-violet) 12%, var(--color-bg)) 0%, var(--color-bg) 100%);
+      radial-gradient(120% 50% at -15% 0%, rgba(104, 120, 255, .42), transparent 70%),
+      radial-gradient(95% 45% at 115% 42%, rgba(240, 68, 196, .14), transparent 72%),
+      radial-gradient(110% 45% at -15% 95%, rgba(25, 211, 243, .10), transparent 70%),
+      linear-gradient(180deg, #141b35 0%, #0d1325 55%, #070d17 100%);
+    background:
+      radial-gradient(120% 50% at -15% 0%, color-mix(in srgb, var(--color-violet) 42%, transparent), transparent 70%),
+      radial-gradient(95% 45% at 115% 42%, color-mix(in srgb, var(--color-magenta) 14%, transparent), transparent 72%),
+      radial-gradient(110% 45% at -15% 95%, color-mix(in srgb, var(--color-cyan) 10%, transparent), transparent 70%),
+      linear-gradient(180deg,
+        color-mix(in srgb, var(--color-violet) 13%, var(--color-bg)) 0%,
+        color-mix(in srgb, var(--color-violet) 6%, var(--color-bg)) 55%,
+        var(--color-bg) 100%);
+  }
+  body::after {
+    -webkit-mask-image: radial-gradient(70% 40% at 100% 70%, black, transparent 75%), radial-gradient(60% 30% at 0% 20%, black, transparent 75%);
+    mask-image: radial-gradient(70% 40% at 100% 70%, black, transparent 75%), radial-gradient(60% 30% at 0% 20%, black, transparent 75%);
+  }
+}
+/* Same fallback for computers without color-mix() */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+  @media (min-width: 641px) {
+    body::before {
+      background:
+        radial-gradient(60% 65% at -6% -8%, rgba(104, 120, 255, .40), transparent 70%),
+        radial-gradient(45% 45% at 106% 0%, rgba(240, 68, 196, .11), transparent 72%),
+        radial-gradient(50% 45% at 100% 105%, rgba(25, 211, 243, .07), transparent 70%),
+        linear-gradient(180deg, #141b35 0%, #0d1325 55%, #070d17 100%);
+    }
   }
 }
 @media print { body::before, body::after { display: none; } }

@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
 import { cronSecret } from '@/lib/cron';
 import { sendCustomerEmail } from '@/lib/email/send';
+import { emailPlans } from '@/lib/email/plans';
 import { getServiceSupabase } from '@/lib/supabase/server';
 import { safeEqual } from '@/lib/telegram/api';
 
 /**
- * Trustpilot review invitations: one e-mail 3 days after « Converti », no reminder.
- * Called every hour by the Cloudflare cron trigger (worker.ts), never by browsers.
+ * Hourly customer e-mails, called by the Cloudflare cron trigger (worker.ts), never by browsers:
+ * - Trustpilot review invitation: one e-mail 3 days after « Converti », no reminder;
+ * - trial follow-up: one e-mail 24 h after « Essai envoyé » (the three plans), unless converted or lost.
  */
 export async function POST(req: Request) {
   const expected = await cronSecret();
@@ -34,5 +36,23 @@ export async function POST(req: Request) {
       await db.rpc('ops_review_release' as never, { p_request: r.id } as never);
     }
   }
-  return NextResponse.json({ ok: true, due: due.length, sent, failed });
+
+  // Trial follow-ups (24 h after the trial was given).
+  const f = await db.rpc('ops_trial_followup_claim_due' as never, { p_after: '24 hours', p_limit: 25 } as never);
+  const followDue = f.error ? [] : ((f.data ?? []) as unknown as { id: string; email: string; name: string | null }[]);
+  if (f.error) console.warn('[cron] trial follow-up claim', f.error.message);
+  let followSent = 0;
+  let followFailed = 0;
+  if (followDue.length) {
+    const plans = await emailPlans();
+    for (const r of followDue) {
+      const result = await sendCustomerEmail('trial_followup', r.email, { name: r.name, plans });
+      if (result === 'sent') followSent++;
+      else {
+        followFailed++;
+        await db.rpc('ops_trial_followup_release' as never, { p_request: r.id } as never);
+      }
+    }
+  }
+  return NextResponse.json({ ok: true, due: due.length, sent, failed, trialFollowups: { due: followDue.length, sent: followSent, failed: followFailed } });
 }

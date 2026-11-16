@@ -340,5 +340,23 @@ select public.ops_review_release('20000000-0000-4000-8000-000000000001');
 select pg_temp.check(jsonb_array_length(public.ops_review_claim_due(interval '0 seconds')) = 1, 'a failed send is retried');
 reset role;
 
+-- Trial follow-up (24 h after « Essai envoyé »)
+insert into public.contact_requests (id, kind, name, email, phone, locale, consent_given, consent_text_version)
+values ('20000000-0000-4000-8000-000000000002', 'trial_request', 'Trial T.', 'trial2@example.test', '+14155550199', 'en', true, 'test');
+set role anon;
+select pg_temp.expect_error($$select public.ops_trial_followup_claim_due()$$, '42501', 'anon cannot claim trial follow-ups');
+select pg_temp.expect_error($$select trial_followup_sent_at from public.contact_requests$$, '42501', 'anon cannot read trial follow-up dates');
+reset role;
+set role service_role;
+select public.ops_card_open('20000000-0000-4000-8000-000000000002');
+select pg_temp.check(jsonb_array_length(public.ops_trial_followup_claim_due(interval '0 seconds')) = 0, 'no follow-up before the trial is given');
+select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000002', 1, 'contact', 111, 'Sara') -> 'card' -> 'card' ->> 'status') = 'contacted', 'trial given (Essai envoyé)');
+select pg_temp.check(jsonb_array_length(public.ops_trial_followup_claim_due(interval '24 hours')) = 0, 'no follow-up before 24 h');
+select pg_temp.check(public.ops_trial_followup_claim_due(interval '0 seconds') = '[{"id": "20000000-0000-4000-8000-000000000002", "name": "Trial T.", "email": "trial2@example.test"}]'::jsonb, 'follow-up due once the delay has passed — converted trials are excluded');
+select pg_temp.check(jsonb_array_length(public.ops_trial_followup_claim_due(interval '0 seconds')) = 0, 'follow-up sent only once');
+select public.ops_trial_followup_release('20000000-0000-4000-8000-000000000002');
+select pg_temp.check(jsonb_array_length(public.ops_trial_followup_claim_due(interval '0 seconds')) = 1, 'a failed follow-up is retried');
+reset role;
+
 select 'PASSED: ' || count(*) || ' assertions' as result from _t;
 rollback;

@@ -86,7 +86,7 @@ jobs:
           curl -fsS -X POST -H 'content-type: application/json' --data @hook.json "https://api.telegram.org/bot$TG_TOKEN/setWebhook" | grep -q '"ok":true' && echo "Webhook registered."
           rm -f hook.json
           cat > cmds.json <<'JSON'
-          {"commands":[{"command":"id","description":"Mon identifiant Telegram"},{"command":"attente","description":"Demandes en attente"},{"command":"stats","description":"Activité des dernières 24 h"},{"command":"setup","description":"Enregistrer ce sujet (admins)"},{"command":"testemail","description":"E-mails de test (essai, essai-actif, suivi…) vers support@"},{"command":"aide","description":"Aide"}]}
+          {"commands":[{"command":"id","description":"Mon identifiant Telegram"},{"command":"attente","description":"Demandes en attente"},{"command":"stats","description":"Activité des dernières 24 h"},{"command":"setup","description":"Enregistrer ce sujet (admins)"},{"command":"testemail","description":"E-mails de test (essai, essai-actif, suivi…) vers support@"},{"command":"actualiser","description":"Actualiser les fiches en cours (admins)"},{"command":"aide","description":"Aide"}]}
           JSON
           curl -fsS -X POST -H 'content-type: application/json' --data @cmds.json "https://api.telegram.org/bot$TG_TOKEN/setMyCommands" >/dev/null && echo "Commands set."
           rm -f cmds.json

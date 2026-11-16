@@ -62,7 +62,7 @@ describe('rendering', () => {
     const view = renderCard(base('contacted', [ev(1, 'create', null, 'new', 5), ev(2, 'contact', 'new', 'contacted', 1)]), 'Europe/London');
     expect(view.text).toContain('Alex &lt;b&gt;Martin&lt;/b&gt;');
     expect(view.text).not.toContain('<b>Martin</b>');
-    expect(view.text).toContain('Contacté — Sara');
+    expect(view.text).toContain('Essai envoyé — Sara'); // trial request wording
     expect(view.reply_markup.inline_keyboard.flat().map((b) => b.text)).toContain('↩️ Annuler la dernière action');
   });
   it('shows the exact country (flag + name) and the precise device', () => {
@@ -78,6 +78,17 @@ describe('rendering', () => {
     const d = base('new');
     d.request = { ...d.request, kind: 'launch_waitlist', marketing: true };
     expect(renderCard(d, 'UTC').text).toContain('📣 Accepte de recevoir nos offres');
+  });
+  it('trial requests: « Essai envoyé » instead of « Contacté » (button, status, history)', () => {
+    const fresh = renderCard(base('new'), 'UTC');
+    expect(fresh.reply_markup.inline_keyboard.flat().map((b) => b.text)).toContain('🎁 Essai envoyé');
+    expect(fresh.reply_markup.inline_keyboard.flat().map((b) => b.text)).not.toContain('📞 Contacté');
+    const given = renderCard(base('contacted', [ev(1, 'contact', 'new', 'contacted', 1)]), 'UTC');
+    expect(given.text).toContain('Statut : <b>🔵 Essai envoyé</b>');
+    expect(given.text).toContain('Essai envoyé — Sara');
+    const lead = base('new');
+    lead.request = { ...lead.request, kind: 'launch_waitlist' };
+    expect(renderCard(lead, 'UTC').reply_markup.inline_keyboard.flat().map((b) => b.text)).toContain('📞 Contacté');
   });
   it('confirmation keyboard carries a timestamp and a cancel button', () => {
     const k = confirmKeyboard({ op: 'q', requestId: ID, version: 3, action: 'lose' }, 1_800_000_000);

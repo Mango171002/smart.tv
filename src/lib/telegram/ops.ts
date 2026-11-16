@@ -1,5 +1,6 @@
 import 'server-only';
 import { sendCustomerEmail } from '@/lib/email/send';
+import { siteConfig } from '@/config/site';
 import { emailPlans } from '@/lib/email/plans';
 import type { InvoiceData } from '@/lib/email/templates';
 import { getPriceTable } from '@/lib/price-source';
@@ -15,6 +16,7 @@ import {
   RESULT_TOAST,
   shortRef,
   STATUS_LABEL,
+  statusLabel,
   type CardData,
 } from './cards';
 
@@ -163,6 +165,7 @@ const HELP = [
   '/stats — activité des dernières 24 h',
   '/addadmin &lt;id&gt; &lt;admin|vendeur&gt; &lt;nom&gt; — ajouter un membre (admin)',
   '/removeadmin &lt;id&gt; — retirer un membre (admin)',
+  '/actualiser — redessiner les fiches en cours (nouveaux boutons) (admin)',
   '/testemail &lt;essai|essai-actif|suivi|commande|actif|avis|tous&gt; — e-mail de test vers support@sygmatv.com (admin)',
 ].join('\n');
 
@@ -235,7 +238,7 @@ async function handleCommand(m: TgMessage) {
       return;
     }
     const rows = list.map((x) => {
-      const label = `#${shortRef(x.id)} · ${escapeHtml(x.name ?? x.email)} · ${STATUS_LABEL[x.status] ?? x.status}`;
+      const label = `#${shortRef(x.id)} · ${escapeHtml(x.name ?? x.email)} · ${statusLabel(x.status, x.kind)}`;
       return x.chat_id && x.message_id ? `• <a href="${messageLink(x.chat_id, x.message_id)}">${label}</a>` : `• ${label}`;
     });
     await reply(m, `<b>En attente (${list.length})</b>\n${rows.join('\n')}`);
@@ -269,6 +272,24 @@ async function handleCommand(m: TgMessage) {
       results.push(`${r === 'sent' ? '✅' : r === 'failed' ? '⚠️' : '⏸'} ${t.label}`);
     }
     await reply(m, `<b>E-mails de test → ${TEST_EMAIL_TO}</b>\n${results.join('\n')}`);
+    return;
+  }
+  if (cmd === '/actualiser') {
+    // Re-draws the cards still in progress (new buttons and wording) — admin only.
+    if (role !== 'admin') {
+      await reply(m, '⛔ Réservé aux admins.');
+      return;
+    }
+    const list = (await call<Array<{ id: string; chat_id: number | null; message_id: number | null }>>('ops_pending', { p_limit: 50 })) ?? [];
+    let done = 0;
+    for (const x of list) {
+      if (!x.chat_id || !x.message_id) continue;
+      const data = await call<CardData>('ops_card_get', { p_request: x.id });
+      if (!data) continue;
+      await editCard(x.chat_id, x.message_id, data, settings);
+      done++;
+    }
+    await reply(m, `🔄 ${done} fiche(s) en cours actualisée(s).`);
     return;
   }
   if (cmd === '/addadmin') {
@@ -354,6 +375,10 @@ async function handleCallback(q: TgCallback) {
   if (res.ok && res.card && c.action === 'convert' && res.card.request.kind !== 'support') {
     mail = await sendConversionEmail(res.card);
   }
+  // « Essai envoyé » (trial requests) sends the « trial started » e-mail — once per request.
+  if (res.ok && res.card && c.action === 'contact' && res.card.request.kind === 'trial_request') {
+    mail = await sendTrialStartedEmail(res.card);
+  }
   const toast = res.ok ? `✅ Fait${mail}` : (RESULT_TOAST[res.code ?? ''] ?? 'Action impossible');
   await answer(toast, !res.ok && res.code !== 'stale');
 
@@ -363,7 +388,7 @@ async function handleCallback(q: TgCallback) {
     await tg('sendMessage', {
       chat_id: settings.chat_id,
       message_thread_id: settings.thread_alertes,
-      text: `#${shortRef(r.id)} · ${escapeHtml(displayName(q.from))} · ${c.action === 'undo' ? '↩️ annulation' : c.action} → <b>${STATUS_LABEL[res.card.card.status] ?? res.card.card.status}</b>`,
+      text: `#${shortRef(r.id)} · ${escapeHtml(displayName(q.from))} · ${c.action === 'undo' ? '↩️ annulation' : c.action === 'contact' && r.kind === 'trial_request' ? 'essai envoyé' : c.action} → <b>${statusLabel(res.card.card.status, r.kind)}</b>`,
       parse_mode: 'HTML',
       disable_notification: true,
     });
@@ -375,6 +400,14 @@ async function handleCallback(q: TgCallback) {
  * with an order number given once per request (an undo + new « Converti » does not send it again)
  * and the amount when the plan is known. Returns the suffix of the toast.
  */
+async function sendTrialStartedEmail(card: CardData): Promise<string> {
+  // Not again if the trial was already marked as given before (undo + new click).
+  if (card.events.filter((e) => e.action === 'contact').length > 1) return ' · e-mail « essai activé » déjà envoyé';
+  const r = card.request;
+  const sent = await sendCustomerEmail('trial_started', r.email, { name: r.name, phone: r.phone, trialDuration: siteConfig.trialDuration });
+  return sent === 'sent' ? ' · 📧 e-mail « essai activé » envoyé' : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
+}
+
 async function sendConversionEmail(card: CardData): Promise<string> {
   const r = card.request;
   const inv = await call<{ ok: boolean; number?: string; issued_at?: string; new?: boolean }>('ops_invoice', { p_request: r.id });

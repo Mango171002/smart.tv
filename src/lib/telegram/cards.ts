@@ -84,6 +84,15 @@ const BUTTON_LABEL: Record<Action, string> = {
   undo: '↩️ Annuler la dernière action',
 };
 
+/** Trial requests: « Contacté » means the trial was given on WhatsApp (it also sends the « trial started » e-mail). */
+const TRIAL_WORDING = { button: '🎁 Essai envoyé', status: '🔵 Essai envoyé', action: 'Essai envoyé' };
+
+/** Status label of a card, with the trial wording for trial requests. */
+export function statusLabel(status: string, kind?: string | null): string {
+  if (kind === 'trial_request' && status === 'contacted') return TRIAL_WORDING.status;
+  return STATUS_LABEL[status] ?? status;
+}
+
 const KIND_TITLE: Record<CardData['request']['kind'], string> = {
   launch_waitlist: '📝 Pré-inscription',
   trial_request: '🎁 Demande d’essai',
@@ -188,7 +197,7 @@ export function renderCard(data: CardData, tz: string, now = Date.now()): { text
   const r = data.request;
   const lines: string[] = [];
   lines.push(`<b>${KIND_TITLE[r.kind]}</b> · <code>#${shortRef(r.id)}</code>`);
-  lines.push(`Statut : <b>${STATUS_LABEL[data.card.status] ?? data.card.status}</b>`);
+  lines.push(`Statut : <b>${statusLabel(data.card.status, r.kind)}</b>`);
   lines.push('');
   if (r.name) lines.push(`👤 ${escapeHtml(r.name)}`);
   lines.push(`✉️ ${escapeHtml(r.email)}`);
@@ -218,8 +227,10 @@ export function renderCard(data: CardData, tz: string, now = Date.now()): { text
       const who = e.actor_name && e.action !== 'create' ? ` — ${escapeHtml(e.actor_name)}` : '';
       const label =
         e.action === 'undo'
-          ? `↩️ Annulé (retour à ${STATUS_LABEL[e.to_status]?.replace(/^\S+\s/, '') ?? e.to_status})`
-          : ACTION_LABEL[e.action];
+          ? `↩️ Annulé (retour à ${statusLabel(e.to_status, r.kind).replace(/^\S+\s/, '')})`
+          : r.kind === 'trial_request' && e.action === 'contact'
+            ? TRIAL_WORDING.action
+            : ACTION_LABEL[e.action];
       const reason = e.reason ? ` · <i>${escapeHtml(e.reason)}</i>` : '';
       const struck = e.undone ? `<s>${label}</s>` : label;
       lines.push(`${time(e.created_at, tz)} · ${struck}${who}${reason}`);
@@ -230,7 +241,7 @@ export function renderCard(data: CardData, tz: string, now = Date.now()): { text
   const undoEvent = undoableEvent(data);
   const lastAt = undoEvent ? Date.parse(undoEvent.created_at) : null;
   const button = (a: Action): InlineButton => ({
-    text: BUTTON_LABEL[a],
+    text: r.kind === 'trial_request' && a === 'contact' ? TRIAL_WORDING.button : BUTTON_LABEL[a],
     callback_data: encodeCallback({
       op: needsConfirmation(a, lastAt, now) ? 'q' : 'a',
       requestId: r.id,

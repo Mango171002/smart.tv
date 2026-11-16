@@ -20,6 +20,8 @@ export const siteConfig = {
   domain: null as string | null,
   supportEmail: 'support@sygmatv.com' as string | null,
   /** Official support line (owner, 14/11/2026). */
+  /** Length of the free trial given on WhatsApp (shown in the « trial started » e-mail). */
+  trialDuration: '24 hours' as string | null,
   supportPhone: '+44 7412 857594' as string | null,
   /** WhatsApp support number in international format without '+' or spaces (e.g. '33612345678'). Null = the floating support button opens the contact form. */
   supportWhatsApp: '447412857594' as string | null,

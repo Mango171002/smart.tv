@@ -5,6 +5,7 @@ const rpc = vi.fn();
 vi.mock('@/lib/supabase/server', () => ({ getServiceSupabase: () => (process.env.SUPABASE_SECRET_KEY ? { rpc } : null) }));
 const send = vi.fn();
 vi.mock('@/lib/email/send', () => ({ sendCustomerEmail: (...a: unknown[]) => send(...a) }));
+vi.mock('@/lib/email/plans', () => ({ emailPlans: async () => [{ name: 'Plus', tagline: 't', price: '$69', highlights: [], color: '#d1fe17', image: 'x' }] }));
 
 const post = (secret?: string) =>
   new Request('https://sygmatv.com/api/cron/review-invites', { method: 'POST', headers: secret ? { 'x-cron-secret': secret } : {} });
@@ -46,11 +47,14 @@ describe('POST /api/cron/review-invites', () => {
     rpc.mockImplementation(async (fn: string) =>
       fn === 'ops_review_claim_due'
         ? { data: [{ id: 'a', email: 'a@b.co', name: 'Ana' }, { id: 'b', email: 'b@b.co', name: null }], error: null }
-        : { data: null, error: null },
+        : fn === 'ops_trial_followup_claim_due'
+          ? { data: [{ id: 't', email: 't@b.co', name: 'Tom' }], error: null }
+          : { data: null, error: null },
     );
-    send.mockResolvedValueOnce('sent').mockResolvedValueOnce('failed');
+    send.mockResolvedValueOnce('sent').mockResolvedValueOnce('failed').mockResolvedValueOnce('sent');
     const res = await POST(post((await cronSecret())!));
-    expect(await res.json()).toEqual({ ok: true, due: 2, sent: 1, failed: 1 });
+    expect(await res.json()).toEqual({ ok: true, due: 2, sent: 1, failed: 1, trialFollowups: { due: 1, sent: 1, failed: 0 } });
+    expect(send).toHaveBeenCalledWith('trial_followup', 't@b.co', expect.objectContaining({ name: 'Tom', plans: expect.any(Array) }));
     expect(send).toHaveBeenCalledWith('review_invite', 'a@b.co', { name: 'Ana' });
     expect(rpc).toHaveBeenCalledWith('ops_review_release', { p_request: 'b' });
   });

@@ -4,7 +4,7 @@
  * Wording of e-mails 2 and 3: owner's texts (15/11/2026).
  */
 
-export type EmailKind = 'trial_received' | 'trial_started' | 'preregistration_received' | 'request_confirmed' | 'review_invite';
+export type EmailKind = 'trial_received' | 'trial_started' | 'trial_followup' | 'preregistration_received' | 'request_confirmed' | 'review_invite';
 
 /** Order data attached to the « Converti » e-mail (number given once per request by the database). */
 export interface InvoiceData {
@@ -27,8 +27,17 @@ export interface EmailData {
   invoice?: InvoiceData | null;
   /** « Trial started » e-mail: trial length as told by the team (e.g. « 24 hours »), shown only when known. */
   trialDuration?: string | null;
-  /** Lowest yearly price already formatted (e.g. « $59 »), from the price table. */
-  fromPrice?: string | null;
+  /** « Trial follow-up » e-mail: the three plans (names, prices and highlights come from the site's own data). */
+  plans?: EmailPlan[] | null;
+}
+
+export interface EmailPlan {
+  name: string;
+  tagline: string;
+  /** Already formatted, e.g. « $59 ». */
+  price: string;
+  highlights: string[];
+  recommended?: boolean;
 }
 
 export interface RenderedEmail {
@@ -84,6 +93,7 @@ type Part =
   | { help: true }
   | { helpShort: true }
   | { trustpilot: true }
+  | { plans: EmailPlan[] }
   | { cta: true; label?: string; href?: string };
 
 interface Mail {
@@ -114,6 +124,22 @@ function partHtml(part: Part): string {
       .join('')}</table>`;
   }
   if ('note' in part) return `<p style="margin:0 0 18px;font-size:13px;line-height:1.5;color:${C.muted};">${part.note}</p>`;
+  if ('plans' in part) {
+    return part.plans
+      .map((pl) => {
+        const border = pl.recommended ? `2px solid ${C.lime}` : `1px solid ${C.line}`;
+        const badge = pl.recommended
+          ? `<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:${C.lime};color:${C.bg};font-size:11px;font-weight:800;vertical-align:middle;">RECOMMENDED</span>`
+          : '';
+        const list = pl.highlights.map((h) => `<li style="margin:0 0 4px;">${esc(h)}</li>`).join('');
+        return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;border:${border};border-radius:12px;"><tr>
+<td valign="top" style="padding:14px 16px;"><b style="font-size:17px;color:${C.ink};">${esc(pl.name)}</b>${badge}<br><span style="font-size:13px;color:${C.muted};">${esc(pl.tagline)}</span>
+<ul style="margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.5;color:${C.ink};">${list}</ul></td>
+<td valign="top" align="right" style="padding:14px 16px;white-space:nowrap;"><b style="font-size:22px;color:${pl.recommended ? C.lime : C.ink};">${esc(pl.price)}</b><br><span style="font-size:12px;color:${C.muted};">/ year</span></td>
+</tr></table>`;
+      })
+      .join('');
+  }
   if ('trustpilot' in part) {
     // Official Trustpilot brand assets (logo + 5 stars), unmodified, linking to our review page.
     return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 22px;border:1px solid ${C.line};border-radius:14px;background:${C.bg};"><tr><td align="center" style="padding:22px 16px;">
@@ -145,6 +171,7 @@ function partText(part: Part): string {
   if ('steps' in part) return part.steps.map((s, i) => `${i + 1}. ${strip(s)}`).join('\n');
   if ('note' in part) return strip(part.note);
   if ('trustpilot' in part) return `Write a review on Trustpilot: ${TRUSTPILOT_REVIEW_URL}`;
+  if ('plans' in part) return part.plans.map((pl) => `${pl.name}${pl.recommended ? ' (recommended)' : ''} — ${pl.price} / year: ${pl.highlights.join(', ')}`).join('\n');
   if ('helpShort' in part) return `Need help? WhatsApp ${SUPPORT_WHATSAPP} · ${SUPPORT}`;
   if ('help' in part) return `Need assistance? Our support team is here to help.\nWhatsApp: ${SUPPORT_WHATSAPP}\nEmail: ${SUPPORT}\nWebsite: ${SITE}`;
   return part.label ? `${part.label}: ${part.href ?? SITE}` : SITE;
@@ -214,7 +241,6 @@ function buildMail(kind: EmailKind, d: EmailData): Mail {
 
   if (kind === 'trial_started') {
     // Sent when the team has given the trial on WhatsApp (activation), not when the request is received.
-    const duration = d.trialDuration ? esc(d.trialDuration) : null;
     return {
       subject: 'Your SYGMA TV+ trial is active — enjoy!',
       title: 'Enjoy your trial!',
@@ -226,24 +252,26 @@ function buildMail(kind: EmailKind, d: EmailData): Mail {
             ? `Your access details and setup instructions have been sent to you on <b>WhatsApp</b> at <b>${phone}</b>.`
             : 'Your access details and setup instructions have been sent to you on <b>WhatsApp</b>.',
         },
-        ...(duration ? [{ rows: [['Trial length', d.trialDuration!]] as [string, string][] }] : []),
-        { h: 'Get started in 3 steps' },
-        {
-          steps: [
-            'Open our WhatsApp message with your access details.',
-            'Install the app on your device (Smart TV, Fire TV, Android TV, mobile or computer) as explained.',
-            'Sign in and start watching.',
-          ],
-        },
-        { h: 'Enjoying it?' },
-        {
-          p: d.fromPrice
-            ? `When your trial ends, keep watching with the plan that suits you — from <b>${esc(d.fromPrice)} per year</b>, up to 4 screens.`
-            : 'When your trial ends, keep watching with the plan that suits you — up to 4 screens.',
-        },
-        { cta: true, label: 'See the plans', href: `${SITE}/#plans` },
+        ...(d.trialDuration ? [{ rows: [['Trial length', d.trialDuration]] as [string, string][] }] : []),
         { help: true },
-        { p: 'Thank you for your trust!', strong: true },
+      ],
+      signature: true,
+    };
+  }
+
+  if (kind === 'trial_followup') {
+    // Sent automatically 24 h after the trial was given: thanks + the three plans + link to the site.
+    return {
+      subject: 'How was your SYGMA TV+ trial?',
+      title: 'We hope you enjoyed your trial!',
+      parts: [
+        { p: hello },
+        { p: 'Thank you for trying SYGMA TV+. We hope you enjoyed your favourite sports, movies, series and live TV.' },
+        { p: 'Ready to keep watching? Choose the plan that suits you:' },
+        ...(d.plans?.length ? [{ plans: d.plans }] : []),
+        { note: 'Prices per year in USD · up to 4 screens on every plan · save up to 30% with 2 or 3 years.' },
+        { cta: true, label: 'Choose my plan', href: `${SITE}/#plans` },
+        { helpShort: true },
       ],
       signature: true,
     };

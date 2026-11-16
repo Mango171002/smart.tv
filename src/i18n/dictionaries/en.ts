@@ -29,7 +29,7 @@ const en = {
     analyticsTitle: 'Analytics',
     analyticsText: 'Audience measurement and site improvement (Google Analytics, Microsoft Clarity).',
     marketingTitle: 'Marketing',
-    marketingText: 'Measurement of our advertising campaigns (Google Ads, Meta, TikTok) through Google Tag Manager.',
+    marketingText: 'Measurement of our advertising campaigns (Google Ads, Meta, TikTok).',
     settings: 'Cookie settings',
   },
   common: {
@@ -513,19 +513,19 @@ const en = {
       },
       privacy: {
         title: 'Privacy policy',
-        intro: 'What personal data we collect, why, who receives it, how long we keep it and how to exercise your rights.',
+        intro: 'What we collect, why, and your rights — in short.',
       },
       cookies: {
         title: 'Cookie policy',
-        intro: 'The cookies and similar technologies used on sygmatv.com, and how to control them. Optional cookies are only set with your consent.',
+        intro: 'The cookies on sygmatv.com and how to control them.',
       },
       refunds: {
         title: 'Refunds & cancellations',
-        intro: 'Free trial before you buy, a full refund within 7 days of activation, and your legal withdrawal rights.',
+        intro: 'Free trial first, then a full refund within 7 days.',
       },
       imprint: {
         title: 'Legal notice',
-        intro: 'Identity of the company that publishes this website, and its host.',
+        intro: 'The company behind SYGMA TV+.',
       },
     },
   },

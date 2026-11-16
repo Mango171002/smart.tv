@@ -2296,3 +2296,12 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
 @media (hover: hover) { .consent-link:hover { color: var(--color-lime); } }
 .consent-banner { max-height: calc(100vh - 32px); overflow-y: auto; }
 @media (max-width: 720px) { .consent-banner { max-height: calc(100dvh - 120px); } }
+/* Phones (owner request 16/11/2026): the hero feature bar repeated the benefits card below it — it is
+   hidden; the benefits card shows 4 items, centred, with still icons (no floating animation). */
+@media (max-width: 580px) {
+  .hero .hero-bar { display: none; }
+  .hero { padding-bottom: 24px; } /* the space the hidden bar used to fill */
+  .features-bar { justify-items: center; }
+  .features-bar li { align-items: center; text-align: center; }
+  .features-bar svg { animation: none !important; will-change: auto; }
+}

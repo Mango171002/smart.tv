@@ -88,7 +88,7 @@ const en = {
   },
   benefits: [
     { title: 'Express pre-registration', text: 'In less than a minute' },
-    { title: 'Up to 4 screens', text: 'Depending on your plan' },
+    { title: 'Flexible plans', text: 'Up to 4 screens, 1 to 3 years' },
     { title: 'Multi-device', text: 'TV, mobile, tablet, PC' },
     { title: 'Protected data', text: 'No payment before launch' },
     { title: 'Email support', text: 'A team listening to you' },

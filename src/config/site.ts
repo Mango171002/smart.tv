@@ -35,8 +35,13 @@ export const siteConfig = {
     whatsapp: 'https://whatsapp.com/channel/0029Vb96DpII1rchcsE0tC0V' as string | null,
   },
   supportHours: null as string | null,
+  /** Operator shown in the Legal notice / Privacy policy (company only — never a personal name). */
   legalEntity: null as string | null,
   legalAddress: null as string | null,
+  legalCountry: null as string | null,
+  /** Company registration number (e.g. Companies House, RC, ICE). */
+  companyNumber: null as string | null,
+  vatNumber: null as string | null,
   /** ISO market codes with VERIFIED written redistribution rights. None yet. */
   licensedTerritories: [] as string[],
   /** Licensed catalogue source. None yet: categories shown are illustrative. */
@@ -46,7 +51,8 @@ export const siteConfig = {
   taxRules: null as null,
   paymentMethods: [] as string[],
   paymentProvider: null as string | null,
-  refundPolicy: null as string | null,
+  /** Owner decision 16/11/2026: full refund within 7 days of activation (see /legal/refunds). */
+  refundPolicy: 'satisfied-or-refunded-7-days' as string | null,
   activationProvider: null as string | null,
   /** Must stay false until launch: every page is served with noindex,nofollow. */
   allowIndexing: process.env.NEXT_PUBLIC_ALLOW_INDEXING === 'true',

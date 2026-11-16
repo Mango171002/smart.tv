@@ -54,7 +54,7 @@ export const TERMS_SECTIONS: TermsSection[] = [
     icon: 'refund',
     title: 'Renewal, cancellation and refunds',
     body: [
-      { p: 'A subscription only renews if you choose to renew it, and you can stop renewal at any time. EU and UK consumers have a 14-day right of withdrawal. Details are in our Refunds & cancellations policy; your statutory consumer rights always apply.' },
+      { p: 'A subscription only renews if you choose to renew it. You can try the service for free before buying, and you get a full refund if you ask within 7 days of activation (“Satisfied or refunded”). EU and UK consumers also have a 14-day right of withdrawal. Details are in our Refunds & cancellations policy; your statutory consumer rights always apply.' },
     ],
   },
   {

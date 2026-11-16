@@ -2305,3 +2305,24 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
   .features-bar li { align-items: center; text-align: center; }
   .features-bar svg { animation: none !important; will-change: auto; }
 }
+/* Legal pages: tables (purposes, providers, cookies) and fact lists (Legal notice) */
+.legal-table-wrap { margin: 4px 0 12px; border-radius: 14px; border: 1px solid var(--line-strong); overflow: hidden; }
+.legal-table { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.55; }
+.legal-table th { text-align: left; padding: 11px 14px; background: var(--surface-low); color: var(--cat); font-size: 12.5px; letter-spacing: .5px; text-transform: uppercase; }
+.legal-table td { padding: 11px 14px; border-top: 1px solid var(--line); color: var(--color-ink); opacity: .88; vertical-align: top; }
+.legal-table td:first-child { font-weight: 700; opacity: 1; }
+.legal-facts { margin: 0 0 12px; display: grid; gap: 0; border-radius: 14px; border: 1px solid var(--line-strong); overflow: hidden; }
+.legal-facts div { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 11px 14px; border-top: 1px solid var(--line); }
+.legal-facts div:first-child { border-top: 0; }
+.legal-facts dt { color: var(--color-muted); font-size: 14px; }
+.legal-facts dd { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
+.legal-facts dd.is-pending { color: var(--color-muted); font-weight: 500; font-style: italic; }
+@media (max-width: 640px) {
+  .legal-table thead { display: none; }
+  .legal-table, .legal-table tbody, .legal-table tr, .legal-table td { display: block; width: 100%; }
+  .legal-table tr { padding: 10px 14px; border-top: 1px solid var(--line); }
+  .legal-table tr:first-child { border-top: 0; }
+  .legal-table td { padding: 3px 0; border: 0; }
+  .legal-table td::before { content: attr(data-label); display: block; color: var(--cat); font-size: 11.5px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+  .legal-facts div { grid-template-columns: 1fr; gap: 2px; }
+}

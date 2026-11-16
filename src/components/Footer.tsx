@@ -21,7 +21,7 @@ const SOCIAL_ICONS: Record<keyof typeof siteConfig.social, { label: string; path
 
 
 /** Legal documents shown in the footer, in the owner's order. */
-const FOOTER_LEGAL = ['terms', 'privacy', 'cookies', 'imprint'] as const;
+const FOOTER_LEGAL = ['terms', 'privacy', 'cookies', 'refunds', 'imprint'] as const;
 
 const CHIP_ICONS = [MonitorSmartphone, Zap, ShieldCheck];
 

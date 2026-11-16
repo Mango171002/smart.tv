@@ -12,7 +12,8 @@ import { useEffect, useRef, useState } from 'react';
  * here (phones: the light 960 px MP4; other screens: WebM if supported, else MP4).
  */
 function ensureSrc(v: HTMLVideoElement) {
-  if (v.getAttribute('src')) return;
+  // Banner 1 carries <source> elements and autoplays natively: nothing to choose.
+  if (v.getAttribute('src') || v.querySelector('source')) return;
   const d = v.dataset;
   const src = window.matchMedia('(max-width: 900px)').matches ? d.srcSm : v.canPlayType('video/webm') ? d.srcWebm : d.srcMp4;
   if (src) v.src = src;
@@ -46,7 +47,8 @@ export function HeroVideoToggle({ pauseLabel, playLabel }: { pauseLabel: string;
     }
     const startAll = () => {
       const [first, ...rest] = videos;
-      if (first) { ensureSrc(first); first.preload = 'auto'; void first.play().catch(() => undefined); }
+      // Banner 1 normally plays already (native autoplay); this only retries if the browser refused.
+      if (first?.paused) { ensureSrc(first); first.preload = 'auto'; void first.play().catch(() => undefined); }
       // Safety net: whatever happens (autoplay refused, slow network), the banners cycle on their posters.
       t4 = window.setTimeout(startCycle, 12000);
       t2 = window.setTimeout(

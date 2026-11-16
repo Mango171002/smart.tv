@@ -34,7 +34,9 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
           </div>
         </div>
         <div className="hero-stage">
-          {/* 1st banner: savanna chase, documentary-style video (Kling 4.0, muted loop). Its first frame is the poster until it plays. */}
+          {/* 1st banner: savanna chase, documentary-style video (Kling 4.0, muted loop). It starts as soon as the
+              page opens (owner request 16/11/2026): native autoplay, one file chosen by the browser
+              (phones: the light 960 px MP4; other screens: WebM, else MP4). Its first frame is the poster. */}
           <video
             className="hero-video"
             poster="/images/hero-savanna-video-poster-s.webp"
@@ -43,12 +45,14 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             muted
             loop
             playsInline
-            preload="none"
+            autoPlay
+            preload="auto"
             aria-label={h.visualLabel}
-            data-src-sm="/videos/hero-chase-960.mp4"
-            data-src-webm="/videos/hero-chase.webm"
-            data-src-mp4="/videos/hero-chase.mp4"
-          />
+          >
+            <source src="/videos/hero-chase-960.mp4" type="video/mp4" media="(max-width: 900px)" />
+            <source src="/videos/hero-chase.webm" type="video/webm" />
+            <source src="/videos/hero-chase.mp4" type="video/mp4" />
+          </video>
           {/* 2nd banner: action film scene, cinematic video (Kling 4.0, muted loop) */}
           <video
             className="hero-slide hero-video"

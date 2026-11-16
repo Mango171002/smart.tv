@@ -38,6 +38,10 @@ export interface EmailPlan {
   price: string;
   highlights: string[];
   recommended?: boolean;
+  /** Plan colour, as on the site (Starter cyan, Plus lime, Ultra+ magenta). */
+  color: string;
+  /** Absolute URL of the plan picture (JPEG for e-mail clients). */
+  image: string;
 }
 
 export interface RenderedEmail {
@@ -125,20 +129,27 @@ function partHtml(part: Part): string {
   }
   if ('note' in part) return `<p style="margin:0 0 18px;font-size:13px;line-height:1.5;color:${C.muted};">${part.note}</p>`;
   if ('plans' in part) {
-    return part.plans
-      .map((pl) => {
-        const border = pl.recommended ? `2px solid ${C.lime}` : `1px solid ${C.line}`;
-        const badge = pl.recommended
-          ? `<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:${C.lime};color:${C.bg};font-size:11px;font-weight:800;vertical-align:middle;">RECOMMENDED</span>`
-          : '';
-        const list = pl.highlights.map((h) => `<li style="margin:0 0 4px;">${esc(h)}</li>`).join('');
-        return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;border:${border};border-radius:12px;"><tr>
-<td valign="top" style="padding:14px 16px;"><b style="font-size:17px;color:${C.ink};">${esc(pl.name)}</b>${badge}<br><span style="font-size:13px;color:${C.muted};">${esc(pl.tagline)}</span>
-<ul style="margin:10px 0 0;padding-left:18px;font-size:14px;line-height:1.5;color:${C.ink};">${list}</ul></td>
-<td valign="top" align="right" style="padding:14px 16px;white-space:nowrap;"><b style="font-size:22px;color:${pl.recommended ? C.lime : C.ink};">${esc(pl.price)}</b><br><span style="font-size:12px;color:${C.muted};">/ year</span></td>
-</tr></table>`;
-      })
-      .join('');
+    // The three plans side by side, like on the site: vertical cards in the plan colour.
+    // Fluid: equal columns, pictures at 100 % width, long words wrap (fits a 360 px phone screen).
+    const cell = (pl: EmailPlan) => {
+      const badge = pl.recommended
+        ? `<div style="margin:0 0 6px;"><span style="display:inline-block;padding:2px 5px;border-radius:999px;background:${pl.color};color:${C.bg};font-size:8px;font-weight:800;letter-spacing:.2px;white-space:nowrap;">RECOMMENDED</span></div>`
+        : '';
+      const list = pl.highlights
+        .map((h) => `<tr><td valign="top" style="padding:0 3px 5px 0;color:${pl.color};font-size:11px;line-height:1.35;">&#10003;</td><td style="padding:0 0 5px;font-size:11px;line-height:1.35;color:${C.ink};overflow-wrap:break-word;">${esc(h)}</td></tr>`)
+        .join('');
+      return `<td valign="top" width="33%" style="padding:0 2px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:2px solid ${pl.color};border-radius:12px;background:${C.bg};table-layout:fixed;">
+<tr><td style="padding:0;"><img src="${pl.image}" alt="" style="display:block;width:100%;max-width:100%;height:auto;border:0;border-radius:10px 10px 0 0;"></td></tr>
+<tr><td style="padding:10px 7px 12px;overflow-wrap:break-word;">${badge}
+<div style="font-size:17px;font-weight:800;line-height:1.15;color:${pl.color};">${esc(pl.name)}</div>
+<div style="font-size:11px;line-height:1.35;color:${C.muted};margin:3px 0 8px;">${esc(pl.tagline)}</div>
+<div style="font-size:22px;font-weight:800;color:${C.ink};line-height:1;">${esc(pl.price)}</div>
+<div style="font-size:11px;font-weight:600;color:${C.muted};margin:2px 0 0;">per year</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:10px;">${list}</table>
+</td></tr></table></td>`;
+    };
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 16px;table-layout:fixed;"><tr>${part.plans.map(cell).join('')}</tr></table>`;
   }
   if ('trustpilot' in part) {
     // Official Trustpilot brand assets (logo + 5 stars), unmodified, linking to our review page.

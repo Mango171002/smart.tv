@@ -49,7 +49,7 @@ export function Hero({ locale: _locale, dict }: { locale: Locale; dict: Dictiona
             preload="auto"
             aria-label={h.visualLabel}
           >
-            <source src="/videos/hero-chase-960.mp4" type="video/mp4" media="(max-width: 900px)" />
+            <source src="/videos/hero-chase-960.mp4?v=20261116" type="video/mp4" media="(max-width: 900px)" />
             <source src="/videos/hero-chase.webm" type="video/webm" />
             <source src="/videos/hero-chase.mp4" type="video/mp4" />
           </video>

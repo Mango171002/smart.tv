@@ -17,7 +17,7 @@ test.describe('international versions are not published in production', () => {
     expect(hrefs.filter((h) => /^\/[a-z]{2}-[a-z]{2}(\/|#|$)/.test(h))).toEqual([]);
   });
 
-  for (const path of ['/fr-fr', '/fr-fr/legal/terms', '/de-de', '/en-gb']) {
+  for (const path of ['/fr-fr', '/fr-fr/legal/terms', '/fr-fr/faq', '/fr-fr/guides/smart-tv', '/fr-ch', '/fr-be', '/fr-ca', '/en-gb', '/en-ca', '/de-de', '/faq', '/guides', '/guides/smart-tv']) {
     test(`${path} does not exist in production (404)`, async ({ request }) => {
       const res = await request.get(path, { maxRedirects: 0 });
       expect(res.status()).toBe(404);

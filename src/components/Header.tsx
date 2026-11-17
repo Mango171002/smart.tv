@@ -10,7 +10,8 @@ import type { Dictionary } from '@/i18n/dictionaries';
 import { Brand } from './Brand';
 import { openRequest } from './RequestHost';
 
-export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
+/** `links`: menu of an international version (guides, FAQ page); the English home keeps its own menu. */
+export function Header({ locale, nav, links: customLinks }: { locale: Locale; nav: Dictionary['nav']; links?: Array<{ href: string; label: string }> }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
   }, [open]);
 
   // One-page site: the menu scrolls to sections of the home page.
-  const links = [
+  const links = customLinks ?? [
     { href: href(locale, '#plans'), label: nav.plans },
     { href: href(locale, '#how'), label: nav.how },
     { href: href(locale, '#faq'), label: nav.help },

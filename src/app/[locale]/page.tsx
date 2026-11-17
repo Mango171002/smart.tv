@@ -3,6 +3,8 @@ import { Benefits, ContentCategories, PlanExtras, Faq, Hero, HowItWorks, CtaBann
 import { getDictionary } from '@/i18n/dictionaries';
 import { getMarketPriceTable } from '@/lib/price-source';
 import { SITE_LOCALES } from '@/i18n/locales';
+import { faqFor, guidesLocale } from '@/content/intl';
+import { href } from '@/lib/routes';
 import { fill } from '@/i18n/dictionaries';
 import { computeQuote, formatMoney } from '@/lib/pricing';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
@@ -18,6 +20,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const locale = await resolveLocale(params);
   const dict = getDictionary(locale);
   const { market, currency } = SITE_LOCALES[locale];
+  // International versions link to their FAQ page and to the guides of their language (« / » unchanged).
+  const gl = locale === 'en' ? null : guidesLocale(locale);
+  const guidesHref = gl ? href(gl, '/guides') : undefined;
+  const faqHref = locale !== 'en' && faqFor(locale) ? href(locale, '/faq') : undefined;
   // The version's own grid, in its own currency (never converted). null = prices not validated yet.
   const table = await getMarketPriceTable(market, currency);
   const starter = table ? computeQuote(table, { tier: 'starter', term: '12m', streams: 1 }) : null;
@@ -45,21 +51,22 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               table={table}
               dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout }}
             >
-              <PlanExtras dict={dict} focusableTable={locale !== 'en'} />
+              <PlanExtras dict={dict} focusableTable={locale !== 'en'} {...(guidesHref ? { guidesHref } : {})} />
             </PlansIsland>
           ) : (
             <>
               <div className="card panel-pad prices-soon" role="note">
                 <h3>{dict.intl.pricesSoonTitle}</h3>
                 <p className="muted">{fill(dict.intl.pricesSoonText, { currency })}</p>
+                <p className="muted prices-soon-note">{dict.plans.footnote}</p>
               </div>
-              <PlanExtras dict={dict} focusableTable={locale !== 'en'} />
+              <PlanExtras dict={dict} focusableTable={locale !== 'en'} {...(guidesHref ? { guidesHref } : {})} />
             </>
           )}
         </div>
       </section>
       <HowItWorks locale={locale} dict={dict} />
-      <Faq dict={dict} />
+      <Faq dict={dict} {...(faqHref ? { allHref: faqHref } : {})} />
       <CtaBanner locale={locale} dict={dict} fromMonthly={fromMonthly} />
     </>
   );

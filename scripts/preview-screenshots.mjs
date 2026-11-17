@@ -17,7 +17,11 @@ for (const [tag, opts] of [
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  for (const [name, path] of [['accueil', '/fr-fr'], ['remboursement', '/fr-fr/legal/refunds'], ['blog', '/fr-fr/blog'], ['404', '/fr-fr/page-inconnue']]) {
+  for (const [name, path] of [
+    ['accueil', '/fr-fr'], ['faq', '/fr-fr/faq'], ['guides', '/fr-fr/guides'], ['guide-smart-tv', '/fr-fr/guides/smart-tv'],
+    ['guide-fire-tv', '/fr-fr/guides/fire-tv'], ['cgu', '/fr-fr/legal/terms'], ['remboursement', '/fr-fr/legal/refunds'],
+    ['belgique', '/fr-be'], ['suisse', '/fr-ch'], ['canada-fr', '/fr-ca'], ['royaume-uni', '/en-gb'], ['canada-en', '/en-ca'], ['404', '/fr-fr/page-inconnue'],
+  ]) {
     await page.goto(base + path, { waitUntil: 'networkidle' });
     // Reveal the animated sections, then go back to the top.
     await page.evaluate(async () => {

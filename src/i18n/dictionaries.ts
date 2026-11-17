@@ -2,8 +2,9 @@ import en, { type Dictionary } from './dictionaries/en';
 import fr from './dictionaries/fr';
 import type { Locale } from './config';
 import { SITE_LOCALES, type Language } from './locales';
+import { applyVariant } from './variants';
 
-/** One dictionary per language (country variants, if any, are applied on top in phase 3). */
+/** One dictionary per language; country variants are applied on top (src/i18n/variants.ts). */
 const dictionaries: Partial<Record<Language, Dictionary>> = { en, fr };
 
 export function getDictionary(locale: Locale): Dictionary {
@@ -11,7 +12,8 @@ export function getDictionary(locale: Locale): Dictionary {
   const dict = dictionaries[language];
   // Never an English page under another language: a version without its dictionary cannot be built.
   if (!dict) throw new Error(`No dictionary for language « ${language} » (version ${locale})`);
-  return dict;
+  // Country variants (fr-be, fr-ch, fr-ca, en-gb, en-ca): only their real local differences.
+  return applyVariant(locale, dict);
 }
 
 export function hasDictionary(language: Language): boolean {

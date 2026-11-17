@@ -9,6 +9,7 @@
 import { siteConfig } from '@/config/site';
 import type { LegalDoc } from '@/lib/routes';
 import type { Language } from '@/i18n/locales';
+import { FR_LEGAL_DOCUMENTS } from '@/content/fr/legal';
 import { TERMS_SECTIONS, TERMS_UPDATED, type TermsBlock, type TermsSection } from '@/content/terms';
 
 export type LegalBlock =
@@ -208,10 +209,10 @@ export const LEGAL_DOCUMENTS: Record<LegalDoc, LegalDocument> = {
 };
 
 /**
- * Legal documents of a language. Phase 1 (SEO international): only English exists; the other
- * languages are added in phase 2, after translation and review (until then they show English).
+ * Legal documents of a language: English and French (phase 2, 18/11/2026). A language without its own
+ * documents shows English (none today: every built version has its language).
  */
-const LEGAL_BY_LANGUAGE: Partial<Record<Language, Record<LegalDoc, LegalDocument>>> = { en: LEGAL_DOCUMENTS };
+const LEGAL_BY_LANGUAGE: Partial<Record<Language, Record<LegalDoc, LegalDocument>>> = { en: LEGAL_DOCUMENTS, fr: FR_LEGAL_DOCUMENTS };
 export function legalDocuments(language: Language): Record<LegalDoc, LegalDocument> {
   return LEGAL_BY_LANGUAGE[language] ?? LEGAL_DOCUMENTS;
 }

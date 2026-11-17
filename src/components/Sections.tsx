@@ -215,7 +215,7 @@ const FAQ_HIGHLIGHTS: { Icon: LucideIcon; cat: string }[] = [
   { Icon: ShieldCheck, cat: 'streaming' },
 ];
 
-export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
+export function Faq({ dict, limit, allHref }: { dict: Dictionary; limit?: number; allHref?: string }) {
   const f = dict.faq;
   const items = limit ? f.items.slice(0, limit) : f.items;
   return (
@@ -256,6 +256,11 @@ export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
               <p>{item.a}</p>
             </details>
           ))}
+          {allHref && (
+            <p className="faq-all">
+              <Link className="btn ghost" href={allHref}>{dict.intl.faqAll} →</Link>
+            </p>
+          )}
         </div>
       </div>
     </section>
@@ -271,7 +276,7 @@ const TRUST: { Icon: LucideIcon; cat: string }[] = [
 ];
 
 /** `focusableTable`: the comparison table scroll area can be reached with the keyboard (versions whose labels may overflow). */
-export function PlanExtras({ dict, focusableTable = false }: { dict: Dictionary; focusableTable?: boolean }) {
+export function PlanExtras({ dict, focusableTable = false, guidesHref }: { dict: Dictionary; focusableTable?: boolean; guidesHref?: string }) {
   const p = dict.plans;
   return (
     <div className="plan-extras">
@@ -292,6 +297,7 @@ export function PlanExtras({ dict, focusableTable = false }: { dict: Dictionary;
             );
           })}
         </ul>
+        {guidesHref && <Link className="platforms-guides" href={guidesHref}>{dict.intl.guidesLink} →</Link>}
       </div>
       <ul className="trust-bar">
         {p.trust.map((item, i) => {

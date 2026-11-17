@@ -1,4 +1,5 @@
 import type { Dictionary } from './en';
+import { FR_FAQ } from '@/content/fr/faq';
 
 /**
  * French interface (SEO international, phase 1 — draft to be reviewed by a native speaker before
@@ -10,7 +11,7 @@ const fr: Dictionary = {
     siteTitle: 'Abonnement streaming international',
     homeTitle: 'SYGMA TV+ — Abonnement streaming international',
     homeDescription:
-      'SYGMA TV+ : One World. Endless Entertainment. Formules de streaming pour 1 à 4 appareils sur Smart TV, mobile et ordinateur. Commande en ligne en quelques minutes, essai gratuit.',
+      'SYGMA TV+ : sport en direct, films, séries et chaînes internationales sur Smart TV, mobile et ordinateur. Essai gratuit, 1 à 4 appareils, satisfait ou remboursé.',
     plansTitle: 'Formules et prix',
     plansDescription: 'Comparez les durées d’abonnement et le nombre d’appareils simultanés.',
     devicesTitle: 'Appareils et installation',
@@ -338,32 +339,8 @@ const fr: Dictionary = {
     titleHl: 'fréquentes.',
     sub: 'Les réponses aux questions les plus courantes avant de commencer.',
     highlights: ['Installation simple', 'Multi-appareils', 'Votre vie privée compte'],
-    items: [
-      {
-        q: 'Puis-je m’abonner dès maintenant ?',
-        a: 'Oui. Choisissez votre formule, laissez vos coordonnées et notre équipe vous contacte sur WhatsApp pour activer votre accès. Vous pouvez aussi demander d’abord un essai gratuit.',
-      },
-      {
-        q: 'Quels pays sont disponibles ?',
-        a: 'Les États-Unis, le Canada et l’Europe. Les contenus peuvent varier selon le pays.',
-      },
-      {
-        q: 'Quels appareils sont compatibles ?',
-        a: 'Smart TV, box et clés de streaming, smartphones, tablettes et ordinateurs. Demandez un essai gratuit pour vérifier votre appareil.',
-      },
-      {
-        q: 'Combien ça coûte ?',
-        a: 'Trois formules annuelles : Starter, Plus et Ultra+, avec une remise sur 24 et 36 mois. Les prix en euros, TTC, sont affichés dans la section Formules dès leur validation, et toujours avant tout achat.',
-      },
-      {
-        q: 'Puis-je résilier ?',
-        a: 'Aucune formule ne se renouvelle automatiquement. Si vous le demandez dans les 7 jours suivant l’activation, nous vous remboursons à 100 %. Vous conservez aussi votre droit de rétractation de 14 jours.',
-      },
-      {
-        q: 'Conservez-vous mes données personnelles ?',
-        a: 'Uniquement les informations que vous nous envoyez, pour traiter votre demande et votre abonnement. Nous ne vendons jamais vos données. Voir notre politique de confidentialité.',
-      },
-    ],
+    // Same text as the FAQ page (src/content/fr/faq.ts): the home shows the most asked questions.
+    items: FR_FAQ.filter((f) => f.home).map(({ q, a }) => ({ q, a })),
   },
   helpCta: {
     title: 'Des questions sur le service ?',
@@ -566,6 +543,17 @@ const fr: Dictionary = {
     pricesSoonText: 'Nos prix en {currency} s’afficheront ici dès leur validation.',
     priceSoon: 'bientôt',
     close: 'Fermer',
+    navGuides: 'Guides',
+    navFaq: 'FAQ',
+    faqAll: 'Voir toutes les questions',
+    breadcrumbHome: 'Accueil',
+    guidesLink: 'Guides d’installation',
+    faqTitle: 'Questions fréquentes',
+    faqMetaTitle: 'FAQ : commande, essai gratuit, appareils, remboursement',
+    faqDescription: 'Les réponses sur SYGMA TV+ : commande, essai gratuit de 24 heures, paiement, appareils, connexion, renouvellement, remboursement et assistance.',
+    faqSub: 'Commande, essai gratuit, appareils, remboursement : les réponses aux questions que nos clients posent le plus souvent.',
+    faqStillQuestions: 'Une autre question ?',
+    faqContact: 'Notre équipe vous répond par e-mail et sur WhatsApp.',
   },
   notFound: {
     title: 'Cette page n’existe pas.',

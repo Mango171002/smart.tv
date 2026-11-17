@@ -28,10 +28,10 @@ describe('registry of international versions', () => {
     }
   });
 
-  it('phase 1: only « / » is live; France is a private preview; the others are declared only', () => {
+  it('only « / » is live; France, Belgium, Switzerland, Canada and the UK are private previews', () => {
     expect(liveLocales()).toEqual(['en']);
     expect(builtLocales(false)).toEqual(['en']);
-    expect(builtLocales(true)).toEqual(['en', 'fr-fr']);
+    expect(builtLocales(true)).toEqual(['en', 'fr-fr', 'fr-be', 'fr-ch', 'fr-ca', 'en-gb', 'en-ca']);
     expect(SITE_LOCALES.en.currency).toBe('USD');
   });
 

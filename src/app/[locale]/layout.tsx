@@ -14,6 +14,7 @@ import { LOCALES, isLocale } from '@/i18n/config';
 import { isLive, SITE_LOCALES } from '@/i18n/locales';
 import { fill, getDictionary } from '@/i18n/dictionaries';
 import { href } from '@/lib/routes';
+import { faqFor, guidesLocale } from '@/content/intl';
 import { OG_IMAGE } from '@/lib/seo';
 import { CONSENT_DEFAULT_SCRIPT } from '@/lib/consent-default';
 
@@ -49,6 +50,18 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
+  // Menu and footer links of an international version (guides of its language, its FAQ page).
+  const gl = locale === 'en' ? null : guidesLocale(locale);
+  const faqPage = locale !== 'en' && faqFor(locale) ? href(locale, '/faq') : null;
+  const intlLinks = locale === 'en' ? null : {
+    menu: [
+      { href: href(locale, '#plans'), label: dict.nav.plans },
+      { href: href(locale, '#how'), label: dict.nav.how },
+      ...(gl ? [{ href: href(gl, '/guides'), label: dict.intl.navGuides }] : []),
+      { href: faqPage ?? href(locale, '#faq'), label: faqPage ? dict.intl.navFaq : dict.nav.help },
+    ],
+    footer: { ...(faqPage ? { faq: faqPage } : {}), ...(gl ? { guides: href(gl, '/guides') } : {}) },
+  };
   return (
     <html lang={SITE_LOCALES[locale].htmlLang} suppressHydrationWarning>
       <head>
@@ -60,9 +73,9 @@ export default async function LocaleLayout({
         <RevealScript />
         {!isLive(locale) && <p className="preview-ribbon" role="note">{dict.intl.previewRibbon}</p>}
         <a className="skip-link" href="#main">{dict.common.skipToContent}</a>
-        <Header locale={locale} nav={dict.nav} />
+        <Header locale={locale} nav={dict.nav} {...(intlLinks ? { links: intlLinks.menu } : {})} />
         <main id="main" tabIndex={-1}>{children}</main>
-        <Footer locale={locale} dict={dict} />
+        <Footer locale={locale} dict={dict} {...(intlLinks ? { extra: intlLinks.footer } : {})} />
         <SupportButton nav={dict.nav} />
         <SectionLinkHandler />
         {/* The English home keeps its exact markup; other versions link to their own cookie policy. */}

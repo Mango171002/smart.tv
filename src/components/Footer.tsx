@@ -26,7 +26,8 @@ const FOOTER_LEGAL = ['terms', 'privacy', 'cookies', 'refunds', 'imprint'] as co
 
 const CHIP_ICONS = [MonitorSmartphone, Zap, ShieldCheck];
 
-export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+/** `extra`: links of an international version (FAQ page, installation guides); none on the English home. */
+export function Footer({ locale, dict, extra }: { locale: Locale; dict: Dictionary; extra?: { faq?: string; guides?: string } }) {
   const f = dict.footer;
   const socials = [
     ...(Object.keys(SOCIAL_ICONS) as (keyof typeof SOCIAL_ICONS)[]).map((k) => ({ key: k, ...SOCIAL_ICONS[k], href: siteConfig.social[k] })),
@@ -76,7 +77,8 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           <ul>
             <li><Link href={href(locale, '#plans')}>{dict.nav.plans}</Link></li>
             <li><Link href={href(locale, '#how')}>{dict.nav.how}</Link></li>
-            <li><Link href={href(locale, '#faq')}>{f.helpFaq}</Link></li>
+            <li><Link href={extra?.faq ?? href(locale, '#faq')}>{f.helpFaq}</Link></li>
+            {extra?.guides && <li><Link href={extra.guides}>{dict.intl.guidesLink}</Link></li>}
             <li><ContactLink label={f.contact} /></li>
           </ul>
         </nav>

@@ -6,6 +6,8 @@
  * - preview:  built ONLY in the private preview environment (NEXT_PUBLIC_SITE_MODE=preview),
  *             never indexable, never in the sitemap / hreflang, orders closed (server-side);
  * - disabled: declared for planning, never built (no dictionary yet).
+ * Phase 2 (18/11/2026): Belgium, Switzerland, Canada (fr + en) and the United Kingdom are in preview,
+ * without prices (no validated grid) and without orders.
  *
  * The English home stays at « / » (id « en », internal route /en, rewritten), unchanged.
  * A country only becomes live after the owner validated its broadcasting rights, prices
@@ -40,12 +42,12 @@ export interface SiteLocale {
 export const SITE_LOCALES = {
   en: { id: 'en', prefix: '', language: 'en', country: null, hreflang: 'en', htmlLang: 'en', intl: 'en-US', ogLocale: 'en_US', market: 'US', currency: 'USD', status: 'live' },
   'fr-fr': { id: 'fr-fr', prefix: '/fr-fr', language: 'fr', country: 'FR', hreflang: 'fr-FR', htmlLang: 'fr-FR', intl: 'fr-FR', ogLocale: 'fr_FR', market: 'EU', currency: 'EUR', status: 'preview' },
-  'fr-be': { id: 'fr-be', prefix: '/fr-be', language: 'fr', country: 'BE', hreflang: 'fr-BE', htmlLang: 'fr-BE', intl: 'fr-BE', ogLocale: 'fr_BE', market: 'EU', currency: 'EUR', status: 'disabled' },
-  'fr-ch': { id: 'fr-ch', prefix: '/fr-ch', language: 'fr', country: 'CH', hreflang: 'fr-CH', htmlLang: 'fr-CH', intl: 'fr-CH', ogLocale: 'fr_CH', market: 'CH', currency: 'CHF', status: 'disabled' },
-  'fr-ca': { id: 'fr-ca', prefix: '/fr-ca', language: 'fr', country: 'CA', hreflang: 'fr-CA', htmlLang: 'fr-CA', intl: 'fr-CA', ogLocale: 'fr_CA', market: 'CA', currency: 'CAD', status: 'disabled' },
+  'fr-be': { id: 'fr-be', prefix: '/fr-be', language: 'fr', country: 'BE', hreflang: 'fr-BE', htmlLang: 'fr-BE', intl: 'fr-BE', ogLocale: 'fr_BE', market: 'EU', currency: 'EUR', status: 'preview' },
+  'fr-ch': { id: 'fr-ch', prefix: '/fr-ch', language: 'fr', country: 'CH', hreflang: 'fr-CH', htmlLang: 'fr-CH', intl: 'fr-CH', ogLocale: 'fr_CH', market: 'CH', currency: 'CHF', status: 'preview' },
+  'fr-ca': { id: 'fr-ca', prefix: '/fr-ca', language: 'fr', country: 'CA', hreflang: 'fr-CA', htmlLang: 'fr-CA', intl: 'fr-CA', ogLocale: 'fr_CA', market: 'CA', currency: 'CAD', status: 'preview' },
   'fr-ma': { id: 'fr-ma', prefix: '/fr-ma', language: 'fr', country: 'MA', hreflang: 'fr-MA', htmlLang: 'fr-MA', intl: 'fr-MA', ogLocale: 'fr_MA', market: 'MA', currency: 'MAD', status: 'disabled' },
-  'en-gb': { id: 'en-gb', prefix: '/en-gb', language: 'en', country: 'GB', hreflang: 'en-GB', htmlLang: 'en-GB', intl: 'en-GB', ogLocale: 'en_GB', market: 'GB', currency: 'GBP', status: 'disabled' },
-  'en-ca': { id: 'en-ca', prefix: '/en-ca', language: 'en', country: 'CA', hreflang: 'en-CA', htmlLang: 'en-CA', intl: 'en-CA', ogLocale: 'en_CA', market: 'CA', currency: 'CAD', status: 'disabled' },
+  'en-gb': { id: 'en-gb', prefix: '/en-gb', language: 'en', country: 'GB', hreflang: 'en-GB', htmlLang: 'en-GB', intl: 'en-GB', ogLocale: 'en_GB', market: 'GB', currency: 'GBP', status: 'preview' },
+  'en-ca': { id: 'en-ca', prefix: '/en-ca', language: 'en', country: 'CA', hreflang: 'en-CA', htmlLang: 'en-CA', intl: 'en-CA', ogLocale: 'en_CA', market: 'CA', currency: 'CAD', status: 'preview' },
   'de-de': { id: 'de-de', prefix: '/de-de', language: 'de', country: 'DE', hreflang: 'de-DE', htmlLang: 'de-DE', intl: 'de-DE', ogLocale: 'de_DE', market: 'EU', currency: 'EUR', status: 'disabled' },
   'de-ch': { id: 'de-ch', prefix: '/de-ch', language: 'de', country: 'CH', hreflang: 'de-CH', htmlLang: 'de-CH', intl: 'de-CH', ogLocale: 'de_CH', market: 'CH', currency: 'CHF', status: 'disabled' },
   'es-es': { id: 'es-es', prefix: '/es-es', language: 'es', country: 'ES', hreflang: 'es-ES', htmlLang: 'es-ES', intl: 'es-ES', ogLocale: 'es_ES', market: 'EU', currency: 'EUR', status: 'disabled' },

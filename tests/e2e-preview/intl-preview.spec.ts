@@ -139,3 +139,72 @@ test.describe('/fr-fr (French, preview)', () => {
     expect(errors).toEqual([]);
   });
 });
+
+test.describe('phase 2 — French content (preview)', () => {
+  const GUIDES = ['smart-tv', 'android-tv', 'fire-tv', 'apple-tv', 'iphone-ipad', 'android', 'ordinateur'];
+
+  test('FAQ page: 10 questions, FAQPage + BreadcrumbList data, noindex, canonical', async ({ page }) => {
+    await page.goto('/fr-fr/faq');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Questions fréquentes');
+    await expect(page.locator('.faq-full details')).toHaveCount(10);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/fr-fr\/faq$/);
+    const ld = await page.locator('script[type="application/ld+json"]').allTextContents();
+    const types = ld.map((t) => JSON.parse(t)['@type']);
+    expect(types).toEqual(expect.arrayContaining(['FAQPage', 'BreadcrumbList']));
+    const faq = ld.map((t) => JSON.parse(t)).find((d) => d['@type'] === 'FAQPage');
+    expect(faq.mainEntity).toHaveLength(10);
+  });
+
+  test('guides: index and 7 device pages — one H1, breadcrumb, noindex, links inside /fr-fr', async ({ page }) => {
+    await page.goto('/fr-fr/guides');
+    await expect(page.locator('.guide-card')).toHaveCount(7);
+    for (const slug of GUIDES) {
+      await page.goto(`/fr-fr/guides/${slug}`);
+      await expect(page.locator('h1'), slug).toHaveCount(1);
+      await expect(page.locator('link[rel="canonical"]'), slug).toHaveAttribute('href', new RegExp(`/fr-fr/guides/${slug}$`));
+      await expect(page.locator('meta[name="robots"]'), slug).toHaveAttribute('content', /noindex/);
+      await expect(page.locator('.guide-steps li').first(), slug).toBeVisible();
+      const title = await page.title();
+      expect(title.length, slug).toBeLessThanOrEqual(60);
+      const hrefs = await page.locator('main a[href^="/"]').evaluateAll((as) => as.map((a) => a.getAttribute('href')!));
+      expect(hrefs.filter((h) => !h.startsWith('/fr-fr')), slug).toEqual([]);
+    }
+  });
+
+  test('home: menu and footer link to the guides and the FAQ page; « see all questions »', async ({ page, isMobile }) => {
+    await page.goto('/fr-fr');
+    if (isMobile) await page.getByRole('button', { name: /menu/i }).click();
+    const nav = page.getByRole('navigation', { name: 'Navigation principale' });
+    await expect(nav.getByRole('link', { name: 'Guides' })).toHaveAttribute('href', '/fr-fr/guides');
+    await expect(nav.getByRole('link', { name: 'FAQ' })).toHaveAttribute('href', '/fr-fr/faq');
+    await expect(page.getByRole('link', { name: /Voir toutes les questions/ })).toHaveAttribute('href', '/fr-fr/faq');
+    await expect(page.locator('footer').getByRole('link', { name: 'Guides d’installation' })).toHaveAttribute('href', '/fr-fr/guides');
+  });
+
+  test('legal pages are in French (body included)', async ({ page }) => {
+    for (const [doc, h2] of [['terms', 'Comment se passe une commande'], ['privacy', 'Ce que nous collectons'], ['cookies', 'Les cookies que nous utilisons'], ['refunds', 'Satisfait ou remboursé'], ['imprint', 'Éditeur du site']]) {
+      await page.goto(`/fr-fr/legal/${doc}`);
+      await expect(page.locator('.terms-body'), doc).toContainText(h2!);
+      await expect(page.locator('.terms-meta'), doc).toContainText('novembre');
+    }
+  });
+
+  for (const [id, lang, text] of [
+    ['fr-be', 'fr-BE', 'Prix TTC en euros'],
+    ['fr-ch', 'fr-CH', 'francs suisses'],
+    ['fr-ca', 'fr-CA', 'dollars canadiens'],
+    ['en-gb', 'en-GB', 'pounds sterling'],
+    ['en-ca', 'en-CA', 'Canadian dollars'],
+  ] as const) {
+    test(`${id}: preview version, own language, currency wording, no price, orders closed`, async ({ page }) => {
+      await page.goto(`/${id}`);
+      await expect(page.locator('html')).toHaveAttribute('lang', lang);
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`/${id}$`));
+      await expect(page.locator('#plans')).toContainText(text);
+      await expect(page.locator('.tier-card')).toHaveCount(0);
+      await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+    });
+  }
+});

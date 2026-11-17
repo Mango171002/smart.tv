@@ -270,11 +270,12 @@ const TRUST: { Icon: LucideIcon; cat: string }[] = [
   { Icon: RefreshCcw, cat: 'streaming' },
 ];
 
-export function PlanExtras({ dict }: { dict: Dictionary }) {
+/** `focusableTable`: the comparison table scroll area can be reached with the keyboard (versions whose labels may overflow). */
+export function PlanExtras({ dict, focusableTable = false }: { dict: Dictionary; focusableTable?: boolean }) {
   const p = dict.plans;
   return (
     <div className="plan-extras">
-      <ComparisonTable dict={dict} />
+      <ComparisonTable dict={dict} focusable={focusableTable} />
       <div className="platforms-bar">
         <p className="platforms-title">
           <MonitorSmartphone size={34} strokeWidth={ICON_STROKE} aria-hidden="true" />
@@ -311,7 +312,7 @@ export function PlanExtras({ dict }: { dict: Dictionary }) {
 }
 
 /** Plans comparison table (owner request): features from the plan cards, honest values only. */
-function ComparisonTable({ dict }: { dict: Dictionary }) {
+function ComparisonTable({ dict, focusable = false }: { dict: Dictionary; focusable?: boolean }) {
   const c = dict.plans.compare;
   const tiers = ['starter', 'plus', 'ultra'] as const;
   return (
@@ -319,7 +320,7 @@ function ComparisonTable({ dict }: { dict: Dictionary }) {
       <h3 id="compare-title" className="section-title plans-title compare-title">
         {c.titleA} <span className="title-hl">{c.titleHl}</span>
       </h3>
-      <div className="compare-scroll">
+      <div className="compare-scroll" {...(focusable ? { tabIndex: 0, role: 'region', 'aria-label': dict.plans.compare.title } : {})}>
         <table className="compare-table">
           <thead>
             <tr>

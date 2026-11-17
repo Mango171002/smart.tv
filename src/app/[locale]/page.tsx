@@ -45,7 +45,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               table={table}
               dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout }}
             >
-              <PlanExtras dict={dict} />
+              <PlanExtras dict={dict} focusableTable={locale !== 'en'} />
             </PlansIsland>
           ) : (
             <>
@@ -53,7 +53,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <h3>{dict.intl.pricesSoonTitle}</h3>
                 <p className="muted">{fill(dict.intl.pricesSoonText, { currency })}</p>
               </div>
-              <PlanExtras dict={dict} />
+              <PlanExtras dict={dict} focusableTable={locale !== 'en'} />
             </>
           )}
         </div>

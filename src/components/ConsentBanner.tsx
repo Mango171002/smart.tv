@@ -11,7 +11,7 @@ import type { Dictionary } from '@/i18n/dictionaries';
  * measurement through Google Tag Manager). « Customize » shows one box per choice, with « Save my
  * choices » as the main button (it only grants what is ticked). The footer « Cookie settings » button reopens the settings.
  */
-export function ConsentBanner({ dict }: { dict: Dictionary['consent'] }) {
+export function ConsentBanner({ dict, policyHref = '/legal/cookies' }: { dict: Dictionary['consent']; policyHref?: string }) {
   const [open, setOpen] = useState(false);
   const [custom, setCustom] = useState(false);
   const [analytics, setAnalytics] = useState(false);
@@ -53,7 +53,7 @@ export function ConsentBanner({ dict }: { dict: Dictionary['consent'] }) {
           {/* The detailed choices replace the intro text in the « Customize » view (shorter on phones). */}
           <p>
             {custom ? null : <>{dict.text} </>}
-            <Link href="/legal/cookies">{dict.policy}</Link>
+            <Link href={policyHref}>{dict.policy}</Link>
           </p>
         </div>
       </div>

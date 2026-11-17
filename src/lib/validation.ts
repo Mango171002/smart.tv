@@ -3,7 +3,7 @@ import { MARKET_CODES } from '@/config/markets';
 import { DEVICE_DETAIL_KEYS } from '@/config/devices';
 export { DEVICE_DETAILS, DEVICE_DETAIL_KEYS, type DeviceDetail } from '@/config/devices';
 import { STREAMS, TERMS, TIERS } from '@/lib/pricing';
-import { LOCALES } from '@/i18n/config';
+import { LIVE_LOCALES } from '@/i18n/config';
 
 const streamCount = z.number().int().refine((v): v is (typeof STREAMS)[number] => (STREAMS as readonly number[]).includes(v), 'invalid value');
 
@@ -17,7 +17,9 @@ const email = z.string().trim().toLowerCase().max(254).pipe(z.email());
 
 const contactBase = {
   email,
-  locale: z.enum(LOCALES),
+  // Only versions open to the public: a request from a preview version is refused by the server,
+  // whatever the browser sends (the list comes from src/i18n/locales.ts, not from the request).
+  locale: z.enum(LIVE_LOCALES),
   market: z.enum(MARKET_CODES).optional(),
   /** Exact country (ISO 3166-1 alpha-2). */
   country: z.string().regex(/^[A-Z]{2}$/).optional(),

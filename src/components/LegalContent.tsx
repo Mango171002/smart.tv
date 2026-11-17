@@ -5,8 +5,11 @@ import {
   Tag, Tv, UserRound, UsersRound, type LucideIcon,
 } from 'lucide-react';
 import { siteConfig } from '@/config/site';
-import { LEGAL_DOCUMENTS, type LegalSection } from '@/content/legal';
-import type { LegalDoc } from '@/lib/routes';
+import { legalDocuments, type LegalSection } from '@/content/legal';
+import type { Locale } from '@/i18n/config';
+import type { Dictionary } from '@/i18n/dictionaries';
+import { SITE_LOCALES } from '@/i18n/locales';
+import { href, LEGAL_DOCS, type LegalDoc } from '@/lib/routes';
 
 const ICONS: Record<LegalSection['icon'], LucideIcon> = {
   info: Info, building: Building2, rocket: Rocket, tv: Tv, user: UserRound, tag: Tag, calendar: CalendarClock,
@@ -17,20 +20,17 @@ const ICONS: Record<LegalSection['icon'], LucideIcon> = {
 };
 const CATS = ['live', 'sports', 'movies', 'streaming'] as const;
 
-const RELATED: Array<[LegalDoc, string]> = [
-  ['terms', 'Terms of Service'], ['privacy', 'Privacy policy'], ['cookies', 'Cookie policy'],
-  ['refunds', 'Refunds & cancellations'], ['imprint', 'Legal notice'],
-];
 
 /** Legal page body (charter styling: neon highlights, numbered sections). */
-export function LegalContent({ doc, pending }: { doc: LegalDoc; pending: string }) {
-  const { updated, edition, sections, contactIntro } = LEGAL_DOCUMENTS[doc];
+export function LegalContent({ doc, locale, dict }: { doc: LegalDoc; locale: Locale; dict: Dictionary['legal'] }) {
+  const { updated, edition, sections, contactIntro } = legalDocuments(SITE_LOCALES[locale].language)[doc];
+  const pending = dict.toBePublished;
   const email = siteConfig.supportEmail;
   const phone = siteConfig.supportPhone;
-  const related = RELATED.filter(([d]) => d !== doc);
+  const related = LEGAL_DOCS.filter((d) => d !== doc);
   return (
     <div className="terms">
-      <p className="terms-meta">Last updated: {updated}{edition ? ` · ${edition}` : ''}</p>
+      <p className="terms-meta">{`${dict.lastUpdated} `}{updated}{edition ? ` · ${edition}` : ''}</p>
 
       <div className="terms-body">
         {sections.map((s, i) => {
@@ -77,30 +77,30 @@ export function LegalContent({ doc, pending }: { doc: LegalDoc; pending: string 
         })}
 
         <section id="contact" className="terms-contact" aria-labelledby="contact-t">
-          <h2 id="contact-t">Contact us</h2>
+          <h2 id="contact-t">{dict.contactTitle}</h2>
           <p>{contactIntro}</p>
           <ul>
             {email && (
               <li>
                 <Mail size={20} strokeWidth={1.75} aria-hidden="true" />
-                <span>Email</span>
+                <span>{dict.email}</span>
                 <a href={`mailto:${email}`}>{email}</a>
               </li>
             )}
             {phone && (
               <li>
                 <Phone size={20} strokeWidth={1.75} aria-hidden="true" />
-                <span>Phone</span>
+                <span>{dict.phone}</span>
                 <a href={`tel:${phone.replace(/\s/g, '')}`}>{phone}</a>
               </li>
             )}
           </ul>
           <p className="terms-related">
-            See also our{' '}
-            {related.map(([d, label], i) => (
+            {dict.seeAlso}{' '}
+            {related.map((d, i) => (
               <span key={d}>
-                <Link href={`/legal/${d}`}>{label}</Link>
-                {i < related.length - 2 ? ', ' : i === related.length - 2 ? ' and ' : '.'}
+                <Link href={href(locale, `/legal/${d}`)}>{dict.docs[d].title}</Link>
+                {i < related.length - 2 ? ', ' : i === related.length - 2 ? dict.and : '.'}
               </span>
             ))}
           </p>

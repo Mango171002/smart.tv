@@ -1,9 +1,18 @@
 import { siteConfig } from '@/config/site';
+import type { Locale } from '@/i18n/config';
+import { SITE_LOCALES } from '@/i18n/locales';
+import { href } from '@/lib/routes';
 import { OG_IMAGE } from '@/lib/seo';
 
-/** JSON-LD (Organization + WebSite) for the home page. Only verified, public facts. */
-export function StructuredData({ description }: { description: string }) {
+/**
+ * JSON-LD (Organization + WebSite) for the home page of a version. Only verified, public facts.
+ * One Organization (Sygma TV LLC) shared by every version; one WebSite per version, in its language.
+ */
+export function StructuredData({ description, locale = 'en' }: { description: string; locale?: Locale }) {
   const url = siteConfig.siteUrl;
+  const home = href(locale);
+  const site = home === '/' ? `${url}/` : `${url}${home}`;
+  const siteId = home === '/' ? `${url}/#website` : `${url}${home}#website`;
   const sameAs = Object.values(siteConfig.social).filter((v): v is string => Boolean(v));
   const data = {
     '@context': 'https://schema.org',
@@ -40,11 +49,11 @@ export function StructuredData({ description }: { description: string }) {
       },
       {
         '@type': 'WebSite',
-        '@id': `${url}/#website`,
-        url: `${url}/`,
+        '@id': siteId,
+        url: site,
         name: siteConfig.brandName,
         description,
-        inLanguage: 'en',
+        inLanguage: SITE_LOCALES[locale].htmlLang,
         publisher: { '@id': `${url}/#organization` },
       },
     ],

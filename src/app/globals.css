@@ -2328,3 +2328,15 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
   .legal-table td::before { content: attr(data-label); display: block; color: var(--cat); font-size: 11.5px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
   .legal-facts div { grid-template-columns: 1fr; gap: 2px; }
 }
+/* International versions (SEO phase 1): shown only on versions that are not open yet (private preview). */
+.preview-ribbon { position: sticky; top: 0; z-index: 60; margin: 0; padding: 8px 16px; text-align: center; font-size: 13px; font-weight: 800; letter-spacing: .3px; color: var(--color-bg); background: var(--color-cyan); }
+.prices-soon { margin: 6px auto 28px; max-width: 720px; text-align: center; border: 1.5px solid color-mix(in srgb, var(--color-cyan) 45%, transparent); }
+.prices-soon h3 { margin: 0 0 8px; }
+.prices-soon p { margin: 0; }
+.closed-notice { max-width: 460px; text-align: center; display: grid; gap: 14px; justify-items: center; }
+.closed-notice h2 { margin: 0; }
+.closed-notice p { margin: 0; }
+/* Other languages: longer chip labels may wrap instead of overflowing (the English home keeps one row). */
+html:not([lang="en"]) .footer ul.footer-chips { flex-wrap: wrap; }
+html:not([lang="en"]) .cta-actions, html:not([lang="en"]) .cta-trust { flex-wrap: wrap; justify-content: center; }
+html:not([lang="en"]) .footer-link-btn { text-align: left; }

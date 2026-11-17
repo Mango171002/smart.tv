@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { LOCALES } from '@/i18n/config';
 import { fill, getDictionary, plural } from '@/i18n/dictionaries';
 
-describe('dictionary (English only)', () => {
-  it('the site is in English only', () => {
+describe('dictionaries', () => {
+  it('production builds only the English home (international versions stay private until validated)', () => {
     expect(LOCALES).toEqual(['en']);
   });
 
@@ -13,6 +13,7 @@ describe('dictionary (English only)', () => {
       else if (v && typeof v === 'object') Object.values(v).forEach(walk);
     };
     walk(getDictionary('en'));
+    walk(getDictionary('fr-fr'));
   });
 
   it('pluralises', () => {

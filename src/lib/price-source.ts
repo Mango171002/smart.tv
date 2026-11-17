@@ -17,13 +17,13 @@ interface PriceRow {
 }
 
 /** Builds the price table from database rows; null when incomplete. Exported for unit tests. */
-export function tableFromRows(rows: PriceRow[]): PriceTable | null {
-  const t: PriceTable = { currency: 'USD', status: 'approved', prices: {} };
+export function tableFromRows(rows: PriceRow[], currency = 'USD'): PriceTable | null {
+  const t: PriceTable = { currency, status: 'approved', prices: {} };
   for (const row of rows) {
     const tier = row.plans?.tier_code;
     const term = row.plans?.term;
     const streams = row.plans?.streams;
-    if (!isTier(tier) || !isTerm(term) || !isStreamCount(streams) || row.status === 'retired' || row.currency !== 'USD') continue;
+    if (!isTier(tier) || !isTerm(term) || !isStreamCount(streams) || row.status === 'retired' || row.currency !== currency) continue;
     t.prices[planKey(tier, term, streams)] = row.amount_minor;
     // The table is "approved" only when every price in it is approved.
     if (row.status !== 'approved') t.status = 'illustrative';
@@ -59,4 +59,32 @@ export async function getPriceTable(): Promise<{ table: PriceTable; source: Pric
 
 export function resetPriceCacheForTests() {
   cache = null;
+}
+
+/**
+ * Price grid of a site version's market (SEO international). The English home keeps the US grid
+ * (getPriceTable, unchanged). Any other market only shows prices from its own validated grid in its
+ * own currency — never a converted price, never the USD fallback: null means « prices coming soon ».
+ */
+const marketCache = new Map<string, { at: number; table: PriceTable | null }>();
+export async function getMarketPriceTable(market: string, currency: string): Promise<PriceTable | null> {
+  if (market === PRICE_MARKET) return (await getPriceTable()).table;
+  const hit = marketCache.get(market);
+  if (hit && Date.now() - hit.at < TTL_MS) return hit.table;
+  let table: PriceTable | null = null;
+  const supabase = getPublicSupabase();
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('prices')
+        .select('currency, amount_minor, status, plans(tier_code, term, streams)')
+        .eq('market_code', market)
+        .abortSignal(AbortSignal.timeout(4000));
+      if (!error && data) table = tableFromRows(data as unknown as PriceRow[], currency);
+    } catch (e) {
+      console.warn('[price-source] market', market, (e as Error).message);
+    }
+  }
+  marketCache.set(market, { at: Date.now(), table });
+  return table;
 }

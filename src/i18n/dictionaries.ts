@@ -1,10 +1,21 @@
 import en, { type Dictionary } from './dictionaries/en';
+import fr from './dictionaries/fr';
 import type { Locale } from './config';
+import { SITE_LOCALES, type Language } from './locales';
 
-const dictionaries: Record<Locale, Dictionary> = { en };
+/** One dictionary per language (country variants, if any, are applied on top in phase 3). */
+const dictionaries: Partial<Record<Language, Dictionary>> = { en, fr };
 
 export function getDictionary(locale: Locale): Dictionary {
-  return dictionaries[locale];
+  const language = SITE_LOCALES[locale].language;
+  const dict = dictionaries[language];
+  // Never an English page under another language: a version without its dictionary cannot be built.
+  if (!dict) throw new Error(`No dictionary for language « ${language} » (version ${locale})`);
+  return dict;
+}
+
+export function hasDictionary(language: Language): boolean {
+  return Boolean(dictionaries[language]);
 }
 
 export type { Dictionary };

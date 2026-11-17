@@ -1,0 +1,30 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // PRIVATE PREVIEW of the international versions (SEO phase 1) — never the production site.
+  // Separate Worker, served only on preview.sygmatv.com (no *.workers.dev: the account subdomain
+  // contains a personal name). Password required (secret PREVIEW_PASSWORD, set by the preview
+  // workflow), every response noindex, every /api/* route refused except /api/health, no cron.
+  "name": "sygma-tv-preview",
+  "main": "worker.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+    // Every request (pages, scripts, images) goes through the password check first.
+    "run_worker_first": true,
+    "html_handling": "none",
+    "not_found_handling": "none"
+  },
+  "observability": { "enabled": true },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "preview.sygmatv.com", "custom_domain": true }],
+  "vars": {
+    "SITE_MODE": "preview",
+    "SUPABASE_URL": "https://gsxgfefpkosrlflggdxv.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_9ToDpQ-FqIDKRHc7yindZA_uHKYes2P",
+    "FEATURE_CONTACT_FORM": "false",
+    "SALES_ENABLED": "false"
+  }
+}

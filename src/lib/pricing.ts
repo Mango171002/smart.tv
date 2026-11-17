@@ -1,4 +1,10 @@
 import table from '@/config/price-tables.json';
+import { SITE_LOCALES, type SiteLocale } from '@/i18n/locales';
+
+/** Intl format of a site version (« en » → en-US, « fr-fr » → fr-FR…); other values are used as given. */
+export function intlLocale(locale: string): string {
+  return (SITE_LOCALES as Record<string, SiteLocale>)[locale]?.intl ?? (locale === 'fr' ? 'fr-FR' : locale === 'en' ? 'en-US' : locale);
+}
 
 /** Pure pricing logic, shared by the server (authoritative) and the UI (display). */
 
@@ -110,7 +116,7 @@ export function getStaticPriceTable(): PriceTable {
 /** Formats money; whole amounts are shown without decimals (49 $ rather than 49,00 $). */
 export function formatMoney(amountMinor: number, currency: string, locale: string): string {
   const whole = amountMinor % 100 === 0;
-  return new Intl.NumberFormat(locale === 'fr' ? 'fr-FR' : 'en-US', {
+  return new Intl.NumberFormat(intlLocale(locale), {
     style: 'currency',
     currency,
     currencyDisplay: 'narrowSymbol',

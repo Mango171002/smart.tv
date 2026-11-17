@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { BookOpen } from 'lucide-react';
 import { getDictionary } from '@/i18n/dictionaries';
+import { href } from '@/lib/routes';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -22,7 +23,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
       <div className="card blog-empty">
         <BookOpen size={32} strokeWidth={1.75} aria-hidden="true" />
         <p>{b.empty}</p>
-        <Link className="btn btn-lime" href="/">{b.back}</Link>
+        <Link className="btn btn-lime" href={href(locale)}>{b.back}</Link>
       </div>
     </div>
   );

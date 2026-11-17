@@ -311,6 +311,7 @@ const en = {
     titleA: 'Ready to watch TV from',
     titleHl: 'around the world?',
     text: 'Access up to 35,000+ TV channels and 200,000+ movies & series, in HD to 4K HDR, from multiple countries — from {price}/month.',
+    textNoPrice: 'Access up to 35,000+ TV channels and 200,000+ movies & series, in HD to 4K HDR, from multiple countries.',
     text2: 'Free trial first, 7-day money-back guarantee.',
     choose: 'Choose my plan',
     trial: 'Request a free trial',
@@ -506,6 +507,12 @@ const en = {
     eyebrow: 'Legal',
     draftBanner: 'The company details below are being published.',
     toBePublished: 'To be published',
+    lastUpdated: 'Last updated:',
+    contactTitle: 'Contact us',
+    email: 'Email',
+    phone: 'Phone',
+    seeAlso: 'See also our',
+    and: ' and ',
     docs: {
       terms: {
         title: 'Terms of Service',
@@ -546,6 +553,16 @@ const en = {
     compliance2: 'Each country opens only once broadcasting authorisations are in place.',
     legalTitle: 'Legal',
     siteTitle: 'Site',
+  },
+  /** International versions: texts shown only on versions that are not open yet (preview). */
+  intl: {
+    previewRibbon: 'Private preview — not public, orders closed',
+    closedTitle: 'Coming soon in your country',
+    closedText: 'Orders, trials and support requests will open here once this version is validated. For now, contact us at {email}.',
+    pricesSoonTitle: 'Prices coming soon',
+    pricesSoonText: 'Our prices in {currency} will be shown here once they are validated.',
+    priceSoon: 'soon',
+    close: 'Close',
   },
   notFound: {
     title: 'This page does not exist.',

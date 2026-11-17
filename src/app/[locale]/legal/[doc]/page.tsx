@@ -4,7 +4,7 @@ import { LegalContent } from '@/components/LegalContent';
 import { imprintComplete } from '@/content/legal';
 import { LOCALES, isLocale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
-import { LEGAL_DOCS, type LegalDoc } from '@/lib/routes';
+import { href, LEGAL_DOCS, type LegalDoc } from '@/lib/routes';
 import { buildMetadata } from '@/lib/seo';
 
 export const dynamicParams = false;
@@ -37,13 +37,13 @@ export default async function LegalPage({ params }: { params: Params }) {
       {doc === 'imprint' && !imprintComplete() && <p className="legal-banner" role="note">{dict.legal.draftBanner}</p>}
       <nav className="legal-nav" aria-label={dict.footer.legalTitle}>
         {LEGAL_DOCS.map((x) => (
-          <Link key={x} href={`/legal/${x}`} aria-current={x === doc ? 'page' : undefined}>
+          <Link key={x} href={href(locale, `/legal/${x}`)} aria-current={x === doc ? 'page' : undefined}>
             {dict.legal.docs[x].title}
           </Link>
         ))}
       </nav>
       <p className="sub">{d.intro}</p>
-      <LegalContent doc={doc} pending={dict.legal.toBePublished} />
+      <LegalContent doc={doc} locale={locale} dict={dict.legal} />
     </div>
   );
 }

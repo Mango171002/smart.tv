@@ -1,0 +1,78 @@
+# PRIVATE PREVIEW of the international versions (SEO phase 1) — never the production site.
+# Deploys the separate Worker « sygma-tv-preview » on https://preview.sygmatv.com (wrangler.preview.jsonc):
+# password required (GitHub secret PREVIEW_PASSWORD), every response noindex, every order / request API
+# refused, no cron, no secret of the production Worker. Runs only for the branch below (or by hand);
+# the production workflow (deploy-cloudflare.yml) is not triggered by this branch.
+name: Preview (international)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/seo-phase1-preview']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-preview
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 9a7bb862febedb1b8e70a005037adee5
+      PREVIEW_URL: https://preview.sygmatv.com
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare the Cloudflare token
+        env:
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if printf '%s' "$RAW_TOKEN" | grep -q 'Bearer'; then
+            T="$(printf '%s' "$RAW_TOKEN" | tr '\n' ' ' | sed -E 's/.*Bearer[[:space:]]+([A-Za-z0-9_.-]+).*/\1/')"
+          else
+            T="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
+          fi
+          [ -n "$T" ] || { echo "::error::Missing CLOUDFLARE_API_TOKEN secret."; exit 1; }
+          echo "::add-mask::$T"
+          echo "CLOUDFLARE_API_TOKEN=$T" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Build the preview (international versions, never indexable)
+        env:
+          NEXT_PUBLIC_SITE_MODE: preview
+          NEXT_PUBLIC_ALLOW_INDEXING: 'false'
+          NEXT_PUBLIC_SITE_URL: https://preview.sygmatv.com
+        run: npx opennextjs-cloudflare build -c wrangler.preview.jsonc
+      - name: Deploy the preview Worker
+        run: npx opennextjs-cloudflare deploy -c wrangler.preview.jsonc
+      - name: Preview password
+        env:
+          PREVIEW_PASSWORD: ${{ secrets.PREVIEW_PASSWORD }}
+        run: |
+          if [ -z "$PREVIEW_PASSWORD" ]; then
+            echo "::warning::No PREVIEW_PASSWORD secret in GitHub: the preview stays locked (HTTP 503) until it is added."
+            exit 0
+          fi
+          printf '%s' "$PREVIEW_PASSWORD" | npx wrangler secret put PREVIEW_PASSWORD -c wrangler.preview.jsonc >/dev/null && echo "Preview password set."
+      - name: Checks (protection, noindex, orders closed)
+        env:
+          PREVIEW_PASSWORD: ${{ secrets.PREVIEW_PASSWORD }}
+        run: |
+          sleep 15
+          code=$(curl -s -o /dev/null -w '%{http_code}' "$PREVIEW_URL/fr-fr")
+          echo "Without password: HTTP $code"
+          [ "$code" = 401 ] || [ "$code" = 503 ] || { echo "::error::The preview answered $code without password."; exit 1; }
+          if [ -n "$PREVIEW_PASSWORD" ]; then
+            curl -fsS -u "team:$PREVIEW_PASSWORD" -D headers.txt -o page.html "$PREVIEW_URL/fr-fr"
+            grep -qi '^x-robots-tag: noindex' headers.txt || { echo "::error::Missing X-Robots-Tag noindex."; exit 1; }
+            grep -q 'lang="fr-FR"' page.html || { echo "::error::/fr-fr is not the French version."; exit 1; }
+            api=$(curl -s -o /dev/null -w '%{http_code}' -u "team:$PREVIEW_PASSWORD" -X POST "$PREVIEW_URL/api/contact")
+            [ "$api" = 403 ] || { echo "::error::/api/contact answered $api in the preview."; exit 1; }
+            echo "Preview OK: protected, noindex, orders closed." | tee -a "$GITHUB_STEP_SUMMARY"
+          fi

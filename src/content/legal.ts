@@ -8,6 +8,7 @@
  */
 import { siteConfig } from '@/config/site';
 import type { LegalDoc } from '@/lib/routes';
+import type { Language } from '@/i18n/locales';
 import { TERMS_SECTIONS, TERMS_UPDATED, type TermsBlock, type TermsSection } from '@/content/terms';
 
 export type LegalBlock =
@@ -205,6 +206,15 @@ export const LEGAL_DOCUMENTS: Record<LegalDoc, LegalDocument> = {
   refunds: { updated: UPDATED, sections: REFUNDS, contactIntro: 'Need a refund? Contact us with your order reference.' },
   imprint: { updated: UPDATED, sections: IMPRINT, contactIntro: 'Contact the publisher:' },
 };
+
+/**
+ * Legal documents of a language. Phase 1 (SEO international): only English exists; the other
+ * languages are added in phase 2, after translation and review (until then they show English).
+ */
+const LEGAL_BY_LANGUAGE: Partial<Record<Language, Record<LegalDoc, LegalDocument>>> = { en: LEGAL_DOCUMENTS };
+export function legalDocuments(language: Language): Record<LegalDoc, LegalDocument> {
+  return LEGAL_BY_LANGUAGE[language] ?? LEGAL_DOCUMENTS;
+}
 
 /** True once the operator identity is published (the Legal notice banner disappears). */
 export const imprintComplete = () => Boolean(siteConfig.legalEntity && siteConfig.legalAddress && siteConfig.legalCountry);

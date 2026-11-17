@@ -8,6 +8,7 @@
  * - Nothing loads and no cookie is set before the matching consent. Google Consent Mode follows both
  *   choices (analytics_storage ← Analytics; ad_storage, ad_user_data, ad_personalization ← Marketing).
  * - Each script is injected once. Withdrawing a consent removes its cookies and reloads the page.
+ * - Without Marketing consent, an extra CSP makes the browser refuse every advertising request.
  * - GA4 events are unchanged. Advertising events are pushed to the dataLayer under their own names
  *   (`sygma.<event>`) with a unique `event_id`, so GA4 never counts them twice.
  * - No personal data (name, e-mail, phone) in any event: only plan, price, currency and form type.
@@ -84,6 +85,42 @@ function ensureGtag(): Gtag {
 
 const ALL_DENIED = { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied' } as const;
 
+/** The four Google Consent Mode v2 signals for a visitor's choice: Analytics → analytics_storage, Marketing → the three ad signals. */
+export function googleConsentFor(state: ConsentState): Record<'analytics_storage' | 'ad_storage' | 'ad_user_data' | 'ad_personalization', ConsentChoice> {
+  return {
+    analytics_storage: state.analytics,
+    ad_storage: state.marketing,
+    ad_user_data: state.marketing,
+    ad_personalization: state.marketing,
+  };
+}
+
+/**
+ * Without Marketing consent, the browser itself refuses every advertising request. The GA4 Google tag
+ * also carries the Google Ads destination linked to it in Google's interface, which sends « cookieless »
+ * pings (pagead2.googlesyndication.com/ccm/collect) even with ad_storage denied. An extra, stricter CSP
+ * (added to the server one) only allows the analytics hosts for network calls and images.
+ */
+export const NO_ADS_CSP_ID = 'sygma-no-ads-csp';
+const NO_ADS_HOSTS = [
+  'https://cloudflareinsights.com',
+  'https://www.googletagmanager.com', 'https://*.google-analytics.com', 'https://analytics.google.com', 'https://*.analytics.google.com',
+  'https://www.clarity.ms', 'https://*.clarity.ms', 'https://c.bing.com',
+  'https://tagassistant.google.com',
+];
+export function noAdsPolicy(): string {
+  const hosts = NO_ADS_HOSTS.join(' ');
+  return `connect-src 'self' ${hosts}; img-src 'self' data: ${hosts}`;
+}
+function blockAdRequests(): void {
+  if (document.getElementById(NO_ADS_CSP_ID)) return;
+  const m = document.createElement('meta');
+  m.id = NO_ADS_CSP_ID;
+  m.httpEquiv = 'Content-Security-Policy';
+  m.content = noAdsPolicy();
+  document.head.appendChild(m);
+}
+
 /**
  * Google Consent Mode: the default (all denied) is set in <head> by CONSENT_DEFAULT_SCRIPT; the
  * visitor's choice is sent as an « update » before any Google tag loads.
@@ -96,12 +133,7 @@ function applyGoogleConsent(state: ConsentState): void {
     g('consent', 'default', { ...ALL_DENIED, wait_for_update: 500 });
     w.__sygmaConsentDefault = true;
   }
-  g('consent', 'update', {
-    analytics_storage: state.analytics,
-    ad_storage: state.marketing,
-    ad_user_data: state.marketing,
-    ad_personalization: state.marketing,
-  });
+  g('consent', 'update', googleConsentFor(state));
   consentUpdated = true;
 }
 
@@ -157,6 +189,7 @@ export function startAnalytics(): boolean {
   if (!state || !analyticsHostAllowed()) return false;
   const wantsGa = state.analytics === 'granted' && !gaLoaded;
   const wantsGtm = state.marketing === 'granted' && !gtmLoaded && ANALYTICS.gtmEnabled;
+  if (state.marketing !== 'granted' && (wantsGa || gaLoaded)) blockAdRequests();
   if (wantsGa || wantsGtm) applyGoogleConsent(state);
   if (wantsGa) {
     // The current page is counted by GA's own initial page view.
@@ -199,7 +232,9 @@ export function saveConsent(next: ConsentState): void {
   const lostAnalytics = previous?.analytics === 'granted' && next.analytics === 'denied';
   const lostMarketing = previous?.marketing === 'granted' && next.marketing === 'denied';
   if (consentUpdated) applyGoogleConsent(next);
-  if (lostAnalytics || lostMarketing) {
+  // The advertising block cannot be lifted on the current page: reload once Marketing is granted.
+  const gainedMarketing = next.marketing === 'granted' && Boolean(document.getElementById(NO_ADS_CSP_ID));
+  if (lostAnalytics || lostMarketing || gainedMarketing) {
     if (lostAnalytics) {
       window.clarity?.('consentv2', { ad_Storage: 'denied', analytics_Storage: 'denied' });
       window.clarity?.('consent', false);

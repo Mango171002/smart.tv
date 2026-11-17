@@ -428,3 +428,55 @@ test.describe('Google Consent Mode default and CSP (corrections 1 and 2)', () =>
     expect(ok).toBe(true);
   });
 });
+
+test.describe('no advertising request without Marketing consent', () => {
+  // Network to the ad hosts is answered locally: if the browser lets a request out, the probe says « sent ».
+  const probe = (page: Page) =>
+    page.evaluate(async () => {
+      const urls = ['https://pagead2.googlesyndication.com/ccm/collect', 'https://googleads.g.doubleclick.net/pagead/viewthroughconversion/1', 'https://www.google.com/rmkt/collect/1'];
+      const out: string[] = [];
+      for (const u of urls) out.push(await fetch(u, { mode: 'no-cors' }).then(() => 'sent', () => 'blocked'));
+      const img = await new Promise<string>((done) => { const i = new Image(); i.onload = () => done('sent'); i.onerror = () => done('blocked'); i.src = 'https://www.google.com/pagead/1p-user-list/1/?x=1'; });
+      return [...out, img];
+    });
+  const routeAds = (page: Page) =>
+    page.route(/googlesyndication\.com|doubleclick\.net|www\.google\.com\/(rmkt|pagead)/, (route) => route.fulfill({ status: 200, contentType: 'image/gif', body: Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64') }));
+
+  test('Analytics only: the browser refuses every advertising request; GA4 hits still allowed', async ({ page }) => {
+    await stubThirdParties(page);
+    await routeAds(page);
+    await page.route('https://region1.google-analytics.com/**', (route) => route.fulfill({ status: 204, body: '' }));
+    await prepare(page, { analytics: 'granted', marketing: 'denied' });
+    await page.goto('/');
+    await expect.poll(() => page.evaluate(() => document.getElementById('sygma-no-ads-csp') !== null)).toBe(true);
+    expect(await probe(page)).toEqual(['blocked', 'blocked', 'blocked', 'blocked']);
+    const ga = await page.evaluate(() => fetch('https://region1.google-analytics.com/g/collect?v=2', { method: 'POST', mode: 'no-cors' }).then(() => true, () => false));
+    expect(ga).toBe(true);
+  });
+
+  test('Accept all: no block (advertising allowed)', async ({ page }) => {
+    await stubThirdParties(page);
+    await routeAds(page);
+    await prepare(page, 'granted');
+    await page.goto('/');
+    await expect.poll(() => page.evaluate(() => document.querySelector('script[data-sygma="ga4"]') !== null)).toBe(true);
+    expect(await page.evaluate(() => document.getElementById('sygma-no-ads-csp'))).toBeNull();
+    expect(await probe(page)).toEqual(['sent', 'sent', 'sent', 'sent']);
+  });
+
+  test('Analytics only, then Marketing granted: the page reloads without the block, ads consent granted', async ({ page }) => {
+    await stubThirdParties(page);
+    await routeAds(page);
+    await prepare(page, { analytics: 'granted', marketing: 'denied' });
+    await page.goto('/');
+    await expect.poll(() => page.evaluate(() => document.getElementById('sygma-no-ads-csp') !== null)).toBe(true);
+    await page.getByRole('button', { name: 'Cookie settings' }).click();
+    const banner = page.getByTestId('consent-banner');
+    await banner.getByRole('checkbox', { name: /Marketing/ }).check();
+    await Promise.all([page.waitForEvent('load'), banner.getByRole('button', { name: 'Save my choices' }).click()]);
+    await expect.poll(() => page.evaluate(() => document.querySelector('script[data-sygma="gtm"]') !== null)).toBe(true);
+    expect(await page.evaluate(() => document.getElementById('sygma-no-ads-csp'))).toBeNull();
+    const last = await page.evaluate(() => (window.dataLayer ?? []).map((a) => Array.from(a as ArrayLike<unknown>)).filter((a) => a[0] === 'consent').at(-1));
+    expect(last).toEqual(['consent', 'update', { analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' }]);
+  });
+});

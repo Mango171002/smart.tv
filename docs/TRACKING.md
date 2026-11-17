@@ -40,6 +40,19 @@ dataLayer.push({
 - Chaque balise : « Paramètres de consentement → consentement supplémentaire requis : `ad_storage` ».
 - **Aucune balise GA4 dans GTM.** Enhanced Conversions / Advanced Matching désactivés (pas de données personnelles).
 
+## Google Consent Mode v2 et blocage publicitaire
+
+| Choix | analytics_storage | ad_storage | ad_user_data | ad_personalization | Chargé | Requêtes pub |
+|---|---|---|---|---|---|---|
+| Aucun choix / Refus total | denied | denied | denied | denied | rien | aucune |
+| Analytics uniquement | granted | denied | denied | denied | GA4 + Clarity | **bloquées par le navigateur** |
+| Marketing uniquement | denied | granted | granted | granted | GTM | autorisées |
+| Acceptation totale | granted | granted | granted | granted | GA4 + Clarity + GTM | autorisées |
+
+- Défaut « denied » pour les quatre signaux dans le `<head>` de chaque page, puis `update` (fonction `googleConsentFor`, `src/lib/analytics.ts`).
+- Sans Marketing, une CSP supplémentaire (`<meta id="sygma-no-ads-csp">`) n'autorise que les domaines Analytics pour le réseau et les images : la destination Google Ads liée au tag GA4 (AW-18577285546) ne peut plus envoyer ses pings « sans cookie » (`pagead2.googlesyndication.com/ccm/collect`).
+- Retrait d'un consentement : `update` « denied », suppression des cookies, rechargement. Ajout du Marketing après coup : rechargement (le blocage ne peut pas être levé sur la page en cours).
+
 ## Retour arrière
 - GTM : publier la version précédente (immédiat).
 - Site : `gtmEnabled: false` puis déploiement, ou rollback Cloudflare vers la version précédente.

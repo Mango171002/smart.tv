@@ -8,6 +8,8 @@ export interface Country {
   code: string;
   name: string;
   dial: string;
+  /** English name (always searchable, whatever the display language). */
+  en?: string;
 }
 
 const ALL: Country[] = [...countries].sort((a, b) => a.name.localeCompare(b.name, 'en'));
@@ -16,20 +18,42 @@ const ALL: Country[] = [...countries].sort((a, b) => a.name.localeCompare(b.name
 export const countryFlag = (code: string) => String.fromCodePoint(...[...code].map((ch) => 0x1f1a5 + ch.charCodeAt(0)));
 export const countryByCode = (code: string) => ALL.find((c) => c.code === code);
 
+/**
+ * Country list in a display language (« fr-FR »…): names from the browser (Intl.DisplayNames), sorted
+ * the local way; English names stay searchable. Without a language (English home): the list is unchanged.
+ */
+const localized = new Map<string, Country[]>();
+export function countriesFor(lang?: string): Country[] {
+  if (!lang || lang.startsWith('en')) return ALL;
+  const hit = localized.get(lang);
+  if (hit) return hit;
+  let names: Intl.DisplayNames | null = null;
+  try {
+    names = new Intl.DisplayNames([lang], { type: 'region' });
+  } catch {
+    names = null;
+  }
+  const list = ALL.map((c) => ({ ...c, en: c.name, name: names?.of(c.code) ?? c.name })).sort((a, b) => a.name.localeCompare(b.name, lang));
+  localized.set(lang, list);
+  return list;
+}
+export const countryIn = (code: string, lang?: string) => countriesFor(lang).find((c) => c.code === code);
+
 const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
 /** Countries matching the query: names starting with it first, then a word starting with it, then names containing it, codes and dial codes. */
-function search(q: string): Country[] {
+function search(q: string, all: Country[] = ALL): Country[] {
   const n = norm(q).replace(/^\+/, '');
-  if (!n) return ALL;
+  if (!n) return all;
   const starts: Country[] = [];
   const words: Country[] = [];
   const other: Country[] = [];
-  for (const c of ALL) {
+  for (const c of all) {
     const name = norm(c.name);
+    const en = c.en ? norm(c.en) : '';
     if (name.startsWith(n)) starts.push(c);
     else if (name.split(/[\s&(),.-]+/).some((w) => w.startsWith(n))) words.push(c);
-    else if (name.includes(n) || c.code.toLowerCase() === n || c.dial.startsWith(n)) other.push(c);
+    else if (name.includes(n) || (en && (en.startsWith(n) || en.includes(n))) || c.code.toLowerCase() === n || c.dial.startsWith(n)) other.push(c);
   }
   return [...starts, ...words, ...other];
 }
@@ -51,6 +75,7 @@ export function CountryPicker({
   icon,
   invalid,
   describedBy,
+  lang,
 }: {
   id?: string;
   value: string;
@@ -64,6 +89,8 @@ export function CountryPicker({
   icon?: ReactNode;
   invalid?: boolean;
   describedBy?: string;
+  /** Display language of the country names (other versions than the English home). */
+  lang?: string;
 }) {
   const uid = useId();
   const listId = `${uid}-list`;
@@ -73,8 +100,9 @@ export function CountryPicker({
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const list = useRef<HTMLUListElement>(null);
-  const results = useMemo(() => search(query), [query]);
-  const selected = countryByCode(value);
+  const all = useMemo(() => countriesFor(lang), [lang]);
+  const results = useMemo(() => search(query, all), [query, all]);
+  const selected = all.find((c) => c.code === value);
 
   // Close when clicking outside.
   useEffect(() => {
@@ -94,7 +122,7 @@ export function CountryPicker({
 
   function openList() {
     setQuery('');
-    const i = value ? ALL.findIndex((c) => c.code === value) : 0;
+    const i = value ? all.findIndex((c) => c.code === value) : 0;
     setActive(Math.max(0, i));
     setOpen(true);
   }

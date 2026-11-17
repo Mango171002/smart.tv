@@ -173,3 +173,15 @@ describe('every declared version', () => {
     expect(ALL_LOCALE_IDS).toEqual(['en', 'fr-fr', 'fr-be', 'fr-ch', 'fr-ca', 'fr-ma', 'en-gb', 'en-ca', 'de-de', 'de-ch', 'es-es', 'nl-be']);
   });
 });
+
+describe('country picker in other languages', () => {
+  it('French names, French order; the English home list is unchanged', async () => {
+    const { countriesFor, countryIn } = await import('@/components/CountryPicker');
+    const fr = countriesFor('fr-FR');
+    expect(countryIn('DE', 'fr-FR')?.name).toBe('Allemagne');
+    expect(countryIn('DE', 'fr-FR')?.en).toBe('Germany');
+    expect(countryIn('DE')?.name).toBe('Germany');
+    expect(fr.findIndex((c) => c.code === 'DE')).toBeLessThan(fr.findIndex((c) => c.code === 'FR'));
+    expect(countriesFor('en-US')).toBe(countriesFor());
+  });
+});

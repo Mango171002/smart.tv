@@ -6,6 +6,7 @@ import { CheckCircle2, Mail, MessageSquareText, Phone, ShieldCheck, UserRound, Z
 import { Brand } from './Brand';
 import countries from '@/config/countries.json';
 import { CountryPicker } from './CountryPicker';
+import { SITE_LOCALES } from '@/i18n/locales';
 import type { Locale } from '@/i18n/config';
 import { fill, type Dictionary } from '@/i18n/dictionaries';
 
@@ -19,10 +20,11 @@ import { toE164 } from '@/lib/phone';
 import { track } from '@/lib/analytics';
 export { toE164 };
 
-function guessCountry(): string {
-  if (typeof navigator === 'undefined') return 'US';
+/** Country of the phone number: the browser's region, else the version's country (« US » on the English home). */
+function guessCountry(fallback = 'US'): string {
+  if (typeof navigator === 'undefined') return fallback;
   const region = navigator.language?.split('-')[1]?.toUpperCase();
-  return region && countries.some((c) => c.code === region) ? region : 'US';
+  return region && countries.some((c) => c.code === region) ? region : fallback;
 }
 
 export function RequestDialog({
@@ -37,7 +39,8 @@ export function RequestDialog({
   onClose: () => void;
 }) {
   const r = dict.request;
-  const [country, setCountry] = useState(guessCountry);
+  const version = SITE_LOCALES[locale];
+  const [country, setCountry] = useState(() => guessCountry(version.country ?? 'US'));
   const [errors, setErrors] = useState<Partial<Record<'name' | 'email' | 'phone' | 'message' | 'consent', string>>>({});
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
   const [serverError, setServerError] = useState('');
@@ -198,6 +201,7 @@ export function RequestDialog({
                 searchLabel={dict.common.countrySearch}
                 noResult={dict.common.countryNoResult}
                 listLabel={dict.common.countryList}
+                {...(version.prefix ? { lang: version.intl } : {})}
               />
               <div className="phone-input">
                 <Phone className="phone-icon" size={18} strokeWidth={1.75} aria-hidden="true" />

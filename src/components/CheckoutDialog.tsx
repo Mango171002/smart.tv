@@ -8,7 +8,8 @@ import { Brand } from './Brand';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { CountryPicker, countryByCode, countryFlag } from './CountryPicker';
+import { CountryPicker, countryByCode, countryFlag, countryIn } from './CountryPicker';
+import { SITE_LOCALES } from '@/i18n/locales';
 import type { MarketCode } from '@/config/markets';
 import { DEVICE_DETAILS, DEVICE_DETAIL_KEYS, type DeviceDetail } from '@/config/devices';
 import type { Locale } from '@/i18n/config';
@@ -51,7 +52,10 @@ export function CheckoutDialog({
   const [quoteState, setQuoteState] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [email, setEmail] = useState('');
   const [device, setDevice] = useState<DeviceChoice>('smart_tv');
-  const [country, setCountry] = useState('');
+  // Other versions than the English home start on their own country (it can be changed).
+  const version = SITE_LOCALES[locale];
+  const lang = version.prefix ? version.intl : undefined;
+  const [country, setCountry] = useState(version.prefix ? (version.country ?? '') : '');
   // WhatsApp number: calling code follows the chosen country until the visitor picks another one.
   const [dialCountry, setDialCountry] = useState('');
   const [phoneNational, setPhoneNational] = useState('');
@@ -62,7 +66,7 @@ export function CheckoutDialog({
   const [submitError, setSubmitError] = useState('');
   const dialogRef = useRef<HTMLDivElement>(null);
   const dialIso = dialCountry || country;
-  const dialCode = countryByCode(dialIso || 'US')?.dial ?? '1';
+  const dialCode = countryByCode(dialIso || version.country || 'US')?.dial ?? '1';
   const phoneE164 = toE164(dialCode, phoneNational);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -183,7 +187,7 @@ export function CheckoutDialog({
     }
   }
 
-  const countryName = countryByCode(country)?.name;
+  const countryName = countryIn(country, lang)?.name;
   const regionLabel = countryName ? `${countryFlag(country)} ${countryName}` : '';
   const planLabel = `${dict.plans.tiers[selection.tier].name} · ${dict.plans.terms[selection.term]} · ${plural(dict.common, 'device', selection.streams)}`;
   const subtotal = quote ? `${formatMoney(quote.amountMinor, quote.currency, locale)} ${quote.currency}` : clientPrice;
@@ -276,6 +280,7 @@ export function CheckoutDialog({
                   icon={<MapPin size={20} strokeWidth={1.75} aria-hidden="true" />}
                   invalid={!!fieldError.region}
                   describedBy={fieldError.region ? 'prereg-region-err' : undefined}
+                  {...(lang ? { lang } : {})}
                 />
                 {fieldError.region && <span id="prereg-region-err" className="error">{fieldError.region}</span>}
               </div>
@@ -292,6 +297,7 @@ export function CheckoutDialog({
                   searchLabel={dict.common.countrySearch}
                   noResult={dict.common.countryNoResult}
                   listLabel={dict.common.countryList}
+                  {...(lang ? { lang } : {})}
                 />
                 <div className="phone-input">
                   <Phone className="phone-icon" size={18} strokeWidth={1.75} aria-hidden="true" />

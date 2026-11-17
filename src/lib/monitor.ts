@@ -41,15 +41,24 @@ async function checkEmail(): Promise<Check> {
   const name = 'E-mails';
   const key = process.env.BREVO_API_KEY;
   if (!key) return { name, ok: false, detail: 'clé d’envoi absente' };
-  const headers = { 'api-key': key, accept: 'application/json' };
+  const headers = { 'api-key': key, accept: 'application/json', 'content-type': 'application/json' };
   try {
-    const res = await fetch('https://api.brevo.com/v3/account', { headers, signal: AbortSignal.timeout(T) });
-    if (res.status === 401 || res.status === 403) return { name, ok: false, detail: `clé d’envoi refusée (HTTP ${res.status}) — expirée ou adresse IP non autorisée` };
-    if (!res.ok) return { name, ok: false, detail: `service d’envoi en erreur (HTTP ${res.status})` };
-    const acc = (await res.json()) as BrevoAccount;
-    const daily = acc.plan?.find((p) => p.creditsType === 'sendLimit' && typeof p.credits === 'number');
-    if (daily && (daily.credits ?? 0) < 20) return { name, ok: false, detail: `presque plus de crédits d’envoi (${daily.credits} restants)` };
+    // Same call as a real send, with an empty message: the key, its permissions and the
+    // authorised IPs are checked, but nothing can be sent (Brevo answers 400 « missing parameter »).
+    const probe = await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers, body: '{}', signal: AbortSignal.timeout(T) });
+    if (probe.status === 401 || probe.status === 403) {
+      const body = (await probe.json().catch(() => ({}))) as { code?: string };
+      return { name, ok: false, detail: `envoi refusé (HTTP ${probe.status}${body.code ? `, ${body.code}` : ''}) — clé expirée, sans droit d’envoi ou adresse IP non autorisée` };
+    }
+    if (probe.status >= 500) return { name, ok: false, detail: `service d’envoi en erreur (HTTP ${probe.status})` };
 
+    // Optional details: only when the key is allowed to read them.
+    const acc = await fetch('https://api.brevo.com/v3/account', { headers, signal: AbortSignal.timeout(T) });
+    if (acc.ok) {
+      const a = (await acc.json()) as BrevoAccount;
+      const daily = a.plan?.find((p) => p.creditsType === 'sendLimit' && typeof p.credits === 'number');
+      if (daily && (daily.credits ?? 0) < 20) return { name, ok: false, detail: `presque plus de crédits d’envoi (${daily.credits} restants)` };
+    }
     const rep = await fetch('https://api.brevo.com/v3/smtp/statistics/aggregatedReport?days=1', { headers, signal: AbortSignal.timeout(T) });
     if (rep.ok) {
       const r = (await rep.json()) as { requests?: number; blocked?: number };

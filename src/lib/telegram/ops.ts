@@ -84,7 +84,7 @@ export async function notifyNewRequest(
   const topic: Topic = kind === 'support' ? 'support' : 'commandes';
   const thread = typeof settings[`thread_${topic}`] === 'number' ? (settings[`thread_${topic}`] as number) : undefined;
   const notice = opts.repeat
-    ? `🔁 <b>Nouvelle pré-inscription de la même personne</b>${opts.planLabel ? ` · ${escapeHtml(opts.planLabel)}` : ''}`
+    ? `🔁 <b>Nouvelle commande de la même personne</b>${opts.planLabel ? ` · ${escapeHtml(opts.planLabel)}` : ''}`
     : null;
 
   if (data.card.message_id && data.card.chat_id) {
@@ -249,7 +249,7 @@ async function handleCommand(m: TgMessage) {
     if (!s) return;
     await reply(
       m,
-      `<b>Dernières 24 h</b>\n📝 Pré-inscriptions : ${s.waitlist}\n🎁 Demandes d’essai : ${s.trials}\n🛟 Tickets support : ${s.support}\n📞 Contactés : ${s.contacted}\n🎉 Convertis : ${s.converted}\n⏳ En attente (total) : ${s.pending}`,
+      `<b>Dernières 24 h</b>\n🛒 Commandes : ${s.waitlist}\n🎁 Demandes d’essai : ${s.trials}\n🛟 Tickets support : ${s.support}\n📞 Contactés : ${s.contacted}\n🎉 Convertis : ${s.converted}\n⏳ En attente (total) : ${s.pending}`,
     );
     return;
   }

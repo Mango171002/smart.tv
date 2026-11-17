@@ -94,7 +94,7 @@ export function statusLabel(status: string, kind?: string | null): string {
 }
 
 const KIND_TITLE: Record<CardData['request']['kind'], string> = {
-  launch_waitlist: '📝 Pré-inscription',
+  launch_waitlist: '🛒 Nouvelle commande',
   trial_request: '🎁 Demande d’essai',
   support: '🛟 Ticket support',
 };

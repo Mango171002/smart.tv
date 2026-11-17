@@ -1,0 +1,93 @@
+# Hourly monitoring of https://sygmatv.com (runs outside Cloudflare, on GitHub).
+# 1. The public pages must answer (3 tries, 30 s apart).
+# 2. /api/cron/monitor checks the database, e-mails and Telegram bot from production and
+#    posts to the Telegram « alertes » topic (alert while broken, summary once a day).
+# If the site or that check does not answer, this workflow posts the alert itself
+# (and the failed run also triggers GitHub's own e-mail notification).
+name: Monitor
+
+on:
+  schedule:
+    - cron: '41 * * * *'
+  workflow_dispatch:
+    inputs:
+      test:
+        description: 'Send the summary to Telegram even if everything is fine'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monitor
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SITE: https://sygmatv.com
+      SUPABASE_URL: https://gsxgfefpkosrlflggdxv.supabase.co
+    steps:
+      - name: Public pages
+        id: site
+        run: |
+          ok=0
+          for i in 1 2 3; do
+            home=$(curl -s -o home.html -w '%{http_code}' --max-time 20 "$SITE/?monitor=$RANDOM" || echo 000)
+            health=$(curl -s -o health.json -w '%{http_code}' --max-time 20 "$SITE/api/health" || echo 000)
+            if [ "$home" = 200 ] && grep -q 'SYGMA' home.html && [ "$health" = 200 ] && grep -q '"status":"ok"' health.json; then ok=1; break; fi
+            echo "Try $i: home=$home health=$health"
+            [ "$i" -lt 3 ] && sleep 30
+          done
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+          echo "detail=page d’accueil HTTP $home, contrôle HTTP $health" >> "$GITHUB_OUTPUT"
+      - name: Production checks (database, e-mails, bot)
+        id: inside
+        if: steps.site.outputs.ok == '1'
+        env:
+          SB_SECRET: ${{ secrets.SUPABASE_SECRET_KEY }}
+          TEST: ${{ inputs.test && '1' || '0' }}
+        run: |
+          KEY="$(printf '%s' "$SB_SECRET" | tr -d '[:space:]')"
+          if [ -z "$KEY" ]; then echo "::error::Missing SUPABASE_SECRET_KEY secret."; echo "ok=0" >> "$GITHUB_OUTPUT"; exit 0; fi
+          CRON="$(printf '%s:sygma-cron' "$KEY" | sha256sum | cut -c1-48)"
+          echo "::add-mask::$CRON"
+          code=$(curl -s -o result.json -w '%{http_code}' --max-time 60 -X POST -H "x-cron-secret: $CRON" "$SITE/api/cron/monitor?test=$TEST" || echo 000)
+          echo "HTTP $code"; cat result.json || true; echo
+          if [ "$code" = 200 ]; then echo "ok=1" >> "$GITHUB_OUTPUT"; else echo "ok=0" >> "$GITHUB_OUTPUT"; fi
+          if grep -q '"healthy":false' result.json; then echo "unhealthy=1" >> "$GITHUB_OUTPUT"; fi
+      - name: Alert on Telegram (site or check not answering)
+        if: steps.site.outputs.ok != '1' || steps.inside.outputs.ok != '1'
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          SB_SECRET: ${{ secrets.SUPABASE_SECRET_KEY }}
+          SITE_OK: ${{ steps.site.outputs.ok }}
+          SITE_DETAIL: ${{ steps.site.outputs.detail }}
+        run: |
+          TG="$(printf '%s' "$TG_TOKEN" | tr -d '[:space:]')"; KEY="$(printf '%s' "$SB_SECRET" | tr -d '[:space:]')"
+          echo "::add-mask::$TG"; echo "::add-mask::$KEY"
+          if [ "$SITE_OK" = 1 ]; then
+            TEXT="🚨 <b>Alerte surveillance</b>
+          ✅ Site
+          ❌ Contrôle interne — pas de réponse (base de données, e-mails et bot non vérifiés)"
+          else
+            TEXT="🚨 <b>Alerte surveillance</b>
+          ❌ Site sygmatv.com — ne répond pas ($SITE_DETAIL)"
+          fi
+          TEXT="$TEXT
+
+          <i>Message répété chaque heure tant que le problème dure.</i>"
+          curl -s --max-time 20 -X POST -H "apikey: $KEY" -H 'content-type: application/json' -d '{}' "$SUPABASE_URL/rest/v1/rpc/ops_get_settings" > settings.json || true
+          CHAT=$(jq -r '.chat_id // empty' settings.json 2>/dev/null || true)
+          THREAD=$(jq -r '.thread_alertes // empty' settings.json 2>/dev/null || true)
+          if [ -n "$TG" ] && [ -n "$CHAT" ]; then
+            jq -n --arg chat "$CHAT" --arg thread "$THREAD" --arg text "$TEXT" \
+              '{chat_id: ($chat|tonumber), text: $text, parse_mode: "HTML"} + (if $thread == "" then {} else {message_thread_id: ($thread|tonumber)} end)' > msg.json
+            curl -s --max-time 20 -X POST -H 'content-type: application/json' --data @msg.json "https://api.telegram.org/bot$TG/sendMessage" | grep -q '"ok":true' && echo "Telegram alert sent."
+          else
+            echo "::warning::Could not read the Telegram settings: alert not sent to Telegram."
+          fi
+          exit 1

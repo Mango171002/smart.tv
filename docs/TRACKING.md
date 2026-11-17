@@ -9,6 +9,7 @@
 - Configuration centrale : `src/config/analytics.ts` (IDs publics, `gtmEnabled` = interrupteur général de GTM).
 - Logique : `src/lib/analytics.ts` — `track()` envoie à GA4 (inchangé) **et**, pour les événements publicitaires, pousse un message GTM.
 - Google Consent Mode : `analytics_storage` ← Analytics ; `ad_storage`, `ad_user_data`, `ad_personalization` ← Marketing (`default` avant la 1re balise Google, `update` ensuite).
+- Bannière, vue « Customize » : le bouton principal est « Save my choices » (n'accorde que les cases cochées) ; « Accept all » et « Decline all » y sont secondaires et de même poids. Avant le 17/11/2026, le bouton principal de cette vue était « Accept all » : cocher Analytics seul puis cliquer ce bouton accordait les quatre signaux (cas signalé dans Tag Assistant).
 - Retrait d'un consentement : cookies de la catégorie supprimés (`_ga*`, `_clck`, `_clsk` / `_gcl_*`, `_fbp`, `_fbc`, `_ttp`, `_uet*`) + rechargement de la page.
 
 ## Contrat dataLayer (pour la phase 2, dans GTM)
@@ -51,6 +52,7 @@ dataLayer.push({
 
 - Défaut « denied » pour les quatre signaux dans le `<head>` de chaque page, puis `update` (fonction `googleConsentFor`, `src/lib/analytics.ts`).
 - Sans Marketing, une CSP supplémentaire (`<meta id="sygma-no-ads-csp">`) n'autorise que les domaines Analytics pour le réseau et les images : la destination Google Ads liée au tag GA4 (AW-18577285546) ne peut plus envoyer ses pings « sans cookie » (`pagead2.googlesyndication.com/ccm/collect`).
+- Bannière, vue « Customize » : le bouton principal est « Save my choices » (n'accorde que les cases cochées) ; « Accept all » et « Decline all » y sont secondaires et de même poids. Avant le 17/11/2026, le bouton principal de cette vue était « Accept all » : cocher Analytics seul puis cliquer ce bouton accordait les quatre signaux (cas signalé dans Tag Assistant).
 - Retrait d'un consentement : `update` « denied », suppression des cookies, rechargement. Ajout du Marketing après coup : rechargement (le blocage ne peut pas être levé sur la page en cours).
 
 ## Retour arrière

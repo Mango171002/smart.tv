@@ -480,3 +480,37 @@ test.describe('no advertising request without Marketing consent', () => {
     expect(last).toEqual(['consent', 'update', { analytics_storage: 'granted', ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted' }]);
   });
 });
+
+test.describe('Customize view: the main button saves only what is ticked (Tag Assistant report, 17/11/2026)', () => {
+  test('Analytics ticked, Marketing not: the highlighted button is « Save my choices » and ads stay denied', async ({ page }) => {
+    const hits = await stubThirdParties(page);
+    await prepare(page);
+    await page.goto('/');
+    const banner = page.getByTestId('consent-banner');
+    await banner.getByRole('button', { name: 'Customize' }).click();
+    await banner.getByRole('checkbox', { name: /Analytics/ }).check();
+    // The only highlighted (lime) button of the Customize view is « Save my choices ».
+    await expect(banner.locator('.btn-lime')).toHaveCount(1);
+    await expect(banner.locator('.btn-lime')).toHaveText('Save my choices');
+    await banner.locator('.btn-lime').click();
+    await expect.poll(() => hits.some((h) => h.includes('gtag/js'))).toBe(true);
+    await page.waitForTimeout(800);
+    const calls = await page.evaluate(() => (window.dataLayer ?? []).map((a) => Array.from(a as ArrayLike<unknown>)).filter((a) => a[0] === 'consent'));
+    expect(calls[0]).toEqual(['consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 }]);
+    expect(calls.filter((c) => c[1] === 'update')).toEqual([['consent', 'update', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' }]]);
+    expect(hits.some((h) => h.includes('gtm.js'))).toBe(false);
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('sygma_consent') ?? '{}'))).toMatchObject({ v: 2, analytics: 'granted', marketing: 'denied' });
+  });
+
+  test('« Accept all » and « Decline all » keep the same weight in the Customize view', async ({ page }) => {
+    await stubThirdParties(page);
+    await prepare(page);
+    await page.goto('/');
+    const banner = page.getByTestId('consent-banner');
+    await banner.getByRole('button', { name: 'Customize' }).click();
+    const accept = banner.getByRole('button', { name: 'Accept all' });
+    const decline = banner.getByRole('button', { name: 'Decline all' });
+    await expect(accept).toHaveClass(/ghost/);
+    await expect(decline).toHaveClass(/ghost/);
+  });
+});

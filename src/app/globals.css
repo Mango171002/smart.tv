@@ -2283,6 +2283,8 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
 .consent-banner p a { color: var(--color-lime); text-decoration: underline; }
 .consent-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
 .consent-actions .btn { min-height: 46px; justify-content: center; }
+.consent-save { width: 100%; min-height: 46px; justify-content: center; margin-top: 14px; }
+.consent-save + .consent-actions { margin-top: 10px; }
 /* Narrow screens: the banner sits above the round support button instead of under it */
 @media (max-width: 720px) { .consent-banner { bottom: calc(max(16px, env(safe-area-inset-bottom)) + 72px); max-height: calc(100dvh - 120px); } }
 /* Consent settings (Customize): one line per category, native checkboxes in the brand colour */

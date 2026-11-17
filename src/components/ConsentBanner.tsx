@@ -8,8 +8,8 @@ import type { Dictionary } from '@/i18n/dictionaries';
 
 /**
  * Cookie consent with two independent choices: Analytics (GA4, Clarity) and Marketing (advertising
- * measurement through Google Tag Manager). « Accept all » and « Decline all » have the same weight;
- * « Customize » sets each choice. The footer « Cookie settings » button reopens the settings.
+ * measurement through Google Tag Manager). « Customize » shows one box per choice, with « Save my
+ * choices » as the main button (it only grants what is ticked). The footer « Cookie settings » button reopens the settings.
  */
 export function ConsentBanner({ dict }: { dict: Dictionary['consent'] }) {
   const [open, setOpen] = useState(false);
@@ -85,18 +85,33 @@ export function ConsentBanner({ dict }: { dict: Dictionary['consent'] }) {
         </fieldset>
       )}
 
-      <div className="consent-actions">
-        <button type="button" className="btn ghost" onClick={() => all('denied')}>{dict.declineAll}</button>
-        <button type="button" className="btn btn-lime" onClick={() => all('granted')}>{dict.acceptAll}</button>
-      </div>
       {custom ? (
-        <button type="button" className="consent-link" onClick={() => save({ analytics: analytics ? 'granted' : 'denied', marketing: marketing ? 'granted' : 'denied' })}>
-          {dict.save}
-        </button>
+        <>
+          {/* Customize view: saving the ticked boxes is the main action; « Accept all » and « Decline all »
+              stay available with the same (secondary) weight, so a click on the main button never grants
+              more than what is ticked. */}
+          <button
+            type="button"
+            className="btn btn-lime consent-save"
+            onClick={() => save({ analytics: analytics ? 'granted' : 'denied', marketing: marketing ? 'granted' : 'denied' })}
+          >
+            {dict.save}
+          </button>
+          <div className="consent-actions">
+            <button type="button" className="btn ghost" onClick={() => all('denied')}>{dict.declineAll}</button>
+            <button type="button" className="btn ghost" onClick={() => all('granted')}>{dict.acceptAll}</button>
+          </div>
+        </>
       ) : (
-        <button type="button" className="consent-link" aria-expanded={false} onClick={() => setCustom(true)}>
-          {dict.customize}
-        </button>
+        <>
+          <div className="consent-actions">
+            <button type="button" className="btn ghost" onClick={() => all('denied')}>{dict.declineAll}</button>
+            <button type="button" className="btn btn-lime" onClick={() => all('granted')}>{dict.acceptAll}</button>
+          </div>
+          <button type="button" className="consent-link" aria-expanded={false} onClick={() => setCustom(true)}>
+            {dict.customize}
+          </button>
+        </>
       )}
     </section>
   );

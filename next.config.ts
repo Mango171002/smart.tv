@@ -22,7 +22,10 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.clarity.ms https://scripts.clarity.ms ${[...ADS_SCRIPTS, ...GTM_PREVIEW].join(' ')}${isDev ? " 'unsafe-eval'" : ''}`,
   `style-src 'self' 'unsafe-inline' ${GTM_PREVIEW.join(' ')}`,
-  `img-src 'self' data: ${[...GA, ...CLARITY, ...ADS_HITS, ...GTM_PREVIEW].join(' ')}`,
+  // Images: any https source (owner decision 17/11/2026). Google Ads remarketing pixels redirect to the
+  // visitor's local Google domain (www.google.fr, www.google.co.uk…), which no fixed list can cover.
+  // Images cannot run code; scripts and network calls keep their strict lists below.
+  "img-src 'self' data: https:",
   "font-src 'self'",
   `connect-src 'self' https://cloudflareinsights.com ${[...GA, ...CLARITY, ...ADS_HITS, ...GTM_PREVIEW].join(' ')}`,
   `frame-src https://td.doubleclick.net https://www.googletagmanager.com ${GTM_PREVIEW.join(' ')}`,

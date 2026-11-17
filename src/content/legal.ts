@@ -199,7 +199,7 @@ const IMPRINT: LegalSection[] = [
 ];
 
 export const LEGAL_DOCUMENTS: Record<LegalDoc, LegalDocument> = {
-  terms: { updated: TERMS_UPDATED, edition: 'Pre-launch version', sections: TERMS_SECTIONS, contactIntro: 'Questions? Our team is here to help.' },
+  terms: { updated: TERMS_UPDATED, sections: TERMS_SECTIONS, contactIntro: 'Questions? Our team is here to help.' },
   privacy: { updated: UPDATED, sections: PRIVACY, contactIntro: 'Questions about your data? Write to us.' },
   cookies: { updated: UPDATED, sections: COOKIES, contactIntro: 'Questions about cookies? Write to us.' },
   refunds: { updated: UPDATED, sections: REFUNDS, contactIntro: 'Need a refund? Contact us with your order reference.' },

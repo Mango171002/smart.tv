@@ -55,7 +55,7 @@ test.describe('cookie consent', () => {
     await expect(page.getByTestId('consent-banner')).toBeVisible();
     await page.locator('#plans').scrollIntoViewIfNeeded();
     await page.locator('.offers[data-ready]').waitFor();
-    await page.getByRole('button', { name: /^Pre-register for free/ }).click();
+    await page.getByRole('button', { name: /^Order now/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     // Clickable = not covered by the banner (Playwright checks what receives the click).
     await dialog.getByRole('button', { name: /Continue/ }).click({ trial: true });
@@ -173,7 +173,7 @@ test.describe('analytics events (consent granted)', () => {
 
     await page.locator('.sim-layout [data-tier="ultra"]').click();
     await page.locator('[data-term="24m"]').click();
-    await page.getByRole('button', { name: /^Pre-register for free/ }).click();
+    await page.getByRole('button', { name: /^Order now/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await expect(dialog).toHaveAttribute('data-clarity-mask', 'true');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
@@ -183,8 +183,8 @@ test.describe('analytics events (consent granted)', () => {
     await dialog.getByLabel('WhatsApp number').fill('4155550123');
     await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
-    await dialog.getByRole('button', { name: /Confirm my pre-registration/ }).click();
-    await expect(dialog.getByRole('heading', { name: 'You are pre-registered!' })).toBeVisible();
+    await dialog.getByRole('button', { name: /Confirm my order/ }).click();
+    await expect(dialog.getByRole('heading', { name: 'Order received!' })).toBeVisible();
 
     const events = await gaEvents(page);
     const names = events.map((e) => e.name);
@@ -306,7 +306,7 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
     await page.locator('.offers[data-ready]').waitFor();
     await page.locator('.tier-grid').scrollIntoViewIfNeeded();
     await page.locator('.sim-layout [data-tier="ultra"]').click();
-    await page.getByRole('button', { name: /^Pre-register for free/ }).click();
+    await page.getByRole('button', { name: /^Order now/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('ads.qa@example.test');
     await dialog.getByLabel('Your country').click();
@@ -315,8 +315,8 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
     await dialog.getByLabel('WhatsApp number').fill('0612345678');
     await dialog.getByLabel(/I agree to be contacted/).check();
     await dialog.getByRole('button', { name: /Continue/ }).click();
-    await dialog.getByRole('button', { name: /Confirm my pre-registration/ }).click();
-    await expect(dialog.getByRole('heading', { name: 'You are pre-registered!' })).toBeVisible();
+    await dialog.getByRole('button', { name: /Confirm my order/ }).click();
+    await expect(dialog.getByRole('heading', { name: 'Order received!' })).toBeVisible();
 
     const ads = await adEvents(page);
     const names = ads.map((e) => e.event);

@@ -1,11 +1,11 @@
 /**
- * Terms of Service — SYGMA TV+ (pre-launch version).
+ * Terms of Service — SYGMA TV+.
  *
- * Written to match what the site actually offers today: free pre-registration,
- * no payment, no contract until a purchase is confirmed. Must be reviewed by a
+ * Written to match how the service is sold today (owner, 17/11/2026): order on the
+ * site, confirmation, payment and activation with the team on WhatsApp. Must be reviewed by a
  * lawyer before subscriptions open (operator identity, governing law, taxes).
  */
-export const TERMS_UPDATED = '16 November 2026';
+export const TERMS_UPDATED = '17 November 2026';
 
 export type TermsBlock = { p: string } | { list: string[] };
 
@@ -26,11 +26,11 @@ export const TERMS_SECTIONS: TermsSection[] = [
     ],
   },
   {
-    id: 'pre-launch',
+    id: 'ordering',
     icon: 'rocket',
-    title: 'Pre-launch',
+    title: 'How ordering works',
     body: [
-      { p: 'SYGMA TV+ is in preparation. Pre-registration and trial requests are free and create no obligation. No payment is requested and no contract exists until you complete a purchase and receive our confirmation. Prices shown are planned launch prices.' },
+      { p: 'Trial requests are free and create no obligation. When you order on the site, nothing is charged there: our team contacts you on WhatsApp to confirm your order and payment, then activates your access. The contract starts when we confirm your order.' },
     ],
   },
   {
@@ -46,7 +46,7 @@ export const TERMS_SECTIONS: TermsSection[] = [
     icon: 'tag',
     title: 'Plans, prices and payment',
     body: [
-      { p: 'Starter, Plus and Ultra+ plans for 12, 24 or 36 months, with 1 device included and up to 4. Prices are shown in USD before taxes; the final price, taxes included, is always displayed before payment. Payments are handled by a secure third-party provider. Promotions such as “+30 days free” apply under the conditions shown at purchase.' },
+      { p: 'Starter, Plus and Ultra+ plans for 12, 24 or 36 months, with 1 device included and up to 4. Prices are shown in USD before taxes; the final price, taxes included, is always displayed before payment. Payment is arranged with our team when your order is confirmed. Promotions such as “+30 days free” apply under the conditions shown at purchase.' },
     ],
   },
   {

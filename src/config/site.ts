@@ -57,7 +57,7 @@ export const siteConfig = {
   /** Must stay false until launch: every page is served with noindex,nofollow. */
   allowIndexing: process.env.NEXT_PUBLIC_ALLOW_INDEXING === 'true',
   /** Version of the consent text shown next to the contact forms. */
-  consentTextVersion: 'v0-draft-2026-11b',
+  consentTextVersion: 'v1-2026-11-17',
 } as const;
 
 export type SiteConfig = typeof siteConfig;

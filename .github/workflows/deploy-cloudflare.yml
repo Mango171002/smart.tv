@@ -52,7 +52,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: IndexNow — snapshot of the live public pages (before deploy)
+        continue-on-error: true
+        run: node scripts/indexnow.mjs snapshot --out "$RUNNER_TEMP/indexnow-before.json"
       - name: Build and deploy
+        id: deploy
         run: npx opennextjs-cloudflare build && npx opennextjs-cloudflare deploy
       - name: Customer e-mails (Brevo) — API key
         env:
@@ -127,3 +131,13 @@ jobs:
           console.log('\n*SEO is capped while the prototype is served with `noindex` on purpose.');
           if (failed) { console.log('\n**A score dropped below its threshold.**'); process.exitCode = 1; }
           NODE
+      - name: IndexNow — notify search engines of changed public pages
+        # Runs last (the new version is live everywhere by now) and never fails the deployment.
+        # Dry run until the repository variable INDEXNOW_ENABLED is set to "true".
+        if: ${{ !cancelled() && steps.deploy.outcome == 'success' }}
+        continue-on-error: true
+        env:
+          INDEXNOW_ENABLED: ${{ vars.INDEXNOW_ENABLED }}
+        run: |
+          SEND=""; [ "$INDEXNOW_ENABLED" = "true" ] && SEND="--send"
+          node scripts/indexnow.mjs changed --before "$RUNNER_TEMP/indexnow-before.json" $SEND

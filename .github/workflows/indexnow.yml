@@ -1,0 +1,41 @@
+# Manual IndexNow submission of PUBLIC sygmatv.com pages (e.g. when a country version goes live).
+# Only URLs of the live sitemap are accepted; never preview.sygmatv.com. Dry run unless "send" is ticked.
+name: IndexNow (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'all = every page of the live sitemap; urls = the list below'
+        type: choice
+        options: [all, urls]
+        default: urls
+      urls:
+        description: 'Space-separated https://sygmatv.com/... URLs (mode "urls")'
+        required: false
+        default: ''
+      send:
+        description: 'Really send (otherwise dry run)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Submit
+        env:
+          MODE: ${{ inputs.mode }}
+          URLS: ${{ inputs.urls }}
+          SEND: ${{ inputs.send }}
+        run: |
+          set -f  # no glob expansion of the URL list
+          FLAG=""; [ "$SEND" = "true" ] && FLAG="--send"
+          if [ "$MODE" = "all" ]; then node scripts/indexnow.mjs all $FLAG; else node scripts/indexnow.mjs urls $URLS $FLAG; fi

@@ -177,7 +177,9 @@ describe('API by market (a test-only registry where /fr-fr is live)', () => {
     expect(home).not.toHaveProperty('lastModified');
     expect(home.alternates?.languages).toEqual({ en: 'https://sygmatv.com/', 'fr-FR': 'https://sygmatv.com/fr-fr', fr: 'https://sygmatv.com/fr-fr', 'x-default': 'https://sygmatv.com/' });
     const guide = entries.find((e) => e.url.endsWith('/fr-fr/guides/fire-tv'))!;
-    expect(guide.lastModified).toBe('2026-11-18');
+    expect(guide).not.toHaveProperty('lastModified'); // no printed date on guides: no lastmod
+    const frTerms = entries.find((e) => e.url.endsWith('/fr-fr/legal/terms'))!;
+    expect(frTerms.lastModified).toBe('2026-11-18'); // « Mis à jour le 18 novembre 2026 » printed on the page
     expect(guide.alternates).toBeUndefined();
   });
 

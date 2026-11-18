@@ -28,7 +28,44 @@ Décisions : D69 (phase 1, 17/11/2026), D42 annulée.
 4. Pages légales traduites et relues (CGU, remboursement, confidentialité, cookies, mentions).
 5. Migration : `contact_requests.locale` accepte la nouvelle version ; e-mails et fiches Telegram dans la bonne langue / monnaie.
 6. Statut `preview` → vérification sur l'aperçu → statut `live` (une seule ligne) → déploiement sur autorisation.
-7. Search Console / Bing : soumettre le sitemap, surveiller les erreurs `hreflang`.
+7. Contrôles SEO avant, pendant et après l'ouverture : voir la checklist ci-dessous.
+
+## Checklist SEO de lancement d'un pays (validée le 18/11/2026)
+Une version n'est ouverte que lorsque **toutes** les cases sont cochées. Rien n'est publié sans l'autorisation explicite du propriétaire.
+
+### A. Prérequis bloquants (propriétaire)
+- [ ] Droits de diffusion confirmés par écrit pour le pays (chaînes et VOD).
+- [ ] Grille de prix du pays validée dans sa devise, TVA / taxes comprises ou indiquées selon le pays ; aucun prix converti automatiquement.
+- [ ] Obligations légales locales validées par un juriste (mentions, rétractation, médiateur, cookies, données personnelles).
+- [ ] Textes du pays relus par un locuteur natif ; aucune page générée ou dupliquée pour « remplir » la version.
+
+### B. Contenu et métadonnées (aperçu privé)
+- [ ] Chaque page a un titre unique ≤ 60 caractères et une description unique ≤ 155 caractères, fondée sur des faits de la page.
+- [ ] Pas de contenu identique entre deux pays de même langue : une page n'existe dans une version que si elle y apporte une vraie différence (sinon renvoi vers la version qui l'héberge, comme les guides `/fr-fr`).
+- [ ] Données structurées valides (Organization, WebSite, BreadcrumbList, FAQPage si FAQ) ; devise et langue du pays ; outil « Résultats enrichis » de Google sans erreur.
+- [ ] Images : texte alternatif dans la langue du pays ; aucun logo ou marque de tiers.
+
+### C. Technique (aperçu privé, puis build de production)
+- [ ] Statut `preview` → `live` dans `src/i18n/locales.ts` (une seule ligne) ; les versions `preview` et `disabled` restent hors sitemap et en `noindex`.
+- [ ] Balise `canonical` = l'URL de la version elle-même (jamais une autre version).
+- [ ] `hreflang` réciproques entre toutes les versions live de la page, avec `x-default` → `/` et le repli de langue (`fr` → `/fr-fr`).
+- [ ] Sitemap : la version apparaît avec ses alternates ; `lastmod` uniquement là où une date est imprimée sur la page.
+- [ ] `robots` : `index, follow` sur la version ; l'aperçu `preview.sygmatv.com` reste protégé et en `noindex`.
+- [ ] Commande : refusée côté serveur tant que la version n'est pas `live` ; e-mails et fiche Telegram dans la langue et la devise du pays.
+- [ ] GA4 : `content_group` = la version ; événements clés inchangés ; aucune modification du suivi Google Ads.
+- [ ] Tests : `npx vitest run`, Playwright production et aperçu, accessibilité (axe) sans violation, Lighthouse mobile ≥ 90 sur l'accueil et une page légale de la version.
+- [ ] Non-régression de `/` : HTML identique hors changements prévus.
+
+### D. Mise en ligne (après autorisation explicite)
+- [ ] Déploiement isolé (uniquement les commits approuvés).
+- [ ] Contrôle en ligne : statut 200, canonical, hreflang, sitemap, `X-Robots-Tag` absent sur la version.
+- [ ] Search Console : sitemap soumis à nouveau, inspection de 3 à 5 URL de la version, demande d'indexation de l'accueil de la version.
+- [ ] Bing Webmaster Tools : sitemap soumis (propriété importée depuis la Search Console).
+- [ ] IndexNow : envoi automatique après le déploiement (pages ajoutées ou modifiées), ou workflow manuel « IndexNow (manual) » en mode `all`.
+
+### E. Suivi
+- [ ] J+7, J+14, J+30 : pages indexées de la version (Search Console › Indexation › Pages), erreurs `hreflang`, impressions et clics par pays.
+- [ ] Conversions organiques (essais et pré-inscriptions, canal « Organic Search ») par version dans GA4.
 
 ## Phase 2 (18/11/2026, aperçu uniquement)
 - **Pages légales en français** (`src/content/fr/legal.ts`) : traduction fidèle des 5 pages anglaises, même structure (test). Seule adaptation : « prix dans la devise de votre pays » au lieu de « USD ».

@@ -7,6 +7,9 @@ describe('sitemap lastmod (real, verifiable dates only)', () => {
   it('reads the « Last updated » date printed on the page', () => {
     expect(isoDate('16 November 2026')).toBe('2026-11-16');
     expect(isoDate('1 March 2027')).toBe('2027-03-01');
+    expect(isoDate('18 novembre 2026', 'fr')).toBe('2026-11-18');
+    expect(isoDate('1 février 2027', 'fr')).toBe('2027-02-01');
+    expect(isoDate('18 novembre 2026', 'en')).toBeUndefined();
   });
 
   it('never invents a date', () => {

@@ -1,13 +1,10 @@
 import type { MetadataRoute } from 'next';
 import { siteConfig } from '@/config/site';
 import { faqFor, guidesFor } from '@/content/intl';
-import { liveLocales, type LocaleId } from '@/i18n/locales';
+import { liveLocales, SITE_LOCALES, type LocaleId } from '@/i18n/locales';
 import { lastModifiedOf } from '@/lib/lastmod';
 import { ALL_PATHS, href } from '@/lib/routes';
 import { hreflangAlternates } from '@/lib/seo';
-
-/** Date of the latest content update of the international pages (FAQ, guides, legal translations). */
-const INTL_CONTENT_UPDATED = '2026-11-18';
 
 /** Pages of a version, with the versions where each one exists (for hreflang). */
 function pagesOf(locale: LocaleId): Array<{ path: string; exists: (id: string) => boolean }> {
@@ -26,7 +23,7 @@ function pagesOf(locale: LocaleId): Array<{ path: string; exists: (id: string) =
 /**
  * Every indexable page of every LIVE version (preview versions never appear). When a page exists in
  * several live versions, each entry lists its alternates (xhtml:link hreflang), as Google and Bing expect.
- * The English home's entries are unchanged; international entries carry their last update date.
+ * lastmod only on pages that print their « Last updated » date (legal pages), in every version.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const abs = (p: string) => `${siteConfig.siteUrl}${p}`;
@@ -34,9 +31,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const locale = id as LocaleId;
     return pagesOf(locale).map(({ path, exists }) => {
       const languages = hreflangAlternates(path, undefined, exists);
+      const lastModified = lastModifiedOf(path, SITE_LOCALES[locale].language);
       return {
         url: abs(href(locale, path)),
-        ...(locale === 'en' ? (lastModifiedOf(path) ? { lastModified: lastModifiedOf(path) } : {}) : { lastModified: INTL_CONTENT_UPDATED }),
+        ...(lastModified ? { lastModified } : {}),
         changeFrequency: 'monthly' as const,
         priority: path === '' ? 1 : 0.6,
         ...(languages ? { alternates: { languages: Object.fromEntries(Object.entries(languages).map(([k, v]) => [k, abs(v)])) } } : {}),

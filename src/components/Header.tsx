@@ -24,7 +24,7 @@ export function Header({ locale: _locale, nav }: { locale: Locale; nav: Dictiona
     { href: `/#plans`, label: nav.plans },
     { href: `/#how`, label: nav.how },
     { href: `/#faq`, label: nav.help },
-    { href: `/blog`, label: nav.blog },
+    // Blog link hidden until the first article is published (owner decision, 18/11/2026); /blog stays noindex.
   ];
 
   return (

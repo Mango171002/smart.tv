@@ -510,22 +510,28 @@ const en = {
       terms: {
         title: 'Terms of Service',
         intro: 'The rules for using SYGMA TV+ — written in plain language, with your consumer rights always protected.',
+        /** Search-result snippet (≤155 characters, facts from the page only); the visible intro stays short. */
+        metaDescription: 'SYGMA TV+ Terms of Service in plain language: ordering, free trial, plans and payment, renewal, refunds, fair use and governing law.',
       },
       privacy: {
         title: 'Privacy policy',
         intro: 'What we collect, why, and your rights — in short.',
+        metaDescription: 'SYGMA TV+ privacy policy: what data we collect, why we use it, how we protect it, how long we keep it and your rights. We never sell your data.',
       },
       cookies: {
         title: 'Cookie policy',
         intro: 'The cookies on sygmatv.com and how to control them.',
+        metaDescription: 'SYGMA TV+ cookie policy: the cookies we use, their purpose and duration. Optional cookies are set only if you accept them; change your choice anytime.',
       },
       refunds: {
         title: 'Refunds & cancellations',
         intro: 'Free trial first, then a full refund within 7 days.',
+        metaDescription: 'SYGMA TV+ refunds: free 24-hour trial first, 100% refund within 7 days of activation, 14-day withdrawal for EU and UK customers, no automatic renewal.',
       },
       imprint: {
         title: 'Legal notice',
         intro: 'The company behind SYGMA TV+.',
+        metaDescription: 'SYGMA TV+ legal notice: the website is published by Sygma TV LLC, Albuquerque, New Mexico (USA). Registered address, EIN, e-mail and WhatsApp contact.',
       },
     },
   },

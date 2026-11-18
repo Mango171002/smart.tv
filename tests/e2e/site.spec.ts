@@ -365,7 +365,9 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
     await page.goto('/');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
     const nav = page.getByRole('navigation', { name: 'Main navigation' });
-    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Blog', 'Get started']);
+    await expect(nav.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help', 'Get started']);
+    // Blog link hidden until the first article is published (phase 4); the page itself stays reachable and noindex.
+    await expect(page.locator('a[href="/blog"]')).toHaveCount(0);
     await expect(nav.getByRole('button', { name: 'Free trial' })).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(nav.getByRole('link', { name: 'Get started' })).toHaveCSS('background-color', 'rgb(209, 254, 23)');
   });

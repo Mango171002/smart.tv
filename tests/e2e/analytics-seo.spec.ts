@@ -221,6 +221,11 @@ test.describe('technical SEO', () => {
     expect(xml).toContain('/legal/terms</loc>');
     expect(xml).not.toContain('/blog</loc>');
     expect(xml).not.toContain('/api/');
+    // lastmod only where the date is real: the « Last updated » date printed on each legal page; none on the home.
+    expect(xml).toContain('/legal/terms</loc>\n<lastmod>2026-11-17</lastmod>');
+    expect(xml).toContain('/legal/privacy</loc>\n<lastmod>2026-11-16</lastmod>');
+    expect(xml).toMatch(/<loc>[^<]+\/<\/loc>\n<changefreq>/);
+    expect(xml.match(/<lastmod>/g)).toHaveLength(5);
     const robots = await (await request.get('/robots.txt')).text();
     expect(robots).toMatch(/Sitemap: https?:\/\/[^\s]+\/sitemap\.xml/);
     expect(robots).toMatch(/Disallow: \/api\//);
@@ -240,6 +245,31 @@ test.describe('technical SEO', () => {
     const types = ld['@graph'].map((n: { '@type': string }) => n['@type']);
     expect(types).toEqual(['Organization', 'WebSite']);
     expect(ld['@graph'][0]).toMatchObject({ name: 'SYGMA TV+', slogan: 'One World. Endless Entertainment.' });
+    // Google asks for a logo of at least 112×112 px: the square symbol, not the 512×67 wordmark.
+    expect(ld['@graph'][0].logo).toMatchObject({ width: 512, height: 512 });
+    expect(ld['@graph'][0].logo.url).toMatch(/\/brand\/sygma-symbol-512\.png$/);
+    const logo = await page.request.get('/brand/sygma-symbol-512.png');
+    expect(logo.status()).toBe(200);
+  });
+
+  test('legal pages: descriptive meta description (≤155 characters), distinct from each other', async ({ page }) => {
+    const seen = new Set<string>();
+    for (const doc of ['terms', 'privacy', 'cookies', 'refunds', 'imprint']) {
+      await page.goto(`/legal/${doc}`);
+      const d = (await page.locator('meta[name="description"]').getAttribute('content'))!;
+      expect(d.length, doc).toBeGreaterThanOrEqual(110);
+      expect(d.length, doc).toBeLessThanOrEqual(155);
+      await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', d);
+      seen.add(d);
+    }
+    expect(seen.size).toBe(5);
+  });
+
+  test('favicon.ico is served (older browsers, Bing)', async ({ request }) => {
+    const res = await request.get('/favicon.ico');
+    expect(res.status()).toBe(200);
+    const body = await res.body();
+    expect([...body.subarray(0, 4)]).toEqual([0, 0, 1, 0]); // ICO header
   });
 
   test('blog stays out of search until it has articles', async ({ page }) => {

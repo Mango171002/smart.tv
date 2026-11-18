@@ -71,8 +71,14 @@ describe('hreflang and canonical', () => {
 
   it('once France is live: every live version + x-default (the English home)', () => {
     const reg = { en: { ...SITE_LOCALES.en }, 'fr-fr': { ...SITE_LOCALES['fr-fr'], status: 'live' as const }, 'de-de': { ...SITE_LOCALES['de-de'] } };
-    expect(hreflangAlternates('', reg)).toEqual({ en: '/', 'fr-FR': '/fr-fr', 'x-default': '/' });
-    expect(hreflangAlternates('/legal/terms', reg)).toEqual({ en: '/legal/terms', 'fr-FR': '/fr-fr/legal/terms', 'x-default': '/legal/terms' });
+    // « fr » (language only) points to /fr-fr: French speakers of countries without their own version land there.
+    expect(hreflangAlternates('', reg)).toEqual({ en: '/', 'fr-FR': '/fr-fr', fr: '/fr-fr', 'x-default': '/' });
+    expect(hreflangAlternates('/legal/terms', reg)).toEqual({ en: '/legal/terms', 'fr-FR': '/fr-fr/legal/terms', fr: '/fr-fr/legal/terms', 'x-default': '/legal/terms' });
+    // A page that only exists in one live version has no alternates (e.g. the French guides).
+    expect(hreflangAlternates('/guides', reg, (id) => id === 'fr-fr')).toBeUndefined();
+    // Several French versions: each country + « fr » → the main one (fr-fr).
+    const reg2 = { ...reg, 'fr-ch': { ...SITE_LOCALES['fr-ch'], status: 'live' as const } };
+    expect(hreflangAlternates('/faq', reg2, (id) => id !== 'en')).toEqual({ 'fr-FR': '/fr-fr/faq', 'fr-CH': '/fr-ch/faq', fr: '/fr-fr/faq', 'x-default': '/fr-fr/faq' });
   });
 
   it('a preview version points to itself, is never indexable and has no hreflang', () => {

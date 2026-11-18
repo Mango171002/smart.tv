@@ -67,7 +67,7 @@ select pg_temp.check(
 drop table public._exposure_probe;
 
 -- ---------- Seed sanity ----------
-select pg_temp.check((select count(*) = 3 from public.markets), 'three markets seeded');
+select pg_temp.check((select count(*) = 6 from public.markets), 'six markets (US, CA, EU seeded; GB, CH, MA from the phase 3A migration)');
 select pg_temp.check((select count(*) = 3 from public.plan_tiers), 'three tiers seeded');
 select pg_temp.check((select count(*) = 48 from public.plans where tier_code is not null and is_active), '48 tier/term/stream plans active');
 select pg_temp.check((select count(*) = 16 from public.plans where tier_code is null and not is_active), 'legacy plans kept but inactive');
@@ -167,7 +167,7 @@ reset role;
 
 -- ---------- anon ----------
 set local role anon;
-select pg_temp.check((select count(*) = 3 from public.markets), 'anon reads markets');
+select pg_temp.check((select count(*) = 6 from public.markets), 'anon reads markets (public catalogue: codes and currencies only)');
 select pg_temp.check((select count(*) = 48 from public.prices), 'anon reads only current prices');
 select pg_temp.check((select count(*) = 48 from public.plans), 'anon reads only active plans');
 select pg_temp.check((select count(*) = 3 from public.plan_tiers), 'anon reads tiers');
@@ -213,6 +213,17 @@ select pg_temp.expect_error(
 select pg_temp.expect_error(
   $$insert into public.contact_requests (kind, name, email, phone, consent_given, consent_text_version) values ('trial_request', 'Alex', 'trial3@example.test', '0612', true, 'v-test')$$,
   '23514', 'phone must be in international format');
+-- International versions (phase 3A, migration 20261118120000): site version + server-side price market
+insert into public.contact_requests (kind, email, phone, locale, price_market, interest_tier, consent_given, consent_text_version)
+  values ('launch_waitlist', 'intl@example.test', '+33612345678', 'fr-fr', 'EU', 'plus', true, 'v-test');
+select pg_temp.check(true, 'anon can send a request from a site version (fr-fr) with its price market');
+select pg_temp.expect_error(
+  $$insert into public.contact_requests (kind, email, locale, consent_given, consent_text_version) values ('launch_waitlist', 'l1@example.test', 'french', true, 'v-test')$$,
+  '23514', 'the site version must look like « fr » or « fr-fr »');
+select pg_temp.expect_error(
+  $$insert into public.contact_requests (kind, email, price_market, consent_given, consent_text_version) values ('launch_waitlist', 'l2@example.test', 'ZZ', true, 'v-test')$$,
+  '23503', 'the price market must be a known market');
+select pg_temp.expect_error($$select price_market from public.contact_requests$$, '42501', 'anon cannot read the price market');
 select pg_temp.expect_error($$select phone from public.contact_requests$$, '42501', 'anon cannot read phone numbers');
 
 
@@ -352,10 +363,21 @@ select public.ops_card_open('20000000-0000-4000-8000-000000000002');
 select pg_temp.check(jsonb_array_length(public.ops_trial_followup_claim_due(interval '0 seconds')) = 0, 'no follow-up before the trial is given');
 select pg_temp.check((public.ops_apply('20000000-0000-4000-8000-000000000002', 1, 'contact', 111, 'Sara') -> 'card' -> 'card' ->> 'status') = 'contacted', 'trial given (Essai envoyé)');
 select pg_temp.check(jsonb_array_length(public.ops_trial_followup_claim_due(interval '24 hours')) = 0, 'no follow-up before 24 h');
-select pg_temp.check(public.ops_trial_followup_claim_due(interval '0 seconds') = '[{"id": "20000000-0000-4000-8000-000000000002", "name": "Trial T.", "email": "trial2@example.test"}]'::jsonb, 'follow-up due once the delay has passed — converted trials are excluded');
+select pg_temp.check(public.ops_trial_followup_claim_due(interval '0 seconds') = '[{"id": "20000000-0000-4000-8000-000000000002", "name": "Trial T.", "email": "trial2@example.test", "locale": "en"}]'::jsonb, 'follow-up due once the delay has passed — converted trials are excluded');
 select pg_temp.check(jsonb_array_length(public.ops_trial_followup_claim_due(interval '0 seconds')) = 0, 'follow-up sent only once');
 select public.ops_trial_followup_release('20000000-0000-4000-8000-000000000002');
 select pg_temp.check(jsonb_array_length(public.ops_trial_followup_claim_due(interval '0 seconds')) = 1, 'a failed follow-up is retried');
+reset role;
+
+-- Phase 3A: markets without prices, card data with version and price market
+select pg_temp.check((select count(*) = 6 from public.markets where code in ('US', 'CA', 'EU', 'GB', 'CH', 'MA')), 'six price markets exist');
+select pg_temp.check((select string_agg(code || ':' || currency, ',' order by code) from public.markets where code in ('GB', 'CH', 'MA')) = 'CH:CHF,GB:GBP,MA:MAD', 'new markets have their own currency');
+select pg_temp.check(not exists (select 1 from public.prices where market_code in ('GB', 'CH', 'MA')), 'no price is invented for the new markets');
+select pg_temp.check(not exists (select 1 from public.markets where code in ('GB', 'CH', 'MA') and (licensed or sales_enabled)), 'new markets stay closed (no licence, no sales)');
+set role service_role;
+select public.ops_card_open((select id from public.contact_requests where email = 'intl@example.test'));
+select pg_temp.check((public.ops_card_get((select id from public.contact_requests where email = 'intl@example.test')) -> 'request' ->> 'price_market') = 'EU', 'the card knows the price market');
+select pg_temp.check((public.ops_card_get((select id from public.contact_requests where email = 'intl@example.test')) -> 'request' ->> 'locale') = 'fr-fr', 'the card knows the site version');
 reset role;
 
 select 'PASSED: ' || count(*) || ' assertions' as result from _t;

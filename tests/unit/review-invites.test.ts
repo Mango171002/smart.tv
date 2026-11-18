@@ -5,7 +5,7 @@ const rpc = vi.fn();
 vi.mock('@/lib/supabase/server', () => ({ getServiceSupabase: () => (process.env.SUPABASE_SECRET_KEY ? { rpc } : null) }));
 const send = vi.fn();
 vi.mock('@/lib/email/send', () => ({ sendCustomerEmail: (...a: unknown[]) => send(...a) }));
-vi.mock('@/lib/email/plans', () => ({ emailPlans: async () => [{ name: 'Plus', tagline: 't', price: '$69', highlights: [], color: '#d1fe17', image: 'x' }] }));
+vi.mock('@/lib/email/plans', () => ({ emailPlans: async () => ({ currency: 'USD', plans: [{ name: 'Plus', tagline: 't', price: '$69', highlights: [], color: '#d1fe17', image: 'x' }] }) }));
 
 const post = (secret?: string) =>
   new Request('https://sygmatv.com/api/cron/review-invites', { method: 'POST', headers: secret ? { 'x-cron-secret': secret } : {} });

@@ -28,6 +28,8 @@ export type Database = {
           kind: 'support' | 'launch_waitlist' | 'trial_request';
           locale: string;
           market_code: string | null;
+          /** Phase 3A migration (20261118120000), not applied in production yet. */
+          price_market: string | null;
           country_code: string | null;
           device_detail: string | null;
           message: string | null;
@@ -46,6 +48,8 @@ export type Database = {
           kind: 'support' | 'launch_waitlist' | 'trial_request';
           locale?: string;
           market_code?: string | null;
+          /** Phase 3A migration (20261118120000): only written for versions other than « / ». */
+          price_market?: string | null;
           country_code?: string | null;
           device_detail?: string | null;
           message?: string | null;

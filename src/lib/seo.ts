@@ -12,12 +12,30 @@ export const OG_IMAGE = { url: '/brand/og-image.jpg', width: 1200, height: 630, 
  * Nothing while only one version is live (today: « / » alone, exactly as before the international
  * versions). Preview versions never appear here, nor in the sitemap.
  */
-export function hreflangAlternates(path: string, registry: Record<string, SiteLocale> = SITE_LOCALES): Record<string, string> | undefined {
-  const live = Object.values(registry).filter((l) => l.status === 'live');
+/** Main version of each language, used for the language-only hreflang (« fr » → /fr-fr). */
+const LANGUAGE_HOME: Record<string, string> = { en: 'en', fr: 'fr-fr', de: 'de-de', es: 'es-es', nl: 'nl-be' };
+
+/**
+ * hreflang alternates of a page: every LIVE version where the page exists (`exists`), a language-only
+ * entry (« fr ») pointing to the main version of the language — so that French speakers of countries
+ * without their own version (Belgium, Switzerland, Morocco…) land on it — and x-default (the English home).
+ * Nothing while the page exists in only one live version (today: « / » alone, exactly as before).
+ */
+export function hreflangAlternates(
+  path: string,
+  registry: Record<string, SiteLocale> = SITE_LOCALES,
+  exists: (id: string) => boolean = () => true,
+): Record<string, string> | undefined {
+  const live = Object.values(registry).filter((l) => l.status === 'live' && exists(l.id));
   if (live.length < 2) return undefined;
   const withPrefix = (l: SiteLocale) => (path ? (path.startsWith('#') ? `${l.prefix || '/'}${path}` : `${l.prefix}${path}`) : l.prefix || '/');
   const languages: Record<string, string> = {};
   for (const l of live) languages[l.hreflang] = withPrefix(l);
+  for (const lang of new Set(live.map((l) => l.language))) {
+    if (languages[lang]) continue;
+    const home = live.find((l) => l.id === LANGUAGE_HOME[lang]) ?? live.find((l) => l.language === lang)!;
+    languages[lang] = withPrefix(home);
+  }
   const def = live.find((l) => l.prefix === '') ?? live[0]!;
   languages['x-default'] = withPrefix(def);
   return languages;
@@ -34,6 +52,7 @@ export function buildMetadata({
   description,
   absoluteTitle = false,
   noindex = false,
+  existsIn,
 }: {
   locale: Locale;
   path: string;
@@ -43,11 +62,13 @@ export function buildMetadata({
   absoluteTitle?: boolean;
   /** Pages without content yet (kept out of search results and of the sitemap). */
   noindex?: boolean;
+  /** Versions where this page exists (hreflang); default: every version. */
+  existsIn?: (id: string) => boolean;
 }): Metadata {
   const url = href(locale, path);
   const fullTitle = absoluteTitle ? title : `${title} | ${siteConfig.brandName}`;
   const indexable = siteConfig.allowIndexing && !noindex && isLive(locale);
-  const languages = isLive(locale) ? hreflangAlternates(path) : undefined;
+  const languages = isLive(locale) ? hreflangAlternates(path, SITE_LOCALES, existsIn) : undefined;
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,

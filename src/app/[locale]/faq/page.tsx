@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Params }) {
   const { locale } = await params;
   if (!isLocale(locale) || !faqFor(locale)) return {};
   const t = getDictionary(locale).intl;
-  return buildMetadata({ locale, path: '/faq', title: t.faqMetaTitle, description: t.faqDescription });
+  return buildMetadata({ locale, path: '/faq', title: t.faqMetaTitle, description: t.faqDescription, existsIn: (id) => Boolean(faqFor(id as never)) });
 }
 
 export default async function FaqPage({ params }: { params: Params }) {

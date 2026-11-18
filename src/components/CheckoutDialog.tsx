@@ -38,12 +38,15 @@ export function CheckoutDialog({
   dict,
   selection,
   clientPrice,
+  currency = 'USD',
   onClose,
 }: {
   locale: Locale;
   dict: Pick<Dictionary, 'checkout' | 'common' | 'markets' | 'plans'>;
   selection: PlanSelection;
   clientPrice: string;
+  /** Currency of the price grid shown (the version's market); USD on the English home. */
+  currency?: string;
   onClose: () => void;
 }) {
   const c = dict.checkout;
@@ -145,7 +148,7 @@ export function CheckoutDialog({
         const amount = quote?.amountMinor;
         track('generate_lead', {
           lead_type: 'order',
-          currency: quote?.currency ?? 'USD',
+          currency: quote?.currency ?? currency,
           ...(amount ? { value: amount / 100 } : {}),
           item_id: `${selection.tier}-${selection.term}-${selection.streams}`,
         });
@@ -176,7 +179,8 @@ export function CheckoutDialog({
       const res = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(selection),
+        // Other versions send their id: the server picks their market and currency (« / » unchanged).
+        body: JSON.stringify(locale === 'en' ? selection : { ...selection, locale }),
       });
       if (!res.ok) throw new Error(String(res.status));
       const data = (await res.json()) as { quote: ServerQuote };

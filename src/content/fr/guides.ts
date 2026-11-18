@@ -25,7 +25,7 @@ export interface Guide {
 
 export const FR_GUIDES_INTRO = {
   title: 'Guides d’installation',
-  metaTitle: 'Guides d’installation : Smart TV, Fire TV, mobile, PC',
+  metaTitle: 'Guides d’installation : TV, mobile et ordinateur',
   description: 'Installez SYGMA TV+ pas à pas sur Smart TV, Android TV, Fire TV, Apple TV, iPhone, Android ou ordinateur : prérequis, étapes et dépannage.',
   lead: 'Choisissez votre appareil : chaque guide détaille les prérequis, les étapes d’installation et les solutions aux problèmes les plus courants. Avec vos accès, notre équipe vous indique l’application à utiliser sur votre appareil.',
   shared: {

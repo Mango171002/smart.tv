@@ -208,3 +208,29 @@ test.describe('phase 2 — French content (preview)', () => {
     });
   }
 });
+
+test.describe('phase 3A — SEO and tracking of international versions', () => {
+  test('titles ≤ 60 characters and descriptions 50–160 on the French pages', async ({ page }) => {
+    for (const p of ['/fr-fr', '/fr-fr/faq', '/fr-fr/guides', '/fr-fr/guides/apple-tv', '/fr-fr/legal/terms', '/fr-fr/legal/privacy', '/fr-fr/legal/cookies', '/fr-fr/legal/refunds', '/fr-fr/legal/imprint']) {
+      await page.goto(p);
+      expect((await page.title()).length, p).toBeLessThanOrEqual(60);
+      const d = (await page.locator('meta[name="description"]').getAttribute('content')) ?? '';
+      expect(d.length, p).toBeGreaterThanOrEqual(50);
+      expect(d.length, p).toBeLessThanOrEqual(160);
+    }
+  });
+
+  test('GA4 content group = site version (fr-fr), set before the GA4 configuration', async ({ page }) => {
+    await page.route(/googletagmanager\.com|google-analytics\.com|clarity\.ms|c\.bing\.com/, (r) => r.fulfill({ status: 200, contentType: 'application/javascript', body: '' }));
+    await page.addInitScript(() => {
+      localStorage.setItem('sygma_analytics_force', '1');
+      localStorage.setItem('sygma_consent', JSON.stringify({ v: 2, analytics: 'granted', marketing: 'denied', ts: new Date().toISOString() }));
+    });
+    await page.goto('/fr-fr');
+    await expect(page.locator('html')).toHaveAttribute('data-site-version', 'fr-fr');
+    await expect.poll(() => page.evaluate(() => document.querySelector('script[data-sygma="ga4"]') !== null)).toBe(true);
+    const order = await page.evaluate(() => (window.dataLayer ?? []).map((a) => Array.from(a as ArrayLike<unknown>)).filter((a) => a[0] === 'set' || a[0] === 'config').map((a) => JSON.stringify(a)));
+    expect(order[0]).toBe(JSON.stringify(['set', { content_group: 'fr-fr' }]));
+    expect(order[1]).toContain('"config","G-258WWPPN8Y"');
+  });
+});

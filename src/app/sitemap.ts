@@ -1,24 +1,45 @@
 import type { MetadataRoute } from 'next';
 import { siteConfig } from '@/config/site';
+import { faqFor, guidesFor } from '@/content/intl';
 import { liveLocales, type LocaleId } from '@/i18n/locales';
 import { ALL_PATHS, href } from '@/lib/routes';
 import { hreflangAlternates } from '@/lib/seo';
 
+/** Date of the latest content update of the international pages (FAQ, guides, legal translations). */
+const INTL_CONTENT_UPDATED = '2026-11-18';
+
+/** Pages of a version, with the versions where each one exists (for hreflang). */
+function pagesOf(locale: LocaleId): Array<{ path: string; exists: (id: string) => boolean }> {
+  const all = (_id: string) => true;
+  const pages: Array<{ path: string; exists: (id: string) => boolean }> = ALL_PATHS.map((path) => ({ path, exists: all }));
+  if (faqFor(locale)) pages.push({ path: '/faq', exists: (id) => Boolean(faqFor(id as LocaleId)) });
+  const g = guidesFor(locale);
+  if (g) {
+    const hosts = (id: string) => Boolean(guidesFor(id as LocaleId));
+    pages.push({ path: '/guides', exists: hosts });
+    for (const guide of g.guides) pages.push({ path: `/guides/${guide.slug}`, exists: hosts });
+  }
+  return pages;
+}
+
 /**
  * Every indexable page of every LIVE version (preview versions never appear). When a page exists in
  * several live versions, each entry lists its alternates (xhtml:link hreflang), as Google and Bing expect.
+ * The English home's entries are unchanged; international entries carry their last update date.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const abs = (p: string) => `${siteConfig.siteUrl}${p}`;
-  return liveLocales().flatMap((locale) =>
-    ALL_PATHS.map((path) => {
-      const languages = hreflangAlternates(path);
+  return liveLocales().flatMap((id) => {
+    const locale = id as LocaleId;
+    return pagesOf(locale).map(({ path, exists }) => {
+      const languages = hreflangAlternates(path, undefined, exists);
       return {
-        url: abs(href(locale as LocaleId, path)),
+        url: abs(href(locale, path)),
+        ...(locale === 'en' ? {} : { lastModified: INTL_CONTENT_UPDATED }),
         changeFrequency: 'monthly' as const,
         priority: path === '' ? 1 : 0.6,
         ...(languages ? { alternates: { languages: Object.fromEntries(Object.entries(languages).map(([k, v]) => [k, abs(v)])) } } : {}),
       };
-    }),
-  );
+    });
+  });
 }

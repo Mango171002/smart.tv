@@ -10,6 +10,9 @@ import { safeEqual } from '@/lib/telegram/api';
  * - Trustpilot review invitation: one e-mail 3 days after « Converti », no reminder;
  * - trial follow-up: one e-mail 24 h after « Essai envoyé » (the three plans), unless converted or lost.
  */
+/** Language of the e-mail: the request's site version (nothing added for the English home). */
+const langOf = (locale?: string | null) => (locale && locale !== 'en' ? { locale } : {});
+
 export async function POST(req: Request) {
   const expected = await cronSecret();
   const given = req.headers.get('x-cron-secret') ?? '';
@@ -23,11 +26,12 @@ export async function POST(req: Request) {
     console.warn('[cron] review claim', error.message);
     return NextResponse.json({ ok: false, error: 'db' }, { status: 502 });
   }
-  const due = (data ?? []) as unknown as { id: string; email: string; name: string | null }[];
+  // `locale` (site version) comes with the phase 3A migration; absent = English home, as before.
+  const due = (data ?? []) as unknown as { id: string; email: string; name: string | null; locale?: string | null }[];
   let sent = 0;
   let failed = 0;
   for (const r of due) {
-    const result = await sendCustomerEmail('review_invite', r.email, { name: r.name });
+    const result = await sendCustomerEmail('review_invite', r.email, { name: r.name, ...langOf(r.locale) });
     if (result === 'sent') {
       sent++;
     } else {
@@ -39,14 +43,18 @@ export async function POST(req: Request) {
 
   // Trial follow-ups (24 h after the trial was given).
   const f = await db.rpc('ops_trial_followup_claim_due' as never, { p_after: '24 hours', p_limit: 25 } as never);
-  const followDue = f.error ? [] : ((f.data ?? []) as unknown as { id: string; email: string; name: string | null }[]);
+  const followDue = f.error ? [] : ((f.data ?? []) as unknown as { id: string; email: string; name: string | null; locale?: string | null }[]);
   if (f.error) console.warn('[cron] trial follow-up claim', f.error.message);
   let followSent = 0;
   let followFailed = 0;
   if (followDue.length) {
-    const plans = await emailPlans();
+    // Plans of each customer's site version, in its own currency (one lookup per version and run).
+    const byVersion = new Map<string, Awaited<ReturnType<typeof emailPlans>>>();
     for (const r of followDue) {
-      const result = await sendCustomerEmail('trial_followup', r.email, { name: r.name, plans });
+      const v = r.locale ?? 'en';
+      if (!byVersion.has(v)) byVersion.set(v, await emailPlans(v));
+      const ep = byVersion.get(v);
+      const result = await sendCustomerEmail('trial_followup', r.email, { name: r.name, ...(ep ? { plans: ep.plans, currency: ep.currency } : {}), ...langOf(r.locale) });
       if (result === 'sent') followSent++;
       else {
         followFailed++;

@@ -12,6 +12,7 @@ test.describe('international versions are not published in production', () => {
     await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', 'en_US');
     await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
     await expect(page.locator('.preview-ribbon')).toHaveCount(0);
+    await expect(page.locator('html')).not.toHaveAttribute('data-site-version', /.*/);
     // Every internal link stays on the English home (no prefix).
     const hrefs = await page.locator('a[href^="/"]').evaluateAll((as) => as.map((a) => a.getAttribute('href')!));
     expect(hrefs.filter((h) => /^\/[a-z]{2}-[a-z]{2}(\/|#|$)/.test(h))).toEqual([]);

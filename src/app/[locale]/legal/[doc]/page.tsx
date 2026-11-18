@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Params }) {
   if (!isLocale(locale) || !isDoc(doc)) return {};
   const dict = getDictionary(locale);
   const d = dict.legal.docs[doc];
-  return buildMetadata({ locale, path: `/legal/${doc}`, title: d.title, description: d.intro });
+  return buildMetadata({ locale, path: `/legal/${doc}`, title: d.title, description: d.metaDescription });
 }
 
 export default async function LegalPage({ params }: { params: Params }) {

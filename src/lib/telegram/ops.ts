@@ -3,7 +3,8 @@ import { sendCustomerEmail } from '@/lib/email/send';
 import { siteConfig } from '@/config/site';
 import { emailPlans } from '@/lib/email/plans';
 import type { InvoiceData } from '@/lib/email/templates';
-import { getPriceTable } from '@/lib/price-source';
+import { getPriceTable, getPriceTableFor } from '@/lib/price-source';
+import { priceMarketOfRequest } from '@/lib/market';
 import { computeQuote, isStreamCount, isTerm, isTier } from '@/lib/pricing';
 import { getServiceSupabase } from '@/lib/supabase/server';
 import { tg } from './api';
@@ -166,7 +167,7 @@ const HELP = [
   '/addadmin &lt;id&gt; &lt;admin|vendeur&gt; &lt;nom&gt; — ajouter un membre (admin)',
   '/removeadmin &lt;id&gt; — retirer un membre (admin)',
   '/actualiser — redessiner les fiches en cours (nouveaux boutons) (admin)',
-  '/testemail &lt;essai|essai-actif|suivi|commande|actif|avis|tous&gt; — e-mail de test vers support@sygmatv.com (admin)',
+  '/testemail &lt;essai|essai-actif|suivi|commande|actif|avis|tous&gt; [fr] — e-mail de test vers support@sygmatv.com, en français avec « fr » (admin)',
 ].join('\n');
 
 /** Test e-mails (sample data) — always sent to the team's own mailbox, never to a customer. */
@@ -264,14 +265,17 @@ async function handleCommand(m: TgMessage) {
       await reply(m, `Utilisation : <code>/testemail avis</code> (${TEST_EMAILS.map((t) => t.key).join(', ')}, tous). Envoi vers ${TEST_EMAIL_TO} uniquement.`);
       return;
     }
+    // « fr »: the French e-mails (version fr-fr); the sample amount stays a test value.
+    const fr = (args[1] ?? '').toLowerCase() === 'fr';
     const results: string[] = [];
     for (const t of kinds) {
-      // The follow-up e-mail shows the three plans with the site's current prices.
-      const data = t.kind === 'trial_followup' ? { ...t.data, plans: await emailPlans() } : t.data;
+      // The follow-up e-mail shows the three plans with the site's current prices (none until the grid is validated).
+      const ep = t.kind === 'trial_followup' ? await emailPlans(fr ? 'fr-fr' : 'en') : null;
+      const data = { ...t.data, ...(ep ? { plans: ep.plans, currency: ep.currency } : {}), ...(fr ? { locale: 'fr-fr' } : {}) };
       const r = await sendCustomerEmail(t.kind, TEST_EMAIL_TO, data);
       results.push(`${r === 'sent' ? '✅' : r === 'failed' ? '⚠️' : '⏸'} ${t.label}`);
     }
-    await reply(m, `<b>E-mails de test → ${TEST_EMAIL_TO}</b>\n${results.join('\n')}`);
+    await reply(m, `<b>E-mails de test${fr ? ' (français)' : ''} → ${TEST_EMAIL_TO}</b>\n${results.join('\n')}`);
     return;
   }
   if (cmd === '/actualiser') {
@@ -400,11 +404,14 @@ async function handleCallback(q: TgCallback) {
  * with an order number given once per request (an undo + new « Converti » does not send it again)
  * and the amount when the plan is known. Returns the suffix of the toast.
  */
+/** Language of a customer e-mail: the request's site version (nothing added for the English home). */
+const langOf = (locale?: string | null) => (locale && locale !== 'en' ? { locale } : {});
+
 async function sendTrialStartedEmail(card: CardData): Promise<string> {
   // Not again if the trial was already marked as given before (undo + new click).
   if (card.events.filter((e) => e.action === 'contact').length > 1) return ' · e-mail « essai activé » déjà envoyé';
   const r = card.request;
-  const sent = await sendCustomerEmail('trial_started', r.email, { name: r.name, phone: r.phone, trialDuration: siteConfig.trialDuration });
+  const sent = await sendCustomerEmail('trial_started', r.email, { name: r.name, phone: r.phone, trialDuration: siteConfig.trialDuration, ...langOf(r.locale) });
   return sent === 'sent' ? ' · 📧 e-mail « essai activé » envoyé' : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
 }
 
@@ -414,19 +421,26 @@ async function sendConversionEmail(card: CardData): Promise<string> {
   if (!inv?.ok || !inv.number || !inv.issued_at) return ' · ⚠️ n° de commande non créé, e-mail non envoyé';
   if (!inv.new) return ` · confirmation ${inv.number} déjà envoyée`;
   const invoice: InvoiceData = { number: inv.number, issuedAt: inv.issued_at };
+  // Amount from the official grid of the order's price market (US for « / » and older requests), in its
+  // own currency — never a converted price. No validated grid for that market: no amount line.
+  const market = priceMarketOfRequest(r);
+  let noGrid = false;
   if (isTier(r.tier) && isTerm(r.term) && isStreamCount(r.streams)) {
     try {
-      const { table } = await getPriceTable();
-      const q = computeQuote(table, { tier: r.tier, term: r.term, streams: r.streams });
-      invoice.amountMinor = q.amountMinor;
-      invoice.currency = q.currency;
+      const table = market === 'US' ? (await getPriceTable()).table : await getPriceTableFor(market);
+      if (table) {
+        const q = computeQuote(table, { tier: r.tier, term: r.term, streams: r.streams });
+        invoice.amountMinor = q.amountMinor;
+        invoice.currency = q.currency;
+      } else noGrid = true;
     } catch {
       // Price not found: the e-mail is sent without the amount.
     }
   }
   const sent = await sendCustomerEmail('request_confirmed', r.email, {
-    name: r.name, email: r.email, phone: r.phone, tier: r.tier, term: r.term, streams: r.streams, invoice,
+    name: r.name, email: r.email, phone: r.phone, tier: r.tier, term: r.term, streams: r.streams, invoice, ...langOf(r.locale),
   });
+  if (noGrid && sent === 'sent') return ` · 📧 confirmation ${inv.number} envoyée (⚠️ sans montant : pas de grille ${market})`;
   return sent === 'sent' ? ` · 📧 confirmation ${inv.number} envoyée au client` : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
 }
 

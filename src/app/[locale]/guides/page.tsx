@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Params }) {
   const { locale } = await params;
   const g = isLocale(locale) ? guidesFor(locale) : null;
   if (!g) return {};
-  return buildMetadata({ locale: locale as never, path: '/guides', title: g.intro.metaTitle, description: g.intro.description });
+  return buildMetadata({ locale: locale as never, path: '/guides', title: g.intro.metaTitle, description: g.intro.description, existsIn: (id) => Boolean(guidesFor(id as never)) });
 }
 
 export default async function GuidesIndex({ params }: { params: Params }) {

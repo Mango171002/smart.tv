@@ -11,7 +11,7 @@ const fr: Dictionary = {
     siteTitle: 'Abonnement streaming international',
     homeTitle: 'SYGMA TV+ — Abonnement streaming international',
     homeDescription:
-      'SYGMA TV+ : sport en direct, films, séries et chaînes internationales sur Smart TV, mobile et ordinateur. Essai gratuit, 1 à 4 appareils, satisfait ou remboursé.',
+      'SYGMA TV+ : sport en direct, films, séries et chaînes internationales sur TV, mobile et ordinateur. Essai gratuit, 1 à 4 appareils, remboursé sous 7 jours.',
     plansTitle: 'Formules et prix',
     plansDescription: 'Comparez les durées d’abonnement et le nombre d’appareils simultanés.',
     devicesTitle: 'Appareils et installation',
@@ -498,22 +498,27 @@ const fr: Dictionary = {
       terms: {
         title: 'Conditions générales',
         intro: 'Les règles d’utilisation de SYGMA TV+, écrites simplement, dans le respect de vos droits de consommateur.',
+        metaDescription: 'Conditions générales de SYGMA TV+ : commande, essai gratuit, formules, paiement, remboursement, usage du service et droit applicable, expliqués simplement.',
       },
       privacy: {
         title: 'Politique de confidentialité',
         intro: 'Ce que nous collectons, pourquoi, et vos droits — en bref.',
+        metaDescription: 'Politique de confidentialité de SYGMA TV+ : données collectées, finalités, durées de conservation, sécurité et vos droits sur vos données personnelles.',
       },
       cookies: {
         title: 'Politique cookies',
         intro: 'Les cookies de sygmatv.com et comment les contrôler.',
+        metaDescription: 'Politique cookies de SYGMA TV+ : cookies utilisés, finalités, durées, et comment accepter, refuser ou modifier votre choix à tout moment.',
       },
       refunds: {
         title: 'Remboursement et résiliation',
         intro: 'Essai gratuit d’abord, puis remboursement intégral sous 7 jours.',
+        metaDescription: 'Remboursement et résiliation chez SYGMA TV+ : essai gratuit, satisfait ou remboursé 7 jours, droit de rétractation et démarche pour être remboursé.',
       },
       imprint: {
         title: 'Mentions légales',
         intro: 'La société qui édite SYGMA TV+.',
+        metaDescription: 'Mentions légales de SYGMA TV+ : société éditrice, adresse du siège, immatriculation, coordonnées de contact et propriété intellectuelle.',
       },
     },
   },
@@ -549,7 +554,7 @@ const fr: Dictionary = {
     breadcrumbHome: 'Accueil',
     guidesLink: 'Guides d’installation',
     faqTitle: 'Questions fréquentes',
-    faqMetaTitle: 'FAQ : commande, essai gratuit, appareils, remboursement',
+    faqMetaTitle: 'FAQ : commande, essai, appareils, remboursement',
     faqDescription: 'Les réponses sur SYGMA TV+ : commande, essai gratuit de 24 heures, paiement, appareils, connexion, renouvellement, remboursement et assistance.',
     faqSub: 'Commande, essai gratuit, appareils, remboursement : les réponses aux questions que nos clients posent le plus souvent.',
     faqStillQuestions: 'Une autre question ?',

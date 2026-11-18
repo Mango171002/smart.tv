@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Params }) {
   const f = find(locale, slug);
   if (!f) return {};
   // The guide titles already contain the brand: no « | SYGMA TV+ » suffix.
-  return buildMetadata({ locale: f.locale, path: `/guides/${slug}`, title: f.guide.metaTitle, description: f.guide.description, absoluteTitle: true });
+  return buildMetadata({ locale: f.locale, path: `/guides/${slug}`, title: f.guide.metaTitle, description: f.guide.description, absoluteTitle: true, existsIn: (id) => Boolean(guidesFor(id as never)?.guides.some((g) => g.slug === slug)) });
 }
 
 export default async function GuidePage({ params }: { params: Params }) {

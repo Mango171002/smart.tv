@@ -517,22 +517,27 @@ const en = {
       terms: {
         title: 'Terms of Service',
         intro: 'The rules for using SYGMA TV+ — written in plain language, with your consumer rights always protected.',
+        metaDescription: 'The rules for using SYGMA TV+ — written in plain language, with your consumer rights always protected.',
       },
       privacy: {
         title: 'Privacy policy',
         intro: 'What we collect, why, and your rights — in short.',
+        metaDescription: 'What we collect, why, and your rights — in short.',
       },
       cookies: {
         title: 'Cookie policy',
         intro: 'The cookies on sygmatv.com and how to control them.',
+        metaDescription: 'The cookies on sygmatv.com and how to control them.',
       },
       refunds: {
         title: 'Refunds & cancellations',
         intro: 'Free trial first, then a full refund within 7 days.',
+        metaDescription: 'Free trial first, then a full refund within 7 days.',
       },
       imprint: {
         title: 'Legal notice',
         intro: 'The company behind SYGMA TV+.',
+        metaDescription: 'The company behind SYGMA TV+.',
       },
     },
   },

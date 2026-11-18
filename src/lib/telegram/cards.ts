@@ -1,4 +1,5 @@
 import countries from '@/config/countries.json';
+import { isPriceMarket, PRICE_MARKET_CURRENCY } from '@/config/markets';
 
 /**
  * Live "cards" of the SYGMA Operations Bot: one Telegram message per request, edited in place.
@@ -38,6 +39,10 @@ export interface CardData {
     device_detail?: string | null;
     marketing: boolean | null;
     created_at: string;
+    /** Site version of the request (phase 3A migration; absent/« en » = English home). */
+    locale?: string | null;
+    /** Price market chosen by the server from the version (NULL = US). */
+    price_market?: string | null;
   };
   card: { flow: Flow; status: string; version: number; chat_id: number | null; thread_id: number | null; message_id: number | null };
   events: CardEvent[];
@@ -204,6 +209,11 @@ export function renderCard(data: CardData, tz: string, now = Date.now()): { text
   if (r.phone) lines.push(`📞 ${escapeHtml(r.phone)}`);
   if (r.country) lines.push(`🌍 Pays : ${flag(r.country)} ${escapeHtml(COUNTRY_NAME.get(r.country) ?? r.country)}${r.market ? ` (${escapeHtml(r.market)})` : ''}`);
   else if (r.market) lines.push(`🌍 Région : ${escapeHtml(r.market)}`);
+  // Site version and currency of the order (only for versions other than the English home).
+  if (r.locale && r.locale !== 'en') {
+    const m = r.price_market && isPriceMarket(r.price_market) ? r.price_market : null;
+    lines.push(`🗣 Version : ${escapeHtml(r.locale)}${m ? ` · ${PRICE_MARKET_CURRENCY[m]}` : ''}`);
+  }
   if (r.tier) {
     const plan = [TIER_NAME[r.tier] ?? r.tier, r.term ? (TERM_NAME[r.term] ?? r.term) : null, r.streams ? `${r.streams} appareil${r.streams > 1 ? 's' : ''}` : null]
       .filter(Boolean)

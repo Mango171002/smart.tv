@@ -145,12 +145,22 @@ function inject(src: string, tag?: string): void {
   document.head.appendChild(s);
 }
 
+/** `content_group` of an international version (from <html data-site-version>); nothing on the English home. */
+export function siteVersionParam(): { content_group?: string } {
+  const v = typeof document === 'undefined' ? undefined : document.documentElement.dataset.siteVersion;
+  return v ? { content_group: v } : {};
+}
+
 function loadGa(): void {
   if (gaLoaded || document.querySelector('script[data-sygma="ga4"]')) return;
   gaLoaded = true;
   const g = ensureGtag();
   g('js', new Date());
   const debug = new URLSearchParams(window.location.search).has('analytics_debug');
+  // International versions: every GA4 hit carries the « content group » = site version (fr-fr, fr-ch…).
+  // Nothing is set on the English home « / » (unchanged).
+  const group = siteVersionParam();
+  if (group.content_group) g('set', group);
   g('config', ANALYTICS.ga4MeasurementId, {
     // GA sends the first page view itself; in-site navigations are sent by trackPageView()
     // (Next.js navigations are not seen by GA's own history detection; #hash links are not page views).
@@ -257,6 +267,7 @@ export function trackPageView(): void {
     page_location: window.location.origin + key,
     page_path: window.location.pathname,
     page_title: document.title,
+    ...siteVersionParam(),
   });
 }
 

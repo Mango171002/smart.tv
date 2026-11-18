@@ -7,6 +7,7 @@ import { getPublicSupabase } from '@/lib/supabase/server';
 import { contactSchema, DEVICE_DETAILS } from '@/lib/validation';
 import { notifyNewRequest } from '@/lib/telegram/ops';
 import { sendCustomerEmail } from '@/lib/email/send';
+import { storedPriceMarket } from '@/lib/market';
 
 const limiter = createRateLimiter({ limit: 5, windowMs: 10 * 60_000 });
 
@@ -37,6 +38,7 @@ export async function POST(req: Request) {
 
   const supabase = getPublicSupabase();
   if (!supabase) return jsonError(503, 'contact_unavailable');
+  const priceMarket = storedPriceMarket(input.locale);
 
   const { error } = await supabase.from('contact_requests').insert({
     kind: input.kind,
@@ -57,6 +59,8 @@ export async function POST(req: Request) {
     marketing_opt_in: input.marketing === true,
     consent_given: true,
     consent_text_version: siteConfig.consentTextVersion,
+    // Price market of the site version, decided by the server (absent for « / »: US, as before).
+    ...(priceMarket ? { price_market: priceMarket } : {}),
   });
 
   if (error) {
@@ -73,12 +77,14 @@ export async function POST(req: Request) {
   }
   // Operations bot: post a live card in the team's Telegram group, after the response is sent.
   after(() => notifyNewRequest(input.kind, input.email).catch((e) => console.warn('[contact] telegram', (e as Error).message)));
-  // Acknowledgement e-mail to the customer (trial request / pre-registration; support answers come from the team).
+  // Acknowledgement e-mail to the customer (trial request / pre-registration; support answers come from the team),
+  // in the language of the site version (English e-mails unchanged for « / »).
+  const lang = input.locale === 'en' ? {} : { locale: input.locale };
   if (input.kind === 'trial_request') {
-    after(() => sendCustomerEmail('trial_received', input.email, { name: input.name, phone: input.phone }).then(() => undefined));
+    after(() => sendCustomerEmail('trial_received', input.email, { name: input.name, phone: input.phone, ...lang }).then(() => undefined));
   } else if (input.kind === 'launch_waitlist') {
     after(() =>
-      sendCustomerEmail('preregistration_received', input.email, { name: input.name, tier: input.tier, term: input.term, streams: input.streams }).then(() => undefined),
+      sendCustomerEmail('preregistration_received', input.email, { name: input.name, tier: input.tier, term: input.term, streams: input.streams, ...lang }).then(() => undefined),
     );
   }
   return NextResponse.json({ ok: true }, { status: 201 });

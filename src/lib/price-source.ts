@@ -1,4 +1,5 @@
 import 'server-only';
+import { PRICE_MARKET_CURRENCY, type PriceMarketCode } from '@/config/markets';
 import { getPublicSupabase } from '@/lib/supabase/server';
 import { getStaticPriceTable, isStreamCount, isTerm, isTier, planKey, STREAMS, TERMS, TIERS, type PriceTable } from '@/lib/pricing';
 
@@ -67,6 +68,11 @@ export function resetPriceCacheForTests() {
  * own currency — never a converted price, never the USD fallback: null means « prices coming soon ».
  */
 const marketCache = new Map<string, { at: number; table: PriceTable | null }>();
+/** Grid of a price market, in the market's own currency (null: no complete validated grid yet). */
+export async function getPriceTableFor(market: PriceMarketCode): Promise<PriceTable | null> {
+  return getMarketPriceTable(market, PRICE_MARKET_CURRENCY[market]);
+}
+
 export async function getMarketPriceTable(market: string, currency: string): Promise<PriceTable | null> {
   if (market === PRICE_MARKET) return (await getPriceTable()).table;
   const hit = marketCache.get(market);

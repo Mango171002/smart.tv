@@ -63,7 +63,7 @@ export default async function LocaleLayout({
     footer: { ...(faqPage ? { faq: faqPage } : {}), ...(gl ? { guides: href(gl, '/guides') } : {}) },
   };
   return (
-    <html lang={SITE_LOCALES[locale].htmlLang} suppressHydrationWarning>
+    <html lang={SITE_LOCALES[locale].htmlLang} suppressHydrationWarning {...(locale === 'en' ? {} : { 'data-site-version': locale })}>
       <head>
         {/* Google Consent Mode: everything denied by default, before any Google tag can load.
             The visitor's choice is sent later with gtag('consent', 'update', …) (src/lib/analytics.ts). */}

@@ -22,7 +22,8 @@ export function StructuredData({ description, locale = 'en' }: { description: st
         '@id': `${url}/#organization`,
         name: siteConfig.brandName,
         url: `${url}/`,
-        logo: { '@type': 'ImageObject', url: `${url}/brand/sygma-logo-512.png`, width: 512, height: 67 },
+        // Square symbol: Google asks for a logo of at least 112×112 px (the wordmark is 512×67).
+        logo: { '@type': 'ImageObject', url: `${url}/brand/sygma-symbol-512.png`, width: 512, height: 512 },
         image: `${url}${OG_IMAGE.url}`,
         slogan: 'One World. Endless Entertainment.',
         description,

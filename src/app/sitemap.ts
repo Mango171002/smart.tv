@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { siteConfig } from '@/config/site';
 import { faqFor, guidesFor } from '@/content/intl';
 import { liveLocales, type LocaleId } from '@/i18n/locales';
+import { lastModifiedOf } from '@/lib/lastmod';
 import { ALL_PATHS, href } from '@/lib/routes';
 import { hreflangAlternates } from '@/lib/seo';
 
@@ -35,7 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       const languages = hreflangAlternates(path, undefined, exists);
       return {
         url: abs(href(locale, path)),
-        ...(locale === 'en' ? {} : { lastModified: INTL_CONTENT_UPDATED }),
+        ...(locale === 'en' ? (lastModifiedOf(path) ? { lastModified: lastModifiedOf(path) } : {}) : { lastModified: INTL_CONTENT_UPDATED }),
         changeFrequency: 'monthly' as const,
         priority: path === '' ? 1 : 0.6,
         ...(languages ? { alternates: { languages: Object.fromEntries(Object.entries(languages).map(([k, v]) => [k, abs(v)])) } } : {}),

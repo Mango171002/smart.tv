@@ -26,7 +26,7 @@ export function Header({ locale, nav, links: customLinks }: { locale: Locale; na
     { href: href(locale, '#plans'), label: nav.plans },
     { href: href(locale, '#how'), label: nav.how },
     { href: href(locale, '#faq'), label: nav.help },
-    { href: href(locale, '/blog'), label: nav.blog },
+    // Blog link hidden until the first article is published (owner decision, 18/11/2026); /blog stays noindex.
   ];
 
   return (

@@ -2347,3 +2347,8 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
    there is not enough room, so wide screens keep the one-line look. */
 .tier-features { min-width: 0; }
 .tier-features li { white-space: normal; }
+/* Between 1001 and 1180 px the page container narrows and each plan card is only ~225–260 px wide: tighter side
+   padding keeps every feature on one line, including with wider fallback fonts (the site does not load Inter). */
+@media (max-width: 1180px) and (min-width: 1001px) {
+  .tier-grid .tier-card { padding-left: 16px; padding-right: 16px; }
+}

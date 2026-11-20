@@ -57,7 +57,7 @@ ne sont pas établis.
 | `src/config/catalogue.ts` | Volumes de chaînes/films par formule mis à `null` (affichage masqué, mécanisme existant) |
 | `src/components/Sections.tsx` | FAQ : lien contextuel facultatif (`link: { href, label }`) affiché après la réponse |
 | `src/components/StructuredData.tsx` | `foundingDate: "2026"` et `availableLanguage` = 6 langues, depuis `OWNER_FACTS` (même source que la page About) |
-| `src/app/globals.css` | Liens des réponses FAQ visibles (lime, soulignés) ; **cartes de formules : correction d'un défaut existant en production** — les lignes ne pouvaient pas revenir à la ligne et débordaient de la carte jusqu'à 34 px entre 1040 et 1260 px ; elles reviennent à la ligne seulement si la place manque (aucun retour à la ligne constaté de 320 à 1920 px avec les nouveaux textes) |
+| `src/app/globals.css` | Liens des réponses FAQ visibles (lime, soulignés) ; **cartes de formules : correction d'un défaut existant en production** — le site ne charge pas la police Inter (il utilise celle de l'appareil) ; avec une police de repli large, les lignes de formules débordaient sur la carte voisine à 44 largeurs entre 910 et 1360 px (34 px de débordement même avec Inter entre 1040 et 1260 px). Correction : marges latérales des cartes réduites à 16 px entre 1001 et 1180 px (cartes de 225 à 260 px de large) et retour à la ligne autorisé en dernier recours. Résultat : **aucun retour à la ligne ni débordement de 320 à 1920 px** (pas de 10 px), avec Inter comme avec DejaVu Sans |
 
 ### Données structurées (accueil)
 
@@ -76,14 +76,15 @@ ne sont pas établis.
 | TypeScript | OK |
 | ESLint | 0 erreur (4 avertissements identiques à la production) |
 | Unitaires | **123/123** (nouveau `home-claims.test.ts` : longueurs titre/description ; aucun volume, replay, superlatif, IPTV, VIP, « priority », serveurs, « around the world », « international channels », « help centre », « most watched » ; hero sans « sport » ; 4K/HDR et EPG qualifiés « where available » ; volumes masqués ; FAQ commande assistée + lien remboursement ; support 24/7, WhatsApp, 6 langues) |
-| E2E mode `off` (ordinateur + mobile, dont commande, simulateur, prix, axe, analytics, 404, responsive) | **163 réussis, 0 échec** |
+| E2E mode `off` (ordinateur + mobile, dont commande, simulateur, prix, axe, analytics, 404, responsive) | **163 réussis, 0 échec** — avec Inter **et** sans Inter (conditions de la CI, police masquée via fontconfig) |
 | E2E mode `preview` (About, Help, responsive 9 pages, statut commercial) | **46 réussis, 0 échec** |
-| Nouveau contrôle responsive « lignes de formules dans leur carte » | Réussi sur 6A ; **échoue sur la base 5C/production** (défaut existant, corrigé) |
+| Nouveau contrôle responsive « lignes de formules sur une ligne et dans leur carte » (texte mesuré, 7 largeurs) | Réussi sur 6A ; **échoue sur la base 5C/production** (défaut existant, corrigé). Le test historique « fits on one line » ne voyait pas ce débordement (il mesurait la boîte, pas le texte) |
 | Accessibilité axe WCAG 2.1 AA (accueil + 9 pages, ordinateur + mobile) | **0 violation** |
 | SEO (build avec l'URL de production) | Titre 60, description 147, canonique `https://sygmatv.com`, `index, follow`, 1 H1, JSON-LD valide (`foundingDate`, 6 langues), liens FAQ → `/legal/refunds`, `/legal/privacy` |
+| Première CI (run 237) | Échec sur « fits on one line » à 1024 px : la CI n'a pas Inter (lignes renvoyées à la ligne) — cause reproduite localement et corrigée ci-dessus |
 | Lighthouse mobile (local, laboratoire, 2 mesures) | Avant 90 / 93 ; après 89 / 93 ; SEO, accessibilité, bonnes pratiques 100 ; CLS 0 (pas de différence significative) |
 | Comparaison avant (5C `7052460`) / après, 169 URL | **Seul l'accueil change** (`/` et `/?utm_source=x`) : textes ci-dessus, titre, description, JSON-LD. Les 167 autres URL sont identiques |
-| CSS global | `- .tier-features li{white-space:nowrap}` ; `+ .tier-features{min-width:0}` ; `+ .tier-features li{white-space:normal}` ; `+ .faq p a{…}` (2 règles) |
+| CSS global | `- .tier-features li{white-space:nowrap}` ; `+ .tier-features{min-width:0}` ; `+ .tier-features li{white-space:normal}` ; `+ @media (1001–1180 px) .tier-grid .tier-card{padding-left/right:16px}` ; `+ .faq p a{…}` (2 règles) |
 | Prix / commande / e-mails / Telegram / WhatsApp | Aucun fichier concerné modifié (`git diff`) |
 
 ## 3. Cohérence avec les pages Phase 5C

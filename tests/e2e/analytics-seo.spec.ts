@@ -250,6 +250,11 @@ test.describe('technical SEO', () => {
     expect(ld['@graph'][0].logo.url).toMatch(/\/brand\/sygma-symbol-512\.png$/);
     const logo = await page.request.get('/brand/sygma-symbol-512.png');
     expect(logo.status()).toBe(200);
+    // sameAs: public profiles only — the Telegram invite link stays in the footer but not in the JSON-LD.
+    const sameAs: string[] = ld['@graph'][0].sameAs;
+    expect(sameAs.length).toBeGreaterThan(0);
+    expect(sameAs.some((u) => /^https:\/\/t\.me\/\+/.test(u))).toBe(false);
+    await expect(page.locator('footer a[href^="https://t.me/+"]')).toHaveCount(1);
   });
 
   test('legal pages: descriptive meta description (≤155 characters), distinct from each other', async ({ page }) => {

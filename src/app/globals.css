@@ -2328,3 +2328,13 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
   .legal-table td::before { content: attr(data-label); display: block; color: var(--cat); font-size: 11.5px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
   .legal-facts div { grid-template-columns: 1fr; gap: 2px; }
 }
+
+/* Footer chips (fix 20/11/2026): « nowrap » forced the three chips onto one line at every width; where the
+   « About » column is narrower than the chips (1101–~1400 px, and phones under ~400 px) they overflowed into the
+   « Links » column / out of the page column. They now wrap onto a second line only when there is not enough room. */
+.footer ul.footer-chips { flex-wrap: wrap; row-gap: 8px; }
+/* Footer social icons (fix 20/11/2026): 6 × 44 px + 5 × 10 px = 314 px > 288 px of content at 320 px wide; a smaller gap
+   keeps them inside the page margin. Touch targets stay 44 × 44 px. */
+@media (max-width: 340px) {
+  .footer ul.footer-social { gap: 4px; }
+}

@@ -60,14 +60,49 @@ test.describe('content pages — preview', () => {
     });
   }
 
-  test('About: verified company facts and contact', async ({ page }) => {
+  test('About: verified company facts, owner facts worded as usual times, no unproven promise', async ({ page }) => {
     await page.goto('/about');
-    for (const v of ['Sygma TV LLC', '98-1836592', 'Albuquerque', 'support@sygmatv.com', '+44 7412 857594']) await expect(page.locator('main')).toContainText(v);
+    const main = page.locator('main');
+    for (const v of ['Sygma TV LLC', '98-1836592', 'Albuquerque', 'support@sygmatv.com', '+44 7412 857594', 'Established', '2026', '24/7', 'usually replies in under an hour']) await expect(main).toContainText(v);
+    for (const l of ['English', 'French', 'Arabic', 'German', 'Spanish', 'Italian']) await expect(main.getByRole('list', { name: 'Support languages' })).toContainText(l);
+    await expect(main.getByRole('list', { name: 'Payment methods' }).getByRole('listitem')).toHaveCount(6);
+    await expect(main).toContainText('none is charged automatically on this website');
+    await expect(main).not.toContainText(/pdf|invoice|smarters|ibo player|guaranteed/i);
+    await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link')).toHaveCount(8);
+  });
+
+  test('topic page: table of contents, previous/next, calls to action open the site dialogs', async ({ page }) => {
+    await page.goto('/help/ordering-payment');
+    await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link', { name: 'How do I pay?' })).toHaveAttribute('href', '#pay');
+    const pager = page.getByRole('navigation', { name: 'Help topics' });
+    await expect(pager.getByRole('link')).toHaveCount(2);
+    await expect(pager.getByRole('link').last()).toHaveAttribute('href', '/help/troubleshooting');
+    await page.locator('main').getByRole('button', { name: 'Contact support' }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.goto('/help/free-trial');
+    await page.locator('main').getByRole('button', { name: 'Request a free trial' }).click();
+    await expect(page.getByRole('dialog', { name: 'Request a Trial' })).toBeVisible();
+  });
+
+  test('keyboard: skip link first, then breadcrumb and topic cards reachable with Tab, visible focus', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'keyboard navigation is a desktop check');
+    await page.goto('/help');
+    await page.keyboard.press('Tab');
+    await expect(page.locator(':focus')).toHaveText('Skip to content');
+    await page.keyboard.press('Enter');
+    let reached = false;
+    for (let i = 0; i < 30 && !reached; i++) {
+      await page.keyboard.press('Tab');
+      reached = (await page.evaluate(() => document.activeElement?.getAttribute('href'))) === '/help/getting-started';
+    }
+    expect(reached).toBe(true);
+    const outline = await page.evaluate(() => { const st = getComputedStyle(document.activeElement!); return st.outlineStyle !== 'none' || st.boxShadow !== 'none' || st.borderColor !== ''; });
+    expect(outline).toBe(true);
   });
 
   test('Help center: one card per topic, internal links work', async ({ page }) => {
     await page.goto('/help');
-    const cards = page.locator('main ul a[href^="/help/"]');
+    const cards = page.locator('main ul[aria-label="Help topics"] a');
     await expect(cards).toHaveCount(7);
     await cards.nth(6).click();
     await expect(page).toHaveURL(/\/help\/refunds$/);

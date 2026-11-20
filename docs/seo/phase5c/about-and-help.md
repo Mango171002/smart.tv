@@ -5,19 +5,23 @@ en production (interrupteur `NEXT_PUBLIC_CONTENT_PAGES` non défini) ; elles ne 
 avec `noindex`. Contenu : `src/content/en/info.ts`.
 
 Règle de rédaction : **uniquement des faits déjà vérifiés et publiés** (CGU, remboursement, confidentialité, mentions
-légales, FAQ, formulaires de commande et d'essai, coordonnées de `src/config/site.ts`). Aucune chaîne, aucun sport,
+légales, FAQ, formulaires de commande et d'essai, coordonnées de `src/config/site.ts`) **et les informations M1–M10
+validées par le propriétaire le 20/11/2026**, sauf M6, M7 et M8 (non vérifiables, non publiées — voir `finalisation.md`). Aucune chaîne, aucun sport,
 aucun volume, aucune qualité d'image, aucun superlatif, aucun nom d'application (test automatique bloquant).
 
-## 1. Page About us — `/about`
+## 1. Page About us — `/about` (version finalisée)
 
-| Section | Contenu (résumé) | Source vérifiée |
+| Section | Contenu (résumé) | Source |
 |---|---|---|
-| Who we are | SYGMA TV+ (« One World. Endless Entertainment. »), service exploité par Sygma TV LLC, société du Nouveau-Mexique ; formules de 12/24/36 mois, 1 appareil inclus jusqu'à 4 ; essai gratuit | Mentions légales, CGU |
-| Company information | Société, adresse du siège, immatriculation, EIN, e-mail, téléphone/WhatsApp | `site.ts` (Mentions légales) |
-| How the service works | Choix de la formule → coordonnées (rien n'est débité sur le site) → confirmation et paiement avec l'équipe sur WhatsApp → accès et application | CGU « How ordering works », formulaire de commande |
-| Our commitments | Prix final TTC affiché avant paiement ; pas de renouvellement automatique ; remboursement 7 jours + rétractation 14 jours UE/R-U ; données jamais vendues ; pas de faux avis ; pays ouverts seulement avec autorisations de diffusion | CGU, Remboursement, Confidentialité, pied de page |
-| Customer support | E-mail, WhatsApp, renvoi vers le Help center | Mentions légales |
-| Contact us (encadré) | E-mail et téléphone cliquables, liens Help center / Plans / Mentions légales / CGU | — |
+| Hero | Marque internationale de divertissement numérique, créée aux États-Unis en 2026 ; 4 chiffres clés (2026 / Sygma TV LLC / 24/7 / 6 langues) | M10, mentions légales, M3, M4 |
+| Who we are | Marque de Sygma TV LLC (Nouveau-Mexique) ; formules 12/24/36 mois, 1 à 4 appareils ; essai gratuit | Mentions légales, CGU |
+| Company information | Société, création 2026, siège, immatriculation, EIN, e-mail, téléphone/WhatsApp | `site.ts`, M10 |
+| How the service works | 4 étapes : choisir → coordonnées (rien n'est débité sur le site) → confirmation et paiement avec l'équipe → activation habituellement en moins d'une heure | CGU, M2 |
+| Our commitments | Prix final affiché, pas de renouvellement automatique, remboursement 7 j + rétractation 14 j UE/R-U, données jamais vendues, pas de faux avis, pays ouverts seulement avec autorisations | CGU, Remboursement, Confidentialité, F1 |
+| Multilingual support | 24/7, réponse habituelle < 1 h (« not a contractual guarantee »), 6 langues, site en anglais | M3, M4 |
+| Payment, activation and confirmation | 6 moyens (paiement organisé manuellement par l'équipe, rien de débité sur le site), activation habituelle, e-mail de confirmation (n° de commande, montant payé) | M1, M2, code (e-mail d'activation) |
+| Useful links | Help center, support, formules, remboursement, CGU, mentions légales | — |
+| Contact us | E-mail, téléphone, boutons « Request a free trial », « Contact support », « See the plans » | — |
 
 ## 2. Help center — architecture
 
@@ -35,21 +39,21 @@ aucun volume, aucune qualité d'image, aucun superlatif, aucun nom d'application
 Chaque sujet : fil d'Ariane, H1, introduction, sections numérotées en questions/réponses, « Last reviewed », encadré
 contact, liens vers les autres sujets (et vers `/legal/refunds` ou `/#plans` selon le sujet).
 
-## 3. Métadonnées relevées sur les pages (build preview)
+## 3. Métadonnées relevées sur les pages (build preview, 20/11/2026)
 
-| URL | H1 | Titre (caractères) | Description (caractères) | Données structurées |
-|---|---|---|---|---|
-| `/about` | About SYGMA TV+ | About us: company, support and commitments \| SYGMA TV+ (54) | SYGMA TV+ is operated by Sygma TV LLC (New Mexico, USA). How the service works, our commitments and how to reach our support team. (130) | BreadcrumbList, AboutPage |
-| `/help` | Help center | Help center: trials, orders, devices and refunds \| SYGMA TV+ (60) | Answers about the SYGMA TV+ free trial, ordering and payment, supported devices, troubleshooting, refunds and how to contact our support team. (142) | BreadcrumbList, CollectionPage |
-| `/help/getting-started` | Getting started with SYGMA TV+ | Getting started with SYGMA TV+ \| SYGMA TV+ (42) | How SYGMA TV+ works, from choosing a plan to watching: free trial, order on the website, activation on WhatsApp and where the service is offered. (145) | BreadcrumbList, WebPage |
-| `/help/devices` | Supported devices | Supported devices: TV, streaming devices, mobile \| SYGMA TV+ (60) | SYGMA TV+ works on Smart TVs, streaming boxes and sticks, smartphones, tablets and computers. How many devices you can use and how to check yours. (146) | BreadcrumbList, WebPage |
-| `/help/free-trial` | The free trial | Free trial: how to test SYGMA TV+ \| SYGMA TV+ (45) | Test SYGMA TV+ free for 24 hours on your own device before you buy. How to request your trial and what happens next — nothing to pay, nothing to cancel. (152) | BreadcrumbList, WebPage |
-| `/help/ordering-payment` | Ordering and payment | Ordering and payment: how it works \| SYGMA TV+ (46) | How to order SYGMA TV+: choose your plan online, confirm with our team on WhatsApp, then pay. Prices, taxes and renewal explained. (130) | BreadcrumbList, WebPage |
-| `/help/troubleshooting` | Troubleshooting | Troubleshooting: playback, login and app issues \| SYGMA TV+ (59) | Fix common SYGMA TV+ issues: stuttering picture, login details refused, app not found in your store, app closing, playback on mobile data. (138) | BreadcrumbList, WebPage |
-| `/help/contact-support` | Contact our support team | Contact support: email and WhatsApp \| SYGMA TV+ (47) | How to reach SYGMA TV+ support by email, WhatsApp or the contact form, and what to include in your message to get a faster answer. (130) | BreadcrumbList, WebPage |
-| `/help/refunds` | Refunds and cancellations | Refunds: 7-day money-back and withdrawal \| SYGMA TV+ (52) | SYGMA TV+ refunds: free trial first, 100% refund within 7 days of activation, 14-day withdrawal for EU and UK customers, and how to ask. (136) | BreadcrumbList, WebPage |
+| URL | H1 | Titre (caractères) | Description (caractères) | Données structurées | robots (preview) |
+|---|---|---|---|---|---|
+| `/about` | About SYGMA TV+ | About us: company, support and commitments \| SYGMA TV+ (54) | SYGMA TV+ is a digital-entertainment brand of Sygma TV LLC, established in the United States in 2026. How it works, our commitments and support. (144) | BreadcrumbList, AboutPage | noindex, follow |
+| `/help` | Help center | Help center: trials, orders, devices and refunds \| SYGMA TV+ (60) | Answers about the SYGMA TV+ free trial, ordering and payment, supported devices, troubleshooting, refunds and how to contact our support team. (142) | BreadcrumbList, CollectionPage | noindex, follow |
+| `/help/getting-started` | Getting started with SYGMA TV+ | Getting started with SYGMA TV+ \| SYGMA TV+ (42) | How SYGMA TV+ works, from choosing a plan to watching: free trial, order on the website, payment and activation with our team on WhatsApp. (138) | BreadcrumbList, WebPage | noindex, follow |
+| `/help/devices` | Supported devices | Supported devices: TV, streaming devices, mobile \| SYGMA TV+ (60) | SYGMA TV+ is used on Smart TVs, streaming boxes and sticks, smartphones, tablets and computers. How many devices you can use and how to check yours. (148) | BreadcrumbList, WebPage | noindex, follow |
+| `/help/free-trial` | The free trial | Free trial: how to test SYGMA TV+ \| SYGMA TV+ (45) | Test SYGMA TV+ free for 24 hours on your own device before you buy. How to request your trial and what happens next — nothing to pay, nothing to cancel. (152) | BreadcrumbList, WebPage | noindex, follow |
+| `/help/ordering-payment` | Ordering and payment | Ordering and payment: how it works \| SYGMA TV+ (46) | How to order SYGMA TV+: choose your plan online, confirm with our team on WhatsApp, pay by card, PayPal, transfer or other methods. Activation explained. (153) | BreadcrumbList, WebPage | noindex, follow |
+| `/help/troubleshooting` | Troubleshooting | Troubleshooting: playback, login and app issues \| SYGMA TV+ (59) | Fix common SYGMA TV+ issues: stuttering picture, login details refused, app not found in your store, app closing, playback on mobile data. (138) | BreadcrumbList, WebPage | noindex, follow |
+| `/help/contact-support` | Contact our support team | Contact support: email and WhatsApp, 24/7 \| SYGMA TV+ (53) | Reach SYGMA TV+ support 24/7 by email, WhatsApp or the contact form, in six languages. What to include for a faster answer. (123) | BreadcrumbList, WebPage | noindex, follow |
+| `/help/refunds` | Refunds and cancellations | Refunds: 7-day money-back and withdrawal \| SYGMA TV+ (52) | SYGMA TV+ refunds: free trial first, 100% refund within 7 days of activation, 14-day withdrawal for EU and UK customers, and how to ask. (136) | BreadcrumbList, WebPage | noindex, follow |
 
-## 4. Informations manquantes — à confirmer par le propriétaire (non écrites dans les pages)
+## 4. Informations manquantes (première version) — **traitées le 20/11/2026, voir `finalisation.md` §1**
 
 | # | Information | Où elle serait utile | Pourquoi elle manque |
 |---|---|---|---|
@@ -67,5 +71,5 @@ contact, liens vers les autres sujets (et vers `/legal/refunds` ou `/#plans` sel
 ## 5. Design
 
 Même charte que les pages légales (sections numérotées colorées, icônes, encadré lumineux de contact), fil
-d'Ariane discret, grille de cartes responsive pour le hub (`src/components/info.module.css`, chargé uniquement par
-ces pages). Aperçus ordinateur et mobile joints au rapport de session.
+d'Ariane discret, grille de cartes responsive pour le hub, étapes numérotées, pastilles (langues, moyens de paiement), sommaire,
+sujet précédent/suivant (`src/components/info.module.css`, chargé uniquement par ces pages). Aperçus ordinateur et mobile joints au rapport de session.

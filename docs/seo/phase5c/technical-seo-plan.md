@@ -4,7 +4,7 @@
 
 | Valeur | Effet | Usage |
 |---|---|---|
-| non défini (**production actuelle**) | Routes absentes (404), `/help` → 308 `/#faq` (inchangé), sitemap inchangé, aucun nouveau lien. **Site identique** (172 adresses comparées, 0 différence). | Production jusqu'à décision |
+| non défini (**production actuelle**) | Routes absentes (404), `/help` → 308 `/#faq` (inchangé), sitemap inchangé, aucun nouveau lien. **Site identique** (169 adresses comparées, 0 différence ; seule exception : la correction CSS du pied de page). | Production jusqu'à décision |
 | `preview` | Pages rendues avec `noindex, follow`, **hors sitemap** ; menu « Help » → `/help` ; pied de page : « Help center », « About us » | Revue privée, tests, aperçus |
 | `live` | Pages indexables, ajoutées au sitemap avec la date « Last reviewed », liens actifs | Publication (sur autorisation) |
 
@@ -30,8 +30,9 @@ suppression de la redirection `/help` → `/#faq` **uniquement** si l'interrupte
 
 - En-tête : « Help » → `/help` (au lieu de `/#faq`).
 - Pied de page, colonne « Links » : « Help center », « About us ».
-- Hub → 7 sujets (cartes) ; chaque sujet → hub + 6 autres sujets + page utile (`/legal/refunds`, `/#plans`).
-- About → Help center, Plans, Mentions légales, CGU.
+- Hub → 6 « Popular questions » (liens directs vers les réponses, ex. `/help/ordering-payment#pay`) + 7 sujets (cartes).
+- Chaque sujet → sommaire interne, sujet précédent/suivant, hub, page utile (`/legal/refunds`, `/legal/terms`, `/#plans`), boutons essai/support.
+- About → Help center, Contact support, Plans, Refunds, CGU, Mentions légales (cartes « Useful links »).
 - Ancres descriptives, aucun « click here ».
 
 ## 5. Fil d'Ariane et données structurées
@@ -55,10 +56,11 @@ suppression de la redirection `/help` → `/#faq` **uniquement** si l'interrupte
 | Contrôle | Résultat |
 |---|---|
 | Types, lint | OK |
-| Tests unitaires | **110/110** (dont : longueurs titres/descriptions, unicité, absence d'allégations non vérifiées, faits société issus de la configuration, sitemap off/preview/live) |
-| Comparaison production `864f703` ↔ branche (interrupteur off), 172 adresses dont `/about`, `/help`, `/help/*` | **0 différence** (statut, redirection, HTML visible, JSON-LD) |
-| E2E mode production (off) | **159 réussis**, 0 échec (dont : pages absentes, `/help` → `/#faq`, aucun lien ajouté, sitemap inchangé) |
-| E2E mode preview | **30/30** (9 pages : 200, titre ≤ 60, description ≤ 155, canonique, `noindex`, 1 H1, fil d'Ariane + `BreadcrumbList`, type de page, absence d'allégations, faits société, cartes et liens, navigation, axe WCAG 2.1 AA sur `/about`, `/help`, `/help/refunds` ordinateur + mobile) |
+| Tests unitaires | **112/112** (dont : longueurs titres/descriptions, unicité, absence d'allégations non vérifiées, faits société issus de la configuration, sitemap off/preview/live) |
+| Comparaison production `864f703` ↔ branche (interrupteur off), 169 adresses dont `/about`, `/help`, `/help/*` | **0 différence** (statut, redirection, HTML visible, JSON-LD) ; CSS : seulement la correction du pied de page (+ utilitaire `.grid` inutilisé) |
+| E2E mode production (off) | **161 réussis**, 0 échec (dont : pages absentes, `/help` → `/#faq`, aucun lien ajouté, sitemap inchangé) |
+| E2E mode preview | **38/38** (9 pages : 200, titre ≤ 60, description ≤ 155, canonique, `noindex`, 1 H1, fil d'Ariane + `BreadcrumbList`, type de page, absence d'allégations, faits société, cartes et liens, navigation, axe WCAG 2.1 AA sur `/about`, `/help`, `/help/refunds` ordinateur + mobile, sommaire, précédent/suivant, boutons, clavier) |
+| Responsive 320 → 1920 px (7 largeurs) | Aucun défilement horizontal ; pastilles et icônes du pied de page dans leur colonne |
 
 ## 8. Risques et mesures
 
@@ -66,16 +68,16 @@ suppression de la redirection `/help` → `/#faq` **uniquement** si l'interrupte
 |---|---|---|
 | Publication accidentelle | Faible | Interrupteur absent en production = routes inexistantes ; test E2E « off » dans la CI |
 | Pages indexées avant validation | Faible | `noindex` en `preview`, hors sitemap ; seul `live` les rend indexables |
-| Contenu inexact | Moyen | Faits repris mot pour mot des pages légales ; 10 informations manquantes non écrites (M1–M10) ; validation propriétaire requise |
+| Contenu inexact | Moyen | Faits des pages légales + M1–M5, M9 (partiel), M10 validés ; M6, M7, M8 non publiés ; délais écrits « usually » (test bloquant) ; contradictions listées dans `finalisation.md` §3 |
 | Incohérence avec les allégations du gabarit (en-tête, pied de page) | Moyen | Trancher A4/A5/B1 (voir `claims-decisions.md`) avant ou avec la publication |
 | Promesse « Help centre » (D2) | — | Devient vraie à la publication ; sinon corriger D2 |
 | `/help` changeait de comportement | Faible | Redirection historique conservée tant que `off` ; à la publication, `/help` devient la page d'aide (aucune perte de lien) |
-| Chevauchement des pastilles du pied de page à 1366 px | Faible (déjà en production) | Point de mise en page indépendant, à corriger séparément si souhaité |
+| Chevauchement des pastilles du pied de page (1101–1400 px et < 400 px) | Faible (déjà en production) | **Corrigé dans la branche** (`finalisation.md` §5), non déployé |
 | JavaScript client | Négligeable | En-tête et pied de page lisent l'interrupteur à la compilation : HTML identique en `off` ; seuls les noms de fichiers JS changent |
 
 ## 9. Mise en production proposée (sur autorisation explicite, plus tard)
 
-1. Vos décisions : M1–M10 (ou validation en l'état), A4/A5/B1 pour le gabarit, D2.
+1. Vos décisions : A4/A5/B1 pour le gabarit, D2, contradictions de `finalisation.md` §3 (statut pré-lancement, CGU).
 2. Relecture finale des textes ; mise à jour de « Last reviewed ».
 3. Déploiement du code avec l'interrupteur **off** (site identique, vérifiable), puis activation `live` par une
    variable de compilation dans le workflow de production (changement isolé et réversible), contrôles en ligne,

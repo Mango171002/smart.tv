@@ -57,3 +57,12 @@ jusqu'à votre décision.
 streaming experience with live sports, movies, series and international channels », pastille « HD to 4K ») figurent
 sur **toutes** les pages, y compris les futures pages About et Help center. Tant que A4/A5/B1 ne sont pas tranchés,
 ces pages hériteront de ces mentions.
+
+## Mise à jour du 20/11/2026 (finalisation)
+
+- Le tableau des allégations P0/P1 **encore bloquées** et les options de décision pour **A4, A5, B1 et D2** sont dans
+  `finalisation.md` §2.
+- D3 (« Priority / VIP priority support ») contredit désormais l'information M3 (24/7, réponse habituelle en moins
+  d'une heure pour tous) : à aligner.
+- D4 (« Fast reply ») peut devenir « Usually replies in under an hour » (M3).
+- Aucun texte de production n'a été modifié.

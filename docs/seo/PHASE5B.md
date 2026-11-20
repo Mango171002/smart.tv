@@ -42,6 +42,7 @@ site) ; contrôles après déploiement : 404 sur 7 formes d'adresses, pages exis
 
 - Architecture : `docs/seo/guides-en-architecture.md` (adresses, gabarits, métadonnées, `BreadcrumbList`,
   maillage, sitemap, conditions de publication bloquantes).
+- Plan de vérification réelle : `docs/seo/guides-verification-plan.md` (applications à confirmer par plateforme, 21 points à tester).
 - Brouillons des 8 pages : `docs/seo/guides-en-drafts.md` — **non publiés, non branchés**. 18 étapes marquées
   `[VERIFY ON DEVICE]`, noms d'applications `[TO BE CONFIRMED]`.
 
@@ -52,12 +53,16 @@ Constat (20/11/2026, pages publiques consultées en lecture seule) :
 | Profil `sameAs` (source `src/config/site.ts`) | Constat | Recommandation |
 |---|---|---|
 | `https://t.me/+2ee4Cu9x-nw1ZWVk` | **Lien d'invitation** d'une chaîne « SYGMA TV+ » sans nom public (page Telegram : « Join Channel », 1 abonné). Un lien d'invitation n'est pas une identité stable (il peut être révoqué ou régénéré). | **Retirer des données structurées.** Le garder seulement comme lien « rejoindre » dans le pied de page si souhaité. Si la chaîne devient publique avec un nom (`@…`), utiliser `https://t.me/<nom>` partout. Ne pas utiliser `t.me/sygmatv` ni `t.me/sygma_tv` : rien ne prouve qu'ils appartiennent à la marque. |
-| `https://www.facebook.com/share/14unqXhVYRr/` | **Lien de partage** qui redirige (302) vers `https://www.facebook.com/profile.php?id=61596514232617`. | Utiliser l'adresse du profil (ou son nom d'utilisateur Facebook s'il en a un). |
-| `https://whatsapp.com/channel/0029Vb96DpII1rchcsE0tC0V` | Redirige (302) vers `https://www.whatsapp.com/channel/…`. | Utiliser la forme `www.whatsapp.com`. |
+| `https://www.facebook.com/share/14unqXhVYRr/` | **Lien de partage** : 302 → `profile.php?id=61596514232617` → 301 → **`https://www.facebook.com/people/SYGMA-TV/61596514232617/`** (page publique « SYGMA-TV », vérifié le 20/11/2026). | Utiliser l'adresse finale (ou un nom d'utilisateur Facebook si la page en obtient un). À confirmer par le propriétaire. |
+| `https://whatsapp.com/channel/0029Vb96DpII1rchcsE0tC0V` | 302 → `https://www.whatsapp.com/channel/0029Vb96DpII1rchcsE0tC0V/` : chaîne officielle « SYGMA TV+ » (titre et description de la page vérifiés). | Utiliser la forme canonique `https://www.whatsapp.com/channel/0029Vb96DpII1rchcsE0tC0V/`. |
 | `https://www.youtube.com/@SYGMATV`, `https://www.tiktok.com/@sygma.tv` | 200. | OK. |
-| `https://www.instagram.com/sygmatv` | Page de connexion pour les robots : non vérifiable automatiquement. | Confirmer que le compte appartient à la marque. |
+| `https://www.instagram.com/sygmatv` | Compte public « **Sygma TV+ (@sygmatv)** », adresse canonique `https://www.instagram.com/sygmatv/`. | OK ; propriété à confirmer par le propriétaire. Forme canonique avec barre finale. |
 
-Correction proposée (**non appliquée**, pour préserver la configuration SEO de production) : dans
+**État au 20/11/2026** : la suppression du lien d'invitation dans `sameAs` est **préparée** (commit séparé
+`f0f4cf6`, testé : HTML visible identique, lien conservé dans le pied de page) et **non déployée**. Les adresses
+Facebook/WhatsApp/Instagram ne sont pas modifiées (décision du propriétaire attendue).
+
+Correction initialement proposée : dans
 `src/components/StructuredData.tsx`, exclure les liens d'invitation des `sameAs`
 (`.filter((v) => !/^https:\/\/t\.me\/\+/.test(v))`) et, dans `src/config/site.ts`, remplacer les adresses Facebook et
 WhatsApp par leurs formes canoniques. Changement limité au JSON-LD de l'accueil (et aux liens du pied de page pour
@@ -65,7 +70,7 @@ Facebook/WhatsApp) ; test unitaire et E2E à l'appui.
 
 ## 4. Allégations commerciales
 
-Inventaire complet avec emplacements, preuves nécessaires et suggestions : `docs/seo/claims-inventory.md`.
+Inventaire complet : `docs/seo/claims-inventory.md`. Tableau de décision à remplir (25 lignes) : `docs/seo/claims-validation.md` / `.csv`.
 Points prioritaires : volumes de chaînes et de films (35 000+ / 200 000+), sports et chaînes internationales,
 replay, « The best IPTV experience », et deux fonctions annoncées qui n'existent pas encore (« Step-by-step guide per
 device », « Help centre »).

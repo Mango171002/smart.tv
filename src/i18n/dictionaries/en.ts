@@ -537,10 +537,10 @@ const en = {
   },
   footer: {
     concept: 'International streaming.',
-    tagline: 'Live Sports • Movies • Series • Live TV',
+    tagline: 'Movies • Series • Live TV',
     aboutTitle: 'About {brand}',
-    about: 'A modern streaming experience with live sports, movies, series and international channels on all your devices.',
-    chips: ['Multi-device', 'HD to 4K', 'Secure & private'],
+    about: 'A modern streaming experience for movies, series and live TV on your TV, mobile and computer.',
+    chips: ['Multi-device', 'Secure & private'],
     linksTitle: 'Links',
     helpFaq: 'Help / FAQ',
     contact: 'Contact',

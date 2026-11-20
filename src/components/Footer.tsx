@@ -24,7 +24,8 @@ const SOCIAL_ICONS: Record<keyof typeof siteConfig.social, { label: string; path
 /** Legal documents shown in the footer, in the owner's order. */
 const FOOTER_LEGAL = ['terms', 'privacy', 'cookies', 'refunds', 'imprint'] as const;
 
-const CHIP_ICONS = [MonitorSmartphone, Zap, ShieldCheck];
+/** Icon per chip label (not per position: removing a chip must not shift the others' icons). */
+const CHIP_ICONS: Record<string, typeof Zap> = { 'Multi-device': MonitorSmartphone, 'HD to 4K': Zap, 'Secure & private': ShieldCheck };
 
 export function Footer({ locale: _locale, dict }: { locale: Locale; dict: Dictionary }) {
   const f = dict.footer;
@@ -61,8 +62,8 @@ export function Footer({ locale: _locale, dict }: { locale: Locale; dict: Dictio
           <b className="footer-title">{f.aboutTitle.replace('{brand}', siteConfig.brandName)}</b>
           <p>{f.about}</p>
           <ul className="footer-chips">
-            {f.chips.map((c, i) => {
-              const Icon = CHIP_ICONS[i] ?? Zap;
+            {f.chips.map((c) => {
+              const Icon = CHIP_ICONS[c] ?? Zap;
               return (
                 <li key={c}>
                   <Icon size={20} strokeWidth={1.75} aria-hidden="true" /> {c}

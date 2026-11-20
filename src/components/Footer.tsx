@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { contentPagesEnabled } from '@/config/content-pages';
 import { CookieSettingsButton } from './ConsentBanner';
 import { MonitorSmartphone, ShieldCheck, Zap } from 'lucide-react';
 import { siteConfig } from '@/config/site';
@@ -76,6 +77,12 @@ export function Footer({ locale: _locale, dict }: { locale: Locale; dict: Dictio
             <li><Link href={`/#plans`}>{dict.nav.plans}</Link></li>
             <li><Link href={`/#how`}>{dict.nav.how}</Link></li>
             <li><Link href={`/#faq`}>{f.helpFaq}</Link></li>
+            {contentPagesEnabled() && (
+              <>
+                <li><Link href="/help">Help center</Link></li>
+                <li><Link href="/about">About us</Link></li>
+              </>
+            )}
             <li><ContactLink label={f.contact} /></li>
           </ul>
         </nav>

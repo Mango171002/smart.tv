@@ -39,6 +39,10 @@ const csp = [
 // English only (owner decision): unprefixed URLs go to /en, the former French URLs to their English version.
 // Former pages (one-page site) point to their section of the home page.
 const FORMER_PAGES: Record<string, string> = { '/plans': '#plans', '/devices': '#content', '/coverage': '#content', '/help': '#faq' };
+// Phase 5C content pages (About us, Help center): built only when NEXT_PUBLIC_CONTENT_PAGES is « preview » or
+// « live » (src/config/content-pages.ts). Unset (production today): no route, /help still redirects to /#faq.
+const CONTENT_PAGES = ['preview', 'live'].includes(process.env.NEXT_PUBLIC_CONTENT_PAGES ?? '');
+if (CONTENT_PAGES) delete FORMER_PAGES['/help'];
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
@@ -69,6 +73,13 @@ const nextConfig: NextConfig = {
         { source: '/', destination: '/en' },
         { source: '/blog', destination: '/en/blog' },
         { source: '/legal/:doc', destination: '/en/legal/:doc' },
+        ...(CONTENT_PAGES
+          ? [
+              { source: '/about', destination: '/en/about' },
+              { source: '/help', destination: '/en/help' },
+              { source: '/help/:topic', destination: '/en/help/:topic' },
+            ]
+          : []),
       ],
       // Unknown paths are no longer rewritten into /en: they match no route and get the branded
       // app/global-not-found.tsx page (HTTP 404, noindex).

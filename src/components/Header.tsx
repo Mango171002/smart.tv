@@ -8,6 +8,7 @@ import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { Brand } from './Brand';
 import { openRequest } from './RequestHost';
+import { contentPagesEnabled } from '@/config/content-pages';
 
 export function Header({ locale: _locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
   const [open, setOpen] = useState(false);
@@ -23,7 +24,7 @@ export function Header({ locale: _locale, nav }: { locale: Locale; nav: Dictiona
   const links = [
     { href: `/#plans`, label: nav.plans },
     { href: `/#how`, label: nav.how },
-    { href: `/#faq`, label: nav.help },
+    { href: contentPagesEnabled() ? '/help' : `/#faq`, label: nav.help },
     // Blog link hidden until the first article is published (owner decision, 18/11/2026); /blog stays noindex.
   ];
 

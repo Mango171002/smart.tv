@@ -1,0 +1,20 @@
+/* Phase 5C content pages (About us, Help center). Scoped: loaded only by these pages. */
+.crumbs { margin: 0 0 6px; font-size: 13px; color: var(--color-muted); }
+.crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0; }
+.crumbs li { display: inline-flex; align-items: center; gap: 6px; }
+.crumbs li + li::before { content: '›'; opacity: .6; }
+.crumbs a { color: var(--color-ink); opacity: .82; }
+.crumbs a:hover { color: var(--color-lime); opacity: 1; }
+.crumbs [aria-current='page'] { color: var(--color-muted); }
+
+.grid { list-style: none; padding: 0; margin: 26px 0 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 14px; }
+.card { display: flex; gap: 14px; align-items: flex-start; height: 100%; padding: 20px; border-radius: 18px; background: var(--color-surface); border: 1px solid var(--line); color: var(--color-ink); transition: border-color .2s, transform .2s; }
+.card:hover, .card:focus-visible { border-color: var(--color-lime); transform: translateY(-2px); }
+.card strong { display: block; font-size: 17px; margin-bottom: 4px; }
+.card span.text { color: var(--color-muted); font-size: 14px; line-height: 1.5; }
+
+.related { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; }
+.related a { border: 1px solid var(--line); padding: 8px 12px; border-radius: 10px; font-size: 13px; }
+.related a:hover { border-color: var(--color-lime); color: var(--color-lime); }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }

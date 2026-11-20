@@ -43,6 +43,10 @@ const FORMER_PAGES: Record<string, string> = { '/plans': '#plans', '/devices': '
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // The root layout is the dynamic segment app/[locale]: an unknown first segment (/nope) fails the locale
+  // check, so no layout-level not-found page can render it. app/global-not-found.tsx is Next.js's answer
+  // for this case: one branded 404 page (HTTP 404, noindex) for every unmatched URL.
+  experimental: { globalNotFound: true },
   // Clean URLs (owner request): the site is served at / (no /en prefix). /en/* is the internal route.
   async redirects() {
     const former = Object.entries(FORMER_PAGES).flatMap(([path, anchor]) => [
@@ -66,8 +70,8 @@ const nextConfig: NextConfig = {
         { source: '/blog', destination: '/en/blog' },
         { source: '/legal/:doc', destination: '/en/legal/:doc' },
       ],
-      // Any other unknown path renders the site's own (styled) 404 page.
-      fallback: [{ source: '/:path((?!en(?:/|$)|_next/|api/).*)', destination: '/en/:path' }],
+      // Unknown paths are no longer rewritten into /en: they match no route and get the branded
+      // app/global-not-found.tsx page (HTTP 404, noindex).
     };
   },
   async headers() {

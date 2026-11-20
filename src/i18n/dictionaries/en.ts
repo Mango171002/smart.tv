@@ -557,6 +557,10 @@ const en = {
     title: 'This page does not exist.',
     text: 'The page you are looking for may have moved.',
     home: 'Back to home',
+    /** Global 404 page (unknown URLs, src/app/global-not-found.tsx). */
+    metaTitle: 'Page not found',
+    suggestionsTitle: 'You may be looking for',
+    support: 'Contact support',
   },
 };
 

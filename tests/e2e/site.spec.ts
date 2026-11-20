@@ -46,6 +46,37 @@ test.describe('routing & SEO', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('This page does not exist.');
   });
 
+  // Branded global 404 (app/global-not-found.tsx): every unmatched URL, whatever its depth.
+  for (const path of ['/nope', '/nope/deeper/still', '/legal/xyz', '/blog/x', '/index.html', '/LEGAL/TERMS', '/nope?utm_source=x']) {
+    test(`unknown URL ${path}: branded 404, noindex, no canonical, way back to the site`, async ({ page, request }) => {
+      const res = await page.goto(path);
+      expect(res?.status()).toBe(404);
+      await expect(page).toHaveTitle('Page not found | SYGMA TV+');
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+      await expect(page.locator('meta[name="robots"]')).toHaveCount(1);
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+      await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+      await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('This page does not exist.');
+      await expect(page.getByRole('link', { name: 'Back to home' })).toHaveAttribute('href', '/');
+      await expect(page.getByRole('img', { name: 'SYGMA TV+' })).toBeVisible();
+      const suggestions = page.getByRole('navigation', { name: 'You may be looking for' });
+      await expect(suggestions.getByRole('link')).toHaveText(['Plans', 'How it works', 'Help / FAQ', 'Contact support']);
+      await expect(page.getByRole('navigation', { name: 'Legal' }).getByRole('link')).toHaveCount(5);
+      // No tracking and no consent banner on the 404 page (unchanged: the previous 404 had none either).
+      expect(await page.locator('script[src*="googletagmanager"], script[src*="clarity"]').count()).toBe(0);
+      await expect(page.getByTestId('consent-banner')).toHaveCount(0);
+      // Not cacheable, never served with a 200.
+      const raw = await request.get(path);
+      expect(raw.status()).toBe(404);
+    });
+  }
+
+  test('existing pages keep their own status and metadata (no regression from the global 404)', async ({ request }) => {
+    for (const path of ROUTES) expect((await request.get(path)).status(), path).toBe(200);
+    expect((await request.get('/en/nope', { maxRedirects: 0 })).status()).toBe(308);
+  });
+
   test('robots.txt is served', async ({ request }) => {
     const res = await request.get('/robots.txt');
     expect(res.status()).toBe(200);
@@ -445,7 +476,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
 });
 
 test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
-  for (const route of ['/', '/legal/privacy', '/legal/terms']) {
+  for (const route of ['/', '/legal/privacy', '/legal/terms', '/this-page-does-not-exist']) {
     test(`no violations on ${route}`, async ({ page }) => {
       await page.goto(route);
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();

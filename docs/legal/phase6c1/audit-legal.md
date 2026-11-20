@@ -6,6 +6,11 @@ de production n'est modifié. Rien n'est déployé ni fusionné. `350882a` absen
 
 **Mise à jour 20/11/2026** : le propriétaire a retenu l'**option B** pour le remboursement commercial (7 jours
 calendaires à compter de la date de confirmation du paiement) ; la contradiction C4 est traitée dans les propositions.
+Décisions complémentaires validées commercialement le même jour (sous réserve de validation juridique) :
+**DECISION-19** décompte en UTC ; **DECISION-20** paiement confirmé = fonds reçus + vérification + « Converti »
+manuel (jamais la date déclarée par le client) ; **DECISION-21** date affichée dans l'e-mail de confirmation
+(spécifiée dans `email-confirmation-spec.md`, non implémentée). Source vérifiée en lecture seule : `invoice_issued_at`.
+L'ambiguïté « date de départ du remboursement » est levée dans les propositions.
 
 **Avertissement** : ce document n'est pas un avis juridique. Il identifie des contradictions et des ambiguïtés pour
 un juriste qualifié dans les pays concernés.

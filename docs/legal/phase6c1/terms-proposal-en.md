@@ -1,8 +1,10 @@
 # Terms of Service — PROPOSAL (not legally validated)
 
 > **Status: draft for legal review — not published, not in force.** Prepared on 20 November 2026 to match the
-> assisted ordering process actually used by SYGMA TV+. Updated the same day with the owner's refund decision
-> (voluntary guarantee of 7 calendar days from the payment confirmation date — option B). It does not replace the published Terms
+> assisted ordering process actually used by SYGMA TV+. Updated the same day with the owner's decisions: voluntary
+> guarantee of 7 calendar days from the payment confirmation date (option B), counted in UTC (DECISION-19); payment
+> confirmed only after receipt of funds, verification and manual validation (DECISION-20); confirmation date shown in
+> the confirmation email (DECISION-21). Validated commercially, subject to legal review. It does not replace the published Terms
 > (`/legal/terms`, last updated 17 November 2026).
 >
 > - Text in **[DECISION-…]** is a placeholder for a business decision listed in `questions-validation.md`. No
@@ -29,9 +31,11 @@ residence, including any statutory right of withdrawal and statutory remedies.
 
 1.5 **Definitions.**
 - **Activation**: the moment we give you access to the Service. Activation takes place **before** payment.
-- **Payment confirmation date**: the date on which our team confirms that your payment has been received, as recorded
-  in our order records together with your order number. It is normally the date of your subscription confirmation
-  email; our order records prevail if the two differ. You can ask our support team for this date at any time.
+- **Payment confirmation date**: the date and time (UTC) at which our team records that your payment has been
+  confirmed, together with your order number. A payment is confirmed only once the funds have actually been received,
+  verified by our team and the order manually marked as paid. It is our internal validation date, not the date on
+  which you sent the payment. It is shown in your subscription confirmation email; our order records prevail if the
+  email is delayed or not received. You can ask our support team for this date at any time.
 
 ## 2. The Service
 
@@ -82,8 +86,9 @@ not a guarantee.
 5.5 **Payment after activation.** After activation, our team sends you the payment instructions. You pay using one of
 the payment methods offered by our team (§6).
 
-5.6 **Confirmation of payment.** Your order is recorded as paid only once your payment has been received and
-confirmed by our team; this sets the payment confirmation date (§1.5). We then send you an email confirming that your
+5.6 **Confirmation of payment.** Your order is recorded as paid only once the funds have actually been received and
+our team has verified the payment and marked the order as paid; this sets the payment confirmation date (§1.5). A
+payment date declared by you (for example a transfer receipt) does not replace this confirmation. We then send you an email confirming that your
 subscription is active, with your order number and your subscription details.
 
 ## 6. Prices and payment
@@ -185,9 +190,11 @@ does not remove the other. Details and the form to exercise this right are in ou
 full refund **within 7 calendar days of the payment confirmation date** (§1.5). Because activation takes place before
 payment, this period starts only once your payment has been confirmed.
 
-13A.2 One refund per customer; the guarantee does not apply to accounts suspended or terminated for a serious breach of
-these Terms. Counting rules, the refund method and timing are set out in our Refund policy **[DECISION-19 / ⚖ Legal
-review: reference time zone]**.
+13A.2 The period is counted in UTC: it starts on the calendar day after the payment confirmation date and ends at
+23:59:59 UTC on the 7th calendar day (for example, payment confirmed on 20 November 2026 at 18:00 UTC → until
+27 November 2026 at 23:59:59 UTC). One refund per customer; the guarantee does not apply to accounts suspended or
+terminated for a serious breach of these Terms. The refund method and timing are set out in our Refund policy.
+**⚖ Legal review.**
 
 13A.3 This guarantee does not replace, shorten or limit any statutory right, including the right of withdrawal (§13).
 

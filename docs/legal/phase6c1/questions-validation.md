@@ -25,9 +25,9 @@ identifiants ci-dessous comme emplacements à compléter.
 | DECISION-16 | **Promotions** (« +30 days free ») | Conditions non publiées | Conditions, durée, date de fin |
 | DECISION-17 | **Réclamations** | Aucune procédure | Délai d'accusé de réception et de réponse ; organisme de médiation éventuel |
 | DECISION-18 | **Essai gratuit** | 24 h, « un par client » (aide) | Confirmer et inscrire dans les CGU |
-| DECISION-19 | **Fuseau horaire de référence** pour compter les 7 jours | — | Fuseau du client, UTC, ou heure de New York / Albuquerque |
-| DECISION-20 | **Ce qui vaut « paiement confirmé »** selon le moyen de paiement | Règle d'équipe : « Converti » seulement après réception et confirmation | Carte / PayPal : autorisation ou encaissement ? Virement : fonds reçus ? USDT : nombre de confirmations sur la blockchain ? Western Union / MoneyGram : transfert retiré ? |
-| DECISION-21 | **Affichage de la date** de confirmation du paiement au client | Enregistrée dans les données de commande, **non affichée** dans l'e-mail | Ajouter « Payment confirmed on … » à l'e-mail de confirmation (lot e-mails séparé, sur autorisation) |
+| DECISION-19 | **Fuseau horaire de référence** pour compter les 7 jours | — | ✅ **Validé commercialement (20/11/2026) : UTC** — du lendemain de la date de confirmation à 23:59:59 UTC du 7ᵉ jour (ex. confirmé le 20/11/2026 à 18:00 UTC → jusqu'au 27/11/2026 23:59:59 UTC) ; sous réserve de validation juridique |
+| DECISION-20 | **Ce qui vaut « paiement confirmé »** | Règle d'équipe : « Converti » seulement après réception et confirmation | ✅ **Validé commercialement (20/11/2026)** : (1) fonds effectivement reçus, (2) paiement vérifié par l'équipe, (3) action manuelle « Converti ». La date déclarée par le client n'est jamais la date de confirmation. Sous réserve de validation juridique. *Point opérationnel restant* : critère de « fonds reçus » par moyen (carte/PayPal encaissé, virement crédité, USDT confirmé, Western Union/MoneyGram retiré) — consigne d'équipe |
+| DECISION-21 | **Affichage de la date** de confirmation du paiement au client | Enregistrée (`invoice_issued_at`), **non affichée** dans l'e-mail | ✅ **Validé commercialement (20/11/2026)** : « Payment confirmed on: 20 November 2026, 18:00 UTC » depuis `invoice_issued_at` ; **préparation uniquement** — spécification `email-confirmation-spec.md`, implémentation sur autorisation |
 
 ## B. Questions pour le juriste
 
@@ -77,17 +77,22 @@ identifiants ci-dessous comme emplacements à compléter.
 
 | Élément | Constat | Conséquence pour la rédaction |
 |---|---|---|
-| Date de confirmation du paiement | Enregistrée à la **première** action « Converti » avec le numéro de commande (`invoice_issued_at`) ; non modifiée si l'action est annulée puis refaite ; chaque action est aussi journalisée avec son horodatage | Point de départ **identifiable et prouvable** ; c'est la référence retenue |
+| Date de confirmation du paiement | Enregistrée lors de la **première attribution réussie** du numéro de commande, juste après un « Converti » manuel (`invoice_issued_at`, `timestamp with time zone`, base en UTC) ; seule `ops_invoice` l'écrit ; non modifiée si l'action est annulée puis refaite ; chaque action est aussi journalisée. Données réelles : 3 numéros, 3 dates, écart avec le premier « Converti » 0 s | Point de départ **identifiable et prouvable** ; c'est la référence retenue. Nuance : appel séparé de `ops_invoice` (si échec, date fixée au « Converti » suivant ; jamais constaté) — voir `email-confirmation-spec.md` §2 |
 | Date réelle du paiement par le client | **Non enregistrée** | La date de confirmation est toujours postérieure ou égale au paiement : le décompte ne peut que favoriser le client |
-| E-mail « Your subscription is now active! » | Envoyé juste après la confirmation, une seule fois ; peut échouer ou être retardé ; affiche le numéro de commande **mais pas la date** | La date d'envoi de l'e-mail **n'est pas** la référence ; les données de commande prévalent ; date communiquée sur demande ; affichage recommandé (DECISION-21) |
+| E-mail « Your subscription is now active! » | Envoyé juste après la confirmation, une seule fois ; peut échouer ou être retardé ; affiche le numéro de commande **mais pas la date** (la date est déjà transmise au template, non affichée) | La date d'envoi de l'e-mail **n'est pas** la référence ; affichage préparé (DECISION-21, `email-confirmation-spec.md`) sans changer déclencheurs ni destinataires |
 | Règle d'équipe | « Converti » uniquement après réception **et** confirmation du paiement | À appliquer strictement : c'est elle qui fixe la date de départ |
 
-## E. Questions juridiques restantes après la décision B
+## E. Questions juridiques restantes (après les décisions B, 19, 20 et 21)
 
-1. Formulation et décompte du délai de 7 jours (fuseau, jours calendaires, demande reçue dans le délai).
+1. Décompte en **UTC** pour des consommateurs situés dans d'autres fuseaux (lisibilité, caractère loyal) ; formulation
+   « du lendemain jusqu'à 23:59:59 UTC du 7ᵉ jour » ; demande reçue dans le délai.
 2. Articulation garantie commerciale / droit de rétractation (UE, R-U) quand l'accès est activé **avant** le paiement :
    point de départ des 14 jours, demande expresse d'exécution immédiate, montant proportionnel éventuel.
 3. Remboursement au prorata après 7 jours (DECISION-13).
 4. Méthodes et frais de remboursement (DECISION-14).
 5. Droits équivalents hors UE/R-U (États-Unis, Canada, Suisse) à mentionner ou non.
-6. Preuve de la date de confirmation du paiement en cas de litige (données internes, e-mail, échange WhatsApp).
+6. Preuve de la date de confirmation du paiement en cas de litige (données internes, e-mail, échange WhatsApp) ;
+   valeur probante d'une date de **validation interne** distincte de la date de transfert du client.
+7. Information du client : faut-il indiquer dans l'e-mail que le délai de 7 jours démarre le lendemain de la date
+   affichée (phrase facultative proposée dans `email-confirmation-spec.md`) ?
+8. Correction d'une date enregistrée par erreur (« Converti » cliqué avant réception des fonds) : procédure et trace.

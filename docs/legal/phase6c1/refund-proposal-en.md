@@ -1,8 +1,11 @@
 # Refund Policy — PROPOSAL (not legally validated)
 
 > **Status: draft for legal review — not published, not in force.** Updated on 20 November 2026 with the owner's
-> commercial decision: **voluntary refund guarantee of 7 calendar days from the payment confirmation date
-> (option B)**. It does not replace the published Refunds & cancellations page (`/legal/refunds`, last updated
+> commercial decisions: **voluntary refund guarantee of 7 calendar days from the payment confirmation date
+> (option B)**, counted in **UTC** (DECISION-19), payment confirmed only after receipt of funds, verification and
+> the manual « Converti » action (DECISION-20), and the confirmation date shown in the confirmation email
+> (DECISION-21, prepared — not implemented). These decisions are validated commercially, **subject to legal review**
+> of the clauses concerned. It does not replace the published Refunds & cancellations page (`/legal/refunds`, last updated
 > 16 November 2026).
 >
 > - **[DECISION-…]** = business decision still open (`questions-validation.md`). **⚖ Legal review** = lawyer
@@ -17,7 +20,7 @@
 | Option | Status |
 |---|---|
 | A. 7 days from activation (currently published) | Not retained — activation comes **before** payment, so part of the period could run out before the customer pays |
-| **B. 7 calendar days from the payment confirmation date** | **Retained by the owner (20/11/2026)** |
+| **B. 7 calendar days from the payment confirmation date** | **Retained by the owner (20/11/2026)** — counted in UTC (DECISION-19) |
 | C. Later of activation and payment confirmation | Not retained (equivalent to B with the current process) |
 | D. Mixed rule | Not retained |
 
@@ -33,7 +36,11 @@
 - The subscription confirmation email ("Your subscription is now active!") is sent right after this confirmation,
   but **its sending date is not used as the reference**: an email can be delayed, filtered or fail to send. The
   reference is the date recorded in the order records. Today the email shows the order number but **not** the date;
-  showing it ("Payment confirmed on …") is recommended in a separate email lot (no email is changed here).
+  DECISION-21 adds "Payment confirmed on: <date>, <time> UTC" from the recorded value — specification in
+  `email-confirmation-spec.md` (not implemented; no email is changed here).
+- **What counts as "payment confirmed" (DECISION-20)**: (1) the funds have actually been received, (2) our team has
+  verified the payment and (3) our team has manually marked the order as paid (« Converti »). A payment date declared
+  by the customer (screenshot, transfer receipt) is **never** used as the confirmation date.
 
 ---
 
@@ -42,10 +49,11 @@
 ### 1. Definitions
 
 - **Activation**: the moment we give you access to the Service. Activation takes place **before** payment.
-- **Payment confirmation date**: the date on which our team confirms that your payment has been received, as recorded
-  in our order records together with your order number. It is normally the date of your subscription confirmation
-  email, but our order records prevail if the two differ (for example if the email is delayed or not received). You
-  can ask our support team for this date at any time.
+- **Payment confirmation date**: the date and time (UTC) at which our team records that your payment has been
+  confirmed, together with your order number. A payment is confirmed only once the funds have actually been received
+  and verified by our team. This is our internal validation date: it is not the date on which you sent the payment,
+  which may be earlier. It is shown in your subscription confirmation email ("Payment confirmed on …"); if the email is
+  delayed or not received, our order records prevail. You can ask our support team for this date at any time.
 - **Calendar days**: all days, including weekends and public holidays.
 
 ### 2. Free trial first
@@ -58,9 +66,11 @@ cancel. One free trial per customer.
 3.1 **How it works.** We activate your access first; you pay after activation. If you are not satisfied, you can ask
 for a full refund **within 7 calendar days of the payment confirmation date**.
 
-3.2 **Counting the period.** The period starts on the day after the payment confirmation date and ends at 23:59 on
-the 7th calendar day **[DECISION-19: reference time zone — e.g. the customer's time zone or UTC]**. A request
-received within this period is accepted, even if it is processed after the period ends.
+3.2 **Counting the period.** All dates and times are in Coordinated Universal Time (UTC). The period starts on the
+calendar day after the payment confirmation date and ends at 23:59:59 UTC on the 7th calendar day. Example: payment
+confirmed on 20 November 2026 at 18:00 UTC → you can ask for a refund under this guarantee until 27 November 2026 at
+23:59:59 UTC. A request received within this period is accepted, even if it is processed after the period ends.
+**⚖ Legal review** (counting rule, use of UTC for consumers in other time zones).
 
 3.3 **Limits.** One refund per customer. The guarantee does not apply to accounts suspended or terminated for a serious
 breach of our Terms (for example sharing or reselling access).
@@ -131,4 +141,4 @@ SYGMA TV+ refunds: free 24-hour trial, then 100% refund within 7 days of payment
 
 ### Clauses requiring legal review before publication
 
-3.2 (time zone and counting), 4.4, 5 (all), 6.1 (withdrawal form), 7.2, 7.3 — and every **[DECISION-…]** placeholder.
+3.2 (UTC counting rule), 4.4, 5 (all), 6.1 (withdrawal form), 7.2, 7.3 — and every **[DECISION-…]** placeholder.

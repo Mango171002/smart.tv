@@ -23,8 +23,8 @@
 | Usage | « …personal use in your household… sharing or reselling… not allowed… » (§6) | Conservé + confidentialité des identifiants (8) | Lacune A9 |
 | Assistance | — | E-mail, WhatsApp, formulaire ; 6 langues ; 24/7, réponse habituelle < 1 h, **non contractuel** (9) | Lacune A6 |
 | Disponibilité | « …cannot guarantee uninterrupted access… » (§7) | Conservé + renvoi au remède en cas de dysfonctionnement (10) | Lacune A12 |
-| Définitions | — | « Activation » (avant paiement) et « Payment confirmation date » (1.5) | Option B |
-| Remboursement (nouvel article) | Dans §5 « Renewal, cancellation and refunds » | §13A : garantie de 7 jours calendaires à compter de la date de confirmation du paiement ; ne réduit aucun droit légal | Option B |
+| Définitions | — | « Activation » (avant paiement) et « Payment confirmation date » : date et heure UTC de la validation interne (fonds reçus, vérifiés, commande marquée payée) — pas la date du transfert du client (1.5) | Option B, DECISION-19/20 |
+| Remboursement (nouvel article) | Dans §5 « Renewal, cancellation and refunds » | §13A : garantie de 7 jours calendaires à compter de la date de confirmation du paiement, décompte UTC (ex. 20/11 18:00 UTC → 27/11 23:59:59 UTC) ; ne réduit aucun droit légal | Option B, DECISION-19 |
 | Résiliation / suspension | « Serious breaches may lead to suspension of your account. » | Résiliation par le client, suspension par l'entreprise (manquement grave, non-paiement, loi) (11) | Lacune A8 |
 | Réclamations | — | Procédure, délais [DECISION-17], organismes [⚖] (12) | Lacune A7 |
 | Rétractation | « EU and UK consumers also have a 14-day right of withdrawal. » (§5) | Droit rappelé et **expressément préservé** ; indépendant de la garantie de 7 jours (13.3) ; modalités en cas d'activation avant paiement **à définir par le juriste** ; aucune affirmation de perte du droit (13) | Lacune A13 |
@@ -37,7 +37,7 @@
 | Sujet | Avant (publié) | Après (proposition) | Motif |
 |---|---|---|---|
 | Essai | « Test the service for free (24 hours)… Nothing to cancel. » | Idem + un essai par client (1) | A4 |
-| Garantie commerciale | « Ask within 7 days **of activation** and we refund 100%… One refund per customer; not available for accounts suspended… » | « within **7 calendar days of the payment confirmation date** » — **option B décidée le 20/11/2026** ; date = confirmation du paiement enregistrée avec le numéro de commande (pas la date d'envoi de l'e-mail) ; décompte : du lendemain à 23 h 59 du 7ᵉ jour [fuseau : DECISION-19] ; mêmes limites ; garantie volontaire **en plus** des droits légaux (§1, §3) | **Contradiction C4 résolue** |
+| Garantie commerciale | « Ask within 7 days **of activation** and we refund 100%… One refund per customer; not available for accounts suspended… » | « within **7 calendar days of the payment confirmation date** » — **option B décidée le 20/11/2026** ; date = confirmation interne du paiement (`invoice_issued_at` : fonds reçus, vérifiés, « Converti » manuel — DECISION-20), pas la date d'envoi de l'e-mail ni la date déclarée par le client ; décompte **UTC** : du lendemain jusqu'à 23:59:59 UTC du 7ᵉ jour (DECISION-19) ; mêmes limites ; garantie volontaire **en plus** des droits légaux (§1, §3) | **Contradiction C4 résolue** |
 | Dysfonctionnement | — | Support d'abord ; si non rétabli en [DECISION-12] : prolongation ou remboursement au prorata ; droits légaux préservés (3) | Lacune A12 |
 | Droits légaux | « You also have 14 days to withdraw. After the first 7 days, we refund the unused part… » | Rappel des droits ; modalités après avis juridique ; prorata à décider (4) | C5, A13 (DECISION-13) |
 | Demande | « Send your order reference to [email] or on WhatsApp. » | Idem + accusé de réception [délai] + formulaire de rétractation UE/R-U (5) | — |
@@ -53,7 +53,7 @@
 | About › Our commitments (désactivé) | « 7-day money-back guarantee after activation… » | « 7-day money-back guarantee from the confirmation of your payment… » |
 | Accueil › formules › « Good to know » › Refunds | « …within 7 days of activation… » | « …within 7 calendar days of your payment confirmation… » |
 | Méta-description `/legal/refunds` | « 100% refund within 7 days of activation… » | « SYGMA TV+ refunds: free 24-hour trial, then 100% refund within 7 days of payment confirmation. 14-day withdrawal for EU/UK customers. » (133 caractères) |
-| E-mail « Your subscription is now active! » | Numéro de commande, sans date | Ajouter « Payment confirmed on … » (lot e-mails séparé, DECISION-21) |
+| E-mail « Your subscription is now active! » | Numéro de commande, sans date | « Payment confirmed on: 20 November 2026, 18:00 UTC » depuis `invoice_issued_at` — DECISION-21 validée, **spécifiée** (`email-confirmation-spec.md`), non implémentée |
 | Politique de confidentialité | « plan, price, order reference and invoice » | Facture réellement émise ou non (A17) |
 | Fenêtre de commande | « Taxes $0.00 USD » | DECISION-08 |
 

@@ -1,10 +1,20 @@
 import { siteConfig } from '@/config/site';
 import { OG_IMAGE } from '@/lib/seo';
 
+/**
+ * Profiles listed in `sameAs`: stable public identities only. A Telegram invite link (t.me/+… or
+ * t.me/joinchat/…) is not one — it can be revoked or regenerated — so it stays a « join » link in the footer
+ * but is never given to search engines as an identity of the organisation.
+ */
+export function sameAsProfiles(social: Record<string, string | null>): string[] {
+  const invite = /^https:\/\/t\.me\/(?:\+|joinchat\/)/i;
+  return Object.values(social).filter((v): v is string => Boolean(v) && !invite.test(v as string));
+}
+
 /** JSON-LD (Organization + WebSite) for the home page. Only verified, public facts. */
 export function StructuredData({ description }: { description: string }) {
   const url = siteConfig.siteUrl;
-  const sameAs = Object.values(siteConfig.social).filter((v): v is string => Boolean(v));
+  const sameAs = sameAsProfiles(siteConfig.social);
   const data = {
     '@context': 'https://schema.org',
     '@graph': [

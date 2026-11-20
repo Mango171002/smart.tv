@@ -299,7 +299,7 @@ test.describe('Electric Fusion Neon design system', () => {
 test.describe('home page (approved mock-up)', () => {
   test('most watched: 15 genres with region, arrows on desktop, dots everywhere', async ({ page, isMobile }) => {
     await openHome(page, '/');
-    const carousel = page.getByRole('region', { name: 'Most watched genres' });
+    const carousel = page.getByRole('region', { name: 'Featured genres' });
     await expect(carousel).toHaveAttribute('data-ready', 'true'); // wait for hydration
     await expect(carousel.getByRole('group')).toHaveCount(15);
     await expect(carousel.getByRole('group', { name: /American football/ })).toContainText('International');

@@ -252,7 +252,15 @@ export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
                   <Minus className="faq-minus" size={16} strokeWidth={2.25} />
                 </span>
               </summary>
-              <p>{item.a}</p>
+              <p>
+                {item.a}
+                {'link' in item && item.link ? (
+                  <>
+                    {' '}
+                    <Link href={item.link.href}>{item.link.label}</Link>
+                  </>
+                ) : null}
+              </p>
             </details>
           ))}
         </div>

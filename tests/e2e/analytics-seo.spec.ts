@@ -233,7 +233,7 @@ test.describe('technical SEO', () => {
 
   test('home: branded title, description, canonical, social cards and JSON-LD', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle('SYGMA TV+ — International Streaming Subscription');
+    await expect(page).toHaveTitle('SYGMA TV+ — Streaming subscription for TV, mobile & computer');
     const desc = await page.locator('meta[name="description"]').getAttribute('content');
     expect(desc!.length).toBeGreaterThan(70);
     expect(desc!.length).toBeLessThanOrEqual(160);
@@ -244,7 +244,9 @@ test.describe('technical SEO', () => {
     const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
     const types = ld['@graph'].map((n: { '@type': string }) => n['@type']);
     expect(types).toEqual(['Organization', 'WebSite']);
-    expect(ld['@graph'][0]).toMatchObject({ name: 'SYGMA TV+', slogan: 'One World. Endless Entertainment.' });
+    expect(ld['@graph'][0]).toMatchObject({ name: 'SYGMA TV+', slogan: 'One World. Endless Entertainment.', foundingDate: '2026' });
+    // Owner-validated facts (phase 6A): support in six languages.
+    expect(ld['@graph'][0].contactPoint[0].availableLanguage).toEqual(['English', 'French', 'Arabic', 'German', 'Spanish', 'Italian']);
     // Google asks for a logo of at least 112×112 px: the square symbol, not the 512×67 wordmark.
     expect(ld['@graph'][0].logo).toMatchObject({ width: 512, height: 512 });
     expect(ld['@graph'][0].logo.url).toMatch(/\/brand\/sygma-symbol-512\.png$/);

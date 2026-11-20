@@ -20,12 +20,18 @@ test.describe('responsive layout', () => {
           const wrap = document.querySelector('.footer .wrap')!;
           const contentRight = wrap.getBoundingClientRect().right - parseFloat(getComputedStyle(wrap).paddingRight);
           const socialRight = Math.max(...[...document.querySelectorAll('.footer-social li')].map((e) => e.getBoundingClientRect().right));
+          // Plan cards (home): feature lines do not wrap by design, so each must fit inside its card.
+          const tierOverflow = [...document.querySelectorAll('.tier-card')].flatMap((card) => {
+            const cr = card.getBoundingClientRect();
+            return [...card.querySelectorAll('.tier-features li')].filter((li) => li.getBoundingClientRect().right > cr.right + 1).map((li) => li.textContent?.trim());
+          });
           const sectionsRight = Math.max(0, ...[...document.querySelectorAll('main .terms section')].map((e) => e.getBoundingClientRect().right));
-          return { sectionsRight, contentRight, socialRight, sw: document.documentElement.scrollWidth, vw: window.innerWidth, chipsRight: Math.max(...chips.map((c) => c.right)), aboutRight: about.right, nextLeft: next ? next.left : null };
+          return { tierOverflow, sectionsRight, contentRight, socialRight, sw: document.documentElement.scrollWidth, vw: window.innerWidth, chipsRight: Math.max(...chips.map((c) => c.right)), aboutRight: about.right, nextLeft: next ? next.left : null };
         });
         expect(r.sw, `${path} @${width}px scrollWidth`).toBeLessThanOrEqual(r.vw);
         expect(r.chipsRight, `${path} @${width}px chips`).toBeLessThanOrEqual(r.aboutRight + 1);
         expect(r.socialRight, `${path} @${width}px social icons`).toBeLessThanOrEqual(r.contentRight + 1);
+        expect(r.tierOverflow, `${path} @${width}px plan lines outside their card`).toEqual([]);
         // New pages only (/about, /help…): sections stay inside the page column (the legal pages are not changed here).
         if (!path.startsWith('/legal') && path !== '/') expect(r.sectionsRight, `${path} @${width}px sections`).toBeLessThanOrEqual(r.contentRight + 1);
         if (r.nextLeft !== null) expect(r.chipsRight, `${path} @${width}px overlap`).toBeLessThanOrEqual(r.nextLeft);

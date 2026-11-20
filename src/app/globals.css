@@ -2338,3 +2338,12 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
 @media (max-width: 340px) {
   .footer ul.footer-social { gap: 4px; }
 }
+
+/* FAQ answers (phase 6A): contextual links (refund policy, privacy policy) are visibly links. */
+.faq p a { color: var(--color-lime); text-decoration: underline; text-underline-offset: 3px; }
+.faq p a:hover { text-decoration-thickness: 2px; }
+/* Plan cards (fix 20/11/2026, phase 6A): « nowrap » made the longest feature line stick out of its card whenever the
+   three cards are narrow (measured in production: up to 60 px between 900 and 1400 px). Lines now wrap only when
+   there is not enough room, so wide screens keep the one-line look. */
+.tier-features { min-width: 0; }
+.tier-features li { white-space: normal; }

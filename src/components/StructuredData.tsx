@@ -1,5 +1,6 @@
 import { siteConfig } from '@/config/site';
 import { OG_IMAGE } from '@/lib/seo';
+import { OWNER_FACTS } from '@/content/en/info';
 
 /**
  * Profiles listed in `sameAs`: stable public identities only. A Telegram invite link (t.me/+… or
@@ -27,6 +28,7 @@ export function StructuredData({ description }: { description: string }) {
         logo: { '@type': 'ImageObject', url: `${url}/brand/sygma-symbol-512.png`, width: 512, height: 512 },
         image: `${url}${OG_IMAGE.url}`,
         slogan: 'One World. Endless Entertainment.',
+        foundingDate: OWNER_FACTS.established,
         description,
         ...(siteConfig.legalEntity ? { legalName: siteConfig.legalEntity } : {}),
         ...(siteConfig.supportEmail ? { email: siteConfig.supportEmail } : {}),
@@ -44,7 +46,7 @@ export function StructuredData({ description }: { description: string }) {
             contactType: 'customer support',
             ...(siteConfig.supportEmail ? { email: siteConfig.supportEmail } : {}),
             ...(siteConfig.supportPhone ? { telephone: siteConfig.supportPhone.replace(/\s+/g, '') } : {}),
-            availableLanguage: ['English'],
+            availableLanguage: [...OWNER_FACTS.languages],
           },
         ],
         sameAs,

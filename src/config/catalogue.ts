@@ -8,9 +8,10 @@ import type { Tier } from '@/lib/pricing';
  * site when its value is set. Never estimate or round up.
  */
 export const CATALOGUE: Record<Tier, { channels: number | null; vod: number | null }> = {
-  // Figures provided by the owner on 11/11/2026 — NOT yet backed by a provider contract
-  // (see docs/DECISIONS.md D34). Must be confirmed per territory before sales open.
-  starter: { channels: 12000, vod: 100000 },
-  plus: { channels: 25000, vod: 150000 },
-  ultra: { channels: 35000, vod: 200000 },
+  // Hidden (phase 6A, 20/11/2026): the figures given on 11/11/2026 (12,000–35,000 channels, 100,000–200,000
+  // movies & series) are not backed by a provider contract or rights per territory (docs/DECISIONS.md D34).
+  // Set them again only once confirmed in writing.
+  starter: { channels: null, vod: null },
+  plus: { channels: null, vod: null },
+  ultra: { channels: null, vod: null },
 };

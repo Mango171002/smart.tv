@@ -1,7 +1,8 @@
 # Terms of Service — PROPOSAL (not legally validated)
 
 > **Status: draft for legal review — not published, not in force.** Prepared on 20 November 2026 to match the
-> assisted ordering process actually used by SYGMA TV+. It does not replace the published Terms
+> assisted ordering process actually used by SYGMA TV+. Updated the same day with the owner's refund decision
+> (voluntary guarantee of 7 calendar days from the payment confirmation date — option B). It does not replace the published Terms
 > (`/legal/terms`, last updated 17 November 2026).
 >
 > - Text in **[DECISION-…]** is a placeholder for a business decision listed in `questions-validation.md`. No
@@ -24,7 +25,13 @@ review** — confirm the seller entity for each market served [DECISION-01, DECI
 please do not use the Website or the Service.
 
 1.4 Nothing in these Terms limits the rights you have as a consumer under the mandatory laws of your country of
-residence.
+residence, including any statutory right of withdrawal and statutory remedies.
+
+1.5 **Definitions.**
+- **Activation**: the moment we give you access to the Service. Activation takes place **before** payment.
+- **Payment confirmation date**: the date on which our team confirms that your payment has been received, as recorded
+  in our order records together with your order number. It is normally the date of your subscription confirmation
+  email; our order records prevail if the two differ. You can ask our support team for this date at any time.
 
 ## 2. The Service
 
@@ -68,16 +75,16 @@ availability in your country).
 **[DECISION-04: confirm this moment — order confirmation on WhatsApp, activation, or payment confirmation]**.
 **⚖ Legal review.**
 
-5.4 **Activation before payment.** Once your order is confirmed, we activate your access and send you your access
-details and setup instructions on WhatsApp. Activation usually takes place within an hour; this is a usual time,
+5.4 **Activation before payment.** Once your order is confirmed, we activate your access **before you pay** and send
+you your access details and setup instructions on WhatsApp. Activation usually takes place within an hour; this is a usual time,
 not a guarantee.
 
 5.5 **Payment after activation.** After activation, our team sends you the payment instructions. You pay using one of
 the payment methods offered by our team (§6).
 
 5.6 **Confirmation of payment.** Your order is recorded as paid only once your payment has been received and
-confirmed by our team. We then send you an email confirming that your subscription is active, with your order number
-and your subscription details.
+confirmed by our team; this sets the payment confirmation date (§1.5). We then send you an email confirming that your
+subscription is active, with your order number and your subscription details.
 
 ## 6. Prices and payment
 
@@ -140,8 +147,8 @@ characteristics of your plan are not reduced without informing you **⚖ Legal r
 
 ## 11. Termination and suspension
 
-11.1 **By you.** You can stop using the Service at any time. Refunds are handled under our Refund policy and your
-statutory rights.
+11.1 **By you.** You can stop using the Service at any time. Refunds are handled under §13A, our Refund policy and
+your statutory rights.
 
 11.2 **By us.** We may suspend or terminate your access, after informing you where the law requires it, if you
 seriously breach these Terms (for example sharing or reselling access), in case of non-payment (§6.4), or where
@@ -169,7 +176,20 @@ from which the period runs, any request or acknowledgement needed to start the S
 proportionate amount payable for the period of use — **must be defined with a lawyer for each market**. **⚖ Legal
 review.** This proposal does **not** state that the right of withdrawal ends when access is activated.
 
-13.3 Details and the form to exercise this right are in our Refund policy.
+13.3 The right of withdrawal, where it applies, is independent of the 7-day commercial guarantee (§13A): using one
+does not remove the other. Details and the form to exercise this right are in our Refund policy.
+
+## 13A. Refunds — "Satisfied or refunded" guarantee (commercial guarantee)
+
+13A.1 In addition to your statutory rights, we offer a voluntary guarantee: if you are not satisfied, you can ask for a
+full refund **within 7 calendar days of the payment confirmation date** (§1.5). Because activation takes place before
+payment, this period starts only once your payment has been confirmed.
+
+13A.2 One refund per customer; the guarantee does not apply to accounts suspended or terminated for a serious breach of
+these Terms. Counting rules, the refund method and timing are set out in our Refund policy **[DECISION-19 / ⚖ Legal
+review: reference time zone]**.
+
+13A.3 This guarantee does not replace, shorten or limit any statutory right, including the right of withdrawal (§13).
 
 ## 14. Liability
 
@@ -206,4 +226,4 @@ Email and WhatsApp details are in our Legal notice. Questions about these Terms:
 
 ### Clauses requiring legal review before publication
 
-1.2, 2.2, 5.3, 6.1, 6.4, 10.3, 11.2, 12.3, 13 (all), 14.3, 17.1 — and every **[DECISION-…]** placeholder.
+1.2, 2.2, 5.3, 6.1, 6.4, 10.3, 11.2, 12.3, 13A.2, 13 (all), 14.3, 17.1 — and every **[DECISION-…]** placeholder.

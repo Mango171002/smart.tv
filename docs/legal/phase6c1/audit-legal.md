@@ -4,6 +4,9 @@
 aucun texte du site, aucun e-mail, aucune commande, aucun prix, aucun paiement, WhatsApp, Telegram ou configuration
 de production n'est modifié. Rien n'est déployé ni fusionné. `350882a` absent.
 
+**Mise à jour 20/11/2026** : le propriétaire a retenu l'**option B** pour le remboursement commercial (7 jours
+calendaires à compter de la date de confirmation du paiement) ; la contradiction C4 est traitée dans les propositions.
+
 **Avertissement** : ce document n'est pas un avis juridique. Il identifie des contradictions et des ambiguïtés pour
 un juriste qualifié dans les pays concernés.
 

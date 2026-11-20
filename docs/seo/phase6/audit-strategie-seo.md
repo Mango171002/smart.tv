@@ -1,5 +1,9 @@
 # Phase 6 — Audit SEO commercial et stratégie de référencement (20/11/2026)
 
+> **Mise à jour du 20/11/2026** : données Search Console intégrées, priorités avec fichiers concernés, plan
+> 30/60/90 jours et prochain lot : voir **`rapport-phase6-search-console.md`**, qui prime sur les §1, §5 et §6
+> ci-dessous (« aucune donnée Search Console » n'est plus exact : la propriété est vérifiée).
+
 **Audit et recommandations uniquement.** Branche isolée `claude/seo-phase6-audit`, créée depuis la production
 `864f703` (indépendante de la Phase 5C). Aucun déploiement, aucune fusion, aucune modification du site, des
 commandes, paiements, prix, e-mails, Telegram ou WhatsApp. `350882a` absent.

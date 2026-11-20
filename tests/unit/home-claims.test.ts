@@ -54,4 +54,10 @@ describe('home page wording (phase 6A)', () => {
     expect(text).toMatch(/6 languages/);
     expect(text).toMatch(/WhatsApp/);
   });
+
+  it('order window: activation first, then payment instructions on WhatsApp (phase 6B)', () => {
+    expect(en.checkout.productionNote).toMatch(/Nothing is charged on this website/);
+    expect(en.checkout.productionNote).toMatch(/activates your access, then sends you the payment instructions/);
+    expect(en.checkout.productionNote).not.toMatch(/confirms your order and payment/);
+  });
 });

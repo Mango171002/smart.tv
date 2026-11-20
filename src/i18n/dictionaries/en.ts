@@ -469,7 +469,7 @@ const en = {
     verified: 'Price confirmed by our server',
     verifying: 'Confirming price…',
     quoteError: 'The price could not be confirmed. Please try again.',
-    productionNote: 'Nothing is charged on this site. Our team confirms your order and payment with you on WhatsApp.',
+    productionNote: 'Nothing is charged on this website. Once you confirm, our team contacts you on WhatsApp, activates your access, then sends you the payment instructions.',
     finish: 'Confirm my order',
     sending: 'Sending…',
     doneTitle: 'Order received!',

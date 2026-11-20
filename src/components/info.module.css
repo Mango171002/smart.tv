@@ -3,7 +3,7 @@
 .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0; }
 .crumbs li { display: inline-flex; align-items: center; gap: 6px; }
 .crumbs li + li::before { content: '›'; opacity: .6; }
-.crumbs a { color: var(--color-ink); opacity: .82; }
+.crumbs a { display: inline-block; padding: 2px 0; color: var(--color-ink); opacity: .82; }
 .crumbs a:hover { color: var(--color-lime); opacity: 1; }
 .crumbs [aria-current='page'] { color: var(--color-muted); }
 
@@ -67,5 +67,13 @@
 
 /* Table of contents: same 900 px column as the sections, links on two columns (one on phones) */
 nav.toc { max-width: 900px; }
-nav.toc ol { grid-template-columns: 1fr 1fr; column-gap: 24px; }
+nav.toc ol { grid-template-columns: 1fr 1fr; column-gap: 24px; row-gap: 0; }
+/* Touch targets ≥ 24 px (WCAG 2.2, 2.5.8). */
+nav.toc a { display: inline-block; padding: 4px 0; }
 @media (max-width: 560px) { nav.toc ol { grid-template-columns: 1fr; } }
+
+/* Narrow phones (fix 20/11/2026, new pages only — the legal pages keep their own CSS): the column of the shared
+   legal layout was sized to its widest item (contact box ~314 px) and overflowed a 288 px column at 320 px. */
+.info :global(.terms-body) { grid-template-columns: minmax(0, 1fr); }
+.info :global(.terms-contact li) { flex-wrap: wrap; max-width: 100%; }
+.info :global(.terms-contact li a) { overflow-wrap: anywhere; }

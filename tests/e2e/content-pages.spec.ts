@@ -115,6 +115,7 @@ test.describe('content pages — preview', () => {
     await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Help' })).toHaveAttribute('href', '/help');
     await expect(page.locator('footer a[href="/about"]')).toHaveCount(1);
     await expect(page.locator('footer a[href="/help"]')).toHaveCount(1);
+    await expect(page.locator('footer a[href="/#faq"]')).toHaveText('FAQ');
     expect((await request.get('/help', { maxRedirects: 0 })).status()).toBe(200);
     expect(await (await request.get('/sitemap.xml')).text()).not.toMatch(/\/about<|\/help/);
   });

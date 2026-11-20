@@ -76,7 +76,8 @@ export function Footer({ locale: _locale, dict }: { locale: Locale; dict: Dictio
           <ul>
             <li><Link href={`/#plans`}>{dict.nav.plans}</Link></li>
             <li><Link href={`/#how`}>{dict.nav.how}</Link></li>
-            <li><Link href={`/#faq`}>{f.helpFaq}</Link></li>
+            {/* With the Help center published, « Help / FAQ » would duplicate it: the link keeps its target and reads « FAQ ». */}
+            <li><Link href={`/#faq`}>{contentPagesEnabled() ? 'FAQ' : f.helpFaq}</Link></li>
             {contentPagesEnabled() && (
               <>
                 <li><Link href="/help">Help center</Link></li>

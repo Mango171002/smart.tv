@@ -14,6 +14,7 @@ de GA4, GTM, Google Ads ou consentement, Preview internationale intacte, `350882
 | 7. **Finalisation (20/11/2026)** : M1–M10, allégations P0/P1 bloquées, décisions A4/A5/B1/D2, contradictions, pied de page, tests | **`finalisation.md`** |
 | 8. **Audit du parcours commercial réel** | `audit-parcours-commercial.md` |
 | 9. **Corrections validées (parcours, `/api/health`, remboursement, pré-lancement, points bloquants)** | **`corrections-validees.md`** |
+| 10. **Revue finale avant publication : UI/UX, SEO, allégations, CGU, pied de page, checklist GO / NO-GO** | **`validation-finale.md`** |
 
 Voir les pages en local :
 

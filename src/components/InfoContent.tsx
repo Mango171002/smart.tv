@@ -117,7 +117,7 @@ export function InfoContent({
     </div>
   );
   return (
-    <div className="terms">
+    <div className={`terms ${s.info}`}>
       <p className="terms-meta">Last reviewed: {reviewed}</p>
       {toc && sections.length > 1 ? (
         <div className="terms-layout">

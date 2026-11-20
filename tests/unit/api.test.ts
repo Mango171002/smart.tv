@@ -51,6 +51,15 @@ describe('POST /api/quote', () => {
   });
 });
 
+describe('GET /api/health', () => {
+  it('reports assisted ordering, with automatic online sales still disabled', async () => {
+    vi.stubEnv('SALES_ENABLED', 'false');
+    const { GET } = await import('@/app/api/health/route');
+    const json = await (await GET()).json();
+    expect(json).toEqual({ status: 'ok', mode: 'assisted', salesEnabled: false, priceSource: 'static' });
+  });
+});
+
 describe('POST /api/checkout', () => {
   it('is locked while launch blockers remain, even with SALES_ENABLED=true', async () => {
     vi.stubEnv('SALES_ENABLED', 'true');

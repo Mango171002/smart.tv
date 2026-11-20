@@ -73,7 +73,7 @@ test.describe('content pages — preview', () => {
 
   test('topic page: table of contents, previous/next, calls to action open the site dialogs', async ({ page }) => {
     await page.goto('/help/ordering-payment');
-    await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link', { name: 'How do I pay?' })).toHaveAttribute('href', '#pay');
+    await expect(page.getByRole('navigation', { name: 'On this page' }).getByRole('link', { name: 'When and how do I pay?' })).toHaveAttribute('href', '#pay');
     const pager = page.getByRole('navigation', { name: 'Help topics' });
     await expect(pager.getByRole('link')).toHaveCount(2);
     await expect(pager.getByRole('link').last()).toHaveAttribute('href', '/help/troubleshooting');

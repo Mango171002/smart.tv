@@ -22,15 +22,20 @@ const TRIAL_ADJ = TRIAL.replace(/^(\d+) (\w+?)s?$/, '$1-$2');
  * Owner-validated operational facts (20/11/2026, M1–M10). Declared, not measured: always written as « usually »,
  * never as a contractual guarantee. Not published until proven: PDF invoice (M6 — no PDF in the code today),
  * app names (M7 — store availability unverified), country list (M8 — distribution rights not verified).
+ *
+ * Real ordering flow (owner, 20/11/2026 — docs/seo/phase5c/audit-parcours-commercial.md): order form → our team
+ * contacts the customer on WhatsApp → activation → the customer pays → once the payment is received and confirmed,
+ * the team marks the order « Converti », which sends the « Your subscription is now active! » email (order number,
+ * subscription details, payment confirmation). That email is not a PDF invoice and is never presented as one.
  */
 export const OWNER_FACTS = {
   established: '2026',
   basedIn: 'United States',
   supportHours: '24/7',
   usualReply: 'under an hour',
-  usualActivation: 'within an hour after your payment is confirmed',
+  usualActivation: 'within an hour after your order is confirmed on WhatsApp',
   languages: ['English', 'French', 'Arabic', 'German', 'Spanish', 'Italian'],
-  /** Arranged by our team on WhatsApp after the order is confirmed — none of them is charged on this website. */
+  /** Arranged by our team on WhatsApp once the subscription is active — none of them is charged on this website. */
   paymentMethods: ['Visa / Mastercard card', 'PayPal', 'Cryptocurrency (USDT via Binance)', 'Bank transfer', 'Western Union', 'MoneyGram'],
 } as const;
 
@@ -61,6 +66,17 @@ export interface InfoPage {
 }
 
 const F = OWNER_FACTS;
+
+/** The six steps of an order, in the real order: activation first, payment after, then the confirmation email. */
+const ORDER_STEPS = [
+  { title: 'Choose your plan', text: 'Pick your plan, its duration and the number of devices on our website. The price is shown straight away.' },
+  { title: 'Send your order', text: 'Fill in the short order form: your email, country and WhatsApp number. Nothing is charged on this website. You receive an email confirming that we received your order.' },
+  { title: 'We contact you on WhatsApp', text: 'A member of our team contacts you on WhatsApp to confirm your order.' },
+  { title: 'We activate your subscription', text: `We send you your access details and setup instructions on WhatsApp. Activation usually takes place ${F.usualActivation}.` },
+  { title: 'You pay', text: 'Once your access is active, you pay with one of the payment methods our team offers you.' },
+  { title: 'Payment confirmed', text: 'When we have received and confirmed your payment, you receive an email confirming that your subscription is active, with your order number.' },
+];
+const CONFIRMATION_EMAIL = 'When we have received and confirmed your payment, you receive an email confirming that your subscription is active, with your order number and your subscription details.';
 const LANGS = `${F.languages.slice(0, -1).join(', ')} or ${F.languages[F.languages.length - 1]}`;
 
 // ---------------------------------------------------------------- About us
@@ -97,12 +113,8 @@ export const ABOUT: InfoPage = {
     {
       id: 'how', icon: 'rocket', title: 'How the service works',
       body: [
-        { steps: [
-          { title: 'Choose', text: 'Pick your plan, its duration and the number of devices on our website.' },
-          { title: 'Leave your details', text: 'Your email, country and WhatsApp number. Nothing is charged on this site.' },
-          { title: 'Confirm and pay', text: 'Our team contacts you on WhatsApp to confirm your order and arrange the payment.' },
-          { title: 'Start watching', text: `Your access is usually activated ${F.usualActivation}.` },
-        ] },
+        { p: 'You order with a short form and a real person from our team takes it from there on WhatsApp. We activate your subscription first: you pay only once your access is active.' },
+        { steps: ORDER_STEPS },
         { p: `Not sure yet? Ask for a free ${TRIAL_ADJ} trial first: nothing to pay and nothing to cancel.` },
       ],
     },
@@ -110,12 +122,11 @@ export const ABOUT: InfoPage = {
       id: 'commitments', icon: 'shield', title: 'Our commitments',
       body: [
         { list: [
-          'Clear prices: the final price, taxes included, is always shown before payment.',
+          'Clear prices: the price is shown on our website before you order, and you pay only after your subscription is activated.',
           'No automatic renewal: you decide whether to renew.',
           '7-day money-back guarantee after activation; EU and UK customers also keep their 14-day withdrawal right.',
           'Your data is used only to handle your request and your subscription. We never sell it.',
           'No fake reviews.',
-          'Each country opens only once broadcasting authorisations are in place.',
         ] },
       ],
     },
@@ -128,12 +139,12 @@ export const ABOUT: InfoPage = {
       ],
     },
     {
-      id: 'payment', icon: 'card', title: 'Payment, activation and confirmation',
+      id: 'payment', icon: 'card', title: 'Activation, payment and confirmation',
       body: [
-        { p: 'Nothing is charged on this website. Once your order is confirmed on WhatsApp, our team arranges the payment with you, using one of these methods:' },
+        { p: `Nothing is charged on this website. We activate your subscription first — usually ${F.usualActivation} — and you pay once your access is active, using one of these methods:` },
         { chips: [...F.paymentMethods], label: 'Payment methods' },
-        { note: 'Every method is arranged manually by our team — none is charged automatically on this website. Our team confirms which method applies to your order.' },
-        { p: `Your access is usually activated ${F.usualActivation}. You then receive an email confirming your subscription, with your order number and the amount paid.` },
+        { note: 'Every payment is arranged manually with our team on WhatsApp — none is charged automatically on this website. Our team tells you which methods are available for your order.' },
+        { p: CONFIRMATION_EMAIL },
       ],
     },
     {
@@ -161,7 +172,7 @@ export const HELP_HUB = {
   intro: `Clear answers about the free trial, ordering, payment, devices and refunds. Still stuck? Our team is available ${F.supportHours}.`,
   /** Quick answers on the hub (deep links into the topics). */
   popular: [
-    { q: 'How do I pay?', href: '/help/ordering-payment#pay' },
+    { q: 'When and how do I pay?', href: '/help/ordering-payment#pay' },
     { q: 'How long does activation take?', href: '/help/ordering-payment#activation' },
     { q: 'Is the trial really free?', href: '/help/free-trial#cost' },
     { q: 'Which devices can I use?', href: '/help/devices#categories' },
@@ -175,19 +186,20 @@ export const HELP_TOPICS: InfoPage[] = [
     slug: 'getting-started', name: 'Getting started', icon: 'rocket',
     title: 'Getting started with SYGMA TV+',
     metaTitle: 'Getting started with SYGMA TV+',
-    description: 'How SYGMA TV+ works, from choosing a plan to watching: free trial, order on the website, payment and activation with our team on WhatsApp.',
+    description: 'How SYGMA TV+ works, from choosing a plan to watching: free trial, order form, contact and activation on WhatsApp, then payment.',
     summary: 'From choosing a plan to your first stream.',
     intro: 'Getting started takes a few steps. You can begin with a free trial or order directly.',
     sections: [
       { id: 'steps', icon: 'rocket', title: 'The steps', body: [{ steps: [
         { title: 'Choose your plan', text: 'In the Plans section, choose the plan, the duration (12, 24 or 36 months) and the number of devices.' },
-        { title: 'Trial or order', text: 'Request a free trial or place your order with your email address, your country and your WhatsApp number.' },
-        { title: 'Confirm on WhatsApp', text: 'Our team contacts you. For an order, we confirm it with you and arrange the payment.' },
-        { title: 'Get your access', text: `Your access is usually activated ${F.usualActivation}. You receive your login details and the name of the app to install.` },
+        { title: 'Trial or order', text: 'Request a free trial, or send your order with the short form: your email address, your country and your WhatsApp number.' },
+        { title: 'We contact you on WhatsApp', text: 'Our team contacts you on WhatsApp, sends your login details and tells you which app to install.' },
+        { title: 'Activation, then payment', text: `For an order, we activate your subscription first — usually ${F.usualActivation}. You pay once your access is active.` },
         { title: 'Start watching', text: 'Install the app, enter your login details and start a stream.' },
       ] }] },
       { id: 'good-to-know', icon: 'info', title: 'Good to know', body: [{ list: [
         'Nothing is charged on this website.',
+        'You pay after your subscription is activated, with a payment method offered by our team.',
         'One free trial per customer.',
         'Every plan includes 1 device; you can add devices, up to 4.',
         'Plans never renew automatically.',
@@ -239,23 +251,25 @@ export const HELP_TOPICS: InfoPage[] = [
     slug: 'ordering-payment', name: 'Ordering and payment', icon: 'card',
     title: 'Ordering and payment',
     metaTitle: 'Ordering and payment: how it works',
-    description: 'How to order SYGMA TV+: choose your plan online, confirm with our team on WhatsApp, pay by card, PayPal, transfer or other methods. Activation explained.',
-    summary: 'Order, payment methods and activation.',
-    intro: 'You choose and order online; the payment is arranged with our team. Nothing is charged on this website.',
+    description: 'How to order SYGMA TV+: send the order form, our team contacts you on WhatsApp and activates your access, then you pay. Payment methods explained.',
+    summary: 'Order form, activation, then payment.',
+    intro: 'You order with a short form. Our team contacts you on WhatsApp and activates your access, and you pay after activation. Nothing is charged on this website.',
     sections: [
-      { id: 'order', icon: 'rocket', title: 'How do I order?', body: [{ steps: [
-        { title: 'Choose', text: 'In the Plans section, choose your plan, the duration and the number of devices: the price is shown immediately.' },
-        { title: 'Order', text: 'Select “Order now”, enter your email address, your country and your WhatsApp number, and agree to be contacted about your order.' },
-        { title: 'Confirm', text: 'Review and confirm. A confirmation appears on screen.' },
-        { title: 'Pay and activate', text: 'Our team contacts you on WhatsApp to confirm your order and the payment, then activates your access.' },
-      ] }] },
-      { id: 'pay', icon: 'card', title: 'How do I pay?', body: [
-        { p: 'The payment is arranged with our team on WhatsApp when your order is confirmed. No payment and no card details are requested on this website. Accepted methods:' },
-        { chips: [...F.paymentMethods], label: 'Payment methods' },
-        { note: 'All methods are arranged manually by our team; none is charged automatically on this website. Our team confirms which method applies to your order.' },
+      { id: 'order', icon: 'rocket', title: 'How do I order?', body: [
+        { p: 'Ordering takes six steps, from the form on our website to the confirmation of your payment. Select “Order now” in the Plans section to start.' },
+        { steps: ORDER_STEPS },
       ] },
-      { id: 'activation', icon: 'clock', title: 'How long does activation take?', body: [{ p: `Your access is usually activated ${F.usualActivation} — a usual time, not a guarantee. You then receive an email confirming your subscription, with your order number and the amount paid.` }] },
-      { id: 'prices', icon: 'tag', title: 'Prices and taxes', body: [{ p: 'Prices are shown in US dollars (USD) before taxes. The final price, taxes included, is always shown before payment. Longer durations cost less per year: see the current prices in the Plans section.' }] },
+      { id: 'pay', icon: 'card', title: 'When and how do I pay?', body: [
+        { p: 'You pay after your access has been activated — never on this website. No payment and no card details are requested here: our team sends you the payment options on WhatsApp. Accepted methods:' },
+        { chips: [...F.paymentMethods], label: 'Payment methods' },
+        { note: 'All payments are arranged manually with our team; none is charged automatically on this website. Our team tells you which methods are available for your order.' },
+      ] },
+      { id: 'activation', icon: 'clock', title: 'How long does activation take?', body: [{ p: `Our team usually activates your access ${F.usualActivation} — a usual time, not a guarantee. You pay once your access is active.` }] },
+      { id: 'emails', icon: 'mail', title: 'Which emails will I receive?', body: [{ list: [
+        'Right after you send the form: an email confirming that we received your order.',
+        CONFIRMATION_EMAIL,
+      ] }] },
+      { id: 'prices', icon: 'tag', title: 'Prices and taxes', body: [{ p: 'Prices are shown in US dollars (USD) before taxes, and the price of your plan is shown before you send your order. Longer durations cost less per year: see the current prices in the Plans section.' }] },
       { id: 'contract', icon: 'scale', title: 'When does my subscription start?', body: [{ p: 'The contract starts when our team confirms your order. Plans never renew automatically.' }] },
     ],
   },

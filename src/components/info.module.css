@@ -29,7 +29,7 @@
 .fact small { display: block; font-weight: 500; font-size: 13px; color: var(--color-muted); margin-top: 4px; }
 
 /* ---- Blocks inside sections */
-.steps { list-style: none; counter-reset: step; padding: 0; margin: 4px 0 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 12px; }
+.steps { list-style: none; counter-reset: step; padding: 0; margin: 4px 0 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
 .steps li { counter-increment: step; position: relative; padding: 16px 16px 16px 54px; border-radius: 14px; border: 1px solid var(--line); background: color-mix(in srgb, var(--color-bg) 55%, transparent); }
 .steps li::before { content: counter(step); position: absolute; left: 14px; top: 14px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 14px; color: var(--color-bg); background: var(--cat, var(--color-cyan)); }
 .steps strong { display: block; margin-bottom: 4px; color: var(--color-ink); }

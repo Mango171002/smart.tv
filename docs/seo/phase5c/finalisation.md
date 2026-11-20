@@ -1,5 +1,8 @@
 # Phase 5C — Finalisation About us, Help center et contenu SEO (20/11/2026)
 
+> **Mise à jour** : le parcours a été corrigé (activation avant paiement) après l'audit du parcours commercial —
+> voir `audit-parcours-commercial.md` et `corrections-validees.md`, qui priment sur ce document.
+
 **Statut : préparé et testé dans la branche isolée `claude/seo-phase5c-preview` (base production `864f703`).
 Rien n'est déployé, fusionné ni publié.** Interrupteur `NEXT_PUBLIC_CONTENT_PAGES` non défini par défaut (= `off`) :
 en production, les pages n'existent pas et le site reste identique, sauf la correction du pied de page (§5), qui ne
@@ -63,7 +66,7 @@ Aucune de ces options n'est implémentée : elles touchent des textes de product
 | 1 | `/api/health` en ligne : `mode: "prelaunch"`, `salesEnabled: false` | M9 « le site accepte des commandes » | Clarifier : si les ventes sont ouvertes, activer `SALES_ENABLED` (décision distincte, hors de cette phase) ; sinon les pages ne doivent pas être publiées en l'état. |
 | 2 | CGU §1 : « …and, once subscriptions open, the SYGMA TV+ streaming service » | M9 | Relecture juridique des CGU (non modifiées, conformément à la consigne). |
 | 3 | Marchés `US` / `CA` / `EU` avec `licensed: false` dans la configuration | M8 (10 pays visés) et M9 | Aucun pays cité dans les pages ; FAQ de l'accueil « United States, Canada and Europe » à revoir avec les droits. |
-| 4 | Engagement F1 « Each country opens only once broadcasting authorisations are in place » (repris dans About) | Commandes acceptées sans droits établis (M8) | Garder F1 seulement si les autorisations existent pour les pays ouverts ; sinon le reformuler avec un avocat. |
+| 4 | Engagement F1 « Each country opens only once broadcasting authorisations are in place » (repris dans la première version d'About ; **non affiché sur le site en ligne**, vérifié le 20/11 — retiré d'About, voir `corrections-validees.md`) | Commandes acceptées sans droits établis (M8) | Garder F1 seulement si les autorisations existent pour les pays ouverts ; sinon le reformuler avec un avocat. |
 | 5 | CGU muettes sur « un seul essai par client » (la politique de remboursement dit « One refund per customer ») | M5 publié dans le Help center | Ajouter une phrase aux CGU lors de la prochaine relecture juridique : « One free trial per customer. » |
 | 6 | Aucune facture PDF dans le code | M6 | Fournir un exemple d'e-mail réel avec PDF, ou développer la facture (lot séparé). Non publié d'ici là. |
 | 7 | Applications M7 non vérifiables | M7, D1, B4 | Plan de vérification 5B (`docs/seo/guides-verification-plan.md`) : nom exact, boutique officielle, test réel daté. |
@@ -94,12 +97,12 @@ Aucune de ces options n'est implémentée : elles touchent des textes de product
 | 1366 px | Pastilles : 47 px hors colonne, **chevauchent « Links » de 14 px** | Aucun (« Secure & private » passe à la ligne) |
 | 1440 / 1920 px | Aucun | Aucun |
 
-Aucun défilement horizontal de page, avant comme après. Cause : `flex-wrap: nowrap` imposé aux pastilles à toutes les
+Aucun défilement horizontal de page, avant comme après. Cause : interdiction de retour à la ligne (`nowrap`) imposée aux pastilles à toutes les
 largeurs ; correction : retour à la ligne seulement si la place manque. Icônes sociales : écart réduit à 4 px sous
 340 px (cibles tactiles de 44 × 44 px conservées). CSS ajouté (2 règles, `src/app/globals.css`) :
 
 ```css
-.footer ul.footer-chips { flex-wrap: wrap; row-gap: 8px; }
+.footer ul.footer-chips { flex-wrap:wrap; row-gap: 8px; }
 @media (max-width: 340px) { .footer ul.footer-social { gap: 4px; } }
 ```
 

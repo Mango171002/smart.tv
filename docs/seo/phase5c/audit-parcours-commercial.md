@@ -1,5 +1,7 @@
 # Audit du parcours commercial réel — SYGMA TV+ (20/11/2026)
 
+> **Décisions du propriétaire (20/11/2026)** : voir `corrections-validees.md`.
+
 **Audit uniquement.** Aucun code, texte, prix, commande, automatisation, base de données ou valeur de configuration
 n'a été modifié. Sources : code de production `864f703` (identique sur ce point à la branche
 `claude/seo-phase5c-preview`), base Supabase de production (lecture seule, **comptages agrégés uniquement**),

@@ -12,6 +12,8 @@ de GA4, GTM, Google Ads ou consentement, Preview internationale intacte, `350882
 | 5. Plan SEO technique (adresses, métadonnées, maillage, fil d'Ariane, données structurées, sitemap) | `technical-seo-plan.md` |
 | 6. Tests et risques | `technical-seo-plan.md` §7–8 |
 | 7. **Finalisation (20/11/2026)** : M1–M10, allégations P0/P1 bloquées, décisions A4/A5/B1/D2, contradictions, pied de page, tests | **`finalisation.md`** |
+| 8. **Audit du parcours commercial réel** | `audit-parcours-commercial.md` |
+| 9. **Corrections validées (parcours, `/api/health`, remboursement, pré-lancement, points bloquants)** | **`corrections-validees.md`** |
 
 Voir les pages en local :
 

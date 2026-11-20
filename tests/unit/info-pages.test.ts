@@ -33,10 +33,28 @@ describe('About us + Help center content (phase 5C, not published)', () => {
     for (const m of text.matchAll(/[^.]*(within an hour|under an hour)[^.]*\./g)) expect(m[0], m[0]).toMatch(/usually|usual/i);
   });
 
-  it('every payment method is presented as arranged by our team, not charged on the site', () => {
+  it('every payment method is presented as arranged by our team, after activation, not charged on the site', () => {
     const pay = HELP_TOPICS.find((t) => t.slug === 'ordering-payment')!.sections.find((x) => x.id === 'pay')!;
-    expect(JSON.stringify(pay)).toMatch(/arranged manually by our team/);
-    expect(JSON.stringify(pay)).toMatch(/No payment and no card details are requested on this website/);
+    expect(JSON.stringify(pay)).toMatch(/arranged manually with our team/);
+    expect(JSON.stringify(pay)).toMatch(/No payment and no card details are requested here/);
+    expect(JSON.stringify(pay)).toMatch(/You pay after your access has been activated/);
+  });
+
+  it('real ordering flow: form → WhatsApp → activation → payment → confirmation email (owner, 20/11/2026)', () => {
+    const steps = (page: typeof ABOUT, id: string) =>
+      (page.sections.find((x) => x.id === id)!.body.find((b) => 'steps' in b) as { steps: Array<{ title: string; text: string }> }).steps.map((x) => `${x.title}: ${x.text}`);
+    for (const list of [steps(ABOUT, 'how'), steps(HELP_TOPICS.find((t) => t.slug === 'ordering-payment')!, 'order')]) {
+      const at = (re: RegExp) => list.findIndex((x) => re.test(x));
+      expect(list).toHaveLength(6);
+      expect(at(/order form/i)).toBeLessThan(at(/contacts you on WhatsApp/));
+      expect(at(/contacts you on WhatsApp/)).toBeLessThan(at(/activate your subscription/));
+      expect(at(/activate your subscription/)).toBeLessThan(at(/^You pay/));
+      expect(at(/^You pay/)).toBeLessThan(at(/received and confirmed your payment/));
+    }
+    const text = allText([ABOUT, HELP_HUB, HELP_TOPICS]).join('\n');
+    // Activation is never made to depend on the payment, and the confirmation email is never called an invoice or « amount paid ».
+    for (const re of [/activated[^.]*after your payment/i, /confirm(ed)? (your order )?and (the )?pay/i, /arrange the payment/i, /amount paid/i, /\bcheckout\b/i])
+      expect(text, String(re)).not.toMatch(re);
   });
 
   it('company facts come from the verified configuration', () => {

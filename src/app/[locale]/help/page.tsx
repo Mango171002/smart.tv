@@ -60,7 +60,7 @@ export default async function HelpCenter({ params }: { params: Params }) {
           { k: 'Availability', v: F.supportHours, small: 'Email and WhatsApp', accent: 'var(--color-lime)' },
           { k: 'Usual reply time', v: `Under an hour`, small: 'Usual time, not a guarantee', accent: 'var(--color-cyan)' },
           { k: 'Languages', v: String(F.languages.length), small: F.languages.join(' · '), accent: 'var(--color-magenta)' },
-          { k: 'Activation', v: 'Usually < 1 hour', small: 'After payment is confirmed', accent: 'var(--color-violet)' },
+          { k: 'Activation', v: 'Usually < 1 hour', small: 'Before payment, after your order is confirmed', accent: 'var(--color-violet)' },
         ].map((f) => (
           <div key={f.k} className={s.fact} style={{ ['--accent' as string]: f.accent }}>
             <dt>{f.k}</dt>

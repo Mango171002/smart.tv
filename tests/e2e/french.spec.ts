@@ -114,11 +114,13 @@ test.describe('French — preview / released', () => {
     expect(robots).toMatch(/Sitemap:/);
   });
 
-  test('English pages stay English, no visible link to French', async ({ page }) => {
+  test('English pages stay English; French is linked only from the language switcher', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(RELEASED ? RELEASED_LANGS.length + 2 : 0);
-    await expect(page.locator('a[href^="/fr"]')).toHaveCount(0);
+    await expect(page.locator('a[href^="/fr"]:not([data-lang-switcher] a)')).toHaveCount(0);
+    // Phase 9: the switcher (desktop list + mobile menu section) links to the French home, marked hreflang="fr".
+    await expect(page.locator('[data-lang-switcher] a[href="/fr"][hreflang="fr"]')).toHaveCount(2);
   });
 
   test('home: French plans, simulator and order window (activation before payment)', async ({ page }) => {

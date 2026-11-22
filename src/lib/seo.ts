@@ -1,16 +1,59 @@
 import type { Metadata } from 'next';
 import { siteConfig } from '@/config/site';
-import { LOCALES, type Locale } from '@/i18n/config';
+import { DEFAULT_LOCALE, LOCALES, localeSeo, type Locale } from '@/i18n/config';
+import { DEFAULT_LANGUAGE, enabledLanguages, prefixedPath, type SiteLanguage } from '@/i18n/locales';
+import { localizedPath } from '@/lib/routes';
 
 /** Social sharing image (1200×630). */
 export const OG_IMAGE = { url: '/brand/og-image.jpg', width: 1200, height: 630, alt: 'SYGMA TV+ — One World. Endless Entertainment.' };
 
 /**
- * Page metadata: unique title + description, canonical URL (no language prefix), Open Graph and X
- * cards. English only: no hreflang alternates (there are no translated pages).
+ * Pages that exist only in some languages. A page not listed here exists in every built language (all pages
+ * are served by the [locale] segment). When a language is enabled before all of its pages are translated,
+ * list the untranslated paths here so that no hreflang (nor sitemap alternate) points to a missing page.
+ * Empty today: English is the only built language.
+ */
+export const PAGE_AVAILABILITY: Readonly<Record<string, readonly Locale[]>> = {};
+
+/** Built languages in which a page exists. */
+export function pageLocales(path: string): Locale[] {
+  const only = PAGE_AVAILABILITY[path];
+  return only ? LOCALES.filter((l) => only.includes(l)) : [...LOCALES];
+}
+
+/**
+ * hreflang set of a page: one generic language code per ENABLED language where the page exists, plus
+ * x-default → the English (root) version. Values are paths (relative to metadataBase) unless `base` is given
+ * (absolute URLs, for the sitemap). Undefined when fewer than two languages have the page: a single-language
+ * page needs no hreflang (today's output, English only). Disabled languages are never included.
+ */
+export function hreflangAlternates(
+  path: string,
+  {
+    languages = enabledLanguages(),
+    availableIn,
+    base = '',
+  }: { languages?: readonly SiteLanguage[]; availableIn?: readonly string[]; base?: string } = {},
+): Record<string, string> | undefined {
+  const has = (l: SiteLanguage) => l.status === 'enabled' && (availableIn ? availableIn.includes(l.code) : true);
+  const set = languages.filter(has);
+  if (set.length < 2) return undefined;
+  const out: Record<string, string> = {};
+  for (const l of set) out[l.hreflang] = `${base}${prefixedPath(l.prefix, path)}`;
+  const def = set.find((l) => l.code === DEFAULT_LANGUAGE);
+  if (def) out['x-default'] = `${base}${prefixedPath(def.prefix, path)}`;
+  return out;
+}
+
+/** Canonical path of a page in a language: always itself (a translation is never canonicalised to English). */
+export const canonicalPath = (locale: Locale, path: string) => localizedPath(locale, path);
+
+/**
+ * Page metadata: unique title + description, self-referencing canonical, hreflang between the enabled
+ * languages where the page exists (none today), Open Graph and X cards.
  */
 export function buildMetadata({
-  locale: _locale,
+  locale,
   path,
   title,
   description,
@@ -26,18 +69,25 @@ export function buildMetadata({
   /** Pages without content yet (kept out of search results and of the sitemap). */
   noindex?: boolean;
 }): Metadata {
-  const url = path || '/';
+  const url = canonicalPath(locale, path);
   const fullTitle = absoluteTitle ? title : `${title} | ${siteConfig.brandName}`;
   const indexable = siteConfig.allowIndexing && !noindex;
+  // A noindex page is not part of the hreflang cluster (an alternate must be an indexable page).
+  const languages = indexable ? hreflangAlternates(path, { availableIn: pageLocales(path) }) : undefined;
+  const seo = localeSeo(locale);
+  const alternateLocale = languages
+    ? pageLocales(path).filter((l) => l !== locale).map((l) => localeSeo(l).ogLocale)
+    : [];
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
-    alternates: { canonical: url },
+    alternates: languages ? { canonical: url, languages } : { canonical: url },
     openGraph: {
       title: fullTitle,
       description,
       url,
-      locale: 'en_US',
+      locale: seo.ogLocale,
+      ...(alternateLocale.length ? { alternateLocale } : {}),
       type: 'website',
       siteName: siteConfig.brandName,
       images: [OG_IMAGE],
@@ -49,5 +99,5 @@ export function buildMetadata({
 
 export async function resolveLocale(params: Promise<{ locale: string }>): Promise<Locale> {
   const { locale } = await params;
-  return (LOCALES as readonly string[]).includes(locale) ? (locale as Locale) : 'en';
+  return (LOCALES as readonly string[]).includes(locale) ? (locale as Locale) : DEFAULT_LOCALE;
 }

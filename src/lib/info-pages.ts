@@ -1,7 +1,7 @@
 import { siteConfig } from '@/config/site';
 import { contentPagesIndexable } from '@/config/content-pages';
 import { buildMetadata } from '@/lib/seo';
-import type { Locale } from '@/i18n/config';
+import { DEFAULT_LOCALE, localeSeo, type Locale } from '@/i18n/config';
 
 const abs = (p: string) => `${siteConfig.siteUrl}${p}`;
 export const ORG_REF = () => ({ '@type': 'Organization', '@id': `${siteConfig.siteUrl}/#organization`, name: siteConfig.brandName, url: `${siteConfig.siteUrl}/` });
@@ -12,7 +12,14 @@ export function infoMetadata(locale: Locale, path: string, title: string, descri
   return buildMetadata({ locale, path, title, description, noindex: !contentPagesIndexable() });
 }
 
-export function webPageLd(type: 'AboutPage' | 'CollectionPage' | 'WebPage', path: string, name: string, description: string, extra: Record<string, unknown> = {}) {
-  return { '@context': 'https://schema.org', '@type': type, '@id': `${abs(path)}#webpage`, url: abs(path), name, description, inLanguage: 'en', isPartOf: WEBSITE_REF(), ...extra };
+export function webPageLd(
+  type: 'AboutPage' | 'CollectionPage' | 'WebPage',
+  path: string,
+  name: string,
+  description: string,
+  extra: Record<string, unknown> = {},
+  locale: Locale = DEFAULT_LOCALE,
+) {
+  return { '@context': 'https://schema.org', '@type': type, '@id': `${abs(path)}#webpage`, url: abs(path), name, description, inLanguage: localeSeo(locale).htmlLang, isPartOf: WEBSITE_REF(), ...extra };
 }
 export { abs };

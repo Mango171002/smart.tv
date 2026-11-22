@@ -2,6 +2,11 @@
 
 **Proposal only — no route or locale is created or activated.**
 
+> **Update 22/11/2026 (Phase 7A, owner instructions):** language prefixes adopted (D-P7-1) and English slugs under
+> every prefix (D-P7-2: `/fr/help`, not `/fr/aide`). Scope extended to 8 languages (en, fr, de, es, it, nl, sv, nb)
+> and 13 markets (US, GB, CA, FR, CH, DE, ES, IT, LU, NL, SE, NO, IE). Implemented as a registry with English
+> as the only enabled language: see `lot-7a-foundation.md`. Localised slugs in the tables below are superseded.
+
 ## 1. Principles
 
 1. **One version per language** before any country version. A country version exists only when something material

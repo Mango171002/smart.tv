@@ -1,6 +1,7 @@
 import { siteConfig } from '@/config/site';
 import { OG_IMAGE } from '@/lib/seo';
 import { OWNER_FACTS } from '@/content/en/info';
+import { DEFAULT_LOCALE, localeSeo, type Locale } from '@/i18n/config';
 
 /**
  * Profiles listed in `sameAs`: stable public identities only. A Telegram invite link (t.me/+… or
@@ -13,7 +14,7 @@ export function sameAsProfiles(social: Record<string, string | null>): string[] 
 }
 
 /** JSON-LD (Organization + WebSite) for the home page. Only verified, public facts. */
-export function StructuredData({ description }: { description: string }) {
+export function StructuredData({ description, locale = DEFAULT_LOCALE }: { description: string; locale?: Locale }) {
   const url = siteConfig.siteUrl;
   const sameAs = sameAsProfiles(siteConfig.social);
   const data = {
@@ -57,7 +58,7 @@ export function StructuredData({ description }: { description: string }) {
         url: `${url}/`,
         name: siteConfig.brandName,
         description,
-        inLanguage: 'en',
+        inLanguage: localeSeo(locale).htmlLang,
         publisher: { '@id': `${url}/#organization` },
       },
     ],

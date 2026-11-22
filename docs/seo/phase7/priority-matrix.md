@@ -20,8 +20,8 @@
 
 | ID | Decision |
 |---|---|
-| D-P7-1 | URL prefixes: language-level `/fr`, `/es`, `/de` (recommended) or country-level `/fr-fr` … |
-| D-P7-2 | Localised slugs (`/fr/aide`) or English slugs under each prefix (`/fr/help`) |
+| D-P7-1 | URL prefixes: language-level `/fr`, `/es`, `/de` (recommended) or country-level `/fr-fr` … — **decided 22/11/2026: language prefixes** |
+| D-P7-2 | Localised slugs (`/fr/aide`) or English slugs under each prefix (`/fr/help`) — **decided 22/11/2026: English slugs** |
 | D-P7-3 | Markets served per language (and distribution rights for each) |
 | D-P7-4 | Native reviewers for FR, ES, DE |
 | D-P7-5 | Devices and app names to test for the first guides |

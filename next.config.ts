@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { formerPagePrefixes, legacyLanguageRedirects } from './src/i18n/locales';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -54,7 +55,7 @@ const nextConfig: NextConfig = {
   // Clean URLs (owner request): the site is served at / (no /en prefix). /en/* is the internal route.
   async redirects() {
     const former = Object.entries(FORMER_PAGES).flatMap(([path, anchor]) => [
-      { source: `/:locale(en|fr)${path}`, destination: `/${anchor}`, permanent: true },
+      { source: `/:locale(${formerPagePrefixes().join('|')})${path}`, destination: `/${anchor}`, permanent: true },
       { source: path, destination: `/${anchor}`, permanent: true },
     ]);
     return [
@@ -63,8 +64,9 @@ const nextConfig: NextConfig = {
       ...former,
       { source: '/en', destination: '/', permanent: true },
       { source: '/en/:path+', destination: '/:path+', permanent: true },
-      { source: '/fr', destination: '/', permanent: true },
-      { source: '/fr/:path*', destination: '/:path*', permanent: true },
+      // Former French URLs → English page, while French is disabled (generated from src/i18n/locales.ts).
+      // /de, /es, /it, /nl, /sv and /nb were never published: no redirect, they stay a 404 until their language is enabled.
+      ...legacyLanguageRedirects(),
     ];
   },
   async rewrites() {

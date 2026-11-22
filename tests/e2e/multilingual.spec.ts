@@ -67,7 +67,7 @@ for (const lang of BUILT) {
           await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
         }
         // Internal links stay in the language, except the English legal pages (marked hreflang="en").
-        const hrefs = await page.locator('main a[href^="/"], header a[href^="/"], footer a[href^="/"]').evaluateAll((as) => as.map((a) => [a.getAttribute('href') ?? '', a.getAttribute('hreflang')] as const));
+        const hrefs = await page.locator(':is(main, header, footer) a[href^="/"]:not([data-lang-switcher] a)').evaluateAll((as) => as.map((a) => [a.getAttribute('href') ?? '', a.getAttribute('hreflang')] as const));
         for (const [href, hl] of hrefs) {
           if (href.startsWith('/legal/')) { expect(hl, href).toBe('en'); continue; }
           expect(href, href).toMatch(new RegExp(`^/${lang}(/|#|$)`));

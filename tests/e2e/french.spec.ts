@@ -76,7 +76,7 @@ test.describe('French — preview / released', () => {
       const title = await page.title();
       expect(title.length, title).toBeLessThanOrEqual(60);
       // Internal links stay in French, except the English legal pages (marked hreflang="en").
-      const hrefs = await page.locator('main a[href^="/"], header a[href^="/"], footer a[href^="/"]').evaluateAll((as) => as.map((a) => [a.getAttribute('href') ?? '', a.getAttribute('hreflang')] as const));
+      const hrefs = await page.locator(':is(main, header, footer) a[href^="/"]:not([data-lang-switcher] a)').evaluateAll((as) => as.map((a) => [a.getAttribute('href') ?? '', a.getAttribute('hreflang')] as const));
       for (const [href, lang] of hrefs) {
         if (href.startsWith('/legal/')) continue;
         expect(href, href).toMatch(/^\/fr(\/|#|$)/);

@@ -7,12 +7,14 @@ import { useEffect, useState } from 'react';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { Brand } from './Brand';
+import { LanguageSwitcher, LanguageSwitcherMobile, navCollapse } from './LanguageSwitcher';
 import { openRequest } from './RequestHost';
 import { contentPagesEnabled } from '@/config/content-pages';
 import { localizedPath } from '@/lib/routes';
 
 export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
   const [open, setOpen] = useState(false);
+  const collapse = navCollapse(locale);
 
   useEffect(() => {
     if (!open) return;
@@ -30,7 +32,8 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
   ];
 
   return (
-    <header className="header">
+    // Several languages (preview / released builds only): header tuned for longer labels, see globals.css « header-multi ».
+    <header className={collapse ? 'header header-multi' : 'header'} data-collapse={collapse || undefined}>
       <div className="wrap nav">
         <Link href={localizedPath(locale)} title={nav.home} className="brand-link">
           <Brand />
@@ -42,6 +45,9 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
               {l.label}
             </a>
           ))}
+          {/* Language switcher (phase 9): dropdown on desktop, section of the menu on mobile; absent with one language. */}
+          <LanguageSwitcher locale={locale} />
+          <LanguageSwitcherMobile locale={locale} />
           <span className="nav-ctas">
             <button
               type="button"

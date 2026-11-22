@@ -1,5 +1,5 @@
 {
-  // PRIVATE STAGING — separate Worker, never the production one (« iptv-international » in wrangler.jsonc).
+  // PRIVATE STAGING — separate Worker, never the production one (the Worker defined in wrangler.jsonc).
   // Deployed only by .github/workflows/deploy-staging.yml (push to the branch claude/staging-deploy).
   // Protected by Cloudflare Access on staging.sygmatv.com (application « staging » created by the owner in Zero Trust).
   // Served through a Worker ROUTE on the owner's placeholder DNS record (staging AAAA 100::, proxied): Access is

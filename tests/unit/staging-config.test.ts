@@ -20,6 +20,10 @@ describe('staging Worker configuration (wrangler.staging.jsonc)', () => {
     expect(stg.preview_urls).toBe(false);
   });
 
+  it('never mentions the production Worker name anywhere (the deployment safety check refuses it)', () => {
+    expect(read('wrangler.staging.jsonc')).not.toContain(prod.name);
+  });
+
   it('has no scheduled job and no binding beyond static assets', () => {
     expect(stg.triggers).toEqual({ crons: [] });
     for (const k of ['durable_objects', 'kv_namespaces', 'r2_buckets', 'd1_databases', 'services', 'queues']) expect(stg[k], k).toBeUndefined();

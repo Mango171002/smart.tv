@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import en, { type Dictionary } from '@/i18n/dictionaries/en';
 import { ABOUT, HELP_HUB, HELP_TOPICS, INFO_UI, OWNER_FACTS, type InfoContentSet, type InfoPage } from '@/content/en/info';
+import { siteConfig } from '@/config/site';
 
 /**
  * Phase 8 — quality gate for every additional language (de, es, it, nl, sv, nb). Runs for each language whose files
@@ -62,11 +63,17 @@ function compare(a: unknown, b: unknown, path: string, out: string[], figures = 
 const UNIVERSAL = new Set(('sygma tv+ tv smart android fire apple google iphone ipad ios mac pc whatsapp hd full 4k ultra hdr epg vod usd ' +
   'paypal western union moneygram visa mastercard usdt binance starter plus ultra+ blog anime docs faq wi-fi email e-mail ' +
   'international streaming tennis basketball hockey marketing cookies google analytics microsoft clarity ads meta tiktok gtm ' +
-  'one world endless entertainment sygmatv.com support@sygmatv.com new mexico llc ein ok').split(' '));
+  'one world endless entertainment sygmatv com support@sygmatv new mexico llc ein ok').split(' '));
+/** Code values, not text: never translated (icons, ids, slugs, categories, links). */
+const CODE_KEYS = new Set(['icon', 'id', 'slug', 'cat', 'href', 'plansHref']);
+/** Company facts printed as is in every language (from src/config/site.ts). */
+const FACT_VALUES = new Set(Object.values(siteConfig).filter((v): v is string => typeof v === 'string'));
 function untranslated(a: unknown, b: unknown, allow: Set<string>, path = '', out: string[] = []): string[] {
+  const key = path.split('.').pop()?.replace(/\[\d+\]$/, '') ?? '';
+  if (CODE_KEYS.has(key)) return out;
   if (typeof a === 'string' && typeof b === 'string') {
-    if (a === b && !allow.has(a)) {
-      const words = a.toLowerCase().replace(/\*\*|\{\w+\}/g, ' ').match(/[a-z][a-z.+@-]*/g) ?? [];
+    if (a === b && !allow.has(a) && !FACT_VALUES.has(a)) {
+      const words = a.toLowerCase().replace(/\*\*|\{\w+\}/g, ' ').match(/[a-z0-9][a-z0-9+@-]*/g)?.filter((w) => /[a-z]/.test(w)) ?? [];
       if (words.some((w) => !UNIVERSAL.has(w))) out.push(`${path}: « ${a} »`);
     }
   } else if (Array.isArray(a) && Array.isArray(b)) a.forEach((x, i) => untranslated(x, b[i], allow, `${path}[${i}]`, out));

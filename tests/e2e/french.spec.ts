@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { RELEASED_LANGS, expectedSet } from './released';
 
 /**
  * Phase 7B — French preview.
@@ -8,7 +9,7 @@ import { expect, test } from '@playwright/test';
  * no hreflang, French order window. With E2E_CONTENT_PAGES=preview as well: French About and Help center.
  */
 /** Phase 7C: E2E_RELEASED=fr = build made with NEXT_PUBLIC_RELEASED_LANGUAGES=fr (French public: indexable, hreflang, sitemap). */
-const RELEASED = process.env.E2E_RELEASED === 'fr';
+const RELEASED = RELEASED_LANGS.includes('fr');
 const FR = process.env.E2E_SITE_MODE === 'preview' || RELEASED;
 const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
 const TOPICS = ['getting-started', 'devices', 'free-trial', 'ordering-payment', 'troubleshooting', 'contact-support', 'refunds'];
@@ -62,7 +63,7 @@ test.describe('French — preview / released', () => {
         // Reciprocal set, identical on the English page.
         const set = async () => Object.fromEntries(await page.locator('link[rel="alternate"][hreflang]').evaluateAll((ls) => ls.map((l) => [l.getAttribute('hreflang'), new URL(l.getAttribute('href')!).pathname])));
         const frSet = await set();
-        expect(frSet).toEqual({ en: '/', fr: '/fr', 'x-default': '/' });
+        expect(frSet).toEqual(expectedSet(''));
         await page.goto('/');
         expect(await set()).toEqual(frSet);
         await page.goto(p.path);
@@ -102,7 +103,7 @@ test.describe('French — preview / released', () => {
       const alt = (u: string) => [...u.matchAll(/hreflang="([^"]+)" href="([^"]+)"/g)].map((m) => `${m[1]}=${new URL(m[2]!).pathname}`).sort();
       const home = entry(new URL('/', xml.match(/<loc>([^<]+)<\/loc>/)![1]!).href);
       const frHome = xml.split('<url>').find((u) => /<loc>[^<]+\/fr<\/loc>/.test(u))!;
-      expect(alt(home)).toEqual(['en=/', 'fr=/fr', 'x-default=/']);
+      expect(alt(home)).toEqual(Object.entries(expectedSet('')).map(([k, v]) => `${k}=${v}`).sort());
       expect(alt(frHome)).toEqual(alt(home));
       expect(xml).not.toMatch(/\/fr\/legal|\/fr\/blog/);
     } else {
@@ -116,7 +117,7 @@ test.describe('French — preview / released', () => {
   test('English pages stay English, no visible link to French', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(RELEASED ? 3 : 0);
+    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(RELEASED ? RELEASED_LANGS.length + 2 : 0);
     await expect(page.locator('a[href^="/fr"]')).toHaveCount(0);
   });
 

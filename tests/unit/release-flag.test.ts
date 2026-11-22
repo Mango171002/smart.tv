@@ -25,7 +25,7 @@ describe('release flag (NEXT_PUBLIC_RELEASED_LANGUAGES)', () => {
     expect(RELEASED_LANGUAGES).toEqual([]);
     expect(LOCALES).toEqual(['en']);
     expect(PUBLIC_LOCALES).toEqual(['en']);
-    expect(previewLanguages().map((l) => l.code)).toEqual(['fr']);
+    expect(previewLanguages().map((l) => l.code)).toEqual(['fr', 'de', 'es', 'it', 'nl', 'sv', 'nb']);
   });
 
   it('is never set in the production configuration (env file, Cloudflare config, workflows)', () => {
@@ -41,16 +41,29 @@ describe('release flag (NEXT_PUBLIC_RELEASED_LANGUAGES)', () => {
     const released = applyRelease(REGISTRY, ['fr']);
     expect(enabledLanguages(released).map((l) => l.code)).toEqual(['en', 'fr']);
     expect(builtLanguages(released, false).map((l) => l.code)).toEqual(['en', 'fr']);
-    expect(previewLanguages(released)).toEqual([]);
-    expect(released.filter((l) => l.status === 'disabled').map((l) => l.code)).toEqual(['de', 'es', 'it', 'nl', 'sv', 'nb']);
+    expect(previewLanguages(released).map((l) => l.code)).toEqual(['de', 'es', 'it', 'nl', 'sv', 'nb']);
   });
 
   it('can never release a disabled language (no complete dictionary)', () => {
-    expect(enabledLanguages(applyRelease(REGISTRY, ['de', 'es', 'it', 'nl', 'sv', 'nb'])).map((l) => l.code)).toEqual(['en']);
+    const withDisabled = REGISTRY.map((l) => (l.code === 'de' ? { ...l, status: 'disabled' as const } : l));
+    expect(enabledLanguages(applyRelease(withDisabled, ['de'])).map((l) => l.code)).toEqual(['en']);
   });
 
   it('released French: /fr is served, former URLs point to the French home, legal URLs to the English pages (308)', () => {
     expect(legacyLanguageRedirects(applyRelease(REGISTRY, ['fr']), false)).toEqual([{ source: '/fr/legal/:path*', destination: '/legal/:path*', permanent: true }]);
+  });
+});
+
+describe('all eight languages released together (phase 8)', () => {
+  const all = applyRelease(REGISTRY, ['fr', 'de', 'es', 'it', 'nl', 'sv', 'nb']);
+  it('reciprocal hreflang across the eight languages + x-default, same English slugs', () => {
+    const set = hreflangAlternates('/help', { languages: all })!;
+    expect(set).toEqual({ en: '/help', fr: '/fr/help', de: '/de/help', es: '/es/help', it: '/it/help', nl: '/nl/help', sv: '/sv/help', nb: '/nb/help', 'x-default': '/help' });
+    expect(hreflangAlternates('', { languages: all })!['nb']).toBe('/nb');
+  });
+  it('legal pages stay English-only (no alternate); every language redirects its legal URLs to them', () => {
+    expect(hreflangAlternates('/legal/privacy', { languages: all, availableIn: ['en'] })).toBeUndefined();
+    expect(legacyLanguageRedirects(all, false).map((r) => r.source)).toEqual(['/fr', '/de', '/es', '/it', '/nl', '/sv', '/nb'].map((p) => `${p}/legal/:path*`));
   });
 });
 

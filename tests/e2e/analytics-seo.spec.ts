@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { RELEASED_LANGS } from './released';
 
 /**
  * Consent, analytics events and technical SEO.
@@ -241,8 +242,8 @@ test.describe('technical SEO', () => {
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/brand\/og-image\.jpg$/);
     await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
     await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
-    // hreflang only once French is released (E2E_RELEASED=fr): en, fr and x-default.
-    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(process.env.E2E_RELEASED === 'fr' ? 3 : 0);
+    // hreflang only once languages are released (E2E_RELEASED=fr,…): English, each released language, x-default.
+    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(RELEASED_LANGS.length ? RELEASED_LANGS.length + 2 : 0);
     const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
     const types = ld['@graph'].map((n: { '@type': string }) => n['@type']);
     expect(types).toEqual(['Organization', 'WebSite']);

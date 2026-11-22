@@ -28,9 +28,10 @@ describe('language registry (phase 7A)', () => {
   it('declares 8 languages; English is the only enabled one', () => {
     expect(ALL_LANGUAGE_CODES).toEqual(['en', 'fr', 'de', 'es', 'it', 'nl', 'sv', 'nb']);
     expect(enabledLanguages().map((l) => l.code)).toEqual(['en']);
-    // Phase 7B: French is in preview (built only in the preview environment); the six others stay disabled.
-    expect(previewLanguages().map((l) => l.code)).toEqual(['fr']);
-    expect(disabledLanguages().map((l) => l.code)).toEqual(DISABLED.filter((c) => c !== 'fr'));
+    // Phase 7B: French in preview; phase 8: the six other languages in preview too (built only in the preview
+    // environment, never public). No language is disabled any more.
+    expect(previewLanguages().map((l) => l.code)).toEqual(DISABLED);
+    expect(disabledLanguages().map((l) => l.code)).toEqual([]);
     expect(LOCALES).toEqual(['en']);
     expect(DEFAULT_LANGUAGE).toBe('en');
     for (const code of DISABLED) expect(isLocale(code)).toBe(false);

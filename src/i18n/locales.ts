@@ -64,12 +64,12 @@ export interface SiteLanguage {
 export const SITE_LANGUAGES = {
   en: { code: 'en', prefix: '', hreflang: 'en', htmlLang: 'en', ogLocale: 'en_US', intl: 'en-US', nativeName: 'English', markets: ['US', 'GB', 'CA', 'IE', 'LU', 'NL', 'SE', 'NO'], status: 'enabled' },
   fr: { code: 'fr', prefix: '/fr', hreflang: 'fr', htmlLang: 'fr', ogLocale: 'fr_FR', intl: 'fr-FR', nativeName: 'Français', markets: ['FR', 'CA', 'CH', 'LU'], status: 'preview' },
-  de: { code: 'de', prefix: '/de', hreflang: 'de', htmlLang: 'de', ogLocale: 'de_DE', intl: 'de-DE', nativeName: 'Deutsch', markets: ['DE', 'CH', 'LU'], status: 'disabled' },
-  es: { code: 'es', prefix: '/es', hreflang: 'es', htmlLang: 'es', ogLocale: 'es_ES', intl: 'es-ES', nativeName: 'Español', markets: ['ES'], status: 'disabled' },
-  it: { code: 'it', prefix: '/it', hreflang: 'it', htmlLang: 'it', ogLocale: 'it_IT', intl: 'it-IT', nativeName: 'Italiano', markets: ['IT', 'CH'], status: 'disabled' },
-  nl: { code: 'nl', prefix: '/nl', hreflang: 'nl', htmlLang: 'nl', ogLocale: 'nl_NL', intl: 'nl-NL', nativeName: 'Nederlands', markets: ['NL'], status: 'disabled' },
-  sv: { code: 'sv', prefix: '/sv', hreflang: 'sv', htmlLang: 'sv', ogLocale: 'sv_SE', intl: 'sv-SE', nativeName: 'Svenska', markets: ['SE'], status: 'disabled' },
-  nb: { code: 'nb', prefix: '/nb', hreflang: 'nb', htmlLang: 'nb', ogLocale: 'nb_NO', intl: 'nb-NO', nativeName: 'Norsk bokmål', markets: ['NO'], status: 'disabled' },
+  de: { code: 'de', prefix: '/de', hreflang: 'de', htmlLang: 'de', ogLocale: 'de_DE', intl: 'de-DE', nativeName: 'Deutsch', markets: ['DE', 'CH', 'LU'], status: 'preview' },
+  es: { code: 'es', prefix: '/es', hreflang: 'es', htmlLang: 'es', ogLocale: 'es_ES', intl: 'es-ES', nativeName: 'Español', markets: ['ES'], status: 'preview' },
+  it: { code: 'it', prefix: '/it', hreflang: 'it', htmlLang: 'it', ogLocale: 'it_IT', intl: 'it-IT', nativeName: 'Italiano', markets: ['IT', 'CH'], status: 'preview' },
+  nl: { code: 'nl', prefix: '/nl', hreflang: 'nl', htmlLang: 'nl', ogLocale: 'nl_NL', intl: 'nl-NL', nativeName: 'Nederlands', markets: ['NL'], status: 'preview' },
+  sv: { code: 'sv', prefix: '/sv', hreflang: 'sv', htmlLang: 'sv', ogLocale: 'sv_SE', intl: 'sv-SE', nativeName: 'Svenska', markets: ['SE'], status: 'preview' },
+  nb: { code: 'nb', prefix: '/nb', hreflang: 'nb', htmlLang: 'nb', ogLocale: 'nb_NO', intl: 'nb-NO', nativeName: 'Norsk bokmål', markets: ['NO'], status: 'preview' },
 } as const satisfies Record<string, SiteLanguage>;
 
 export type LanguageCode = keyof typeof SITE_LANGUAGES;
@@ -156,18 +156,16 @@ const isBuiltCode = (code: string, registry: readonly SiteLanguage[], preview: b
 
 /**
  * Redirects generated from the registry (consumed by next.config.ts). Production: same order and values as before
- * 7A. When a legacy language is built (preview environment, or once enabled), its prefix is served by the site, and
- * only its legal URLs keep pointing to the English legal pages (legal documents are not translated).
+ * 7A (only the former French URLs, while French is not built). Every built language other than English is served
+ * under its prefix, and only its legal URLs point to the English legal pages (legal documents are not translated).
  */
 export function legacyLanguageRedirects(registry: readonly SiteLanguage[] = ALL, preview = IS_PREVIEW_SITE) {
-  return LEGACY_REDIRECT_LANGUAGES.flatMap((code) =>
-    isBuiltCode(code, registry, preview)
-      ? [{ source: `/${code}/legal/:path*`, destination: '/legal/:path*', permanent: !preview }]
-      : [
-          { source: `/${code}`, destination: '/', permanent: true },
-          { source: `/${code}/:path*`, destination: '/:path*', permanent: true },
-        ],
-  );
+  const legacy = LEGACY_REDIRECT_LANGUAGES.filter((code) => !isBuiltCode(code, registry, preview)).flatMap((code) => [
+    { source: `/${code}`, destination: '/', permanent: true },
+    { source: `/${code}/:path*`, destination: '/:path*', permanent: true },
+  ]);
+  const legal = prefixedBuiltLanguages(registry, preview).map((l) => ({ source: `${l.prefix}/legal/:path*`, destination: '/legal/:path*', permanent: !preview }));
+  return [...legacy, ...legal];
 }
 
 /** Prefixes whose former one-page URLs (/en/plans, /fr/plans…) point to a section of the ENGLISH home. */

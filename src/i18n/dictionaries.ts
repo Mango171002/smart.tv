@@ -1,5 +1,11 @@
 import en, { type Dictionary } from './dictionaries/en';
 import fr from './dictionaries/fr';
+import de from './dictionaries/de';
+import es from './dictionaries/es';
+import it from './dictionaries/it';
+import nl from './dictionaries/nl';
+import sv from './dictionaries/sv';
+import nb from './dictionaries/nb';
 import type { Locale } from './config';
 
 /**
@@ -8,7 +14,7 @@ import type { Locale } from './config';
  * a language can never go live half-translated or fall back silently to English.
  * Translations are written or reviewed by native speakers from the validated English (never machine output).
  */
-const dictionaries: Record<Locale, Dictionary> = { en, fr };
+const dictionaries: Record<Locale, Dictionary> = { en, fr, de, es, it, nl, sv, nb };
 
 export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale];

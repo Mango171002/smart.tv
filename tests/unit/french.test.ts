@@ -142,9 +142,9 @@ describe('French preview mode: never public', () => {
   });
 
   it('preview environment builds French, production does not', () => {
-    expect(builtLanguages(undefined, true).map((l) => l.code)).toEqual(['en', 'fr']);
+    expect(builtLanguages(undefined, true).map((l) => l.code)).toEqual(['en', 'fr', 'de', 'es', 'it', 'nl', 'sv', 'nb']);
     expect(builtLanguages(undefined, false).map((l) => l.code)).toEqual(['en']);
-    expect(prefixedBuiltLanguages(undefined, true).map((l) => l.prefix)).toEqual(['/fr']);
+    expect(prefixedBuiltLanguages(undefined, true).map((l) => l.prefix)).toEqual(['/fr', '/de', '/es', '/it', '/nl', '/sv', '/nb']);
   });
 
   it('French preview pages are noindex, nofollow and outside hreflang', () => {
@@ -165,7 +165,8 @@ describe('French preview mode: never public', () => {
       { source: '/fr', destination: '/', permanent: true },
       { source: '/fr/:path*', destination: '/:path*', permanent: true },
     ]);
-    expect(legacyLanguageRedirects(undefined, true)).toEqual([{ source: '/fr/legal/:path*', destination: '/legal/:path*', permanent: false }]);
+    // Phase 8: every preview language is built in the preview environment; each one's legal URLs go to the English pages.
+    expect(legacyLanguageRedirects(undefined, true)).toEqual(['fr', 'de', 'es', 'it', 'nl', 'sv', 'nb'].map((c) => ({ source: `/${c}/legal/:path*`, destination: '/legal/:path*', permanent: false })));
   });
 
   it('anchors stay on the French home without a trailing slash (/fr#plans)', () => {

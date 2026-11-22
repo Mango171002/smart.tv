@@ -7,6 +7,7 @@ import { getInfo } from '@/content/info';
 import type { Locale } from '@/i18n/config';
 import { localizedPath } from '@/lib/routes';
 import type { Dictionary } from '@/i18n/dictionaries';
+import en from '@/i18n/dictionaries/en';
 import { Brand } from './Brand';
 import { ContactLink } from './FooterClient';
 
@@ -27,10 +28,9 @@ const SOCIAL_ICONS: Record<keyof typeof siteConfig.social, { label: string; path
 const FOOTER_LEGAL = ['terms', 'privacy', 'cookies', 'refunds', 'imprint'] as const;
 
 /** Icon per chip label (not per position: removing a chip must not shift the others' icons). */
-const CHIP_ICONS: Record<string, typeof Zap> = {
-  'Multi-device': MonitorSmartphone, 'HD to 4K': Zap, 'Free trial': Zap,
-  'Multi-écrans': MonitorSmartphone, 'Essai gratuit': Zap,
-};
+const CHIP_ICONS: Record<string, typeof Zap> = { 'Multi-device': MonitorSmartphone, 'HD to 4K': Zap, 'Free trial': Zap };
+/** Every language has the same chips in the same order as English (tested): the icon follows the English chip. */
+const EN_CHIPS = en.footer.chips;
 
 export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const f = dict.footer;
@@ -70,8 +70,8 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           <b className="footer-title">{f.aboutTitle.replace('{brand}', siteConfig.brandName)}</b>
           <p>{f.about}</p>
           <ul className="footer-chips">
-            {f.chips.map((c) => {
-              const Icon = CHIP_ICONS[c] ?? Zap;
+            {f.chips.map((c, i) => {
+              const Icon = CHIP_ICONS[EN_CHIPS[i] ?? ''] ?? Zap;
               return (
                 <li key={c}>
                   <Icon size={20} strokeWidth={1.75} aria-hidden="true" /> {c}

@@ -1,0 +1,62 @@
+# PRIVATE STAGING — deploys the Worker « sygma-staging » on https://staging.sygmatv.com (Cloudflare Access).
+# Runs ONLY on a push to the branch claude/staging-deploy. Never touches the production Worker
+# (« iptv-international »), its secrets, its cron, the Telegram webhook or IndexNow.
+# Prerequisite (owner, once): a Cloudflare Access application for staging.sygmatv.com (see docs/release/staging.md).
+name: Deploy private staging
+
+on:
+  push:
+    branches: ['claude/staging-deploy']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-staging
+  cancel-in-progress: false
+
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 9a7bb862febedb1b8e70a005037adee5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare the Cloudflare token
+        env:
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if printf '%s' "$RAW_TOKEN" | grep -q 'Bearer'; then
+            T="$(printf '%s' "$RAW_TOKEN" | tr '\n' ' ' | sed -E 's/.*Bearer[[:space:]]+([A-Za-z0-9_.-]+).*/\1/')"
+          else
+            T="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
+          fi
+          [ -n "$T" ] || { echo "::error::CLOUDFLARE_API_TOKEN secret missing."; exit 1; }
+          echo "::add-mask::$T"
+          echo "CLOUDFLARE_API_TOKEN=$T" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Staging settings (runner only) and safety checks
+        run: |
+          cp .env.staging .env.production
+          grep -qx 'NEXT_PUBLIC_ALLOW_INDEXING=false' .env.production || { echo "::error::staging must not be indexable"; exit 1; }
+          grep -qx 'FEATURE_CONTACT_FORM=false' .env.production || { echo "::error::contact form must be off"; exit 1; }
+          ! grep -q '^NEXT_PUBLIC_RELEASED_LANGUAGES' .env.production || { echo "::error::no language release on staging"; exit 1; }
+          grep -q '"name": "sygma-staging"' wrangler.staging.jsonc || { echo "::error::wrong Worker name"; exit 1; }
+          ! grep -q 'iptv-international' wrangler.staging.jsonc || { echo "::error::production Worker name found"; exit 1; }
+      - run: npm test
+      - name: Build and deploy the staging Worker
+        run: npx opennextjs-cloudflare build --config wrangler.staging.jsonc && npx opennextjs-cloudflare deploy --config wrangler.staging.jsonc
+      - name: Access protection check (takes staging down if it is public)
+        run: |
+          sleep 15
+          code="$(curl -s -o /dev/null -w '%{http_code}' https://staging.sygmatv.com/)"
+          echo "Unauthenticated request → HTTP $code"
+          if [ "$code" = "200" ]; then
+            echo "::error::staging.sygmatv.com answers without Cloudflare Access — deleting the staging Worker."
+            npx wrangler delete --config wrangler.staging.jsonc --force
+            exit 1
+          fi

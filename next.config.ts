@@ -111,6 +111,9 @@ const nextConfig: NextConfig = {
         ],
       },
       { source: '/api/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }, { key: 'X-Robots-Tag', value: 'noindex' }] },
+      // Private environments (indexing not allowed, e.g. staging): every URL also says noindex in the HTTP header.
+      // Production builds (NEXT_PUBLIC_ALLOW_INDEXING=true) are unchanged.
+      ...(process.env.NEXT_PUBLIC_ALLOW_INDEXING === 'true' ? [] : [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }]),
       // Preview languages (preview environment only): never indexable, whatever the page says.
       ...(IS_PREVIEW_SITE
         ? previewLanguages().flatMap((l) => [l.prefix, `${l.prefix}/:path*`].map((source) => ({ source, headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] })))

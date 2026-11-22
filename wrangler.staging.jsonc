@@ -1,0 +1,34 @@
+{
+  // PRIVATE STAGING — separate Worker, never the production one (« iptv-international » in wrangler.jsonc).
+  // Deployed only by .github/workflows/deploy-staging.yml (push to the branch claude/staging-deploy).
+  // Protected by Cloudflare Access on staging.sygmatv.com (policy created by the owner in Zero Trust).
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sygma-staging",
+  "main": "worker.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "staging.sygmatv.com", "custom_domain": true }],
+  // No scheduled job: no review invitations, no monitoring from staging.
+  "triggers": { "crons": [] },
+  // Every runtime variable is set explicitly, so nothing is filled from .env.production (OpenNext only fills
+  // variables that are not set). Empty Supabase settings = no database at all (prices from the built-in list,
+  // identical to the database prices); contact form off = no request stored, no email, no Telegram card.
+  // No secret is ever uploaded to this Worker.
+  "vars": {
+    "SUPABASE_URL": "",
+    "SUPABASE_PUBLISHABLE_KEY": "",
+    "SUPABASE_SECRET_KEY": "",
+    "FEATURE_CONTACT_FORM": "false",
+    "SALES_ENABLED": "false",
+    "TELEGRAM_BOT_TOKEN": "",
+    "BREVO_API_KEY": "",
+    "PAYMENT_WEBHOOK_SECRET": ""
+  }
+}

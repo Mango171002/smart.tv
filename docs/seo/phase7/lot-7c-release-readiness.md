@@ -45,10 +45,10 @@ the website, company details.
 |---|---|
 | TypeScript, ESLint | 0 errors |
 | Unit tests | 180 / 180 |
-| E2E — production build (CI configuration) | see section 5 |
-| E2E — content pages preview | see section 5 |
-| E2E — French preview | see section 5 |
-| E2E — French released (flag on) | see section 5 |
+| E2E — production build (CI configuration, no Inter font) | 165 passed, 0 failed |
+| E2E — content pages preview | 205 passed, 0 failed |
+| E2E — French preview (+ content pages) | 255 passed, 0 failed |
+| E2E — French released (flag on, + content pages) | 255 passed, 0 failed (axe, 7 widths, order window, 404, hreflang, sitemap) |
 | English output vs Phase 7B | 232 URLs identical in the three content-page modes; CSS byte-identical |
 | French released: canonical | Self-referencing on every French page |
 | French released: hreflang | `/` ↔ `/fr`, `/about` ↔ `/fr/about`, `/help` ↔ `/fr/help`, `/help/<topic>` ↔ `/fr/help/<topic>`: `en`, `fr`, `x-default` (→ English), identical on both sides; none on legal pages and on noindex pages |

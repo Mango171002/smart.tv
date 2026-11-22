@@ -31,7 +31,8 @@ import {
 import { planItem, track } from '@/lib/analytics';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Locale } from '@/i18n/config';
-import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
+import type { Dictionary } from '@/i18n/dictionaries';
+import { fill, plural } from '@/i18n/format';
 import { CATALOGUE } from '@/config/catalogue';
 import { displayMoney } from '@/lib/money-display';
 import { computeQuote, STREAMS, TERMS, TERM_MONTHS, TIERS, type PriceTable, type StreamCount, type Term, type Tier } from '@/lib/pricing';

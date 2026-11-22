@@ -12,7 +12,8 @@ import { CountryPicker, countryByCode, countryFlag } from './CountryPicker';
 import type { MarketCode } from '@/config/markets';
 import { DEVICE_DETAILS, DEVICE_DETAIL_KEYS, type DeviceDetail } from '@/config/devices';
 import type { Locale } from '@/i18n/config';
-import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
+import type { Dictionary } from '@/i18n/dictionaries';
+import { fill, plural } from '@/i18n/format';
 import type { PlanSelection } from '@/lib/pricing';
 import { displayMoneyWithCode } from '@/lib/money-display';
 

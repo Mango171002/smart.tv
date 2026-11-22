@@ -1,4 +1,18 @@
 @import 'tailwindcss';
+/* Translations are text, not markup: never scan them for class names (a word like « ring » would add CSS). */
+@source not '../i18n/dictionaries/de.ts';
+@source not '../content/de';
+@source not '../i18n/dictionaries/es.ts';
+@source not '../content/es';
+@source not '../i18n/dictionaries/it.ts';
+@source not '../content/it';
+@source not '../i18n/dictionaries/nl.ts';
+@source not '../content/nl';
+@source not '../i18n/dictionaries/sv.ts';
+@source not '../content/sv';
+@source not '../i18n/dictionaries/nb.ts';
+@source not '../content/nb';
+@source not '../../docs/i18n';
 
 /* ==========================================================================
    ELECTRIC FUSION NEON — official design system (approved, final)

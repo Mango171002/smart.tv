@@ -3,6 +3,7 @@ import { localizedPath } from '@/lib/routes';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
+import { legalHrefLang } from '@/i18n/format';
 import { Check, Play, CircleHelp, BadgeCheck, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
 import { HeroVideoToggle } from './HeroVideoToggle';
@@ -215,7 +216,7 @@ const FAQ_HIGHLIGHTS: { Icon: LucideIcon; cat: string }[] = [
   { Icon: ShieldCheck, cat: 'streaming' },
 ];
 
-export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
+export function Faq({ dict, limit, locale = 'en' }: { dict: Dictionary; limit?: number; locale?: Locale }) {
   const f = dict.faq;
   const items = limit ? f.items.slice(0, limit) : f.items;
   return (
@@ -258,7 +259,7 @@ export function Faq({ dict, limit }: { dict: Dictionary; limit?: number }) {
                 {'link' in item && item.link ? (
                   <>
                     {' '}
-                    <Link href={item.link.href}>{item.link.label}</Link>
+                    <Link href={item.link.href} {...legalHrefLang(item.link.href, locale)}>{item.link.label}</Link>
                   </>
                 ) : null}
               </p>
@@ -327,7 +328,8 @@ function ComparisonTable({ dict }: { dict: Dictionary }) {
       <h3 id="compare-title" className="section-title plans-title compare-title">
         {c.titleA} <span className="title-hl">{c.titleHl}</span>
       </h3>
-      <div className="compare-scroll">
+      {/* Scrolls sideways on narrow screens: focusable so keyboard users can scroll it (WCAG 2.1.1). */}
+      <div className="compare-scroll" role="region" aria-labelledby="compare-title" tabIndex={0}>
         <table className="compare-table">
           <thead>
             <tr>

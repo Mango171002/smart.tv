@@ -46,7 +46,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
       <HowItWorks locale={locale} dict={dict} />
-      <Faq dict={dict} />
+      <Faq dict={dict} locale={locale} />
       <CtaBanner locale={locale} dict={dict} fromMonthly={fromMonthly} />
     </>
   );

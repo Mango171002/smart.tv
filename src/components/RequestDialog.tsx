@@ -7,7 +7,8 @@ import { Brand } from './Brand';
 import countries from '@/config/countries.json';
 import { CountryPicker } from './CountryPicker';
 import type { Locale } from '@/i18n/config';
-import { fill, type Dictionary } from '@/i18n/dictionaries';
+import type { Dictionary } from '@/i18n/dictionaries';
+import { fill } from '@/i18n/format';
 
 export type RequestMode = 'trial' | 'support';
 

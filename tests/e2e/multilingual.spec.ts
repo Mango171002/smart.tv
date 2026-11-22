@@ -90,7 +90,7 @@ for (const lang of BUILT) {
       await dialog.getByLabel(d.checkout.emailLabel).fill('staging-check@example.test');
       await dialog.getByLabel(d.checkout.regionLabel).click();
       const country = new Intl.DisplayNames([lang], { type: 'region' }).of('CH')!;
-      await dialog.getByRole('combobox', { name: d.common.countrySearch }).fill(country.slice(0, 5));
+      await dialog.getByRole('combobox', { name: d.common.countrySearch }).fill(country);
       await page.keyboard.press('Enter');
       await dialog.getByLabel(d.checkout.phoneLabel).fill('79 123 45 67');
       await dialog.getByLabel(d.checkout.deviceLabel).selectOption('ios_mobile');

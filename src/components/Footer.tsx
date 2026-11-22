@@ -103,8 +103,9 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
               ...FOOTER_LEGAL.map((d) => (
                 <li key={d}><Link href={`/legal/${d}`} {...legalLang}>{f.legalLinks[d]}</Link></li>
               )),
-              // Only where the legal pages are in another language (French): nothing is rendered in English.
-              ...(f.legalLanguageNote ? [<li key="lang-note"><small>{f.legalLanguageNote}</small></li>] : []),
+              // Only where the legal pages are in another language: nothing is rendered in English. The note wraps (max 22ch) so
+              // that it never widens the column and squeezes the footer chips.
+              ...(f.legalLanguageNote ? [<li key="lang-note"><small style={{ display: 'block', maxWidth: '22ch' }}>{f.legalLanguageNote}</small></li>] : []),
             ]}
             <li><CookieSettingsButton label={dict.consent.settings} /></li>
           </ul>

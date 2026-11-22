@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { RELEASED_LANGS } from './released';
 
 /** Responsive layout: no horizontal scrolling, footer chips never overlap the next footer column, social icons stay inside the page margin. */
-const WIDTHS = [320, 375, 768, 1024, 1366, 1440, 1920];
+const WIDTHS = [320, 375, 768, 1024, 1280, 1366, 1440, 1920];
 const INFO = ['/about', '/help', '/help/getting-started', '/help/devices', '/help/free-trial', '/help/ordering-payment', '/help/troubleshooting', '/help/contact-support', '/help/refunds'];
 const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
 /** French preview (E2E_SITE_MODE=preview): the same checks on the French pages (longer strings). */
@@ -16,7 +16,7 @@ const PAGES = ['/', '/legal/terms', ...(CONTENT ? INFO : []), ...(FR ? ['/fr', .
 test.describe('responsive layout', () => {
   test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly (desktop project)'));
   for (const path of PAGES) {
-    test(`${path}: 7 widths, no horizontal overflow, footer chips inside their column`, async ({ page }) => {
+    test(`${path}: 8 widths, no horizontal overflow, footer chips inside their column`, async ({ page }) => {
       for (const width of WIDTHS) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(path);

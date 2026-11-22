@@ -22,13 +22,4 @@ export function getDictionary(locale: Locale): Dictionary {
 
 export type { Dictionary };
 
-/** Replaces `{name}` placeholders. */
-export function fill(template: string, values: Record<string, string | number>): string {
-  return template.replace(/\{(\w+)\}/g, (_, k: string) => String(values[k] ?? `{${k}}`));
-}
-
-export function plural(dict: Dictionary['common'], kind: 'month' | 'stream' | 'device', n: number): string {
-  const singular = dict[kind];
-  const many = dict[`${kind}s` as 'months' | 'streams' | 'devices'];
-  return n === 1 ? singular : fill(many, { n });
-}
+export { fill, plural } from './format';

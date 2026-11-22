@@ -2,7 +2,8 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { fill, type Dictionary } from '@/i18n/dictionaries';
+import type { Dictionary } from '@/i18n/dictionaries';
+import { fill } from '@/i18n/format';
 import { FEATURED_SCENES } from '@/components/visuals/featured-scenes';
 
 /** Generated artwork (npm run hero → public/images/featured-<scene>-<w>.avif|webp). */

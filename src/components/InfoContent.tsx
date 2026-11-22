@@ -8,6 +8,7 @@ import { siteConfig } from '@/config/site';
 import type { LegalSection } from '@/content/legal';
 import { INFO_UI, type InfoSection, type InfoUi } from '@/content/en/info';
 import s from './info.module.css';
+import { legalHrefLang } from '@/i18n/format';
 
 export const INFO_ICONS: Record<LegalSection['icon'], LucideIcon> = {
   info: Info, building: Building2, rocket: Rocket, tv: Tv, user: UserRound, tag: Tag, calendar: CalendarClock,
@@ -18,7 +19,7 @@ export const INFO_ICONS: Record<LegalSection['icon'], LucideIcon> = {
 };
 const CATS = ['live', 'sports', 'movies', 'streaming'] as const;
 
-function Sections({ sections }: { sections: InfoSection[] }) {
+function Sections({ sections, lang }: { sections: InfoSection[]; lang: string }) {
   return (
     <>
       {sections.map((sec, i) => {
@@ -55,7 +56,7 @@ function Sections({ sections }: { sections: InfoSection[] }) {
                   <ul key={j} className={s.linkGrid}>
                     {b.links.map((l) => (
                       <li key={l.href}>
-                        <Link className={s.linkCard} href={l.href}>
+                        <Link className={s.linkCard} href={l.href} {...legalHrefLang(l.href, lang)}>
                           <span><strong>{l.label}</strong><span className={s.linkText}>{l.text}</span></span>
                           <ArrowRight size={18} strokeWidth={1.75} aria-hidden="true" />
                         </Link>
@@ -84,12 +85,14 @@ function Sections({ sections }: { sections: InfoSection[] }) {
 
 /** Content-page body: same charter as the legal pages (numbered sections, icons, contact box), optional table of contents. */
 export function InfoContent({
-  sections, reviewed, related = [], contactIntro, toc = false, labels = INFO_UI.content, children,
+  sections, reviewed, related = [], contactIntro, toc = false, labels = INFO_UI.content, lang = 'en', children,
 }: {
   sections: InfoSection[];
   reviewed: string;
   /** Interface labels in the page language (English by default). */
   labels?: InfoUi['content'];
+  /** Page language: links to the English-only legal pages get hreflang="en" elsewhere. */
+  lang?: string;
   related?: Array<{ href: string; label: string }>;
   contactIntro: string;
   /** Sticky « On this page » list (desktop), stacked on mobile. */
@@ -101,7 +104,7 @@ export function InfoContent({
   const phone = siteConfig.supportPhone;
   const body = (
     <div className="terms-body">
-      <Sections sections={sections} />
+      <Sections sections={sections} lang={lang} />
       <section id="contact" className="terms-contact" aria-labelledby="contact-t">
         <h2 id="contact-t">{labels.contactUs}</h2>
         <p>{contactIntro}</p>
@@ -112,7 +115,7 @@ export function InfoContent({
         {children}
         {related.length > 0 && (
           <nav className={s.related} aria-label={labels.related}>
-            {related.map((r) => <Link key={r.href} href={r.href}>{r.label}</Link>)}
+            {related.map((r) => <Link key={r.href} href={r.href} {...legalHrefLang(r.href, lang)}>{r.label}</Link>)}
           </nav>
         )}
       </section>

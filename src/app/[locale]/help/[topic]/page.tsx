@@ -5,9 +5,11 @@ import { HelpActions } from '@/components/HelpActions';
 import { InfoContent } from '@/components/InfoContent';
 import { JsonLd } from '@/components/JsonLd';
 import { contentPagesEnabled } from '@/config/content-pages';
-import { HELP_HUB, HELP_SLUGS, HELP_TOPICS, INFO_REVIEWED, OWNER_FACTS as F, helpTopic } from '@/content/en/info';
+import { HELP_SLUGS } from '@/content/en/info';
+import { getInfo, helpTopicFor } from '@/content/info';
 import { LOCALES, isLocale } from '@/i18n/config';
 import { abs, infoMetadata, webPageLd } from '@/lib/info-pages';
+import { localizedPath } from '@/lib/routes';
 import s from '@/components/info.module.css';
 
 export const dynamicParams = false;
@@ -20,8 +22,9 @@ type Params = Promise<{ locale: string; topic: string }>;
 
 export async function generateMetadata({ params }: { params: Params }) {
   const { locale, topic } = await params;
-  const t = helpTopic(topic);
-  if (!contentPagesEnabled() || !isLocale(locale) || !t) return {};
+  if (!contentPagesEnabled() || !isLocale(locale)) return {};
+  const t = helpTopicFor(locale, topic);
+  if (!t) return {};
   return infoMetadata(locale, `/help/${t.slug}`, t.metaTitle, t.description);
 }
 
@@ -38,27 +41,31 @@ const CTA: Record<string, { trial: boolean; plans: boolean }> = {
 
 export default async function HelpTopicPage({ params }: { params: Params }) {
   const { locale, topic } = await params;
-  const t = helpTopic(topic);
-  if (!contentPagesEnabled() || !isLocale(locale) || !t) notFound();
-  const i = HELP_TOPICS.indexOf(t);
-  const prev = HELP_TOPICS[i - 1];
-  const next = HELP_TOPICS[i + 1];
-  const extra = t.slug === 'refunds' ? [{ href: '/legal/refunds', label: 'Full refund policy' }] : t.slug === 'ordering-payment' ? [{ href: '/legal/terms', label: 'Terms of Service' }] : [];
+  if (!contentPagesEnabled() || !isLocale(locale)) notFound();
+  const t = helpTopicFor(locale, topic);
+  if (!t) notFound();
+  const { hub, topics, reviewed, ui } = getInfo(locale);
+  const i = topics.indexOf(t);
+  const prev = topics[i - 1];
+  const next = topics[i + 1];
+  const extra = t.slug === 'refunds' ? [ui.refundPolicy] : t.slug === 'ordering-payment' ? [ui.terms] : [];
   const cta = CTA[t.slug] ?? { trial: false, plans: false };
+  const hubPath = localizedPath(locale, '/help');
+  const path = localizedPath(locale, `/help/${t.slug}`);
   return (
     <div className="wrap page-head" style={{ paddingBottom: 60 }}>
-      <Breadcrumbs items={[{ name: 'Home', path: '/' }, { name: HELP_HUB.name, path: '/help' }, { name: t.name, path: `/help/${t.slug}` }]} />
-      <div className="eyebrow">{HELP_HUB.name}</div>
+      <Breadcrumbs label={ui.breadcrumb} items={[{ name: ui.home, path: localizedPath(locale) }, { name: hub.name, path: hubPath }, { name: t.name, path }]} />
+      <div className="eyebrow">{hub.name}</div>
       <h1 className="page-title">{t.title}</h1>
       <p className="sub">{t.intro}</p>
-      <InfoContent sections={t.sections} reviewed={INFO_REVIEWED} toc contactIntro={`Still need help? Our team answers by email and on WhatsApp, ${F.supportHours}.`} related={[...extra, { href: '/help', label: 'All help topics' }]}>
-        <HelpActions trial={cta.trial} plans={cta.plans} />
+      <InfoContent sections={t.sections} reviewed={reviewed} labels={ui.content} toc contactIntro={ui.topicContact} related={[...extra, { href: hubPath, label: ui.allTopics }]}>
+        <HelpActions trial={cta.trial} plans={cta.plans} {...(locale === 'en' ? {} : { labels: ui.actions })} />
       </InfoContent>
-      <nav className={s.pager} aria-label="Help topics">
-        {prev && <Link href={`/help/${prev.slug}`}><small>Previous topic</small>{prev.name}</Link>}
-        {next && <Link className={s.next} href={`/help/${next.slug}`}><small>Next topic</small>{next.name}</Link>}
+      <nav className={s.pager} aria-label={ui.topics}>
+        {prev && <Link href={localizedPath(locale, `/help/${prev.slug}`)}><small>{ui.prevTopic}</small>{prev.name}</Link>}
+        {next && <Link className={s.next} href={localizedPath(locale, `/help/${next.slug}`)}><small>{ui.nextTopic}</small>{next.name}</Link>}
       </nav>
-      <JsonLd data={webPageLd('WebPage', `/help/${t.slug}`, t.title, t.description, { isPartOf: { '@id': `${abs('/help')}#webpage` } })} />
+      <JsonLd data={webPageLd('WebPage', path, t.title, t.description, { isPartOf: { '@id': `${abs(hubPath)}#webpage` } }, locale)} />
     </div>
   );
 }

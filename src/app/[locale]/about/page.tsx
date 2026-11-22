@@ -4,50 +4,47 @@ import { HelpActions } from '@/components/HelpActions';
 import { InfoContent } from '@/components/InfoContent';
 import { JsonLd } from '@/components/JsonLd';
 import { contentPagesEnabled } from '@/config/content-pages';
-import { siteConfig } from '@/config/site';
-import { ABOUT, INFO_REVIEWED, OWNER_FACTS as F } from '@/content/en/info';
+import { getInfo } from '@/content/info';
 import { isLocale } from '@/i18n/config';
 import { infoMetadata, ORG_REF, webPageLd } from '@/lib/info-pages';
+import { localizedPath } from '@/lib/routes';
 import s from '@/components/info.module.css';
 
 type Params = Promise<{ locale: string }>;
+const ACCENTS = ['var(--color-lime)', 'var(--color-cyan)', 'var(--color-magenta)', 'var(--color-violet)'];
 
 export async function generateMetadata({ params }: { params: Params }) {
   const { locale } = await params;
   if (!contentPagesEnabled() || !isLocale(locale)) return {};
-  return infoMetadata(locale, '/about', ABOUT.metaTitle, ABOUT.description);
+  const { about } = getInfo(locale);
+  return infoMetadata(locale, '/about', about.metaTitle, about.description);
 }
-
-const FACTS: Array<{ k: string; v: string; small?: string; accent: string }> = [
-  { k: 'Established', v: F.established, small: F.basedIn, accent: 'var(--color-lime)' },
-  { k: 'Company', v: siteConfig.legalEntity ?? '', small: 'New Mexico, USA', accent: 'var(--color-cyan)' },
-  { k: 'Support', v: F.supportHours, small: `Usually replies in ${F.usualReply}`, accent: 'var(--color-magenta)' },
-  { k: 'Support languages', v: String(F.languages.length), small: F.languages.join(' · '), accent: 'var(--color-violet)' },
-];
 
 export default async function AboutPage({ params }: { params: Params }) {
   const { locale } = await params;
   if (!contentPagesEnabled() || !isLocale(locale)) notFound();
+  const { about, reviewed, ui } = getInfo(locale);
+  const path = localizedPath(locale, '/about');
   return (
     <div className="wrap page-head" style={{ paddingBottom: 60 }}>
-      <Breadcrumbs items={[{ name: 'Home', path: '/' }, { name: ABOUT.name, path: '/about' }]} />
+      <Breadcrumbs label={ui.breadcrumb} items={[{ name: ui.home, path: localizedPath(locale) }, { name: about.name, path }]} />
       <header className={s.hero}>
-        <div className="eyebrow">{ABOUT.name}</div>
-        <h1 className="page-title">{ABOUT.title}</h1>
-        <p className={s.lead}>{ABOUT.intro}</p>
+        <div className="eyebrow">{about.name}</div>
+        <h1 className="page-title">{about.title}</h1>
+        <p className={s.lead}>{about.intro}</p>
         <dl className={s.facts}>
-          {FACTS.map((f) => (
-            <div key={f.k} className={s.fact} style={{ ['--accent' as string]: f.accent }}>
+          {ui.aboutFacts.map((f, i) => (
+            <div key={f.k} className={s.fact} style={{ ['--accent' as string]: ACCENTS[i % ACCENTS.length] }}>
               <dt>{f.k}</dt>
               <dd>{f.v}{f.small && <small>{f.small}</small>}</dd>
             </div>
           ))}
         </dl>
       </header>
-      <InfoContent sections={ABOUT.sections} reviewed={INFO_REVIEWED} toc contactIntro={`Questions about SYGMA TV+? Our team is available ${F.supportHours}.`}>
-        <HelpActions />
+      <InfoContent sections={about.sections} reviewed={reviewed} labels={ui.content} toc contactIntro={ui.aboutContact}>
+        <HelpActions {...(locale === 'en' ? {} : { labels: ui.actions })} />
       </InfoContent>
-      <JsonLd data={webPageLd('AboutPage', '/about', ABOUT.title, ABOUT.description, { about: ORG_REF(), mainEntity: ORG_REF() })} />
+      <JsonLd data={webPageLd('AboutPage', path, about.title, about.description, { about: ORG_REF(), mainEntity: ORG_REF() }, locale)} />
     </div>
   );
 }

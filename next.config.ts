@@ -1,5 +1,5 @@
 import type { NextConfig } from 'next';
-import { formerPagePrefixes, legacyLanguageRedirects } from './src/i18n/locales';
+import { IS_PREVIEW_SITE, formerPagePrefixes, legacyLanguageRedirects, prefixedBuiltLanguages, previewLanguages } from './src/i18n/locales';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -58,13 +58,20 @@ const nextConfig: NextConfig = {
       { source: `/:locale(${formerPagePrefixes().join('|')})${path}`, destination: `/${anchor}`, permanent: true },
       { source: path, destination: `/${anchor}`, permanent: true },
     ]);
+    // A built language other than English (French in the preview environment): its former one-page URLs point to
+    // a section of its own home page (/fr/plans → /fr#plans). Nothing is generated in production today.
+    const formerPrefixed = prefixedBuiltLanguages().flatMap((l) =>
+      Object.entries(FORMER_PAGES).map(([path, anchor]) => ({ source: `${l.prefix}${path}`, destination: `${l.prefix}${anchor}`, permanent: true })),
+    );
     return [
       // One canonical host: www.sygmatv.com → sygmatv.com (same path and query).
       { source: '/:path*', has: [{ type: 'host', value: 'www.sygmatv.com' }], destination: 'https://sygmatv.com/:path*', permanent: true },
       ...former,
+      ...formerPrefixed,
       { source: '/en', destination: '/', permanent: true },
       { source: '/en/:path+', destination: '/:path+', permanent: true },
-      // Former French URLs → English page, while French is disabled (generated from src/i18n/locales.ts).
+      // Former French URLs → English page, while French is not built (production: generated from src/i18n/locales.ts).
+      // Preview environment: /fr is served (French preview); only /fr/legal/* goes to the English legal pages.
       // /de, /es, /it, /nl, /sv and /nb were never published: no redirect, they stay a 404 until their language is enabled.
       ...legacyLanguageRedirects(),
     ];
@@ -101,6 +108,10 @@ const nextConfig: NextConfig = {
         ],
       },
       { source: '/api/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }, { key: 'X-Robots-Tag', value: 'noindex' }] },
+      // Preview languages (preview environment only): never indexable, whatever the page says.
+      ...(IS_PREVIEW_SITE
+        ? previewLanguages().flatMap((l) => [l.prefix, `${l.prefix}/:path*`].map((source) => ({ source, headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] })))
+        : []),
     ];
   },
 };

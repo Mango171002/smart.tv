@@ -166,7 +166,17 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   });
 
   test('former pages redirect to their section of the one-page site', async ({ request }) => {
-    for (const [from, to] of [['/en/plans', '/#plans'], ['/fr/help', '/#faq'], ['/en/devices', '/#content'], ['/fr/coverage', '/#content'], ['/en', '/'], ['/en/blog', '/blog']] as const) {
+    // The expected target depends on the build (routing unchanged): with the content pages on (E2E_CONTENT_PAGES=preview)
+    // /help is a page, so /fr/help follows the /fr/* → /* redirect to /help; with the French preview built
+    // (E2E_SITE_MODE=preview) the former French URLs point to the French home instead.
+    const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+    const FR = process.env.E2E_SITE_MODE === 'preview';
+    const cases: Array<readonly [string, string]> = [
+      ['/en/plans', '/#plans'], ['/en/devices', '/#content'], ['/en', '/'], ['/en/blog', '/blog'],
+      ['/fr/coverage', FR ? '/fr#content' : '/#content'],
+      ...(CONTENT ? (FR ? [] : [['/fr/help', '/help'] as const]) : [['/fr/help', FR ? '/fr#faq' : '/#faq'] as const]),
+    ];
+    for (const [from, to] of cases) {
       const res = await request.get(from, { maxRedirects: 0 });
       expect(res.status(), from).toBe(308);
       expect(res.headers()['location'], from).toMatch(new RegExp(`${to.replace('#', '\\#')}$`));

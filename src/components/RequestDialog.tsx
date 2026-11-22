@@ -198,6 +198,7 @@ export function RequestDialog({
                 searchLabel={dict.common.countrySearch}
                 noResult={dict.common.countryNoResult}
                 listLabel={dict.common.countryList}
+                locale={locale}
               />
               <div className="phone-input">
                 <Phone className="phone-icon" size={18} strokeWidth={1.75} aria-hidden="true" />

@@ -333,3 +333,63 @@ export const HELP_TOPICS: InfoPage[] = [
 
 export const helpTopic = (slug: string) => HELP_TOPICS.find((t) => t.slug === slug);
 export const HELP_SLUGS = HELP_TOPICS.map((t) => t.slug);
+
+/** Interface labels of the About / Help pages (per language: src/content/fr/info.ts for French). */
+export interface InfoUi {
+  home: string;
+  breadcrumb: string;
+  support: string;
+  popular: string;
+  topics: string;
+  glance: string;
+  helpFacts: Array<{ k: string; v: string; small: string }>;
+  aboutFacts: Array<{ k: string; v: string; small: string }>;
+  aboutContact: string;
+  hubContact: string;
+  topicContact: string;
+  hubRelated: Array<{ href: string; label: string }>;
+  refundPolicy: { href: string; label: string };
+  terms: { href: string; label: string };
+  allTopics: string;
+  prevTopic: string;
+  nextTopic: string;
+  content: { contactUs: string; email: string; phone: string; related: string; onThisPage: string; lastReviewed: string };
+  actions: { trial: string; support: string; plans: string; plansHref: string };
+}
+
+export const INFO_UI: InfoUi = {
+  home: 'Home',
+  breadcrumb: 'Breadcrumb',
+  support: 'Support',
+  popular: 'Popular questions',
+  topics: 'Help topics',
+  glance: 'Support at a glance',
+  helpFacts: [
+    { k: 'Availability', v: F.supportHours, small: 'Email and WhatsApp' },
+    { k: 'Usual reply time', v: 'Under an hour', small: 'Usual time, not a guarantee' },
+    { k: 'Languages', v: String(F.languages.length), small: F.languages.join(' · ') },
+    { k: 'Activation', v: 'Usually < 1 hour', small: 'Before payment, after your order is confirmed' },
+  ],
+  aboutFacts: [
+    { k: 'Established', v: F.established, small: F.basedIn },
+    { k: 'Company', v: siteConfig.legalEntity ?? '', small: 'New Mexico, USA' },
+    { k: 'Support', v: F.supportHours, small: `Usually replies in ${F.usualReply}` },
+    { k: 'Support languages', v: String(F.languages.length), small: F.languages.join(' · ') },
+  ],
+  aboutContact: `Questions about SYGMA TV+? Our team is available ${F.supportHours}.`,
+  hubContact: 'Can’t find your answer? Write to us — tell us your device and, if you have one, your order reference.',
+  topicContact: `Still need help? Our team answers by email and on WhatsApp, ${F.supportHours}.`,
+  hubRelated: [
+    { href: '/about', label: 'About us' },
+    { href: '/#faq', label: 'FAQ' },
+    { href: '/legal/refunds', label: 'Refunds & cancellations' },
+    { href: '/legal/terms', label: 'Terms of Service' },
+  ],
+  refundPolicy: { href: '/legal/refunds', label: 'Full refund policy' },
+  terms: { href: '/legal/terms', label: 'Terms of Service' },
+  allTopics: 'All help topics',
+  prevTopic: 'Previous topic',
+  nextTopic: 'Next topic',
+  content: { contactUs: 'Contact us', email: 'Email', phone: 'Phone / WhatsApp', related: 'Related pages', onThisPage: 'On this page', lastReviewed: 'Last reviewed: ' },
+  actions: { trial: 'Request a free trial', support: 'Contact support', plans: 'See the plans', plansHref: '/#plans' },
+};

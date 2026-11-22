@@ -6,11 +6,11 @@ import s from './info.module.css';
 export interface Crumb { name: string; path: string }
 
 /** Visible breadcrumb trail + BreadcrumbList structured data (same items, absolute URLs). */
-export function Breadcrumbs({ items }: { items: Crumb[] }) {
+export function Breadcrumbs({ items, label = 'Breadcrumb' }: { items: Crumb[]; label?: string }) {
   const abs = (p: string) => `${siteConfig.siteUrl}${p === '/' ? '/' : p}`;
   return (
     <>
-      <nav className={s.crumbs} aria-label="Breadcrumb">
+      <nav className={s.crumbs} aria-label={label}>
         <ol>
           {items.map((c, i) => (
             <li key={c.path}>

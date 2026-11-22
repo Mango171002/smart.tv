@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { siteConfig } from '@/config/site';
-import { DEFAULT_LOCALE, LOCALES, localeSeo, type Locale } from '@/i18n/config';
+import { DEFAULT_LOCALE, LOCALES, isPublicLocale, localeSeo, type Locale } from '@/i18n/config';
 import { DEFAULT_LANGUAGE, enabledLanguages, prefixedPath, type SiteLanguage } from '@/i18n/locales';
 import { localizedPath } from '@/lib/routes';
 
@@ -15,10 +15,15 @@ export const OG_IMAGE = { url: '/brand/og-image.jpg', width: 1200, height: 630, 
  */
 export const PAGE_AVAILABILITY: Readonly<Record<string, readonly Locale[]>> = {};
 
-/** Built languages in which a page exists. */
+/** Built languages in which a page exists (includes preview languages in the preview environment). */
 export function pageLocales(path: string): Locale[] {
   const only = PAGE_AVAILABILITY[path];
   return only ? LOCALES.filter((l) => only.includes(l)) : [...LOCALES];
+}
+
+/** Public (enabled) languages in which a page exists: sitemap entries, hreflang and og:locale:alternate. */
+export function publicPageLocales(path: string): Locale[] {
+  return pageLocales(path).filter(isPublicLocale);
 }
 
 /**
@@ -71,12 +76,14 @@ export function buildMetadata({
 }): Metadata {
   const url = canonicalPath(locale, path);
   const fullTitle = absoluteTitle ? title : `${title} | ${siteConfig.brandName}`;
-  const indexable = siteConfig.allowIndexing && !noindex;
+  // A preview language (phase 7B) is never indexable, whatever the environment.
+  const publicLocale = isPublicLocale(locale);
+  const indexable = siteConfig.allowIndexing && !noindex && publicLocale;
   // A noindex page is not part of the hreflang cluster (an alternate must be an indexable page).
-  const languages = indexable ? hreflangAlternates(path, { availableIn: pageLocales(path) }) : undefined;
+  const languages = indexable ? hreflangAlternates(path, { availableIn: publicPageLocales(path) }) : undefined;
   const seo = localeSeo(locale);
   const alternateLocale = languages
-    ? pageLocales(path).filter((l) => l !== locale).map((l) => localeSeo(l).ogLocale)
+    ? publicPageLocales(path).filter((l) => l !== locale).map((l) => localeSeo(l).ogLocale)
     : [];
   return {
     title: absoluteTitle ? { absolute: title } : title,
@@ -93,7 +100,7 @@ export function buildMetadata({
       images: [OG_IMAGE],
     },
     twitter: { card: 'summary_large_image', title: fullTitle, description, images: [OG_IMAGE.url] },
-    robots: indexable ? { index: true, follow: true } : { index: false, follow: true },
+    robots: indexable ? { index: true, follow: true } : publicLocale ? { index: false, follow: true } : { index: false, follow: false },
   };
 }
 

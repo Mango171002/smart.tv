@@ -4,6 +4,9 @@
  *
  * Status (decided here only, at build time):
  * - enabled:  built, served, indexable (when indexing is allowed), listed in the sitemap and in hreflang;
+ * - preview:  built ONLY in the private preview environment (NEXT_PUBLIC_SITE_MODE=preview, phase 7B), always
+ *             `noindex, nofollow` (meta + X-Robots-Tag), never in the sitemap, never in hreflang. In every other
+ *             build (production) it behaves exactly like « disabled » (the /fr redirects are kept);
  * - disabled: declared for planning only. No route is built (the [locale] segment uses
  *             `dynamicParams = false`), no URL in the sitemap, never referenced in hreflang.
  *
@@ -17,7 +20,10 @@
  *
  * This file has no path-alias imports: next.config.ts imports it (redirects generated from the registry).
  */
-export type LanguageStatus = 'enabled' | 'disabled';
+export type LanguageStatus = 'enabled' | 'preview' | 'disabled';
+
+/** Private preview environment: also builds the « preview » languages (never the production domain). */
+export const IS_PREVIEW_SITE = process.env.NEXT_PUBLIC_SITE_MODE === 'preview';
 
 /** ISO 3166-1 alpha-2 codes of the 13 priority markets (owner, phase 7A + addendum of 22/11/2026). */
 export const PRIORITY_MARKETS = ['US', 'GB', 'CA', 'FR', 'CH', 'DE', 'ES', 'IT', 'LU', 'NL', 'SE', 'NO', 'IE'] as const;
@@ -45,7 +51,7 @@ export interface SiteLanguage {
 
 export const SITE_LANGUAGES = {
   en: { code: 'en', prefix: '', hreflang: 'en', htmlLang: 'en', ogLocale: 'en_US', intl: 'en-US', nativeName: 'English', markets: ['US', 'GB', 'CA', 'IE', 'LU', 'NL', 'SE', 'NO'], status: 'enabled' },
-  fr: { code: 'fr', prefix: '/fr', hreflang: 'fr', htmlLang: 'fr', ogLocale: 'fr_FR', intl: 'fr-FR', nativeName: 'Français', markets: ['FR', 'CA', 'CH', 'LU'], status: 'disabled' },
+  fr: { code: 'fr', prefix: '/fr', hreflang: 'fr', htmlLang: 'fr', ogLocale: 'fr_FR', intl: 'fr-FR', nativeName: 'Français', markets: ['FR', 'CA', 'CH', 'LU'], status: 'preview' },
   de: { code: 'de', prefix: '/de', hreflang: 'de', htmlLang: 'de', ogLocale: 'de_DE', intl: 'de-DE', nativeName: 'Deutsch', markets: ['DE', 'CH', 'LU'], status: 'disabled' },
   es: { code: 'es', prefix: '/es', hreflang: 'es', htmlLang: 'es', ogLocale: 'es_ES', intl: 'es-ES', nativeName: 'Español', markets: ['ES'], status: 'disabled' },
   it: { code: 'it', prefix: '/it', hreflang: 'it', htmlLang: 'it', ogLocale: 'it_IT', intl: 'it-IT', nativeName: 'Italiano', markets: ['IT', 'CH'], status: 'disabled' },
@@ -55,9 +61,13 @@ export const SITE_LANGUAGES = {
 } as const satisfies Record<string, SiteLanguage>;
 
 export type LanguageCode = keyof typeof SITE_LANGUAGES;
-/** Codes of the enabled languages, as a type (a disabled language cannot be used as a page locale). */
+/** Codes of the enabled languages, as a type. */
 export type EnabledLanguageCode = {
   [K in LanguageCode]: (typeof SITE_LANGUAGES)[K]['status'] extends 'enabled' ? K : never;
+}[LanguageCode];
+/** Codes of the languages that can be built (enabled + preview): they need a complete dictionary. A disabled language cannot be a page locale. */
+export type BuildableLanguageCode = {
+  [K in LanguageCode]: (typeof SITE_LANGUAGES)[K]['status'] extends 'enabled' | 'preview' ? K : never;
 }[LanguageCode];
 
 /** The default language: served at the root, x-default of every hreflang set. */
@@ -80,15 +90,33 @@ export function isEnabledLanguage(code: string, registry: readonly SiteLanguage[
   return languageInfo(code, registry)?.status === 'enabled';
 }
 
+/** Built by this build: enabled languages, plus preview languages in the private preview environment. */
+export function isBuiltLanguage(l: SiteLanguage, preview = IS_PREVIEW_SITE): boolean {
+  return l.status === 'enabled' || (preview && l.status === 'preview');
+}
+
+/** Languages built by this build, default first. */
+export function builtLanguages(registry: readonly SiteLanguage[] = ALL, preview = IS_PREVIEW_SITE): SiteLanguage[] {
+  return registry.filter((l) => isBuiltLanguage(l, preview));
+}
+
+/** Languages in preview (built only in the preview environment, never public). */
+export function previewLanguages(registry: readonly SiteLanguage[] = ALL): SiteLanguage[] {
+  return registry.filter((l) => l.status === 'preview');
+}
+
 /** Languages declared but not published: their URL prefixes keep today's behaviour (see legacyLanguageRedirects). */
 export function disabledLanguages(registry: readonly SiteLanguage[] = ALL): SiteLanguage[] {
   return registry.filter((l) => l.status === 'disabled');
 }
 
-/** Public path of a page under a language prefix: '' → home; anchors stay on that language's home page. */
+/**
+ * Public path of a page under a language prefix: '' → home; anchors stay on that language's home page
+ * (/#plans, /fr#plans — no slash after the prefix: /fr/ would redirect to /fr and reload the page).
+ */
 export function prefixedPath(prefix: string, path = ''): string {
   if (!path) return prefix || '/';
-  return path.startsWith('#') ? `${prefix}/${path}` : `${prefix}${path}`;
+  return path.startsWith('#') ? `${prefix || '/'}${path}` : `${prefix}${path}`;
 }
 
 /** Enabled languages that target a market (e.g. CH → the enabled ones among fr, de, it). */
@@ -103,16 +131,33 @@ export function languagesForMarket(country: MarketCountry, registry: readonly Si
  */
 export const LEGACY_REDIRECT_LANGUAGES = ['fr'] as const;
 
-/** Redirects generated from the registry (consumed by next.config.ts). Same order and values as before 7A. */
-export function legacyLanguageRedirects(registry: readonly SiteLanguage[] = ALL) {
-  const legacy = LEGACY_REDIRECT_LANGUAGES.filter((code) => !isEnabledLanguage(code, registry));
-  return legacy.flatMap((code) => [
-    { source: `/${code}`, destination: '/', permanent: true },
-    { source: `/${code}/:path*`, destination: '/:path*', permanent: true },
-  ]);
+const isBuiltCode = (code: string, registry: readonly SiteLanguage[], preview: boolean) => {
+  const l = languageInfo(code, registry);
+  return Boolean(l && isBuiltLanguage(l, preview));
+};
+
+/**
+ * Redirects generated from the registry (consumed by next.config.ts). Production: same order and values as before
+ * 7A. When a legacy language is built (preview environment, or once enabled), its prefix is served by the site, and
+ * only its legal URLs keep pointing to the English legal pages (legal documents are not translated).
+ */
+export function legacyLanguageRedirects(registry: readonly SiteLanguage[] = ALL, preview = IS_PREVIEW_SITE) {
+  return LEGACY_REDIRECT_LANGUAGES.flatMap((code) =>
+    isBuiltCode(code, registry, preview)
+      ? [{ source: `/${code}/legal/:path*`, destination: '/legal/:path*', permanent: !preview }]
+      : [
+          { source: `/${code}`, destination: '/', permanent: true },
+          { source: `/${code}/:path*`, destination: '/:path*', permanent: true },
+        ],
+  );
 }
 
-/** Prefixes whose former one-page URLs (/en/plans, /fr/plans…) point to a home section. */
-export function formerPagePrefixes(registry: readonly SiteLanguage[] = ALL): string[] {
-  return [DEFAULT_LANGUAGE, ...LEGACY_REDIRECT_LANGUAGES.filter((code) => !isEnabledLanguage(code, registry))];
+/** Prefixes whose former one-page URLs (/en/plans, /fr/plans…) point to a section of the ENGLISH home. */
+export function formerPagePrefixes(registry: readonly SiteLanguage[] = ALL, preview = IS_PREVIEW_SITE): string[] {
+  return [DEFAULT_LANGUAGE, ...LEGACY_REDIRECT_LANGUAGES.filter((code) => !isBuiltCode(code, registry, preview))];
+}
+
+/** Built languages other than the default: their former one-page URLs point to a section of their own home (/fr/plans → /fr#plans). */
+export function prefixedBuiltLanguages(registry: readonly SiteLanguage[] = ALL, preview = IS_PREVIEW_SITE): SiteLanguage[] {
+  return builtLanguages(registry, preview).filter((l) => l.prefix !== '');
 }

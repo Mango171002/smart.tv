@@ -10,7 +10,7 @@ import { Header } from '@/components/Header';
 import { Analytics } from '@/components/Analytics';
 import { ConsentBanner } from '@/components/ConsentBanner';
 import { siteConfig } from '@/config/site';
-import { LOCALES, isLocale, localeSeo } from '@/i18n/config';
+import { LOCALES, isLocale, isPublicLocale, localeSeo } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
 import { OG_IMAGE } from '@/lib/seo';
 import { CONSENT_DEFAULT_SCRIPT } from '@/lib/consent-default';
@@ -27,11 +27,13 @@ export const viewport: Viewport = { themeColor: '#070d17', width: 'device-width'
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const dict = getDictionary(isLocale(locale) ? locale : 'en');
+  // A preview language (phase 7B) is never indexable: default robots for all its pages (each page also sets it).
+  const preview = isLocale(locale) && !isPublicLocale(locale);
   return {
     metadataBase: new URL(siteConfig.siteUrl),
     title: { default: `${siteConfig.brandName} — ${dict.meta.siteTitle}`, template: `%s | ${siteConfig.brandName}` },
     description: dict.meta.homeDescription,
-    robots: siteConfig.allowIndexing ? undefined : { index: false, follow: false },
+    robots: siteConfig.allowIndexing && !preview ? undefined : { index: false, follow: false },
     applicationName: siteConfig.brandName,
     openGraph: { siteName: siteConfig.brandName, images: [OG_IMAGE] },
     twitter: { card: 'summary_large_image', images: [OG_IMAGE.url] },

@@ -9,6 +9,7 @@ import {
   SITE_LANGUAGES,
   type SiteLanguage,
   disabledLanguages,
+  previewLanguages,
   enabledLanguages,
   formerPagePrefixes,
   languagesForMarket,
@@ -27,7 +28,9 @@ describe('language registry (phase 7A)', () => {
   it('declares 8 languages; English is the only enabled one', () => {
     expect(ALL_LANGUAGE_CODES).toEqual(['en', 'fr', 'de', 'es', 'it', 'nl', 'sv', 'nb']);
     expect(enabledLanguages().map((l) => l.code)).toEqual(['en']);
-    expect(disabledLanguages().map((l) => l.code)).toEqual(DISABLED);
+    // Phase 7B: French is in preview (built only in the preview environment); the six others stay disabled.
+    expect(previewLanguages().map((l) => l.code)).toEqual(['fr']);
+    expect(disabledLanguages().map((l) => l.code)).toEqual(DISABLED.filter((c) => c !== 'fr'));
     expect(LOCALES).toEqual(['en']);
     expect(DEFAULT_LANGUAGE).toBe('en');
     for (const code of DISABLED) expect(isLocale(code)).toBe(false);
@@ -165,8 +168,8 @@ describe('redirects preserved (generated from the registry)', () => {
     expect(formerPagePrefixes()).toEqual(['en', 'fr']);
   });
 
-  it('are removed in the same release that enables French', () => {
-    expect(legacyLanguageRedirects(withEnabled('fr'))).toEqual([]);
+  it('are removed in the same release that enables French (legal URLs keep pointing to the English pages)', () => {
+    expect(legacyLanguageRedirects(withEnabled('fr'))).toEqual([{ source: '/fr/legal/:path*', destination: '/legal/:path*', permanent: true }]);
     expect(formerPagePrefixes(withEnabled('fr'))).toEqual(['en']);
   });
 

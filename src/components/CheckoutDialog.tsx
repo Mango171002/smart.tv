@@ -183,7 +183,7 @@ export function CheckoutDialog({
     }
   }
 
-  const countryName = countryByCode(country)?.name;
+  const countryName = countryByCode(country, locale)?.name;
   const regionLabel = countryName ? `${countryFlag(country)} ${countryName}` : '';
   const planLabel = `${dict.plans.tiers[selection.tier].name} · ${dict.plans.terms[selection.term]} · ${plural(dict.common, 'device', selection.streams)}`;
   const subtotal = quote ? `${formatMoney(quote.amountMinor, quote.currency, locale)} ${quote.currency}` : clientPrice;
@@ -273,6 +273,7 @@ export function CheckoutDialog({
                   searchLabel={dict.common.countrySearch}
                   noResult={dict.common.countryNoResult}
                   listLabel={dict.common.countryList}
+                  locale={locale}
                   icon={<MapPin size={20} strokeWidth={1.75} aria-hidden="true" />}
                   invalid={!!fieldError.region}
                   describedBy={fieldError.region ? 'prereg-region-err' : undefined}
@@ -292,6 +293,7 @@ export function CheckoutDialog({
                   searchLabel={dict.common.countrySearch}
                   noResult={dict.common.countryNoResult}
                   listLabel={dict.common.countryList}
+                  locale={locale}
                 />
                 <div className="phone-input">
                   <Phone className="phone-icon" size={18} strokeWidth={1.75} aria-hidden="true" />

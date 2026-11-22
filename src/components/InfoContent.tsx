@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import type { LegalSection } from '@/content/legal';
-import type { InfoSection } from '@/content/en/info';
+import { INFO_UI, type InfoSection, type InfoUi } from '@/content/en/info';
 import s from './info.module.css';
 
 export const INFO_ICONS: Record<LegalSection['icon'], LucideIcon> = {
@@ -84,10 +84,12 @@ function Sections({ sections }: { sections: InfoSection[] }) {
 
 /** Content-page body: same charter as the legal pages (numbered sections, icons, contact box), optional table of contents. */
 export function InfoContent({
-  sections, reviewed, related = [], contactIntro, toc = false, children,
+  sections, reviewed, related = [], contactIntro, toc = false, labels = INFO_UI.content, children,
 }: {
   sections: InfoSection[];
   reviewed: string;
+  /** Interface labels in the page language (English by default). */
+  labels?: InfoUi['content'];
   related?: Array<{ href: string; label: string }>;
   contactIntro: string;
   /** Sticky « On this page » list (desktop), stacked on mobile. */
@@ -101,15 +103,15 @@ export function InfoContent({
     <div className="terms-body">
       <Sections sections={sections} />
       <section id="contact" className="terms-contact" aria-labelledby="contact-t">
-        <h2 id="contact-t">Contact us</h2>
+        <h2 id="contact-t">{labels.contactUs}</h2>
         <p>{contactIntro}</p>
         <ul>
-          {email && (<li><Mail size={20} strokeWidth={1.75} aria-hidden="true" /><span>Email</span><a href={`mailto:${email}`}>{email}</a></li>)}
-          {phone && (<li><Phone size={20} strokeWidth={1.75} aria-hidden="true" /><span>Phone / WhatsApp</span><a href={`tel:${phone.replace(/\s/g, '')}`}>{phone}</a></li>)}
+          {email && (<li><Mail size={20} strokeWidth={1.75} aria-hidden="true" /><span>{labels.email}</span><a href={`mailto:${email}`}>{email}</a></li>)}
+          {phone && (<li><Phone size={20} strokeWidth={1.75} aria-hidden="true" /><span>{labels.phone}</span><a href={`tel:${phone.replace(/\s/g, '')}`}>{phone}</a></li>)}
         </ul>
         {children}
         {related.length > 0 && (
-          <nav className={s.related} aria-label="Related pages">
+          <nav className={s.related} aria-label={labels.related}>
             {related.map((r) => <Link key={r.href} href={r.href}>{r.label}</Link>)}
           </nav>
         )}
@@ -118,14 +120,14 @@ export function InfoContent({
   );
   return (
     <div className={`terms ${s.info}`}>
-      <p className="terms-meta">Last reviewed: {reviewed}</p>
+      <p className="terms-meta">{labels.lastReviewed}{reviewed}</p>
       {toc && sections.length > 1 ? (
         <div className="terms-layout">
-          <nav className={`terms-toc ${s.toc}`} aria-label="On this page">
-            <b>On this page</b>
+          <nav className={`terms-toc ${s.toc}`} aria-label={labels.onThisPage}>
+            <b>{labels.onThisPage}</b>
             <ol>
               {sections.map((sec) => <li key={sec.id}><a href={`#${sec.id}`}>{sec.title}</a></li>)}
-              <li><a href="#contact">Contact us</a></li>
+              <li><a href="#contact">{labels.contactUs}</a></li>
             </ol>
           </nav>
           {body}

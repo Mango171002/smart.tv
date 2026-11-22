@@ -9,8 +9,9 @@ import type { Dictionary } from '@/i18n/dictionaries';
 import { Brand } from './Brand';
 import { openRequest } from './RequestHost';
 import { contentPagesEnabled } from '@/config/content-pages';
+import { localizedPath } from '@/lib/routes';
 
-export function Header({ locale: _locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
+export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -22,16 +23,16 @@ export function Header({ locale: _locale, nav }: { locale: Locale; nav: Dictiona
 
   // One-page site: the menu scrolls to sections of the home page.
   const links = [
-    { href: `/#plans`, label: nav.plans },
-    { href: `/#how`, label: nav.how },
-    { href: contentPagesEnabled() ? '/help' : `/#faq`, label: nav.help },
+    { href: localizedPath(locale, '#plans'), label: nav.plans },
+    { href: localizedPath(locale, '#how'), label: nav.how },
+    { href: localizedPath(locale, contentPagesEnabled() ? '/help' : '#faq'), label: nav.help },
     // Blog link hidden until the first article is published (owner decision, 18/11/2026); /blog stays noindex.
   ];
 
   return (
     <header className="header">
       <div className="wrap nav">
-        <Link href="/" title={nav.home} className="brand-link">
+        <Link href={localizedPath(locale)} title={nav.home} className="brand-link">
           <Brand />
         </Link>
         <nav id="navlinks" className={`links${open ? ' open' : ''}`} aria-label={nav.label}>
@@ -53,7 +54,7 @@ export function Header({ locale: _locale, nav }: { locale: Locale; nav: Dictiona
             >
               {nav.trial}
             </button>
-            <a className="btn btn-sm btn-lime" href={`/#plans`} onClick={() => setOpen(false)}>
+            <a className="btn btn-sm btn-lime" href={localizedPath(locale, '#plans')} onClick={() => setOpen(false)}>
               {nav.getStarted}
             </a>
           </span>

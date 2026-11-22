@@ -12,20 +12,35 @@ export interface Country {
 
 const ALL: Country[] = [...countries].sort((a, b) => a.name.localeCompare(b.name, 'en'));
 
+/**
+ * Country list in the page language: English names from countries.json; other languages use the browser's
+ * own country names (Intl.DisplayNames), sorted for that language. Codes and dial codes never change.
+ */
+const BY_LOCALE = new Map<string, Country[]>([['en', ALL]]);
+export function countriesFor(locale = 'en'): Country[] {
+  const cached = BY_LOCALE.get(locale);
+  if (cached) return cached;
+  let names: Intl.DisplayNames | null = null;
+  try { names = new Intl.DisplayNames([locale], { type: 'region' }); } catch { names = null; }
+  const list = ALL.map((c) => ({ ...c, name: names?.of(c.code) ?? c.name })).sort((a, b) => a.name.localeCompare(b.name, locale));
+  BY_LOCALE.set(locale, list);
+  return list;
+}
+
 /** Flag emoji from an ISO 3166-1 alpha-2 code. */
 export const countryFlag = (code: string) => String.fromCodePoint(...[...code].map((ch) => 0x1f1a5 + ch.charCodeAt(0)));
-export const countryByCode = (code: string) => ALL.find((c) => c.code === code);
+export const countryByCode = (code: string, locale = 'en') => countriesFor(locale).find((c) => c.code === code);
 
 const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
 /** Countries matching the query: names starting with it first, then a word starting with it, then names containing it, codes and dial codes. */
-function search(q: string): Country[] {
+function search(q: string, list: Country[] = ALL): Country[] {
   const n = norm(q).replace(/^\+/, '');
-  if (!n) return ALL;
+  if (!n) return list;
   const starts: Country[] = [];
   const words: Country[] = [];
   const other: Country[] = [];
-  for (const c of ALL) {
+  for (const c of list) {
     const name = norm(c.name);
     if (name.startsWith(n)) starts.push(c);
     else if (name.split(/[\s&(),.-]+/).some((w) => w.startsWith(n))) words.push(c);
@@ -51,6 +66,7 @@ export function CountryPicker({
   icon,
   invalid,
   describedBy,
+  locale = 'en',
 }: {
   id?: string;
   value: string;
@@ -64,6 +80,8 @@ export function CountryPicker({
   icon?: ReactNode;
   invalid?: boolean;
   describedBy?: string;
+  /** Language of the country names (English by default). */
+  locale?: string;
 }) {
   const uid = useId();
   const listId = `${uid}-list`;
@@ -73,8 +91,8 @@ export function CountryPicker({
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
   const list = useRef<HTMLUListElement>(null);
-  const results = useMemo(() => search(query), [query]);
-  const selected = countryByCode(value);
+  const results = useMemo(() => search(query, countriesFor(locale)), [query, locale]);
+  const selected = countryByCode(value, locale);
 
   // Close when clicking outside.
   useEffect(() => {

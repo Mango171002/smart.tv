@@ -3,7 +3,9 @@ import { contentPagesEnabled } from '@/config/content-pages';
 import { CookieSettingsButton } from './ConsentBanner';
 import { MonitorSmartphone, ShieldCheck, Zap } from 'lucide-react';
 import { siteConfig } from '@/config/site';
+import { getInfo } from '@/content/info';
 import type { Locale } from '@/i18n/config';
+import { localizedPath } from '@/lib/routes';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { Brand } from './Brand';
 import { ContactLink } from './FooterClient';
@@ -25,10 +27,16 @@ const SOCIAL_ICONS: Record<keyof typeof siteConfig.social, { label: string; path
 const FOOTER_LEGAL = ['terms', 'privacy', 'cookies', 'refunds', 'imprint'] as const;
 
 /** Icon per chip label (not per position: removing a chip must not shift the others' icons). */
-const CHIP_ICONS: Record<string, typeof Zap> = { 'Multi-device': MonitorSmartphone, 'HD to 4K': Zap, 'Secure & private': ShieldCheck };
+const CHIP_ICONS: Record<string, typeof Zap> = {
+  'Multi-device': MonitorSmartphone, 'HD to 4K': Zap, 'Secure & private': ShieldCheck,
+  'Multi-écrans': MonitorSmartphone, 'Sûr et privé': ShieldCheck,
+};
 
-export function Footer({ locale: _locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const f = dict.footer;
+  const info = getInfo(locale);
+  /** Legal documents are in English only: in another language, the links say so (hreflang) and a note is shown. */
+  const legalLang = locale === 'en' ? {} : { hrefLang: 'en' };
   const socials = [
     ...(Object.keys(SOCIAL_ICONS) as (keyof typeof SOCIAL_ICONS)[]).map((k) => ({ key: k, ...SOCIAL_ICONS[k], href: siteConfig.social[k] })),
   ];
@@ -75,14 +83,14 @@ export function Footer({ locale: _locale, dict }: { locale: Locale; dict: Dictio
         <nav aria-label={f.linksTitle} className="footer-col">
           <b className="footer-title">{f.linksTitle}</b>
           <ul>
-            <li><Link href={`/#plans`}>{dict.nav.plans}</Link></li>
-            <li><Link href={`/#how`}>{dict.nav.how}</Link></li>
+            <li><Link href={localizedPath(locale, '#plans')}>{dict.nav.plans}</Link></li>
+            <li><Link href={localizedPath(locale, '#how')}>{dict.nav.how}</Link></li>
             {/* With the Help center published, « Help / FAQ » would duplicate it: the link keeps its target and reads « FAQ ». */}
-            <li><Link href={`/#faq`}>{contentPagesEnabled() ? 'FAQ' : f.helpFaq}</Link></li>
+            <li><Link href={localizedPath(locale, '#faq')}>{contentPagesEnabled() ? 'FAQ' : f.helpFaq}</Link></li>
             {contentPagesEnabled() && (
               <>
-                <li><Link href="/help">Help center</Link></li>
-                <li><Link href="/about">About us</Link></li>
+                <li><Link href={localizedPath(locale, '/help')}>{info.hub.name}</Link></li>
+                <li><Link href={localizedPath(locale, '/about')}>{info.about.name}</Link></li>
               </>
             )}
             <li><ContactLink label={f.contact} /></li>
@@ -91,9 +99,13 @@ export function Footer({ locale: _locale, dict }: { locale: Locale; dict: Dictio
         <nav aria-label={f.legalTitle} className="footer-col">
           <b className="footer-title">{f.legalTitle}</b>
           <ul>
-            {FOOTER_LEGAL.map((d) => (
-              <li key={d}><Link href={`/legal/${d}`}>{f.legalLinks[d]}</Link></li>
-            ))}
+            {[
+              ...FOOTER_LEGAL.map((d) => (
+                <li key={d}><Link href={`/legal/${d}`} {...legalLang}>{f.legalLinks[d]}</Link></li>
+              )),
+              // Only where the legal pages are in another language (French): nothing is rendered in English.
+              ...(f.legalLanguageNote ? [<li key="lang-note"><small>{f.legalLanguageNote}</small></li>] : []),
+            ]}
             <li><CookieSettingsButton label={dict.consent.settings} /></li>
           </ul>
         </nav>

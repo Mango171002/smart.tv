@@ -2,15 +2,19 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { LegalContent } from '@/components/LegalContent';
 import { imprintComplete } from '@/content/legal';
-import { LOCALES, isLocale } from '@/i18n/config';
+import { DEFAULT_LOCALE, isLocale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
 import { LEGAL_DOCS, type LegalDoc } from '@/lib/routes';
 import { buildMetadata } from '@/lib/seo';
 
 export const dynamicParams = false;
 
+/**
+ * Legal documents exist in English only (validated texts; no translated legal page is published).
+ * Other languages link to these English pages; /fr/legal/* redirects to them (next.config.ts).
+ */
 export function generateStaticParams() {
-  return LOCALES.flatMap((locale) => LEGAL_DOCS.map((doc) => ({ locale, doc })));
+  return LEGAL_DOCS.map((doc) => ({ locale: DEFAULT_LOCALE, doc }));
 }
 
 type Params = Promise<{ locale: string; doc: string }>;
@@ -19,7 +23,7 @@ const isDoc = (d: string): d is LegalDoc => (LEGAL_DOCS as readonly string[]).in
 
 export async function generateMetadata({ params }: { params: Params }) {
   const { locale, doc } = await params;
-  if (!isLocale(locale) || !isDoc(doc)) return {};
+  if (!isLocale(locale) || locale !== DEFAULT_LOCALE || !isDoc(doc)) return {};
   const dict = getDictionary(locale);
   const d = dict.legal.docs[doc];
   return buildMetadata({ locale, path: `/legal/${doc}`, title: d.title, description: d.metaDescription });
@@ -27,7 +31,7 @@ export async function generateMetadata({ params }: { params: Params }) {
 
 export default async function LegalPage({ params }: { params: Params }) {
   const { locale, doc } = await params;
-  if (!isLocale(locale) || !isDoc(doc)) notFound();
+  if (!isLocale(locale) || locale !== DEFAULT_LOCALE || !isDoc(doc)) notFound();
   const dict = getDictionary(locale);
   const d = dict.legal.docs[doc];
   return (

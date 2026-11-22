@@ -20,7 +20,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const fromMonthly = formatMoney(starter.monthlyEquivalentMinor ?? starter.amountMinor, table.currency, locale);
   return (
     <>
-      <StructuredData description={dict.meta.homeDescription} />
+      <StructuredData description={dict.meta.homeDescription} locale={locale} />
       <Hero locale={locale} dict={dict} />
       <ContentCategories locale={locale} dict={dict} showHeading={false} />
       {/* Below-the-fold islands hydrate only when they come near the viewport. */}

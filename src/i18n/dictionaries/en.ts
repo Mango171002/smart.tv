@@ -560,4 +560,5 @@ const en = {
 };
 
 export default en;
-export type Dictionary = typeof en;
+/** Shape of every dictionary. `footer.legalLanguageNote`: shown only where the legal pages are in another language (not in English). */
+export type Dictionary = Omit<typeof en, 'footer'> & { footer: (typeof en)['footer'] & { legalLanguageNote?: string } };

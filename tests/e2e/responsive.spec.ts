@@ -2,7 +2,12 @@ import { expect, test } from '@playwright/test';
 
 /** Responsive layout: no horizontal scrolling, footer chips never overlap the next footer column, social icons stay inside the page margin. */
 const WIDTHS = [320, 375, 768, 1024, 1366, 1440, 1920];
-const PAGES = ['/', '/legal/terms', ...(process.env.E2E_CONTENT_PAGES === 'preview' ? ['/about', '/help', '/help/getting-started', '/help/devices', '/help/free-trial', '/help/ordering-payment', '/help/troubleshooting', '/help/contact-support', '/help/refunds'] : [])];
+const INFO = ['/about', '/help', '/help/getting-started', '/help/devices', '/help/free-trial', '/help/ordering-payment', '/help/troubleshooting', '/help/contact-support', '/help/refunds'];
+const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+/** French preview (E2E_SITE_MODE=preview): the same checks on the French pages (longer strings). */
+const FR = process.env.E2E_SITE_MODE === 'preview';
+const HOMES = ['/', ...(FR ? ['/fr'] : [])];
+const PAGES = ['/', '/legal/terms', ...(CONTENT ? INFO : []), ...(FR ? ['/fr', ...(CONTENT ? INFO.map((p) => `/fr${p}`) : [])] : [])];
 
 test.describe('responsive layout', () => {
   test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly (desktop project)'));
@@ -39,7 +44,7 @@ test.describe('responsive layout', () => {
         expect(r.socialRight, `${path} @${width}px social icons`).toBeLessThanOrEqual(r.contentRight + 1);
         expect(r.tierOverflow, `${path} @${width}px plan lines wrapped or outside their card`).toEqual([]);
         // New pages only (/about, /help…): sections stay inside the page column (the legal pages are not changed here).
-        if (!path.startsWith('/legal') && path !== '/') expect(r.sectionsRight, `${path} @${width}px sections`).toBeLessThanOrEqual(r.contentRight + 1);
+        if (!path.startsWith('/legal') && !HOMES.includes(path)) expect(r.sectionsRight, `${path} @${width}px sections`).toBeLessThanOrEqual(r.contentRight + 1);
         if (r.nextLeft !== null) expect(r.chipsRight, `${path} @${width}px overlap`).toBeLessThanOrEqual(r.nextLeft);
       }
     });

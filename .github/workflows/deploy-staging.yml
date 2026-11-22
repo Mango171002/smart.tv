@@ -39,12 +39,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Staging settings (runner only) and safety checks
+      - name: Staging settings safety checks
         run: |
-          cp .env.staging .env.production
-          grep -qx 'NEXT_PUBLIC_ALLOW_INDEXING=false' .env.production || { echo "::error::staging must not be indexable"; exit 1; }
-          grep -qx 'FEATURE_CONTACT_FORM=false' .env.production || { echo "::error::contact form must be off"; exit 1; }
-          ! grep -q '^NEXT_PUBLIC_RELEASED_LANGUAGES' .env.production || { echo "::error::no language release on staging"; exit 1; }
+          grep -qx 'NEXT_PUBLIC_ALLOW_INDEXING=false' .env.staging || { echo "::error::staging must not be indexable"; exit 1; }
+          grep -qx 'FEATURE_CONTACT_FORM=false' .env.staging || { echo "::error::contact form must be off"; exit 1; }
+          ! grep -q '^NEXT_PUBLIC_RELEASED_LANGUAGES' .env.staging || { echo "::error::no language release on staging"; exit 1; }
           grep -q '"name": "sygma-staging"' wrangler.staging.jsonc || { echo "::error::wrong Worker name"; exit 1; }
           ! grep -q 'iptv-international' wrangler.staging.jsonc || { echo "::error::production Worker name found"; exit 1; }
       - name: Cloudflare Access must already protect the hostname (otherwise nothing is deployed)
@@ -58,7 +57,10 @@ jobs:
               *) echo "::error::Access is not protecting staging.sygmatv.com$path — nothing deployed."; exit 1 ;;
             esac
           done
+      # Unit tests run on the repository as committed (they check that production files never enable a preview).
       - run: npm test
+      - name: Apply the staging build settings (runner only, after the tests)
+        run: cp .env.staging .env.production
       - name: Build and deploy the staging Worker
         run: npx opennextjs-cloudflare build --config wrangler.staging.jsonc && npx opennextjs-cloudflare deploy --config wrangler.staging.jsonc
       - name: Access protection check (takes staging down if it is public)

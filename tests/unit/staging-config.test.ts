@@ -61,6 +61,10 @@ describe('staging build settings (.env.staging) and workflow', () => {
     // Access is checked BEFORE the build and deploy step, and again after it.
     expect(wf.indexOf('Access must already protect')).toBeGreaterThan(0);
     expect(wf.indexOf('Access must already protect')).toBeLessThan(wf.indexOf('opennextjs-cloudflare deploy'));
+    // The staging settings replace .env.production only AFTER the unit tests (Deploy private staging #2 failed
+    // because the tests saw the staging file in place of the production one) and BEFORE the build.
+    expect(wf.indexOf('npm test')).toBeLessThan(wf.indexOf('cp .env.staging .env.production'));
+    expect(wf.indexOf('cp .env.staging .env.production')).toBeLessThan(wf.indexOf('opennextjs-cloudflare build'));
     for (const re of [/secret put/, /setWebhook/i, /indexnow/i, /TELEGRAM_BOT_TOKEN|BREVO_API_KEY|SUPABASE_SECRET_KEY/]) expect(wf, String(re)).not.toMatch(re);
   });
 

@@ -14,7 +14,8 @@ describe('staging Worker configuration (wrangler.staging.jsonc)', () => {
   it('is a separate Worker on staging.sygmatv.com only', () => {
     expect(stg.name).toBe('sygma-staging');
     expect(stg.name).not.toBe(prod.name);
-    expect(stg.routes).toEqual([{ pattern: 'staging.sygmatv.com', custom_domain: true }]);
+    // Route on the owner's proxied placeholder record: Access is active before the Worker exists.
+    expect(stg.routes).toEqual([{ pattern: 'staging.sygmatv.com/*', zone_name: 'sygmatv.com' }]);
     expect(stg.workers_dev).toBe(false);
     expect(stg.preview_urls).toBe(false);
   });
@@ -53,6 +54,9 @@ describe('staging build settings (.env.staging) and workflow', () => {
     expect(wf).toMatch(/branches: \['claude\/staging-deploy'\]/);
     expect(wf).not.toMatch(/workflow_dispatch|intelligent-shannon|\bmain\b/);
     expect(wf).toMatch(/--config wrangler\.staging\.jsonc/g);
+    // Access is checked BEFORE the build and deploy step, and again after it.
+    expect(wf.indexOf('Access must already protect')).toBeGreaterThan(0);
+    expect(wf.indexOf('Access must already protect')).toBeLessThan(wf.indexOf('opennextjs-cloudflare deploy'));
     for (const re of [/secret put/, /setWebhook/i, /indexnow/i, /TELEGRAM_BOT_TOKEN|BREVO_API_KEY|SUPABASE_SECRET_KEY/]) expect(wf, String(re)).not.toMatch(re);
   });
 

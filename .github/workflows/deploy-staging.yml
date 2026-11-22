@@ -47,6 +47,17 @@ jobs:
           ! grep -q '^NEXT_PUBLIC_RELEASED_LANGUAGES' .env.production || { echo "::error::no language release on staging"; exit 1; }
           grep -q '"name": "sygma-staging"' wrangler.staging.jsonc || { echo "::error::wrong Worker name"; exit 1; }
           ! grep -q 'iptv-international' wrangler.staging.jsonc || { echo "::error::production Worker name found"; exit 1; }
+      - name: Cloudflare Access must already protect the hostname (otherwise nothing is deployed)
+        run: |
+          # Without a login, Access answers with a redirect to the Cloudflare Access login page (or 401/403).
+          for path in / /api/health /fr; do
+            out="$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "https://staging.sygmatv.com$path")"
+            echo "Before deploy, unauthenticated $path → $out"
+            case "$out" in
+              30[1237]\ https://*.cloudflareaccess.com/*|401\ *|403\ *) ;;
+              *) echo "::error::Access is not protecting staging.sygmatv.com$path — nothing deployed."; exit 1 ;;
+            esac
+          done
       - run: npm test
       - name: Build and deploy the staging Worker
         run: npx opennextjs-cloudflare build --config wrangler.staging.jsonc && npx opennextjs-cloudflare deploy --config wrangler.staging.jsonc

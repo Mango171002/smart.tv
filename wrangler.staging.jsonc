@@ -1,7 +1,9 @@
 {
   // PRIVATE STAGING — separate Worker, never the production one (« iptv-international » in wrangler.jsonc).
   // Deployed only by .github/workflows/deploy-staging.yml (push to the branch claude/staging-deploy).
-  // Protected by Cloudflare Access on staging.sygmatv.com (policy created by the owner in Zero Trust).
+  // Protected by Cloudflare Access on staging.sygmatv.com (application « staging » created by the owner in Zero Trust).
+  // Served through a Worker ROUTE on the owner's placeholder DNS record (staging AAAA 100::, proxied): Access is
+  // therefore active on the hostname BEFORE the Worker is deployed, and is checked by the workflow first.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "sygma-staging",
   "main": "worker.ts",
@@ -14,7 +16,7 @@
   "observability": { "enabled": true },
   "workers_dev": false,
   "preview_urls": false,
-  "routes": [{ "pattern": "staging.sygmatv.com", "custom_domain": true }],
+  "routes": [{ "pattern": "staging.sygmatv.com/*", "zone_name": "sygmatv.com" }],
   // No scheduled job: no review invitations, no monitoring from staging.
   "triggers": { "crons": [] },
   // Every runtime variable is set explicitly, so nothing is filled from .env.production (OpenNext only fills

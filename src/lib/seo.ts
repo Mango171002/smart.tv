@@ -2,18 +2,20 @@ import type { Metadata } from 'next';
 import { siteConfig } from '@/config/site';
 import { DEFAULT_LOCALE, LOCALES, isPublicLocale, localeSeo, type Locale } from '@/i18n/config';
 import { DEFAULT_LANGUAGE, enabledLanguages, prefixedPath, type SiteLanguage } from '@/i18n/locales';
-import { localizedPath } from '@/lib/routes';
+import { LEGAL_DOCS, localizedPath } from '@/lib/routes';
 
 /** Social sharing image (1200×630). */
 export const OG_IMAGE = { url: '/brand/og-image.jpg', width: 1200, height: 630, alt: 'SYGMA TV+ — One World. Endless Entertainment.' };
 
 /**
  * Pages that exist only in some languages. A page not listed here exists in every built language (all pages
- * are served by the [locale] segment). When a language is enabled before all of its pages are translated,
- * list the untranslated paths here so that no hreflang (nor sitemap alternate) points to a missing page.
- * Empty today: English is the only built language.
+ * are served by the [locale] segment). Untranslated paths are listed here so that no hreflang (nor sitemap
+ * alternate) points to a missing page. The legal documents are English only (not translated; /fr/legal/*
+ * redirects to the English page).
  */
-export const PAGE_AVAILABILITY: Readonly<Record<string, readonly Locale[]>> = {};
+export const PAGE_AVAILABILITY: Readonly<Record<string, readonly Locale[]>> = Object.fromEntries(
+  LEGAL_DOCS.map((d) => [`/legal/${d}`, ['en'] as const]),
+);
 
 /** Built languages in which a page exists (includes preview languages in the preview environment). */
 export function pageLocales(path: string): Locale[] {

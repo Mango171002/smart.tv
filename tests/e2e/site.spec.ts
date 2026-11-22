@@ -22,7 +22,8 @@ test.describe('routing & SEO', () => {
       expect(res?.status(), route).toBe(200);
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
-      await expect(page.locator('link[rel="alternate"][hreflang="fr"]')).toHaveCount(0);
+      // French released (E2E_RELEASED=fr): the English home lists its French version; nothing else (legal and blog stay English-only / noindex).
+      await expect(page.locator('link[rel="alternate"][hreflang="fr"]')).toHaveCount(process.env.E2E_RELEASED === 'fr' && route === '/' ? 1 : 0);
       titles.add(`${route}:${await page.title()}`);
     }
     expect(titles.size).toBeGreaterThanOrEqual(ROUTES.length - 1);
@@ -170,7 +171,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     // /help is a page, so /fr/help follows the /fr/* → /* redirect to /help; with the French preview built
     // (E2E_SITE_MODE=preview) the former French URLs point to the French home instead.
     const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
-    const FR = process.env.E2E_SITE_MODE === 'preview';
+    const FR = process.env.E2E_SITE_MODE === 'preview' || process.env.E2E_RELEASED === 'fr';
     const cases: Array<readonly [string, string]> = [
       ['/en/plans', '/#plans'], ['/en/devices', '/#content'], ['/en', '/'], ['/en/blog', '/blog'],
       ['/fr/coverage', FR ? '/fr#content' : '/#content'],

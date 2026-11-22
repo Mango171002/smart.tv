@@ -92,6 +92,9 @@ const nextConfig: NextConfig = {
       ],
       // Unknown paths are no longer rewritten into /en: they match no route and get the branded
       // app/global-not-found.tsx page (HTTP 404, noindex).
+      // Phase 7C: unknown URLs under a built language prefix (/fr/… — preview environment or once released) get
+      // that language's 404 page instead (HTTP 404). Nothing is generated in production today.
+      fallback: prefixedBuiltLanguages().map((l) => ({ source: `${l.prefix}/:path+`, destination: `${l.prefix}/page-not-found` })),
     };
   },
   async headers() {

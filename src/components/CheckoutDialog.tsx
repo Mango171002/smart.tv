@@ -13,7 +13,8 @@ import type { MarketCode } from '@/config/markets';
 import { DEVICE_DETAILS, DEVICE_DETAIL_KEYS, type DeviceDetail } from '@/config/devices';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
-import { formatMoney, type PlanSelection } from '@/lib/pricing';
+import type { PlanSelection } from '@/lib/pricing';
+import { displayMoneyWithCode } from '@/lib/money-display';
 
 type Step = 1 | 2 | 3;
 
@@ -186,7 +187,7 @@ export function CheckoutDialog({
   const countryName = countryByCode(country, locale)?.name;
   const regionLabel = countryName ? `${countryFlag(country)} ${countryName}` : '';
   const planLabel = `${dict.plans.tiers[selection.tier].name} · ${dict.plans.terms[selection.term]} · ${plural(dict.common, 'device', selection.streams)}`;
-  const subtotal = quote ? `${formatMoney(quote.amountMinor, quote.currency, locale)} ${quote.currency}` : clientPrice;
+  const subtotal = quote ? displayMoneyWithCode(quote.amountMinor, quote.currency, locale) : clientPrice;
 
   // Rendered in <body> through a portal: a transformed ancestor (e.g. a card's hover
   // lift) would otherwise become the containing block of this fixed overlay.

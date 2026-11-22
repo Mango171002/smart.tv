@@ -7,7 +7,9 @@ import { expect, test } from '@playwright/test';
  * With E2E_SITE_MODE=preview (build made with NEXT_PUBLIC_SITE_MODE=preview): French pages, noindex, no sitemap,
  * no hreflang, French order window. With E2E_CONTENT_PAGES=preview as well: French About and Help center.
  */
-const FR = process.env.E2E_SITE_MODE === 'preview';
+/** Phase 7C: E2E_RELEASED=fr = build made with NEXT_PUBLIC_RELEASED_LANGUAGES=fr (French public: indexable, hreflang, sitemap). */
+const RELEASED = process.env.E2E_RELEASED === 'fr';
+const FR = process.env.E2E_SITE_MODE === 'preview' || RELEASED;
 const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
 const TOPICS = ['getting-started', 'devices', 'free-trial', 'ordering-payment', 'troubleshooting', 'contact-support', 'refunds'];
 
@@ -26,8 +28,8 @@ test.describe('French — production build (not built)', () => {
   });
 });
 
-test.describe('French — preview', () => {
-  test.skip(!FR, 'needs a build with NEXT_PUBLIC_SITE_MODE=preview');
+test.describe('French — preview / released', () => {
+  test.skip(!FR, 'needs a build with NEXT_PUBLIC_SITE_MODE=preview or NEXT_PUBLIC_RELEASED_LANGUAGES=fr');
 
   const pages = [
     { path: '/fr', h1: /Le streaming premium/ },
@@ -42,14 +44,31 @@ test.describe('French — preview', () => {
   ];
 
   for (const p of pages) {
-    test(`${p.path}: French, noindex/nofollow (meta + header), self canonical, no hreflang`, async ({ page }) => {
+    test(`${p.path}: French, ${RELEASED ? 'public (indexable where English is)' : 'noindex/nofollow (meta + header)'}, self canonical, hreflang`, async ({ page }) => {
       const res = await page.goto(p.path);
       expect(res?.status()).toBe(200);
-      expect(res?.headers()['x-robots-tag']).toBe('noindex, nofollow');
       await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
-      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`${p.path}$`));
-      await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+      // Indexable French pages = the home (the blog is noindex, the content pages are noindex in « preview » mode).
+      const indexable = RELEASED && p.path === '/fr';
+      if (RELEASED) {
+        expect(res?.headers()['x-robots-tag']).toBeUndefined();
+        await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', indexable ? 'index, follow' : 'noindex, follow');
+      } else {
+        expect(res?.headers()['x-robots-tag']).toBe('noindex, nofollow');
+        await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
+      }
+      if (indexable) {
+        // Reciprocal set, identical on the English page.
+        const set = async () => Object.fromEntries(await page.locator('link[rel="alternate"][hreflang]').evaluateAll((ls) => ls.map((l) => [l.getAttribute('hreflang'), new URL(l.getAttribute('href')!).pathname])));
+        const frSet = await set();
+        expect(frSet).toEqual({ en: '/', fr: '/fr', 'x-default': '/' });
+        await page.goto('/');
+        expect(await set()).toEqual(frSet);
+        await page.goto(p.path);
+      } else {
+        await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+      }
       await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', 'fr_FR');
       await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(p.h1);
@@ -76,18 +95,28 @@ test.describe('French — preview', () => {
     expect(res.headers()['location']).toBe('/legal/privacy');
   });
 
-  test('sitemap and robots: no French URL, English unchanged', async ({ request }) => {
+  test(`sitemap and robots: ${RELEASED ? 'French home listed with reciprocal alternates' : 'no French URL'}`, async ({ request }) => {
     const xml = await (await request.get('/sitemap.xml')).text();
-    expect(xml).not.toMatch(/\/fr[/<]/);
-    expect(xml).not.toMatch(/xhtml:link/);
+    if (RELEASED) {
+      const entry = (loc: string) => xml.split('<url>').find((u) => u.includes(`<loc>${loc}</loc>`))!;
+      const alt = (u: string) => [...u.matchAll(/hreflang="([^"]+)" href="([^"]+)"/g)].map((m) => `${m[1]}=${new URL(m[2]!).pathname}`).sort();
+      const home = entry(new URL('/', xml.match(/<loc>([^<]+)<\/loc>/)![1]!).href);
+      const frHome = xml.split('<url>').find((u) => /<loc>[^<]+\/fr<\/loc>/.test(u))!;
+      expect(alt(home)).toEqual(['en=/', 'fr=/fr', 'x-default=/']);
+      expect(alt(frHome)).toEqual(alt(home));
+      expect(xml).not.toMatch(/\/fr\/legal|\/fr\/blog/);
+    } else {
+      expect(xml).not.toMatch(/\/fr[/<]/);
+      expect(xml).not.toMatch(/xhtml:link/);
+    }
     const robots = await (await request.get('/robots.txt')).text();
     expect(robots).toMatch(/Sitemap:/);
   });
 
-  test('English pages are not affected: English, no hreflang, no link to French', async ({ page }) => {
+  test('English pages stay English, no visible link to French', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(RELEASED ? 3 : 0);
     await expect(page.locator('a[href^="/fr"]')).toHaveCount(0);
   });
 
@@ -121,10 +150,24 @@ test.describe('French — preview', () => {
     await expect(dialog.getByTestId('review-region')).toContainText('Suisse');
     await expect(dialog).toContainText('active votre accès, puis vous envoie les instructions de paiement');
     // Same price as the English page (pricing unchanged), French number format.
-    await expect(dialog.getByTestId('review-price')).toHaveText(/^\d+(,\d{2})?\s\$\sUSD$/);
+    await expect(dialog.getByTestId('review-price')).toHaveText(/^\d+(,\d{2})?\s\$\sUS$/);
     await dialog.getByRole('button', { name: /Confirmer ma commande/ }).click();
     await expect(dialog.getByRole('heading', { name: /Commande reçue/ })).toBeVisible();
     expect(sent).toMatchObject({ kind: 'launch_waitlist', locale: 'fr', country: 'CH', phone: '+41791234567', tier: 'plus', term: '24m', streams: 1, consent: true });
+  });
+
+  test('French 404: unknown /fr URLs answer 404 with the French page (status from the server)', async ({ page, request }) => {
+    for (const path of ['/fr/nope', '/fr/help/nope', '/fr/a/b/c']) {
+      const res = await request.get(path);
+      expect(res.status(), path).toBe(404);
+    }
+    const res = await page.goto('/fr/nope');
+    expect(res?.status()).toBe(404);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Cette page n’existe pas.');
+    await expect(page).toHaveTitle('Page introuvable | SYGMA TV+');
+    await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute('content', /noindex/);
+    await expect(page.locator('main a.btn')).toHaveAttribute('href', '/fr');
   });
 
   test('French trial window', async ({ page }) => {

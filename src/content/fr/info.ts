@@ -242,7 +242,7 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     slug: 'troubleshooting', name: 'Dépannage', icon: 'activity',
     title: 'Dépannage',
     metaTitle: 'Dépannage : lecture, identifiants, application',
-    description: 'Résoudre les problèmes courants sur SYGMA TV+ : image saccadée, identifiants refusés, application introuvable, application qui se ferme, lecture en 4G/5G.',
+    description: 'Résoudre les problèmes courants sur SYGMA TV+ : image saccadée, identifiants refusés, application introuvable ou qui se ferme, lecture en données mobiles.',
     summary: 'Image, identifiants et application.',
     intro: 'La plupart des problèmes viennent de la connexion ou d’une faute de frappe dans les identifiants. Essayez d’abord ces étapes.',
     sections: [

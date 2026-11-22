@@ -33,7 +33,8 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Locale } from '@/i18n/config';
 import { fill, plural, type Dictionary } from '@/i18n/dictionaries';
 import { CATALOGUE } from '@/config/catalogue';
-import { computeQuote, formatMoney, STREAMS, TERMS, TERM_MONTHS, TIERS, type PriceTable, type StreamCount, type Term, type Tier } from '@/lib/pricing';
+import { displayMoney } from '@/lib/money-display';
+import { computeQuote, STREAMS, TERMS, TERM_MONTHS, TIERS, type PriceTable, type StreamCount, type Term, type Tier } from '@/lib/pricing';
 
 /** Icon per plan feature (Lucide, Outline Premium). */
 const FEATURE_ICONS: Record<string, LucideIcon> = {
@@ -145,7 +146,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
     track('select_item', { item_list_id: 'plans', item_list_name: 'Plans', items: [itemFor(t, term, streams)] });
   }
 
-  const money = (minor: number) => formatMoney(minor, table.currency, locale);
+  const money = (minor: number) => displayMoney(minor, table.currency, locale);
   const quote = computeQuote(table, { tier, term, streams });
   const tierName = p.tiers[tier].name;
   // Claims shown next to the simulator are computed from the price list, so they stay true.

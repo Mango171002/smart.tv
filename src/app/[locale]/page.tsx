@@ -2,7 +2,8 @@ import { FeaturedIsland, PlansIsland } from '@/components/islands';
 import { Benefits, ContentCategories, PlanExtras, Faq, Hero, HowItWorks, CtaBanner } from '@/components/Sections';
 import { getDictionary } from '@/i18n/dictionaries';
 import { getPriceTable } from '@/lib/price-source';
-import { computeQuote, formatMoney } from '@/lib/pricing';
+import { computeQuote } from '@/lib/pricing';
+import { displayMoney } from '@/lib/money-display';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
 import { StructuredData } from '@/components/StructuredData';
 
@@ -17,7 +18,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const dict = getDictionary(locale);
   const { table } = await getPriceTable();
   const starter = computeQuote(table, { tier: 'starter', term: '12m', streams: 1 });
-  const fromMonthly = formatMoney(starter.monthlyEquivalentMinor ?? starter.amountMinor, table.currency, locale);
+  const fromMonthly = displayMoney(starter.monthlyEquivalentMinor ?? starter.amountMinor, table.currency, locale);
   return (
     <>
       <StructuredData description={dict.meta.homeDescription} locale={locale} />

@@ -29,7 +29,7 @@ const FOOTER_LEGAL = ['terms', 'privacy', 'cookies', 'refunds', 'imprint'] as co
 /** Icon per chip label (not per position: removing a chip must not shift the others' icons). */
 const CHIP_ICONS: Record<string, typeof Zap> = {
   'Multi-device': MonitorSmartphone, 'HD to 4K': Zap, 'Secure & private': ShieldCheck,
-  'Multi-écrans': MonitorSmartphone, 'Sûr et privé': ShieldCheck,
+  'Multi-écrans': MonitorSmartphone, 'Essai gratuit': Zap,
 };
 
 export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {

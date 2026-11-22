@@ -224,7 +224,8 @@ test.describe('technical SEO', () => {
     // lastmod only where the date is real: the « Last updated » date printed on each legal page; none on the home.
     expect(xml).toContain('/legal/terms</loc>\n<lastmod>2026-11-17</lastmod>');
     expect(xml).toContain('/legal/privacy</loc>\n<lastmod>2026-11-16</lastmod>');
-    expect(xml).toMatch(/<loc>[^<]+\/<\/loc>\n<changefreq>/);
+    // No lastmod on the home (its alternates, once French is released, come between <loc> and <changefreq>).
+    expect(xml).toMatch(/<loc>[^<]+\/<\/loc>\n(?:<xhtml:link [^>]+\/>\n)*<changefreq>/);
     expect(xml.match(/<lastmod>/g)).toHaveLength(5);
     const robots = await (await request.get('/robots.txt')).text();
     expect(robots).toMatch(/Sitemap: https?:\/\/[^\s]+\/sitemap\.xml/);
@@ -240,7 +241,8 @@ test.describe('technical SEO', () => {
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/brand\/og-image\.jpg$/);
     await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
     await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
-    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+    // hreflang only once French is released (E2E_RELEASED=fr): en, fr and x-default.
+    await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(process.env.E2E_RELEASED === 'fr' ? 3 : 0);
     const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
     const types = ld['@graph'].map((n: { '@type': string }) => n['@type']);
     expect(types).toEqual(['Organization', 'WebSite']);

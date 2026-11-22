@@ -5,7 +5,7 @@ const WIDTHS = [320, 375, 768, 1024, 1366, 1440, 1920];
 const INFO = ['/about', '/help', '/help/getting-started', '/help/devices', '/help/free-trial', '/help/ordering-payment', '/help/troubleshooting', '/help/contact-support', '/help/refunds'];
 const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
 /** French preview (E2E_SITE_MODE=preview): the same checks on the French pages (longer strings). */
-const FR = process.env.E2E_SITE_MODE === 'preview';
+const FR = process.env.E2E_SITE_MODE === 'preview' || process.env.E2E_RELEASED === 'fr';
 const HOMES = ['/', ...(FR ? ['/fr'] : [])];
 const PAGES = ['/', '/legal/terms', ...(CONTENT ? INFO : []), ...(FR ? ['/fr', ...(CONTENT ? INFO.map((p) => `/fr${p}`) : [])] : [])];
 

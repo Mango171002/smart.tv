@@ -25,6 +25,18 @@ export type LanguageStatus = 'enabled' | 'preview' | 'disabled';
 /** Private preview environment: also builds the « preview » languages (never the production domain). */
 export const IS_PREVIEW_SITE = process.env.NEXT_PUBLIC_SITE_MODE === 'preview';
 
+/**
+ * Release flag (phase 7C): preview languages promoted to « enabled » by this build, e.g.
+ * NEXT_PUBLIC_RELEASED_LANGUAGES=fr. UNSET in every production configuration today (.env.production,
+ * wrangler.jsonc, deploy workflow — checked by tests/unit/release-flag.test.ts): French stays unpublished.
+ * Only a language in « preview » (complete dictionary) can be released; a disabled language never can.
+ * Setting it requires the owner's authorisation (docs/seo/phase7/lot-7c-release-readiness.md).
+ */
+export const RELEASED_LANGUAGES: readonly string[] = (process.env.NEXT_PUBLIC_RELEASED_LANGUAGES ?? '')
+  .split(',')
+  .map((c) => c.trim())
+  .filter(Boolean);
+
 /** ISO 3166-1 alpha-2 codes of the 13 priority markets (owner, phase 7A + addendum of 22/11/2026). */
 export const PRIORITY_MARKETS = ['US', 'GB', 'CA', 'FR', 'CH', 'DE', 'ES', 'IT', 'LU', 'NL', 'SE', 'NO', 'IE'] as const;
 export type MarketCountry = (typeof PRIORITY_MARKETS)[number];
@@ -73,7 +85,13 @@ export type BuildableLanguageCode = {
 /** The default language: served at the root, x-default of every hreflang set. */
 export const DEFAULT_LANGUAGE = 'en' satisfies EnabledLanguageCode;
 
-const ALL = Object.values(SITE_LANGUAGES) as readonly SiteLanguage[];
+/** Status after the release flag: a released « preview » language counts as « enabled ». */
+export function applyRelease(registry: readonly SiteLanguage[], released: readonly string[] = RELEASED_LANGUAGES): SiteLanguage[] {
+  return registry.map((l) => (l.status === 'preview' && released.includes(l.code) ? { ...l, status: 'enabled' as const } : l));
+}
+
+/** Effective registry of this build (declared statuses + release flag). Every helper below uses it by default. */
+const ALL = applyRelease(Object.values(SITE_LANGUAGES) as readonly SiteLanguage[]);
 
 export const ALL_LANGUAGE_CODES = Object.keys(SITE_LANGUAGES) as LanguageCode[];
 

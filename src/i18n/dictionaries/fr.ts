@@ -25,7 +25,7 @@ const fr: Dictionary = {
       'TV en direct, films et séries sur Smart TV, mobile et ordinateur. Formules annuelles de 1 à 4 appareils, essai gratuit 24 h, assistance 24/7 en 6 langues.',
     plansTitle: 'Formules et tarifs',
     plansDescription:
-      'Comparez les durées d’abonnement et le nombre d’écrans simultanés pour les États-Unis, le Canada et l’Europe. Prix en USD.',
+      'Comparez les durées d’abonnement et le nombre d’appareils simultanés pour les États-Unis, le Canada et l’Europe. Prix en USD.',
     devicesTitle: 'Appareils et installation',
     devicesDescription: 'Catégories d’appareils compatibles et installation.',
     coverageTitle: 'Disponibilité et catalogue',
@@ -96,10 +96,10 @@ const fr: Dictionary = {
   hero: {
     titleA: 'Le streaming premium.',
     titleB: 'Films, séries, TV en direct.',
-    lead: 'Films, séries et TV en direct sur votre TV, votre mobile et votre ordinateur — avec d’abord un essai gratuit et une vraie équipe pour vous installer sur WhatsApp.',
+    lead: 'Films, séries et TV en direct sur votre TV, votre mobile et votre ordinateur — avec d’abord un essai gratuit, et une vraie équipe qui vous accompagne sur WhatsApp pour l’installation.',
     ctaPrimary: 'Voir les formules',
     ctaSecondary: 'Comment ça marche',
-    checks: ['Installation rapide', 'Données jamais vendues', 'Multi-appareils', 'Formules flexibles', 'Assistance 24/7'],
+    checks: ['Installation rapide', 'Données jamais vendues', 'Multi-écrans', 'Formules flexibles', 'Assistance 24/7'],
     visualLabel: 'Un guépard poursuivant une gazelle dans la savane au coucher du soleil',
     pauseVideo: 'Mettre en pause la vidéo de la bannière',
     playVideo: 'Lire la vidéo de la bannière',
@@ -107,8 +107,8 @@ const fr: Dictionary = {
   },
   benefits: [
     { title: 'Commande rapide', text: 'En moins d’une minute' },
-    { title: 'Formules flexibles', text: 'Jusqu’à 4 écrans, de 1 à 3 ans' },
-    { title: 'Multi-appareils', text: 'TV, mobile, tablette, PC' },
+    { title: 'Formules flexibles', text: 'Jusqu’à 4 appareils, de 1 à 3 ans' },
+    { title: 'Multi-écrans', text: 'TV, mobile, tablette, PC' },
     { title: 'Essai gratuit', text: 'Essayez avant de payer' },
     { title: 'Assistance 24/7', text: 'E-mail et WhatsApp, 6 langues' },
   ],
@@ -250,7 +250,7 @@ const fr: Dictionary = {
     matrixTitle: 'Tous les prix',
     matrixCaption: 'Prix en {currency}, hors taxes.',
     plan: 'Formule',
-    extraStreams: 'Prix pour 1 écran. Écran supplémentaire (jusqu’à 4) : +{y12} pour 12 mois, +{y24} pour 24 mois, +{y36} pour 36 mois, +{life} à vie.',
+    extraStreams: 'Prix pour 1 appareil. Appareil supplémentaire (jusqu’à 4) : +{y12} pour 12 mois, +{y24} pour 24 mois, +{y36} pour 36 mois, +{life} à vie.',
     detailsTitle: 'Bon à savoir',
     details: [
       { title: 'Contenus inclus', text: 'Les chaînes et les contenus à la demande peuvent varier selon le pays.' },
@@ -338,12 +338,12 @@ const fr: Dictionary = {
     metaDescription: 'Blog SYGMA TV+ : guides d’installation, conseils streaming et actualités. Premiers articles bientôt disponibles.',
   },
   faq: {
-    eyebrow: 'Les réponses d’abord',
+    eyebrow: 'Réponses rapides',
     title: 'Questions fréquentes.',
     titleA: 'Questions',
     titleHl: 'fréquentes.',
     sub: 'Des réponses rapides aux questions les plus courantes, avant de commencer.',
-    highlights: ['Installation simple', 'Multi-appareils', 'Données jamais vendues'],
+    highlights: ['Installation simple', 'Multi-écrans', 'Données jamais vendues'],
     items: [
       {
         q: 'Puis-je m’abonner dès maintenant ?',

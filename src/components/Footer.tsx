@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { contentPagesEnabled } from '@/config/content-pages';
 import { CookieSettingsButton } from './ConsentBanner';
-import { MonitorSmartphone, ShieldCheck, Zap } from 'lucide-react';
+import { MonitorSmartphone, Zap } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { getInfo } from '@/content/info';
 import type { Locale } from '@/i18n/config';
@@ -28,7 +28,7 @@ const FOOTER_LEGAL = ['terms', 'privacy', 'cookies', 'refunds', 'imprint'] as co
 
 /** Icon per chip label (not per position: removing a chip must not shift the others' icons). */
 const CHIP_ICONS: Record<string, typeof Zap> = {
-  'Multi-device': MonitorSmartphone, 'HD to 4K': Zap, 'Secure & private': ShieldCheck,
+  'Multi-device': MonitorSmartphone, 'HD to 4K': Zap, 'Free trial': Zap,
   'Multi-écrans': MonitorSmartphone, 'Essai gratuit': Zap,
 };
 

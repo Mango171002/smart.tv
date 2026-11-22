@@ -7,7 +7,8 @@ describe('footer wording (phase 5C)', () => {
 
   it('keeps the agreed wording', () => {
     expect(en.footer.tagline).toBe('Movies • Series • Live TV');
-    expect(en.footer.chips).toEqual(['Multi-device', 'Secure & private']);
+    // Phase 7D: « Secure & private » replaced by a verified fact (same as the French « Essai gratuit »).
+    expect(en.footer.chips).toEqual(['Multi-device', 'Free trial']);
   });
 
   it('makes no sports, international-channel or picture-quality claim', () => {

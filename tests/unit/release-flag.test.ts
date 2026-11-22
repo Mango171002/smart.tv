@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import en from '@/i18n/dictionaries/en';
 import fr from '@/i18n/dictionaries/fr';
 import { ABOUT_FR, HELP_TOPICS_FR, INFO_UI_FR } from '@/content/fr/info';
 import { LOCALES, PUBLIC_LOCALES } from '@/i18n/config';
@@ -106,5 +107,22 @@ describe('French security and privacy wording: verified facts only', () => {
     expect(fr.hero.checks).toContain('Données jamais vendues');
     expect(fr.checkout.trust).toContain('Données jamais vendues');
     expect(fr.footer.chips).toEqual(['Multi-écrans', 'Essai gratuit']);
+  });
+});
+
+describe('English security / privacy wording aligned with the French (phase 7D)', () => {
+  // Interface texts only: the legal documents and their own page descriptions are not changed.
+  const ui = strings([en.hero, en.cta, en.faq, en.help, en.request, en.checkout, en.footer, en.plans, en.benefits]).join('\n');
+  it('no unsupported security / privacy claim', () => {
+    for (const re of [/secure/i, /data protected/i, /privacy matters/i, /stored securely/i, /encrypt/i, /\bsafe\b/i])
+      expect(ui, String(re)).not.toMatch(re);
+  });
+  it('the same verified fact in both languages', () => {
+    expect(en.hero.checks[1]).toBe('Data Never Sold');
+    expect(fr.hero.checks[1]).toBe('Données jamais vendues');
+    expect(en.checkout.trust[0]).toBe('Data never sold');
+    expect(fr.checkout.trust[0]).toBe('Données jamais vendues');
+    expect(en.footer.chips[1]).toBe('Free trial');
+    expect(fr.footer.chips[1]).toBe('Essai gratuit');
   });
 });

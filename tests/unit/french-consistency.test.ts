@@ -43,3 +43,19 @@ describe('French / English consistency', () => {
     for (const m of ['PayPal', 'Western Union', 'MoneyGram']) expect(OWNER_FACTS_FR.paymentMethods).toContain(m);
   });
 });
+
+describe('French terminology (phase 7D)', () => {
+  const all = (v: unknown): string[] =>
+    typeof v === 'string' ? [v] : Array.isArray(v) ? v.flatMap(all) : v && typeof v === 'object' ? Object.values(v).flatMap(all) : [];
+  const text = all([fr, ABOUT_FR, HELP_HUB_FR, HELP_TOPICS_FR, INFO_UI_FR]).join('\n');
+  it('« appareil » is the counting unit (plans, prices); « écran » never counts devices', () => {
+    expect(text).not.toMatch(/\d[\s ]écrans?\b/i);
+    expect(text).not.toMatch(/écrans? (supplémentaire|simultané)/i);
+    expect(text).toMatch(/Appareil supplémentaire/);
+  });
+  it('one marketing label for multi-device: « Multi-écrans »', () => {
+    expect(text).not.toMatch(/Multi-appareils/);
+    expect(fr.hero.checks).toContain('Multi-écrans');
+    expect(fr.footer.chips).toContain('Multi-écrans');
+  });
+});

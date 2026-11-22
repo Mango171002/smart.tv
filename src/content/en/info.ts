@@ -393,3 +393,13 @@ export const INFO_UI: InfoUi = {
   content: { contactUs: 'Contact us', email: 'Email', phone: 'Phone / WhatsApp', related: 'Related pages', onThisPage: 'On this page', lastReviewed: 'Last reviewed: ' },
   actions: { trial: 'Request a free trial', support: 'Contact support', plans: 'See the plans', plansHref: '/#plans' },
 };
+
+/** One language's About / Help center content (English here; every other language in src/content/<lang>/info.ts). */
+export interface InfoContentSet {
+  about: InfoPage;
+  hub: { name: string; title: string; metaTitle: string; description: string; intro: string; popular: ReadonlyArray<{ q: string; href: string }> };
+  topics: InfoPage[];
+  reviewed: string;
+  supportHours: string;
+  ui: InfoUi;
+}

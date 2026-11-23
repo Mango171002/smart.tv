@@ -62,7 +62,7 @@ describe.each(LANGS)('%s: home copy while closed', (lang) => {
     expect(closed.plans.simulatorPoints).toEqual([...d.plans.simulatorPoints.slice(0, 3), h.trialGuarantee]);
     expect(closed.cta.text2).toBe(h.trialGuarantee);
     // Same short-label limits as the open texts (features bar).
-    for (const b of closed.benefits) { expect(b.title.length, b.title).toBeLessThanOrEqual(20); expect(b.text.length, b.text).toBeLessThanOrEqual(34); }
+    for (const b of closed.benefits) { expect(b.title.length, b.title).toBeLessThanOrEqual(20); expect(b.text.length, b.text).toBeLessThanOrEqual(35); } // 35: same limit as translations.test.ts (Phase 12 copy polish)
   });
 
   it('FAQ: answers 1, 2 and 3 replaced, questions and the other answers unchanged', () => {

@@ -8,7 +8,7 @@ off and absent from every production configuration.
 
 | Area | Change |
 |---|---|
-| Release flag | `NEXT_PUBLIC_RELEASED_LANGUAGES` (build time, default empty). `fr` listed → French promoted from « preview » to « enabled »: built in production, indexable, sitemap + hreflang. Only a « preview » language (complete dictionary) can be released. Not set in `.env.production`, `wrangler.jsonc`, `open-next.config.ts`, `next.config.ts` or any workflow (unit test). |
+| Release flag | `NEXT_PUBLIC_RELEASED_LANGUAGES` (build time, default empty). `fr` listed → French promoted from « preview » to « enabled »: built in production, indexable, sitemap + hreflang. Only a « preview » language (complete dictionary) can be released. Not set today. **`.env.production` is the only place it can be set** (the deploy workflow's build step passes no environment variable); a unit test forbids it in `wrangler*.jsonc`, `next.config.*`, `open-next.config.*`, `.env.staging` and every workflow, and accepts it in `.env.production` only as one line of distinct releasable codes (`fr,de,es,it,nl,sv,nb` or a subset; never `en`, never an unknown code). *(Corrected 23/11/2026.)* |
 | hreflang / sitemap | Legal pages declared English-only (`PAGE_AVAILABILITY`): never an alternate pointing to `/fr/legal/*` (a redirect). Released: reciprocal `en` / `fr` / `x-default` on translated pages, same set in the sitemap. |
 | USD display | One French format everywhere: « 59 $ US », « 4,92 $ US / mois », order window « 69 $ US », taxes « 0,00 $ US », FAQ « 59 $ US ». English unchanged (`$59`, `$69 USD`). New display helper `src/lib/money-display.ts`; `src/lib/pricing.ts` (amounts and rules) untouched. |
 | Security / privacy wording (French) | Unsupported phrases removed: « Sécurisé et confidentiel » (×3), « Données protégées », « Votre vie privée compte », « enregistrée de façon sécurisée », « Sûr et privé ». Replaced by the documented fact « Données jamais vendues » (privacy policy and FAQ: « We never sell your data »), or « Essai gratuit » in the narrow footer chip. |
@@ -60,13 +60,16 @@ the website, company details.
 
 1. Native review sign-off of the French texts (list in `lot-7b-french.md`, section 5; items 4 and 8 — footer chips and price format — are settled by this lot).
 2. Deploy the English lots first if wanted (5C/6A/6B), then release French in a separate deployment.
-3. Set `NEXT_PUBLIC_RELEASED_LANGUAGES=fr` for the production build (repository variable or `.env.production`), with
-   the content pages `live` if About/Help should be published in both languages.
+3. Add `NEXT_PUBLIC_RELEASED_LANGUAGES=fr` to `.env.production` (one-line release commit), with
+   `NEXT_PUBLIC_CONTENT_PAGES=live` if About/Help should be published in both languages. `.env.production` is the
+   only route: a repository variable has no effect (the workflow's build step passes no environment variable to the
+   build). *(Corrected 23/11/2026: an earlier version also mentioned a repository variable.)* Full checklist:
+   `docs/release/release-readiness.md`, section 9.
 4. Build, run the full test suite with `E2E_RELEASED=fr`, deploy.
 5. After deployment: check `/fr`, `/fr/help`, `/fr/about` (200, `index, follow`, hreflang), `/fr/legal/privacy` (308),
    `/fr/nope` (404), `sitemap.xml` (French entries with alternates); Search Console: submit the sitemap, inspect
    `/fr`, open a report for the `/fr/` folder; Bing: same.
-6. Rollback: remove the variable and redeploy — `/fr/*` redirects to English again (308).
+6. Rollback: remove the line from `.env.production` and redeploy — `/fr/*` redirects to English again (308).
 
 ## 5. Deployment-readiness checklist
 

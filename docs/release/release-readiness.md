@@ -44,7 +44,7 @@ Linear chain, each phase built on the previous one (no cherry-pick, no merge com
 | Switch (build time) | Default | Effect |
 |---|---|---|
 | `NEXT_PUBLIC_CONTENT_PAGES` | unset = off | `live` publishes About / Help (indexable, sitemap 6 → 15 URLs, header/footer links); `preview` = noindex |
-| `NEXT_PUBLIC_RELEASED_LANGUAGES` | unset | `fr` publishes French (never set without written approval; a unit test forbids it in production files) |
+| `NEXT_PUBLIC_RELEASED_LANGUAGES` | unset | `fr` publishes French (never set without written approval). Only in `.env.production`: a unit test forbids it in every other production file and checks its value there (section 9) |
 | `NEXT_PUBLIC_SITE_MODE` | unset | `preview` builds French in noindex (private environments only; forbidden in production files by a test) |
 
 The deployment workflow sets none of them: deployed as is, the release candidate keeps About / Help and French **off**.
@@ -142,7 +142,7 @@ Recommended in **three separate, independently reversible steps**:
 |---|---|---|---|
 | R1 | English quality and SEO: 6A home, 6B wording, 7A foundation, 7D trust wording, footer, 404 already live | As is (About / Help off, French off) | D1 |
 | R2 | About us + Help center published | `NEXT_PUBLIC_CONTENT_PAGES=live` in `.env.production` (one-line commit) | D2 (Terms alignment), R1 stable |
-| R3 | French public | `NEXT_PUBLIC_RELEASED_LANGUAGES=fr` | D3, D4, D6, R2 stable, staging test |
+| R3 | French public | `NEXT_PUBLIC_RELEASED_LANGUAGES=fr` in `.env.production` (one-line commit; section 9) | D3, D4, D6, R2 stable, staging test |
 
 ### Checklist (each step)
 
@@ -174,7 +174,7 @@ After (within 15 minutes):
 | Any regression after a deploy | Cloudflare dashboard → Workers → `iptv-international` → Deployments → **Rollback** to the previous version (or `npx wrangler rollback`) | < 1 minute, no rebuild |
 | Then, keep the source aligned | `git revert` of the released commits on `claude/intelligent-shannon-uwa4fi` (new commits, no force push) — this redeploys the previous code | one workflow run |
 | R2 only (About / Help) | Remove `NEXT_PUBLIC_CONTENT_PAGES=live` and redeploy: pages disappear, `/help` redirects to `/#faq` again | one workflow run |
-| R3 only (French) | Remove `NEXT_PUBLIC_RELEASED_LANGUAGES=fr` and redeploy: `/fr/*` redirects to English again | one workflow run |
+| R3 only (French) | Remove `NEXT_PUBLIC_RELEASED_LANGUAGES=fr` from `.env.production` and redeploy: `/fr/*` redirects to English again | one workflow run |
 
 Nothing to roll back in the database, emails, Telegram, prices or payments: the release changes none of them.
 Search engines: after a rollback, removed URLs answer 404 or redirect; no manual removal is needed.
@@ -194,3 +194,46 @@ Search engines: after a rollback, removed URLs answer 404 or redirect; no manual
 | D9 | `INDEXNOW_ENABLED` (search-engine notification) on or kept as dry run | — |
 
 No technical blocker remains for R1.
+
+## 9. Release switch checklist (languages and content pages)
+
+*(Added 23/11/2026.)* A language is published **only** by a line in `.env.production`, in the release commit itself.
+The deployment workflow's build step (`npx opennextjs-cloudflare build`) passes no environment variable: a GitHub
+repository variable has **no effect** on the build. Nothing below is applied today.
+
+Lines to add to `.env.production` in the release commit (after written approval; not applied now):
+
+```
+NEXT_PUBLIC_RELEASED_LANGUAGES=fr,de,es,it,nl,sv,nb
+NEXT_PUBLIC_CONTENT_PAGES=live
+```
+
+For a partial release, list only the approved codes (e.g. `fr`). `tests/unit/release-flag.test.ts` (run by the
+workflow before the build) accepts one line of distinct codes from the registry's « preview » languages
+(`fr,de,es,it,nl,sv,nb`), comma-separated, no spaces or quotes; it fails on `en`, an unknown code (`fr,xx`), a
+duplicate, or the flag in any other file (`wrangler*.jsonc`, `next.config.*`, `open-next.config.*`, `.env.staging`,
+workflows). `NEXT_PUBLIC_SITE_MODE` stays forbidden in every production file.
+
+After deployment (all eight languages + content pages `live`):
+
+| Check | Expected |
+|---|---|
+| `sitemap.xml` | 85 URLs: 10 translated pages × 8 languages + 5 English legal pages; each translated entry carries 9 `xhtml:link` alternates |
+| `/fr`, `/nb` (and the other prefixes) | 200, `<meta name="robots" content="index, follow">`, 9 hreflang links (8 languages + `x-default`) |
+| `/fr/legal/terms` | 308 → `/legal/terms` (legal pages stay English-only) |
+| `/de/nope` | 404 |
+| `/en` | 308 → `/` |
+| `robots.txt` | unchanged (`Allow: /`, `Disallow: /api/`, `Sitemap:` line) |
+
+IndexNow: the last workflow step sends the changed public URLs (about 85 for this release) **only if** the repository
+variable `INDEXNOW_ENABLED` is `true`; otherwise it is a dry run that only lists them.
+
+Rollback: remove the line(s) from `.env.production` and redeploy (or use the Cloudflare rollback of section 7 first).
+Without the release, `/fr/*` redirects to the English pages (308); the other prefixes (`/de`, `/es`, `/it`, `/nl`, `/sv`,
+`/nb`) answer 404, because only French is in `LEGACY_REDIRECT_LANGUAGES` (`src/i18n/locales.ts`). Before any rollback
+of a release that made those languages public, consider adding them to `LEGACY_REDIRECT_LANGUAGES` so their indexed
+URLs redirect to English instead of 404 (not changed today).
+
+Browser caches: `/fr` → `/` and `/help` → `/#faq` are permanent redirects (308) today. Browsers that already
+followed them may keep redirecting after the release until their cache is cleared; check `/fr` and `/help` in a
+private window or with `curl -I`, not in a browser that visited them before.

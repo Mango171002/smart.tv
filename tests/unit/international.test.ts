@@ -1,6 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import nextConfig from '../../next.config';
-import sitemap from '@/app/sitemap';
 import { LOCALES, isLocale, localeSeo } from '@/i18n/config';
 import {
   ALL_LANGUAGE_CODES,
@@ -149,8 +148,13 @@ describe('metadata and sitemap (English only: output unchanged)', () => {
     expect(pageLocales('/help')).toEqual(['en']);
   });
 
-  it('sitemap: English URLs only, no disabled language, no alternates', () => {
+  it('sitemap: English URLs only, no disabled language, no alternates', async () => {
+    // Production build (.env.production: indexing allowed); a non-indexable build lists no URL (sitemap-staging.test.ts).
+    vi.stubEnv('NEXT_PUBLIC_ALLOW_INDEXING', 'true');
+    vi.resetModules();
+    const { default: sitemap } = await import('@/app/sitemap');
     const entries = sitemap();
+    vi.unstubAllEnvs();
     expect(entries.length).toBeGreaterThan(0);
     for (const e of entries) {
       const path = new URL(e.url).pathname;

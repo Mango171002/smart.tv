@@ -135,7 +135,7 @@ export const ABOUT: InfoPage = {
       body: [
         { p: `Our automated assistant is available ${F.supportHours}, with human support when needed. We usually reply in ${F.usualReply}. This is our usual reply time, not a contractual guarantee.` },
         { chips: [...F.languages], label: 'Support languages' },
-        { note: 'Our support team speaks these six languages; the website itself is in English.' },
+        { note: 'Our support team speaks these six languages; our legal documents are in English.' },
       ],
     },
     {
@@ -306,7 +306,7 @@ export const HELP_TOPICS: InfoPage[] = [
       { id: 'languages', icon: 'globe', title: 'Which languages?', body: [
         { p: `You can write to us in ${LANGS}.` },
         { chips: [...F.languages], label: 'Support languages' },
-        { note: 'The website itself is in English.' },
+        { note: 'Our legal documents are in English.' },
       ] },
       { id: 'include', icon: 'pencil', title: 'What to include', body: [{ list: [
         'Your order reference, if you have one.',

@@ -63,7 +63,7 @@ test.describe('content pages — preview', () => {
   test('About: verified company facts, owner facts worded as usual times, no unproven promise', async ({ page }) => {
     await page.goto('/about');
     const main = page.locator('main');
-    for (const v of ['Sygma TV LLC', '98-1836592', 'Albuquerque', 'support@sygmatv.com', '+44 7412 857594', 'Established', '2026', '24/7', 'usually replies in under an hour']) await expect(main).toContainText(v);
+    for (const v of ['Sygma TV LLC', '98-1836592', 'Albuquerque', 'support@sygmatv.com', '+44 7412 857594', 'Established', '2026', '24/7', 'Our automated assistant is available 24/7, with human support when needed.', 'We usually reply in under an hour.', 'not a contractual guarantee']) await expect(main).toContainText(v);
     for (const l of ['English', 'French', 'Arabic', 'German', 'Spanish', 'Italian']) await expect(main.getByRole('list', { name: 'Support languages' })).toContainText(l);
     await expect(main.getByRole('list', { name: 'Payment methods' }).getByRole('listitem')).toHaveCount(6);
     await expect(main).toContainText('none is charged automatically on this website');

@@ -1,0 +1,8 @@
+--- a/.env.production
++++ b/.env.production
+@@ -7,3 +7,5 @@
+ SALES_ENABLED=false
+ NEXT_PUBLIC_ALLOW_INDEXING=true
+ NEXT_PUBLIC_SITE_URL=https://sygmatv.com
++NEXT_PUBLIC_RELEASED_LANGUAGES=fr,de,es,it,nl,sv,nb
++NEXT_PUBLIC_CONTENT_PAGES=live

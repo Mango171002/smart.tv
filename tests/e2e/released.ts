@@ -15,3 +15,10 @@ export function expectedSet(path: string): Record<string, string> {
  */
 export const INDEXABLE = process.env.E2E_ALLOW_INDEXING !== 'false';
 export const PRIVATE_ROBOTS = /^User-Agent: \*\s*\nDisallow: \/\s*$/;
+
+/**
+ * Online requests (orders, free trials, support form) in the build under test. Default: closed, as in production
+ * (FEATURE_CONTACT_FORM=false, phase 11B prelaunch). E2E_ORDERS_OPEN=true for a build made with
+ * FEATURE_CONTACT_FORM=true: the tests that fill the forms run there.
+ */
+export const ORDERS_OPEN = process.env.E2E_ORDERS_OPEN === 'true';

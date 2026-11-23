@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { RELEASED_LANGS, INDEXABLE, PRIVATE_ROBOTS } from './released';
+import en from '../../src/i18n/dictionaries/en';
+import { RELEASED_LANGS, INDEXABLE, PRIVATE_ROBOTS, ORDERS_OPEN } from './released';
 
 /**
  * Consent, analytics events and technical SEO.
@@ -59,7 +60,8 @@ test.describe('cookie consent', () => {
     await page.getByRole('button', { name: /^Order now/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     // Clickable = not covered by the banner (Playwright checks what receives the click).
-    await dialog.getByRole('button', { name: /Continue/ }).click({ trial: true });
+    // Orders closed (prelaunch): the window's main button is « Back to the plans ».
+    await dialog.getByRole('button', { name: ORDERS_OPEN ? /Continue/ : en.prelaunch.back }).click({ trial: true });
     await dialog.getByRole('button', { name: 'Close' }).click({ trial: true });
   });
 
@@ -163,6 +165,7 @@ test.describe('analytics events (consent granted)', () => {
   });
 
   test('plan view, plan selection, checkout and lead — without personal data', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
     await stubThirdParties(page);
     await prepare(page, 'granted');
     await page.route('**/api/contact', (route) => route.fulfill({ status: 201, json: { ok: true } }));
@@ -343,6 +346,7 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
   });
 
   test('Accept all: ad events for view, checkout and lead — unique event_id, no personal data, GA4 unchanged', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
     await stubThirdParties(page);
     await prepare(page, 'granted');
     await page.route('**/api/contact', (route) => route.fulfill({ status: 201, json: { ok: true } }));

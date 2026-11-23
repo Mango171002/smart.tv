@@ -7,7 +7,7 @@ import it from '../../src/i18n/dictionaries/it';
 import nl from '../../src/i18n/dictionaries/nl';
 import sv from '../../src/i18n/dictionaries/sv';
 import nb from '../../src/i18n/dictionaries/nb';
-import { RELEASED_LANGS } from './released';
+import { RELEASED_LANGS, ORDERS_OPEN } from './released';
 
 /**
  * Phase 11 — order summary on the first step of the order window: the current selection (plan, duration, devices,
@@ -75,6 +75,7 @@ for (const lang of LANGS) {
 test.describe('order summary — review step and mobile', () => {
   test('the review step shows the same price as the summary (verified by the server quote)', async ({ page, isMobile }) => {
     test.skip(isMobile, 'desktop');
+    test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
     await page.route('**/api/contact', (r) => r.fulfill({ status: 201, json: { ok: true } }));
     await openPlans(page, '/');
     await select(page, 'plus', '24m', 2);

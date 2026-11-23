@@ -216,9 +216,10 @@ const FAQ_HIGHLIGHTS: { Icon: LucideIcon; cat: string }[] = [
   { Icon: ShieldCheck, cat: 'streaming' },
 ];
 
-export function Faq({ dict, limit, locale = 'en' }: { dict: Dictionary; limit?: number; locale?: Locale }) {
+export function Faq({ dict, limit, locale = 'en', items: given }: { dict: Dictionary; limit?: number; locale?: Locale; items?: Dictionary['faq']['items'] }) {
   const f = dict.faq;
-  const items = limit ? f.items.slice(0, limit) : f.items;
+  const all = given ?? f.items;
+  const items = limit ? all.slice(0, limit) : all;
   return (
     <section id="faq" aria-labelledby="faq-title">
       <div className="wrap faq-layout">

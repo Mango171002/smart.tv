@@ -393,6 +393,26 @@ const fr: Dictionary = {
     supportUnavailable: 'Le formulaire de contact n’est pas connecté dans cet environnement.',
     supportContact: 'Nous répondons par e-mail à l’adresse que vous indiquez.',
   },
+  /**
+   * Prelaunch state (phase 11B): shown instead of the order, free-trial and support forms while online requests are
+   * closed (FEATURE_CONTACT_FORM=false). No form, nothing sent. The e-mail is for general questions only.
+   */
+  prelaunch: {
+    orderTitleA: 'Les commandes ouvrent',
+    orderTitleHl: 'bientôt',
+    orderText: 'Les commandes en ligne ne sont pas encore ouvertes. Votre sélection reste affichée ci-dessous pour comparer à votre rythme : rien n’est envoyé, rien n’est débité.',
+    trialTitleA: 'L’essai gratuit arrive',
+    trialTitleHl: 'bientôt',
+    trialText: 'Les demandes d’essai gratuit ne sont pas encore ouvertes. Vous pourrez bientôt essayer SYGMA TV+ sur votre propre appareil avant de payer.',
+    supportTitleA: 'Nous',
+    supportTitleHl: 'contacter',
+    supportText: 'Nos formulaires en ligne ne sont pas encore ouverts.',
+    contactLead: 'Questions générales :',
+    contactNote: 'Il n’est pas encore possible de passer commande ni d’obtenir un essai gratuit par e-mail ou par un autre moyen.',
+    back: 'Retour aux formules',
+    close: 'Fermer',
+    faqSubscribe: 'Pas encore : les commandes en ligne ouvriront bientôt. Vous pouvez déjà comparer les formules, les durées et les prix avec le simulateur de formule.',
+  },
   request: {
     trialTitle: 'Demander un essai',
     trialHeadA: 'Demandez votre',

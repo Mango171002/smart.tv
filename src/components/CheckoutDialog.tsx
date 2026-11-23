@@ -5,6 +5,7 @@ import { toE164 } from '@/lib/phone';
 import { track } from '@/lib/analytics';
 import { siteConfig } from '@/config/site';
 import { Brand } from './Brand';
+import { PrelaunchNotice } from './PrelaunchNotice';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -40,14 +41,17 @@ export function CheckoutDialog({
   selection,
   clientPrice,
   clientAmount,
+  ordersOpen = true,
   onClose,
 }: {
   locale: Locale;
-  dict: Pick<Dictionary, 'checkout' | 'common' | 'markets' | 'plans'>;
+  dict: Pick<Dictionary, 'checkout' | 'common' | 'markets' | 'plans' | 'prelaunch'>;
   selection: PlanSelection;
   clientPrice: string;
   /** Price of the selection from the plan simulator (same price source), formatted here with its currency code. */
   clientAmount?: { amountMinor: number; currency: string };
+  /** false while online orders are closed (FEATURE_CONTACT_FORM=false): « Orders opening soon », no form. */
+  ordersOpen?: boolean;
   onClose: () => void;
 }) {
   const c = dict.checkout;
@@ -200,6 +204,22 @@ export function CheckoutDialog({
     devices: selection.streams ? plural(dict.common, 'device', selection.streams) : undefined,
     price: clientAmount ? displayMoneyWithCode(clientAmount.amountMinor, clientAmount.currency, locale) : clientPrice || undefined,
   };
+  const summaryBlock = (
+    <section className="order-summary" aria-labelledby="order-summary-title" data-testid="order-summary">
+      <div className="order-summary-head">
+        <h3 id="order-summary-title">{c.summary.title}</h3>
+        <button type="button" className="order-summary-change" aria-label={c.summary.changeLabel} onClick={onClose}>
+          {c.summary.change}
+        </button>
+      </div>
+      <dl className="order-summary-grid">
+        {summary.plan && (<div><dt>{c.plan}</dt><dd data-testid="summary-plan">{summary.plan}</dd></div>)}
+        {summary.duration && (<div><dt>{c.summary.duration}</dt><dd data-testid="summary-duration">{summary.duration}</dd></div>)}
+        {summary.devices && (<div><dt>{c.summary.devices}</dt><dd data-testid="summary-devices">{summary.devices}</dd></div>)}
+        {summary.price && (<div className="order-summary-price"><dt>{c.subtotal}</dt><dd data-testid="summary-price">{summary.price}</dd></div>)}
+      </dl>
+    </section>
+  );
 
   // Rendered in <body> through a portal: a transformed ancestor (e.g. a card's hover
   // lift) would otherwise become the containing block of this fixed overlay.
@@ -227,9 +247,15 @@ export function CheckoutDialog({
           </button>
         </div>
         <h2 id="checkout-title" className="neon-title" ref={titleRef} tabIndex={-1}>
-          {step === 3 ? c.doneTitle : <>{c.headA} <span>{c.headHl}</span></>}
+          {!ordersOpen ? <>{dict.prelaunch.orderTitleA} <span>{dict.prelaunch.orderTitleHl}</span></> : step === 3 ? c.doneTitle : <>{c.headA} <span>{c.headHl}</span></>}
         </h2>
-        {step !== 3 && <p className="neon-sub">{c.headSub}</p>}
+        {!ordersOpen && (
+          <PrelaunchNotice text={dict.prelaunch.orderText} dict={dict.prelaunch} action={dict.prelaunch.back} onAction={onClose}>
+            {summaryBlock}
+          </PrelaunchNotice>
+        )}
+        {ordersOpen && step !== 3 && <p className="neon-sub">{c.headSub}</p>}
+        {ordersOpen && (
         <ol className="stepper" aria-label={c.title}>
           {c.steps.map((label, i) => (
             <li key={label} data-on={i < step} aria-current={i === step - 1 ? 'step' : undefined}>
@@ -238,8 +264,9 @@ export function CheckoutDialog({
             </li>
           ))}
         </ol>
+        )}
 
-        {step === 1 && (
+        {ordersOpen && step === 1 && (
           <form
             className="form"
             noValidate
@@ -248,20 +275,7 @@ export function CheckoutDialog({
               void review();
             }}
           >
-            <section className="order-summary" aria-labelledby="order-summary-title" data-testid="order-summary">
-              <div className="order-summary-head">
-                <h3 id="order-summary-title">{c.summary.title}</h3>
-                <button type="button" className="order-summary-change" aria-label={c.summary.changeLabel} onClick={onClose}>
-                  {c.summary.change}
-                </button>
-              </div>
-              <dl className="order-summary-grid">
-                {summary.plan && (<div><dt>{c.plan}</dt><dd data-testid="summary-plan">{summary.plan}</dd></div>)}
-                {summary.duration && (<div><dt>{c.summary.duration}</dt><dd data-testid="summary-duration">{summary.duration}</dd></div>)}
-                {summary.devices && (<div><dt>{c.summary.devices}</dt><dd data-testid="summary-devices">{summary.devices}</dd></div>)}
-                {summary.price && (<div className="order-summary-price"><dt>{c.subtotal}</dt><dd data-testid="summary-price">{summary.price}</dd></div>)}
-              </dl>
-            </section>
+            {summaryBlock}
             <div className="offer-banner">
               <Gift size={30} strokeWidth={1.75} aria-hidden="true" />
               <div>
@@ -391,7 +405,7 @@ export function CheckoutDialog({
           </form>
         )}
 
-        {step === 2 && (
+        {ordersOpen && step === 2 && (
           <div>
             <p className="muted">{c.reviewIntro}</p>
             <div className="orderline"><span>{c.region}</span><b data-testid="review-region">{regionLabel}</b></div>
@@ -420,7 +434,7 @@ export function CheckoutDialog({
           </div>
         )}
 
-        {step === 3 && (
+        {ordersOpen && step === 3 && (
           <div className="success">
             <div className="checkmark" aria-hidden="true"><CircleCheck size={56} strokeWidth={1.75} /></div>
             <p className="muted">{fill(c.doneText, { email: email.trim() })}</p>

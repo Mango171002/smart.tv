@@ -7,7 +7,7 @@ import it from '../../src/i18n/dictionaries/it';
 import nl from '../../src/i18n/dictionaries/nl';
 import sv from '../../src/i18n/dictionaries/sv';
 import nb from '../../src/i18n/dictionaries/nb';
-import { RELEASED_LANGS, expectedSet } from './released';
+import { RELEASED_LANGS, expectedSet, ORDERS_OPEN } from './released';
 
 /**
  * Phase 8 — German, Spanish, Italian, Dutch, Swedish, Norwegian Bokmål.
@@ -81,6 +81,7 @@ for (const lang of BUILT) {
     }
 
     test('order window in the language, price in USD, submission sends the language (intercepted, nothing sent)', async ({ page }) => {
+      test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
       let sent: Record<string, unknown> | null = null;
       await page.route('**/api/contact', async (route) => { sent = route.request().postDataJSON(); await route.fulfill({ status: 201, json: { ok: true } }); });
       await openPlans(page, `/${lang}`);

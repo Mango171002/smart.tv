@@ -393,6 +393,26 @@ const nl: Dictionary = {
     supportUnavailable: 'Het contactformulier is in deze omgeving niet gekoppeld.',
     supportContact: 'We antwoorden per e-mail op het adres dat je opgeeft.',
   },
+  /**
+   * Prelaunch state (phase 11B): shown instead of the order, free-trial and support forms while online requests are
+   * closed (FEATURE_CONTACT_FORM=false). No form, nothing sent. The e-mail is for general questions only.
+   */
+  prelaunch: {
+    orderTitleA: 'Bestellen kan',
+    orderTitleHl: 'binnenkort',
+    orderText: 'Online bestellen is nog niet mogelijk. Je selectie blijft hieronder staan, zodat je rustig kunt vergelijken: er wordt niets verstuurd en niets afgerekend.',
+    trialTitleA: 'Gratis proberen kan',
+    trialTitleHl: 'binnenkort',
+    trialText: 'Een gratis proefperiode aanvragen is nog niet mogelijk. Binnenkort kun je SYGMA TV+ op je eigen apparaat uitproberen voordat je betaalt.',
+    supportTitleA: 'Neem',
+    supportTitleHl: 'contact op',
+    supportText: 'Onze online formulieren zijn nog niet beschikbaar.',
+    contactLead: 'Algemene vragen:',
+    contactNote: 'Bestellen en een gratis proefperiode aanvragen kan nog niet, ook niet per e-mail of via een ander kanaal.',
+    back: 'Naar de abonnementen',
+    close: 'Sluiten',
+    faqSubscribe: 'Nog niet: online bestellen is binnenkort mogelijk. Je kunt de abonnementen, looptijden en prijzen nu al vergelijken met de prijscalculator.',
+  },
   request: {
     trialTitle: 'Proefperiode aanvragen',
     trialHeadA: 'Vraag je',

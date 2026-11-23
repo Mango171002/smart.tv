@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CheckCircle2, Mail, MessageSquareText, Phone, ShieldCheck, UserRound, Zap, X } from 'lucide-react';
 import { Brand } from './Brand';
+import { PrelaunchNotice } from './PrelaunchNotice';
 import countries from '@/config/countries.json';
 import { CountryPicker } from './CountryPicker';
 import type { Locale } from '@/i18n/config';
@@ -30,14 +31,18 @@ export function RequestDialog({
   mode,
   locale,
   dict,
+  ordersOpen = true,
   onClose,
 }: {
   mode: RequestMode;
   locale: Locale;
-  dict: Pick<Dictionary, 'request' | 'forms' | 'common'>;
+  dict: Pick<Dictionary, 'request' | 'forms' | 'common' | 'prelaunch'>;
+  /** false while online requests are closed (FEATURE_CONTACT_FORM=false): prelaunch message, no form. */
+  ordersOpen?: boolean;
   onClose: () => void;
 }) {
   const r = dict.request;
+  const pl = dict.prelaunch;
   const [country, setCountry] = useState(guessCountry);
   const [errors, setErrors] = useState<Partial<Record<'name' | 'email' | 'phone' | 'message' | 'consent', string>>>({});
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
@@ -152,6 +157,15 @@ export function RequestDialog({
             <X size={18} strokeWidth={1.75} aria-hidden="true" />
           </button>
         </div>
+        {!ordersOpen ? (
+          <>
+            <h2 id="request-title" className="neon-title">
+              {mode === 'trial' ? <>{pl.trialTitleA} <span>{pl.trialTitleHl}</span></> : <>{pl.supportTitleA} <span>{pl.supportTitleHl}</span></>}
+            </h2>
+            <PrelaunchNotice text={mode === 'trial' ? pl.trialText : pl.supportText} dict={pl} action={pl.close} onAction={onClose} />
+          </>
+        ) : (
+        <>
         <h2 id="request-title" className="neon-title" aria-label={state === 'done' ? r.successTitle : title}>
           {state === 'done' ? r.successTitle : mode === 'trial' ? <>{r.trialHeadA} <span>{r.trialHeadHl}</span></> : <>{r.supportHeadA} <span>{r.supportHeadHl}</span></>}
         </h2>
@@ -243,6 +257,8 @@ export function RequestDialog({
               })}
             </ul>
           </form>
+        )}
+        </>
         )}
       </div>
     </div>,

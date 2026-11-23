@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { RELEASED_LANGS } from './released';
+import { RELEASED_LANGS, ORDERS_OPEN } from './released';
 
 /**
  * Phase 11 — order window and trial window on phones (mobile ad campaign): the window, its step bar and the order
@@ -40,6 +40,7 @@ function expectInside(a: Audit, where: string) {
 }
 
 test.describe('order window on phones', () => {
+  test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
   test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly (desktop project)'));
   for (const lang of LANGS) {
     const home = lang === 'en' ? '/' : `/${lang}`;

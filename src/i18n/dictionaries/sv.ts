@@ -393,6 +393,26 @@ const sv: Dictionary = {
     supportUnavailable: 'Kontaktformuläret är inte anslutet i den här miljön.',
     supportContact: 'Vi svarar via e-post till adressen du anger.',
   },
+  /**
+   * Prelaunch state (phase 11B): shown instead of the order, free-trial and support forms while online requests are
+   * closed (FEATURE_CONTACT_FORM=false). No form, nothing sent. The e-mail is for general questions only.
+   */
+  prelaunch: {
+    orderTitleA: 'Beställningar öppnar',
+    orderTitleHl: 'snart',
+    orderText: 'Det går ännu inte att beställa online. Ditt val ligger kvar nedan så att du kan jämföra i lugn och ro: inget skickas och inget debiteras.',
+    trialTitleA: 'Gratis provperiod kommer',
+    trialTitleHl: 'snart',
+    trialText: 'Det går ännu inte att begära en gratis provperiod. Snart kan du testa SYGMA TV+ på din egen enhet innan du betalar.',
+    supportTitleA: 'Kontakta',
+    supportTitleHl: 'oss',
+    supportText: 'Våra onlineformulär är inte öppna ännu.',
+    contactLead: 'Allmänna frågor:',
+    contactNote: 'Beställningar och gratis provperioder kan ännu inte ordnas via e-post eller någon annan kanal.',
+    back: 'Tillbaka till paketen',
+    close: 'Stäng',
+    faqSubscribe: 'Inte än: beställningar online öppnar snart. Du kan redan nu jämföra paket, perioder och priser med paketsimulatorn.',
+  },
   request: {
     trialTitle: 'Begär en provperiod',
     trialHeadA: 'Begär din',

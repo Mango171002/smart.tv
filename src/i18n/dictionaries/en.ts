@@ -374,6 +374,26 @@ const en = {
     supportUnavailable: 'The contact form is not connected in this environment.',
     supportContact: 'We reply by email to the address you provide.',
   },
+  /**
+   * Prelaunch state (phase 11B): shown instead of the order, free-trial and support forms while online requests are
+   * closed (FEATURE_CONTACT_FORM=false). No form, nothing sent. The e-mail is for general questions only.
+   */
+  prelaunch: {
+    orderTitleA: 'Orders opening',
+    orderTitleHl: 'soon',
+    orderText: 'Online orders are not open yet. Your selection stays below so you can compare at your own pace: nothing is sent and nothing is charged.',
+    trialTitleA: 'Free trials opening',
+    trialTitleHl: 'soon',
+    trialText: 'Free trial requests are not open yet. You will soon be able to try SYGMA TV+ on your own device before you pay.',
+    supportTitleA: 'Contact',
+    supportTitleHl: 'us',
+    supportText: 'Our online forms are not open yet.',
+    contactLead: 'General questions:',
+    contactNote: 'Orders and free trials cannot be arranged by e-mail or any other channel yet.',
+    back: 'Back to the plans',
+    close: 'Close',
+    faqSubscribe: 'Not yet: online orders are opening soon. You can already compare the plans, durations and prices with the plan simulator.',
+  },
   request: {
     trialTitle: 'Request a Trial',
     trialHeadA: 'Request your',

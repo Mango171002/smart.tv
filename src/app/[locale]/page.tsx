@@ -6,6 +6,8 @@ import { computeQuote } from '@/lib/pricing';
 import { displayMoney } from '@/lib/money-display';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
 import { StructuredData } from '@/components/StructuredData';
+import { isContactFormEnabled } from '@/lib/features';
+import { faqItems } from '@/lib/faq';
 import { absoluteUrl } from '@/lib/routes';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -20,10 +22,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { table } = await getPriceTable();
   const starter = computeQuote(table, { tier: 'starter', term: '12m', streams: 1 });
   const fromMonthly = displayMoney(starter.monthlyEquivalentMinor ?? starter.amountMinor, table.currency, locale);
+  // Online orders closed (FEATURE_CONTACT_FORM=false): prelaunch order window and FAQ answer.
+  const ordersOpen = isContactFormEnabled();
+  const faq = faqItems(dict, ordersOpen);
   return (
     <>
       {/* FAQPage node: the same questions and answers as the visible FAQ section below (<Faq>, all items). */}
-      <StructuredData description={dict.meta.homeDescription} locale={locale} faq={{ items: dict.faq.items, pageUrl: absoluteUrl(locale) }} />
+      <StructuredData description={dict.meta.homeDescription} locale={locale} faq={{ items: faq, pageUrl: absoluteUrl(locale) }} />
       <Hero locale={locale} dict={dict} />
       <ContentCategories locale={locale} dict={dict} showHeading={false} />
       {/* Below-the-fold islands hydrate only when they come near the viewport. */}
@@ -41,14 +46,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <PlansIsland
             locale={locale}
             table={table}
-            dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout }}
+            dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout, prelaunch: dict.prelaunch }}
+            ordersOpen={ordersOpen}
           >
             <PlanExtras dict={dict} />
           </PlansIsland>
         </div>
       </section>
       <HowItWorks locale={locale} dict={dict} />
-      <Faq dict={dict} locale={locale} />
+      <Faq dict={dict} locale={locale} items={faq} />
       <CtaBanner locale={locale} dict={dict} fromMonthly={fromMonthly} />
     </>
   );

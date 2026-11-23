@@ -394,6 +394,26 @@ const it: Dictionary = {
     supportUnavailable: 'Il modulo di contatto non è collegato in questo ambiente.',
     supportContact: 'Rispondiamo via email all’indirizzo che indichi.',
   },
+  /**
+   * Prelaunch state (phase 11B): shown instead of the order, free-trial and support forms while online requests are
+   * closed (FEATURE_CONTACT_FORM=false). No form, nothing sent. The e-mail is for general questions only.
+   */
+  prelaunch: {
+    orderTitleA: 'Ordini online',
+    orderTitleHl: 'in arrivo',
+    orderText: 'Gli ordini online non sono ancora aperti. La tua selezione resta qui sotto, così puoi confrontare con calma: non viene inviato nulla e non viene addebitato nulla.',
+    trialTitleA: 'Prova gratuita',
+    trialTitleHl: 'in arrivo',
+    trialText: 'Le richieste di prova gratuita non sono ancora aperte. Presto potrai provare SYGMA TV+ sul tuo dispositivo prima di pagare.',
+    supportTitleA: 'Come',
+    supportTitleHl: 'contattarci',
+    supportText: 'I nostri moduli online non sono ancora attivi.',
+    contactLead: 'Domande generali:',
+    contactNote: 'Per ora non è possibile effettuare ordini o richiedere prove gratuite via email né tramite altri canali.',
+    back: 'Torna ai piani',
+    close: 'Chiudi',
+    faqSubscribe: 'Non ancora: gli ordini online apriranno a breve. Intanto puoi già confrontare piani, durate e prezzi con il simulatore di piano.',
+  },
   request: {
     trialTitle: 'Richiedi una prova',
     trialHeadA: 'Richiedi la tua',

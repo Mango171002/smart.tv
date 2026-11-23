@@ -393,6 +393,26 @@ const de: Dictionary = {
     supportUnavailable: 'Das Kontaktformular ist in dieser Umgebung nicht verbunden.',
     supportContact: 'Wir antworten per E-Mail an die von Ihnen angegebene Adresse.',
   },
+  /**
+   * Prelaunch state (phase 11B): shown instead of the order, free-trial and support forms while online requests are
+   * closed (FEATURE_CONTACT_FORM=false). No form, nothing sent. The e-mail is for general questions only.
+   */
+  prelaunch: {
+    orderTitleA: 'Online-Bestellung',
+    orderTitleHl: 'in Kürze',
+    orderText: 'Online-Bestellungen sind noch nicht möglich. Ihre Auswahl bleibt unten stehen, damit Sie in Ruhe vergleichen können: Es wird nichts gesendet und nichts abgebucht.',
+    trialTitleA: 'Kostenloser Testzugang',
+    trialTitleHl: 'in Kürze',
+    trialText: 'Anfragen für einen kostenlosen Testzugang sind noch nicht möglich. Bald können Sie SYGMA TV+ auf Ihrem eigenen Gerät testen, bevor Sie bezahlen.',
+    supportTitleA: 'Kontaktieren Sie',
+    supportTitleHl: 'uns',
+    supportText: 'Unsere Online-Formulare sind noch nicht verfügbar.',
+    contactLead: 'Allgemeine Fragen:',
+    contactNote: 'Bestellungen und kostenlose Testzugänge sind noch nicht möglich – auch nicht per E-Mail oder über einen anderen Kanal.',
+    back: 'Zurück zu den Tarifen',
+    close: 'Schließen',
+    faqSubscribe: 'Noch nicht: Online-Bestellungen sind in Kürze möglich. Mit dem Tarifrechner können Sie Tarife, Laufzeiten und Preise aber schon jetzt vergleichen.',
+  },
   request: {
     trialTitle: 'Testzugang anfordern',
     trialHeadA: 'Jetzt',

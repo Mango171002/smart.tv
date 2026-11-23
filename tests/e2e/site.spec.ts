@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { RELEASED_LANGS } from './released';
+import { RELEASED_LANGS, ORDERS_OPEN } from './released';
 
 const ROUTES = [
   '/', '/blog', '/legal/terms', '/legal/privacy', '/legal/cookies', '/legal/refunds', '/legal/imprint',
@@ -187,6 +187,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
 });
 
 test.describe('pre-registration', () => {
+  test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
   test('pre-registers with the selected plan in three steps', async ({ page }) => {
     let sent: Record<string, unknown> | null = null;
     await page.route('**/api/contact', async (route) => {
@@ -417,6 +418,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
   });
 
   test('"Request a trial" opens a window: name, email, phone with country code', async ({ page, isMobile }) => {
+    test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
     let sent: Record<string, unknown> | null = null;
     await page.route('**/api/contact', async (route) => {
       sent = route.request().postDataJSON();
@@ -446,6 +448,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
   });
 
   test('floating support button and footer Contact open the support window (question required)', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
     let sent: Record<string, unknown> | null = null;
     await page.route('**/api/contact', async (route) => {
       sent = route.request().postDataJSON();
@@ -474,6 +477,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
   });
 
   test('request window shows a rate-limit message', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
     await page.goto('/');
     await page.locator('footer').getByRole('button', { name: 'Contact', exact: true }).click();

@@ -14,6 +14,7 @@ import { LOCALES, isLocale, isPublicLocale, localeSeo } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
 import { OG_IMAGE } from '@/lib/seo';
 import { CONSENT_DEFAULT_SCRIPT } from '@/lib/consent-default';
+import { isContactFormEnabled } from '@/lib/features';
 
 export const dynamicParams = false;
 
@@ -67,7 +68,8 @@ export default async function LocaleLayout({
         <SectionLinkHandler />
         <ConsentBanner dict={dict.consent} />
         <Analytics />
-        <RequestHost locale={locale} dict={{ request: dict.request, forms: dict.forms, common: dict.common }} />
+        {/* Online requests closed (FEATURE_CONTACT_FORM=false): the trial / support windows show the prelaunch message. */}
+        <RequestHost locale={locale} dict={{ request: dict.request, forms: dict.forms, common: dict.common, prelaunch: dict.prelaunch }} ordersOpen={isContactFormEnabled()} />
       </body>
     </html>
   );

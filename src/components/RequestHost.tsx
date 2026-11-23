@@ -13,7 +13,7 @@ export function openRequest(mode: RequestMode) {
   window.dispatchEvent(new CustomEvent<RequestMode>('open-request', { detail: mode }));
 }
 
-export function RequestHost({ locale, dict }: { locale: Locale; dict: Pick<Dictionary, 'request' | 'forms' | 'common'> }) {
+export function RequestHost({ locale, dict, ordersOpen = true }: { locale: Locale; dict: Pick<Dictionary, 'request' | 'forms' | 'common' | 'prelaunch'>; ordersOpen?: boolean }) {
   const [mode, setMode] = useState<RequestMode | null>(null);
   const opener = useRef<HTMLElement | null>(null);
 
@@ -32,6 +32,7 @@ export function RequestHost({ locale, dict }: { locale: Locale; dict: Pick<Dicti
       mode={mode}
       locale={locale}
       dict={dict}
+      ordersOpen={ordersOpen}
       onClose={() => {
         setMode(null);
         requestAnimationFrame(() => opener.current?.focus());

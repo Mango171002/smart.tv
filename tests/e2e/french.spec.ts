@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { INDEXABLE, PRIVATE_ROBOTS, RELEASED_LANGS, expectedSet } from './released';
+import { INDEXABLE, PRIVATE_ROBOTS, RELEASED_LANGS, expectedSet, ORDERS_OPEN } from './released';
 
 /**
  * Phase 7B — French preview.
@@ -125,6 +125,7 @@ test.describe('French — preview / released', () => {
   });
 
   test('home: French plans, simulator and order window (activation before payment)', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
     let sent: Record<string, unknown> | null = null;
     await page.route('**/api/contact', async (route) => {
       sent = route.request().postDataJSON();
@@ -175,6 +176,7 @@ test.describe('French — preview / released', () => {
   });
 
   test('French trial window', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts');
     await page.goto('/fr');
     await page.getByRole('button', { name: 'Essai gratuit' }).first().click();
     await expect(page.getByRole('dialog')).toContainText('Demandez votre');

@@ -114,7 +114,16 @@ for (const lang of BUILT) {
     });
 
     test('404 in the language (HTTP 404) and legal URLs → English legal pages', async ({ page, request }) => {
-      expect((await request.get(`/${lang}/nope`)).status()).toBe(404);
+      const raw = await request.get(`/${lang}/nope`);
+      expect(raw.status()).toBe(404);
+      // Server HTML, without JavaScript (phase 13): the language document, its title, H1 and noindex — not an empty shell.
+      const html = await raw.text();
+      expect(html).toMatch(new RegExp(`<html[^>]*\\blang="${lang}"`));
+      expect(html).not.toContain('__next_error__');
+      expect(html).toContain(`<title>${d.notFound.metaTitle} | SYGMA TV+</title>`);
+      expect(html.replace(/<!-- -->/g, '')).toMatch(new RegExp(`<h1[^>]*>${d.notFound.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h1>`));
+      expect(html).toMatch(/<meta name="robots" content="noindex[^"]*"/);
+      expect(html).not.toContain('rel="canonical"');
       const res = await page.goto(`/${lang}/nope`);
       expect(res?.status()).toBe(404);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(d.notFound.title);

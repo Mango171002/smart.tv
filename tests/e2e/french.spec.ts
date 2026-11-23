@@ -169,6 +169,12 @@ test.describe('French — preview / released', () => {
     for (const path of ['/fr/nope', '/fr/help/nope', '/fr/a/b/c']) {
       const res = await request.get(path);
       expect(res.status(), path).toBe(404);
+      // Server HTML, readable without JavaScript (phase 13): French document, title and H1, noindex.
+      const html = (await res.text()).replace(/<!-- -->/g, '');
+      expect(html, path).toMatch(/<html[^>]*\blang="fr"/);
+      expect(html, path).toContain('<title>Page introuvable | SYGMA TV+</title>');
+      expect(html, path).toMatch(/<h1[^>]*>Cette page n’existe pas\.<\/h1>/);
+      expect(html, path).toMatch(/<meta name="robots" content="noindex[^"]*"/);
     }
     const res = await page.goto('/fr/nope');
     expect(res?.status()).toBe(404);

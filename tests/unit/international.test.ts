@@ -144,6 +144,14 @@ describe('metadata and sitemap (English only: output unchanged)', () => {
     expect(buildMetadata({ locale: 'en', path: '', title: 't', description: 'd' }).alternates).toEqual({ canonical: '/' });
   });
 
+  it('Open Graph and X cards: same title, description and 1200×630 image, each with its text alternative', () => {
+    const m = buildMetadata({ locale: 'en', path: '/help', title: 'Help', description: 'd' });
+    expect(m.openGraph).toMatchObject({ title: 'Help | SYGMA TV+', description: 'd', images: [{ url: '/brand/og-image.jpg', width: 1200, height: 630, alt: expect.stringMatching(/\S/) }] });
+    expect(m.twitter).toMatchObject({ card: 'summary_large_image', title: 'Help | SYGMA TV+', description: 'd' });
+    const [img] = (m.twitter as { images: { url: string; alt: string }[] }).images;
+    expect(img).toEqual({ url: '/brand/og-image.jpg', alt: (m.openGraph as { images: { alt: string }[] }).images[0]!.alt });
+  });
+
   it('pages exist in English only', () => {
     expect(pageLocales('/help')).toEqual(['en']);
   });

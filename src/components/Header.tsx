@@ -3,7 +3,7 @@
 import { Menu } from 'lucide-react';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { Brand } from './Brand';
@@ -15,12 +15,26 @@ import { localizedPath } from '@/lib/routes';
 export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav'] }) {
   const [open, setOpen] = useState(false);
   const collapse = navCollapse(locale);
+  const root = useRef<HTMLElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    // Escape closes the menu; the focus goes back to the menu button when it was inside the menu (never lost on <body>).
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      const inside = root.current?.contains(document.activeElement);
+      setOpen(false);
+      if (inside) button.current?.focus();
+    };
+    // A tap or click outside the header closes it (same as the language list).
+    const onDown = (e: PointerEvent) => !root.current?.contains(e.target as Node) && setOpen(false);
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onDown);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onDown);
+    };
   }, [open]);
 
   // One-page site: the menu scrolls to sections of the home page.
@@ -33,11 +47,24 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
 
   return (
     // Several languages (preview / released builds only): header tuned for longer labels, see globals.css « header-multi ».
-    <header className={collapse ? 'header header-multi' : 'header'} data-collapse={collapse || undefined}>
+    <header ref={root} className={collapse ? 'header header-multi' : 'header'} data-collapse={collapse || undefined}>
       <div className="wrap nav">
         <Link href={localizedPath(locale)} title={nav.home} className="brand-link">
           <Brand />
         </Link>
+        {/* The menu button comes BEFORE the menu it opens, so the next Tab enters the open menu (WCAG 2.4.3). Visually nothing
+            changes: it is hidden on wide screens and the open menu is an absolutely positioned panel. */}
+        <button
+          type="button"
+          ref={button}
+          className="mobile-menu"
+          aria-label={nav.toggleMenu}
+          aria-expanded={open}
+          aria-controls="navlinks"
+          onClick={() => setOpen((o) => !o)}
+        >
+          <Menu size={20} strokeWidth={1.75} aria-hidden="true" />
+        </button>
         <nav id="navlinks" className={`links${open ? ' open' : ''}`} aria-label={nav.label}>
           {/* Plain anchors: native in-page scrolling + hashchange (used by the trial form pre-fill) */}
           {links.map((l) => (
@@ -65,16 +92,6 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
             </a>
           </span>
         </nav>
-        <button
-          type="button"
-          className="mobile-menu"
-          aria-label={nav.toggleMenu}
-          aria-expanded={open}
-          aria-controls="navlinks"
-          onClick={() => setOpen((o) => !o)}
-        >
-          <Menu size={20} strokeWidth={1.75} aria-hidden="true" />
-        </button>
       </div>
     </header>
   );

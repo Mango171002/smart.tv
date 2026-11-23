@@ -77,3 +77,16 @@ nav.toc a { display: inline-block; padding: 4px 0; }
 .info :global(.terms-body) { grid-template-columns: minmax(0, 1fr); }
 .info :global(.terms-contact li) { flex-wrap: wrap; max-width: 100%; }
 .info :global(.terms-contact li a) { overflow-wrap: anywhere; }
+
+/* Touch screens (phase 13, A-007): 44 px hit areas. Breadcrumbs and the « related » pills keep their drawn size (padding
+   offset by a negative margin / invisible ::after); the popular-questions list gets 4 px more row gap and the table of
+   contents 44 px rows (as the footer links), so neighbouring targets never overlap. */
+@media (pointer: coarse) {
+  .crumbs a { padding: 12px 8px; margin: -10px -8px; }
+  .related a { position: relative; }
+  .related a::after { content: ''; position: absolute; inset: -4px 0; }
+  .popular ul { row-gap: 12px; }
+  .popular a { position: relative; }
+  .popular a::after { content: ''; position: absolute; inset: -6px 0; }
+  nav.toc a { padding-block: 12px; }
+}

@@ -345,7 +345,9 @@ export function PlanConfigurator({ locale, table, dict, ordersOpen = true, child
               onFocus={() => void loadDialog()}
               aria-haspopup="dialog"
             >
-              {p.previewCheckout} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+              <span className="btn-label">
+                {p.previewCheckout} <ArrowRight className="btn-icon-end" size={18} strokeWidth={2} aria-hidden="true" />
+              </span>
             </button>
           </div>
         </div>

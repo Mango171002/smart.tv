@@ -20,6 +20,9 @@ export function SectionLinkHandler() {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const behavior: ScrollBehavior = reduce ? 'auto' : 'smooth';
       target.scrollIntoView({ behavior, block: 'start' });
+      // A focusable target (the skip link's <main tabindex="-1">) takes the focus, as the browser would without
+      // preventDefault(): the next Tab then continues from the content, not from the header (WCAG 2.4.1, A-004).
+      if (target.hasAttribute('tabindex')) target.focus({ preventScroll: true });
       // Content above can change height during the smooth scroll (images, entrance animations):
       // once the scroll ends, land exactly on the section (one correction at most).
       const settle = () => {

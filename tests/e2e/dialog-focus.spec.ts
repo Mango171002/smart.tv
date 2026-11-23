@@ -154,3 +154,53 @@ test.describe('header menu: keyboard order and closing (U-006)', () => {
     });
   }
 });
+
+test.describe('phase 13 regression sweep: menu and skip link (A-003, A-004)', () => {
+  const cases: Array<[string, number]> = [['en', 320], ['en', 375], ['en', 768], ...(['de', 'nb'] as const).filter(has).flatMap((l): Array<[string, number]> => [[l, 375], [l, 1280]])];
+  for (const [lang, width] of cases) {
+    test(`${lang}@${width}px: Tab past the last item of the open menu closes it (no focus under the panel)`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto(home(lang));
+      const menu = page.locator('.mobile-menu');
+      const nav = page.locator('#navlinks');
+      await press(page, menu);
+      await expect(nav).toHaveClass(/open/);
+      let n = 0;
+      while ((await page.evaluate(() => !!document.activeElement?.closest('header'))) && n++ < 40) await page.keyboard.press('Tab');
+      expect(n, 'Tab leaves the header after the menu items').toBeLessThan(40);
+      await expect(nav).not.toHaveClass(/open/);
+      await expect(menu).toHaveAttribute('aria-expanded', 'false');
+      // The focused control is visible: not covered by anything (the closed menu included).
+      const hit = await page.evaluate(() => {
+        const el = document.activeElement as HTMLElement;
+        el.scrollIntoView({ block: 'center' });
+        const r = el.getBoundingClientRect();
+        const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return !!t && (t === el || el.contains(t));
+      });
+      expect(hit, `${lang}@${width}: focused control not covered`).toBe(true);
+      // Shift+Tab back into the header keeps the menu closed until it is opened again.
+      await page.keyboard.press('Shift+Tab');
+      await expect(nav).not.toHaveClass(/open/);
+    });
+  }
+
+  for (const width of [375, 1366]) {
+    test(`skip link @${width}px: visible when focused, moves the focus to the content`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto('/');
+      await page.keyboard.press('Tab');
+      const skip = page.locator('.skip-link');
+      await expect(skip).toBeFocused();
+      await expect(skip).toBeInViewport();
+      await page.keyboard.press('Enter');
+      await expect(page.locator('#main')).toBeFocused();
+      await page.keyboard.press('Tab');
+      expect(await page.evaluate(() => !!document.activeElement?.closest('#main')), 'next Tab continues in the content, not in the header').toBe(true);
+      // Focus coming back to it from the end of the page (Tab wrapping round): it is shown on screen.
+      await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      await skip.focus();
+      await expect(skip).toBeInViewport();
+    });
+  }
+});

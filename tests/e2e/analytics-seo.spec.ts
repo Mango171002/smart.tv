@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import en from '../../src/i18n/dictionaries/en';
-import { RELEASED_LANGS, INDEXABLE, PRIVATE_ROBOTS, ORDERS_OPEN } from './released';
+import { RELEASED_LANGS, INDEXABLE, PRIVATE_ROBOTS, ORDERS_OPEN, ORDER_BUTTON } from './released';
 
 /**
  * Consent, analytics events and technical SEO.
@@ -57,7 +57,7 @@ test.describe('cookie consent', () => {
     await expect(page.getByTestId('consent-banner')).toBeVisible();
     await page.locator('#plans').scrollIntoViewIfNeeded();
     await page.locator('.offers[data-ready]').waitFor();
-    await page.getByRole('button', { name: /^Order now/ }).click();
+    await page.getByRole('button', { name: ORDER_BUTTON }).click();
     const dialog = page.getByTestId('checkout-dialog');
     // Clickable = not covered by the banner (Playwright checks what receives the click).
     // Orders closed (prelaunch): the window's main button is « Back to the plans ».
@@ -177,7 +177,7 @@ test.describe('analytics events (consent granted)', () => {
 
     await page.locator('.sim-layout [data-tier="ultra"]').click();
     await page.locator('[data-term="24m"]').click();
-    await page.getByRole('button', { name: /^Order now/ }).click();
+    await page.getByRole('button', { name: ORDER_BUTTON }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await expect(dialog).toHaveAttribute('data-clarity-mask', 'true');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
@@ -355,7 +355,7 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
     await page.locator('.offers[data-ready]').waitFor();
     await page.locator('.tier-grid').scrollIntoViewIfNeeded();
     await page.locator('.sim-layout [data-tier="ultra"]').click();
-    await page.getByRole('button', { name: /^Order now/ }).click();
+    await page.getByRole('button', { name: ORDER_BUTTON }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('ads.qa@example.test');
     await dialog.getByLabel('Your country').click();

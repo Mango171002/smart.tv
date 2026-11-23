@@ -2496,6 +2496,8 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
   .order-summary-price { text-align: left; }
   .order-summary-change { min-height: 44px; }
 }
+/* Touch target: 44 px on every touch-size layout (tablets included), not only on phones. */
+@media (max-width: 900px) { .order-summary-change { min-height: 44px; } }
 /* Narrow phones: the price takes the full width (long USD amounts never overflow). */
 @media (max-width: 400px) {
   .order-summary-price { grid-column: 1 / -1; }

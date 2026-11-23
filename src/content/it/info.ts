@@ -48,7 +48,7 @@ const ABOUT: InfoPage = {
   title: 'Chi è SYGMA TV+',
   metaTitle: 'Chi siamo: società, assistenza e impegni',
   description: 'SYGMA TV+ è un marchio di intrattenimento digitale di Sygma TV LLC, fondata negli Stati Uniti nel 2026. Come funziona, i nostri impegni e l’assistenza.',
-  intro: `SYGMA TV+ è un marchio internazionale di intrattenimento digitale, nato negli ${F.basedIn} nel ${F.established}. Offriamo abbonamenti streaming per TV, smartphone e computer, con un team di assistenza raggiungibile ${F.supportHours} in sei lingue.`,
+  intro: `SYGMA TV+ è un marchio internazionale di intrattenimento digitale, nato negli ${F.basedIn} nel ${F.established}. Offriamo abbonamenti streaming per TV, smartphone e computer, con assistenza clienti ${F.supportHours} in sei lingue.`,
   icon: 'info',
   sections: [
     {
@@ -95,7 +95,7 @@ const ABOUT: InfoPage = {
     {
       id: 'support', icon: 'users', title: 'Assistenza multilingue',
       body: [
-        { p: `Il nostro team è disponibile ${F.supportHours} e di solito risponde in ${F.usualReply}. È il nostro tempo di risposta abituale, non una garanzia contrattuale.` },
+        { p: `Il nostro assistente automatico è disponibile ${F.supportHours}, con assistenza umana quando serve. Di solito rispondiamo in ${F.usualReply}. È il nostro tempo di risposta abituale, non una garanzia contrattuale.` },
         { chips: [...F.languages], label: 'Lingue dell’assistenza' },
         { note: 'Il nostro team di assistenza parla queste sei lingue; i documenti legali sono redatti in inglese.' },
       ],
@@ -131,7 +131,7 @@ const HELP_HUB = {
   title: 'Centro assistenza',
   metaTitle: 'Centro assistenza: prova, ordini e rimborsi',
   description: 'Risposte su prova gratuita di SYGMA TV+, ordini e pagamento, dispositivi supportati, risoluzione dei problemi, rimborsi e contatti dell’assistenza.',
-  intro: `Risposte chiare su prova gratuita, ordini, pagamento, dispositivi e rimborsi. Ti serve ancora aiuto? Il nostro team è disponibile ${F.supportHours}.`,
+  intro: `Risposte chiare su prova gratuita, ordini, pagamento, dispositivi e rimborsi. Ti serve ancora aiuto? Il nostro assistente automatico è disponibile ${F.supportHours}, con assistenza umana quando serve.`,
   popular: [
     { q: 'Quando e come pago?', href: '/it/help/ordering-payment#pay' },
     { q: 'Quanto tempo richiede l’attivazione?', href: '/it/help/ordering-payment#activation' },
@@ -247,7 +247,7 @@ const HELP_TOPICS: InfoPage[] = [
       { id: 'store', icon: 'tv', title: 'Non trovo l’app nel mio store', body: [{ p: 'Gli store di app dipendono dal modello del dispositivo e dal paese. Inviaci marca, modello e anno del tuo dispositivo: ti diremo cosa funziona.' }] },
       { id: 'crash', icon: 'pause', title: 'L’app si chiude da sola', body: [{ p: 'Riavvia il dispositivo, installa gli aggiornamenti disponibili del sistema e dell’app, poi riprova.' }] },
       { id: 'mobile', icon: 'devices', title: 'La riproduzione si interrompe con i dati mobili', body: [{ p: 'La qualità dipende dalla rete mobile e dal tuo piano dati. Se puoi, passa al Wi-Fi.' }] },
-      { id: 'still', icon: 'mail', title: 'Ancora non funziona?', body: [{ p: `Contattaci ${F.supportHours} indicando il modello del tuo dispositivo e allegando una foto dell’eventuale messaggio di errore: il nostro team di solito risponde in ${F.usualReply}.` }] },
+      { id: 'still', icon: 'mail', title: 'Ancora non funziona?', body: [{ p: `Contattaci ${F.supportHours} indicando il modello del tuo dispositivo e allegando una foto dell’eventuale messaggio di errore: di solito rispondiamo in ${F.usualReply}.` }] },
     ],
   },
   {
@@ -256,14 +256,14 @@ const HELP_TOPICS: InfoPage[] = [
     metaTitle: 'Assistenza: email e WhatsApp, 24/7',
     description: `Contatta l’assistenza SYGMA TV+ ${F.supportHours} via email, WhatsApp o modulo di contatto, in sei lingue. Cosa indicare per ricevere una risposta più rapida.`,
     summary: `${F.supportHours}, email o WhatsApp, sei lingue.`,
-    intro: `Il nostro team risponde via email e su WhatsApp, ${F.supportHours}.`,
+    intro: `Contattaci via email o su WhatsApp. Il nostro assistente automatico è disponibile ${F.supportHours}, con assistenza umana quando serve.`,
     sections: [
       { id: 'reach', icon: 'mail', title: 'Come contattarci', body: [{ list: [
         `Email: ${EMAIL}.`,
         `WhatsApp o telefono: ${PHONE}.`,
         'Il modulo di contatto: seleziona «Contatti» in fondo a qualsiasi pagina.',
       ] }] },
-      { id: 'availability', icon: 'clock', title: 'Quando rispondete?', body: [{ p: `Il nostro team è disponibile ${F.supportHours} e di solito risponde in ${F.usualReply}. È il nostro tempo di risposta abituale, non una garanzia contrattuale.` }] },
+      { id: 'availability', icon: 'clock', title: 'Quando rispondete?', body: [{ p: `Il nostro assistente automatico è disponibile ${F.supportHours}, con assistenza umana quando serve. Di solito rispondiamo in ${F.usualReply}. È il nostro tempo di risposta abituale, non una garanzia contrattuale.` }] },
       { id: 'languages', icon: 'globe', title: 'In quali lingue?', body: [
         { p: `Puoi scriverci in ${LANGS}.` },
         { chips: [...F.languages], label: 'Lingue dell’assistenza' },
@@ -312,9 +312,9 @@ const INFO_UI: InfoUi = {
     { k: 'Assistenza', v: F.supportHours, small: `Di solito risponde in ${F.usualReply}` },
     { k: 'Lingue dell’assistenza', v: String(F.languages.length), small: F.languages.join(' · ') },
   ],
-  aboutContact: `Domande su SYGMA TV+? Il nostro team è disponibile ${F.supportHours}.`,
+  aboutContact: `Domande su SYGMA TV+? Il nostro assistente automatico è disponibile ${F.supportHours}, con assistenza umana quando serve.`,
   hubContact: 'Non trovi la risposta? Scrivici — indica il tuo dispositivo e, se ce l’hai, il riferimento del tuo ordine.',
-  topicContact: `Ti serve ancora aiuto? Il nostro team risponde via email e su WhatsApp, ${F.supportHours}.`,
+  topicContact: `Ti serve ancora aiuto? Contattaci via email o su WhatsApp. Il nostro assistente automatico è disponibile ${F.supportHours}, con assistenza umana quando serve.`,
   hubRelated: [
     { href: '/it/about', label: 'Chi siamo' },
     { href: '/it#faq', label: 'FAQ' },

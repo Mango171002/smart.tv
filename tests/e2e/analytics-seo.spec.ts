@@ -250,7 +250,8 @@ test.describe('technical SEO', () => {
     await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(RELEASED_LANGS.length ? RELEASED_LANGS.length + 2 : 0);
     const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
     const types = ld['@graph'].map((n: { '@type': string }) => n['@type']);
-    expect(types).toEqual(['Organization', 'WebSite']);
+    // Phase 10: the FAQPage node mirrors the visible FAQ (tests/e2e/faq-jsonld.spec.ts).
+    expect(types).toEqual(['Organization', 'WebSite', 'FAQPage']);
     expect(ld['@graph'][0]).toMatchObject({ name: 'SYGMA TV+', slogan: 'One World. Endless Entertainment.', foundingDate: '2026' });
     // Owner-validated facts (phase 6A): support in six languages.
     expect(ld['@graph'][0].contactPoint[0].availableLanguage).toEqual(['English', 'French', 'Arabic', 'German', 'Spanish', 'Italian']);

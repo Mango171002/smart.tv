@@ -86,7 +86,7 @@ export const ABOUT: InfoPage = {
   title: 'About SYGMA TV+',
   metaTitle: 'About us: company, support and commitments',
   description: 'SYGMA TV+ is a digital-entertainment brand of Sygma TV LLC, established in the United States in 2026. How it works, our commitments and support.',
-  intro: `SYGMA TV+ is an international digital-entertainment brand, established in the ${F.basedIn} in ${F.established}. We offer streaming subscriptions for your TV, mobile and computer, with a support team you can reach ${F.supportHours} in six languages.`,
+  intro: `SYGMA TV+ is an international digital-entertainment brand, established in the ${F.basedIn} in ${F.established}. We offer streaming subscriptions for your TV, mobile and computer, with ${F.supportHours} customer support in six languages.`,
   icon: 'info',
   sections: [
     {
@@ -133,7 +133,7 @@ export const ABOUT: InfoPage = {
     {
       id: 'support', icon: 'users', title: 'Multilingual support',
       body: [
-        { p: `Our team is available ${F.supportHours} and usually replies in ${F.usualReply}. This is our usual reply time, not a contractual guarantee.` },
+        { p: `Our automated assistant is available ${F.supportHours}, with human support when needed. We usually reply in ${F.usualReply}. This is our usual reply time, not a contractual guarantee.` },
         { chips: [...F.languages], label: 'Support languages' },
         { note: 'Our support team speaks these six languages; the website itself is in English.' },
       ],
@@ -169,7 +169,7 @@ export const HELP_HUB = {
   title: 'Help center',
   metaTitle: 'Help center: trials, orders, devices and refunds',
   description: 'Answers about the SYGMA TV+ free trial, ordering and payment, supported devices, troubleshooting, refunds and how to contact our support team.',
-  intro: `Clear answers about the free trial, ordering, payment, devices and refunds. Still stuck? Our team is available ${F.supportHours}.`,
+  intro: `Clear answers about the free trial, ordering, payment, devices and refunds. Still stuck? Our automated assistant is available ${F.supportHours}, with human support when needed.`,
   /** Quick answers on the hub (deep links into the topics). */
   popular: [
     { q: 'When and how do I pay?', href: '/help/ordering-payment#pay' },
@@ -286,7 +286,7 @@ export const HELP_TOPICS: InfoPage[] = [
       { id: 'store', icon: 'tv', title: 'I cannot find the app in my store', body: [{ p: 'App stores depend on the device model and the country. Send us the brand, model and year of your device: we will tell you what works for it.' }] },
       { id: 'crash', icon: 'pause', title: 'The app closes by itself', body: [{ p: 'Restart the device, install the available system and app updates, then try again.' }] },
       { id: 'mobile', icon: 'devices', title: 'Playback stops on mobile data', body: [{ p: 'Quality depends on your mobile network and data plan. Switch to Wi-Fi if you can.' }] },
-      { id: 'still', icon: 'mail', title: 'Still not working?', body: [{ p: `Contact us ${F.supportHours} with your device model and a photo of any error message: our team usually replies in ${F.usualReply}.` }] },
+      { id: 'still', icon: 'mail', title: 'Still not working?', body: [{ p: `Contact us ${F.supportHours} with your device model and a photo of any error message: we usually reply in ${F.usualReply}.` }] },
     ],
   },
   {
@@ -295,14 +295,14 @@ export const HELP_TOPICS: InfoPage[] = [
     metaTitle: 'Contact support: email and WhatsApp, 24/7',
     description: `Reach SYGMA TV+ support ${F.supportHours} by email, WhatsApp or the contact form, in six languages. What to include for a faster answer.`,
     summary: `${F.supportHours}, email or WhatsApp, six languages.`,
-    intro: `Our team answers by email and on WhatsApp, ${F.supportHours}.`,
+    intro: `Contact us by email or on WhatsApp. Our automated assistant is available ${F.supportHours}, with human support when needed.`,
     sections: [
       { id: 'reach', icon: 'mail', title: 'How to reach us', body: [{ list: [
         `Email: ${EMAIL}.`,
         `WhatsApp or phone: ${PHONE}.`,
         'The contact form: select “Contact” at the bottom of any page.',
       ] }] },
-      { id: 'availability', icon: 'clock', title: 'When do you reply?', body: [{ p: `Our team is available ${F.supportHours} and usually replies in ${F.usualReply}. This is our usual reply time, not a contractual guarantee.` }] },
+      { id: 'availability', icon: 'clock', title: 'When do you reply?', body: [{ p: `Our automated assistant is available ${F.supportHours}, with human support when needed. We usually reply in ${F.usualReply}. This is our usual reply time, not a contractual guarantee.` }] },
       { id: 'languages', icon: 'globe', title: 'Which languages?', body: [
         { p: `You can write to us in ${LANGS}.` },
         { chips: [...F.languages], label: 'Support languages' },
@@ -376,9 +376,9 @@ export const INFO_UI: InfoUi = {
     { k: 'Support', v: F.supportHours, small: `Usually replies in ${F.usualReply}` },
     { k: 'Support languages', v: String(F.languages.length), small: F.languages.join(' · ') },
   ],
-  aboutContact: `Questions about SYGMA TV+? Our team is available ${F.supportHours}.`,
+  aboutContact: `Questions about SYGMA TV+? Our automated assistant is available ${F.supportHours}, with human support when needed.`,
   hubContact: 'Can’t find your answer? Write to us — tell us your device and, if you have one, your order reference.',
-  topicContact: `Still need help? Our team answers by email and on WhatsApp, ${F.supportHours}.`,
+  topicContact: `Still need help? Contact us by email or on WhatsApp. Our automated assistant is available ${F.supportHours}, with human support when needed.`,
   hubRelated: [
     { href: '/about', label: 'About us' },
     { href: '/#faq', label: 'FAQ' },

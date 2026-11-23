@@ -49,7 +49,7 @@ const ABOUT: InfoPage = {
   title: 'Over SYGMA TV+',
   metaTitle: 'Over ons: bedrijf, klantenservice en beloften',
   description: 'SYGMA TV+ is een merk voor digitaal entertainment van Sygma TV LLC, opgericht in 2026 in de Verenigde Staten. Werkwijze, beloften en klantenservice.',
-  intro: `SYGMA TV+ is een internationaal merk voor digitaal entertainment, opgericht in ${F.established} in de ${F.basedIn}. We bieden streamingabonnementen voor je tv, mobiel en computer, met een klantenservice die ${F.supportHours} bereikbaar is in zes talen.`,
+  intro: `SYGMA TV+ is een internationaal merk voor digitaal entertainment, opgericht in ${F.established} in de ${F.basedIn}. We bieden streamingabonnementen voor je tv, mobiel en computer, met ${F.supportHours} klantenservice in zes talen.`,
   icon: 'info',
   sections: [
     {
@@ -96,7 +96,7 @@ const ABOUT: InfoPage = {
     {
       id: 'support', icon: 'users', title: 'Meertalige klantenservice',
       body: [
-        { p: `Ons team is ${F.supportHours} bereikbaar en antwoordt meestal ${F.usualReply}. Dit is onze gebruikelijke reactietijd, geen contractuele garantie.` },
+        { p: `Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is. We antwoorden meestal ${F.usualReply}. Dit is onze gebruikelijke reactietijd, geen contractuele garantie.` },
         { chips: [...F.languages], label: 'Talen van de klantenservice' },
         { note: 'Onze klantenservice spreekt deze zes talen; onze juridische documenten zijn in het Engels.' },
       ],
@@ -132,7 +132,7 @@ const HELP_HUB = {
   title: 'Helpcentrum',
   metaTitle: 'Helpcentrum: proefperiode, bestellen, apparaten',
   description: 'Antwoorden over de gratis proefperiode van SYGMA TV+, bestellen en betalen, apparaten, problemen oplossen, terugbetaling en contact met de klantenservice.',
-  intro: `Duidelijke antwoorden over de gratis proefperiode, bestellen, betalen, apparaten en terugbetaling. Kom je er niet uit? Ons team is ${F.supportHours} bereikbaar.`,
+  intro: `Duidelijke antwoorden over de gratis proefperiode, bestellen, betalen, apparaten en terugbetaling. Kom je er niet uit? Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is.`,
   popular: [
     { q: 'Wanneer en hoe betaal ik?', href: '/nl/help/ordering-payment#pay' },
     { q: 'Hoelang duurt de activering?', href: '/nl/help/ordering-payment#activation' },
@@ -248,7 +248,7 @@ const HELP_TOPICS: InfoPage[] = [
       { id: 'store', icon: 'tv', title: 'Ik vind de app niet in mijn store', body: [{ p: 'Welke appstore je hebt, hangt af van het apparaatmodel en het land. Stuur ons het merk, het model en het bouwjaar van je apparaat: we vertellen je wat erop werkt.' }] },
       { id: 'crash', icon: 'pause', title: 'De app sluit vanzelf af', body: [{ p: 'Herstart het apparaat, installeer de beschikbare systeem- en app-updates en probeer het opnieuw.' }] },
       { id: 'mobile', icon: 'devices', title: 'Afspelen stopt op mobiele data', body: [{ p: 'De kwaliteit hangt af van je mobiele netwerk en je databundel. Schakel zo mogelijk over op wifi.' }] },
-      { id: 'still', icon: 'mail', title: 'Werkt het nog steeds niet?', body: [{ p: `Neem ${F.supportHours} contact met ons op met je apparaatmodel en een foto van een eventuele foutmelding: ons team antwoordt meestal ${F.usualReply}.` }] },
+      { id: 'still', icon: 'mail', title: 'Werkt het nog steeds niet?', body: [{ p: `Neem ${F.supportHours} contact met ons op met je apparaatmodel en een foto van een eventuele foutmelding: we antwoorden meestal ${F.usualReply}.` }] },
     ],
   },
   {
@@ -257,14 +257,14 @@ const HELP_TOPICS: InfoPage[] = [
     metaTitle: 'Klantenservice: e-mail en WhatsApp, 24/7',
     description: `Bereik de klantenservice van SYGMA TV+ ${F.supportHours} per e-mail, via WhatsApp of met het contactformulier, in zes talen. Tips voor een sneller antwoord.`,
     summary: `${F.supportHours}, e-mail of WhatsApp, zes talen.`,
-    intro: `Ons team antwoordt per e-mail en via WhatsApp, ${F.supportHours}.`,
+    intro: `Neem contact op per e-mail of via WhatsApp. Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is.`,
     sections: [
       { id: 'reach', icon: 'mail', title: 'Zo bereik je ons', body: [{ list: [
         `E-mail: ${EMAIL}.`,
         `WhatsApp of telefoon: ${PHONE}.`,
         'Het contactformulier: klik op “Contact” onderaan elke pagina.',
       ] }] },
-      { id: 'availability', icon: 'clock', title: 'Wanneer antwoorden jullie?', body: [{ p: `Ons team is ${F.supportHours} bereikbaar en antwoordt meestal ${F.usualReply}. Dit is onze gebruikelijke reactietijd, geen contractuele garantie.` }] },
+      { id: 'availability', icon: 'clock', title: 'Wanneer antwoorden jullie?', body: [{ p: `Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is. We antwoorden meestal ${F.usualReply}. Dit is onze gebruikelijke reactietijd, geen contractuele garantie.` }] },
       { id: 'languages', icon: 'globe', title: 'Welke talen?', body: [
         { p: `Je kunt ons schrijven in het ${LANGS}.` },
         { chips: [...F.languages], label: 'Talen van de klantenservice' },
@@ -313,9 +313,9 @@ const INFO_UI: InfoUi = {
     { k: 'Klantenservice', v: F.supportHours, small: `Antwoordt meestal ${F.usualReply}` },
     { k: 'Talen van de klantenservice', v: String(F.languages.length), small: F.languages.join(' · ') },
   ],
-  aboutContact: `Vragen over SYGMA TV+? Ons team is ${F.supportHours} bereikbaar.`,
+  aboutContact: `Vragen over SYGMA TV+? Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is.`,
   hubContact: 'Staat je antwoord er niet bij? Schrijf ons — vermeld je apparaat en, als je die hebt, je bestelreferentie.',
-  topicContact: `Nog hulp nodig? Ons team antwoordt per e-mail en via WhatsApp, ${F.supportHours}.`,
+  topicContact: `Nog hulp nodig? Neem contact op per e-mail of via WhatsApp. Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is.`,
   hubRelated: [
     { href: '/nl/about', label: 'Over ons' },
     { href: '/nl#faq', label: 'FAQ' },

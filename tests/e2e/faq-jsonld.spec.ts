@@ -10,7 +10,8 @@ for (const lang of HOMES) {
   test(`${lang}: FAQPage structured data matches the visible FAQ`, async ({ page }) => {
     await page.goto(lang === 'en' ? '/' : `/${lang}`);
     const lds = (await page.locator('script[type="application/ld+json"]').allTextContents()).map((t) => JSON.parse(t));
-    const faq = lds.filter((x) => x['@type'] === 'FAQPage');
+    expect(lds).toHaveLength(1);
+    const faq = lds[0]['@graph'].filter((x: { '@type': string }) => x['@type'] === 'FAQPage');
     expect(faq).toHaveLength(1);
     expect(faq[0].inLanguage).toBe(lang);
     const visible = (await page.locator('#faq summary').allInnerTexts()).map((t) => t.trim());

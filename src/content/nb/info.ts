@@ -47,7 +47,7 @@ const ABOUT: InfoPage = {
   title: 'Om SYGMA TV+',
   metaTitle: 'Om oss: selskap, kundestøtte og forpliktelser',
   description: 'SYGMA TV+ er et merke for digital underholdning fra Sygma TV LLC, etablert i USA i 2026. Les om tjenesten, forpliktelsene våre og kundestøtten.',
-  intro: `SYGMA TV+ er et internasjonalt merke for digital underholdning, etablert i ${F.basedIn} i ${F.established}. Vi tilbyr strømmeabonnementer for TV, mobil og datamaskin, med et kundestøtteteam du kan nå ${F.supportHours} på seks språk.`,
+  intro: `SYGMA TV+ er et internasjonalt merke for digital underholdning, etablert i ${F.basedIn} i ${F.established}. Vi tilbyr strømmeabonnementer for TV, mobil og datamaskin, med kundestøtte ${F.supportHours} på seks språk.`,
   icon: 'info',
   sections: [
     {
@@ -94,7 +94,7 @@ const ABOUT: InfoPage = {
     {
       id: 'support', icon: 'users', title: 'Flerspråklig kundestøtte',
       body: [
-        { p: `Teamet vårt er tilgjengelig ${F.supportHours} og svarer vanligvis på ${F.usualReply}. Dette er den vanlige svartiden vår, ikke en avtalefestet garanti.` },
+        { p: `Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov. Vi svarer vanligvis på ${F.usualReply}. Dette er den vanlige svartiden vår, ikke en avtalefestet garanti.` },
         { chips: [...F.languages], label: 'Språk for kundestøtte' },
         { note: 'Kundestøtteteamet vårt snakker disse seks språkene; de juridiske dokumentene våre er på engelsk.' },
       ],
@@ -130,7 +130,7 @@ const HELP_HUB = {
   title: 'Hjelpesenter',
   metaTitle: 'Hjelpesenter: prøveperiode, bestilling, refusjon',
   description: 'Få svar om SYGMA TV+: gratis prøveperiode, bestilling og betaling, støttede enheter, feilsøking, refusjon og hvordan du kontakter kundestøtten.',
-  intro: `Tydelige svar om gratis prøveperiode, bestilling, betaling, enheter og refusjon. Står du fast? Teamet vårt er tilgjengelig ${F.supportHours}.`,
+  intro: `Tydelige svar om gratis prøveperiode, bestilling, betaling, enheter og refusjon. Står du fast? Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
   popular: [
     { q: 'Når og hvordan betaler jeg?', href: '/nb/help/ordering-payment#pay' },
     { q: 'Hvor lang tid tar aktiveringen?', href: '/nb/help/ordering-payment#activation' },
@@ -246,7 +246,7 @@ const HELP_TOPICS: InfoPage[] = [
       { id: 'store', icon: 'tv', title: 'Jeg finner ikke appen i appbutikken', body: [{ p: 'Utvalget i appbutikkene avhenger av enhetsmodell og land. Send oss merke, modell og årsmodell for enheten din, så forteller vi deg hva som fungerer på den.' }] },
       { id: 'crash', icon: 'pause', title: 'Appen lukker seg av seg selv', body: [{ p: 'Start enheten på nytt, installer tilgjengelige system- og appoppdateringer, og prøv igjen.' }] },
       { id: 'mobile', icon: 'devices', title: 'Avspillingen stopper på mobildata', body: [{ p: 'Kvaliteten avhenger av mobilnettet og mobilabonnementet ditt. Bytt til Wi-Fi hvis du kan.' }] },
-      { id: 'still', icon: 'mail', title: 'Fungerer det fortsatt ikke?', body: [{ p: `Kontakt oss ${F.supportHours} med enhetsmodellen din og et bilde av eventuelle feilmeldinger: teamet vårt svarer vanligvis på ${F.usualReply}.` }] },
+      { id: 'still', icon: 'mail', title: 'Fungerer det fortsatt ikke?', body: [{ p: `Kontakt oss ${F.supportHours} med enhetsmodellen din og et bilde av eventuelle feilmeldinger: vi svarer vanligvis på ${F.usualReply}.` }] },
     ],
   },
   {
@@ -255,14 +255,14 @@ const HELP_TOPICS: InfoPage[] = [
     metaTitle: 'Kundestøtte: e-post og WhatsApp, 24/7',
     description: `Kontakt kundestøtten til SYGMA TV+ ${F.supportHours} på e-post, WhatsApp eller via kontaktskjemaet, på seks språk. Dette bør du ta med for å få raskere svar.`,
     summary: `${F.supportHours}, e-post eller WhatsApp, seks språk.`,
-    intro: `Teamet vårt svarer på e-post og WhatsApp, ${F.supportHours}.`,
+    intro: `Kontakt oss på e-post eller WhatsApp. Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
     sections: [
       { id: 'reach', icon: 'mail', title: 'Slik når du oss', body: [{ list: [
         `E-post: ${EMAIL}.`,
         `WhatsApp eller telefon: ${PHONE}.`,
         'Kontaktskjemaet: velg «Kontakt» nederst på en hvilken som helst side.',
       ] }] },
-      { id: 'availability', icon: 'clock', title: 'Når svarer dere?', body: [{ p: `Teamet vårt er tilgjengelig ${F.supportHours} og svarer vanligvis på ${F.usualReply}. Dette er den vanlige svartiden vår, ikke en avtalefestet garanti.` }] },
+      { id: 'availability', icon: 'clock', title: 'Når svarer dere?', body: [{ p: `Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov. Vi svarer vanligvis på ${F.usualReply}. Dette er den vanlige svartiden vår, ikke en avtalefestet garanti.` }] },
       { id: 'languages', icon: 'globe', title: 'Hvilke språk?', body: [
         { p: `Du kan skrive til oss på ${LANGS}.` },
         { chips: [...F.languages], label: 'Språk for kundestøtte' },
@@ -311,9 +311,9 @@ const INFO_UI: InfoUi = {
     { k: 'Kundestøtte', v: F.supportHours, small: `Svarer vanligvis på ${F.usualReply}` },
     { k: 'Språk for kundestøtte', v: String(F.languages.length), small: F.languages.join(' · ') },
   ],
-  aboutContact: `Spørsmål om SYGMA TV+? Teamet vårt er tilgjengelig ${F.supportHours}.`,
+  aboutContact: `Spørsmål om SYGMA TV+? Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
   hubContact: 'Finner du ikke svaret? Skriv til oss — oppgi enheten din og eventuelt ordrereferansen din.',
-  topicContact: `Trenger du fortsatt hjelp? Teamet vårt svarer på e-post og WhatsApp, ${F.supportHours}.`,
+  topicContact: `Trenger du fortsatt hjelp? Kontakt oss på e-post eller WhatsApp. Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
   hubRelated: [
     { href: '/nb/about', label: 'Om oss' },
     { href: '/nb#faq', label: 'FAQ' },

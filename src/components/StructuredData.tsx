@@ -14,7 +14,7 @@ export function sameAsProfiles(social: Record<string, string | null>): string[] 
 }
 
 /** JSON-LD (Organization + WebSite) for the home page. Only verified, public facts. */
-export function StructuredData({ description, locale = DEFAULT_LOCALE }: { description: string; locale?: Locale }) {
+export function StructuredData({ description, locale = DEFAULT_LOCALE, faq }: { description: string; locale?: Locale; faq?: { items: ReadonlyArray<{ q: string; a: string }>; pageUrl: string } }) {
   const url = siteConfig.siteUrl;
   const sameAs = sameAsProfiles(siteConfig.social);
   const data = {
@@ -61,6 +61,7 @@ export function StructuredData({ description, locale = DEFAULT_LOCALE }: { descr
         inLanguage: localeSeo(locale).htmlLang,
         publisher: { '@id': `${url}/#organization` },
       },
+      ...(faq ? [faqJsonLd(faq.items, locale, faq.pageUrl)] : []),
     ],
   };
   // JSON-LD is data, not executed; `<` is escaped so the content cannot close the script tag.
@@ -68,13 +69,12 @@ export function StructuredData({ description, locale = DEFAULT_LOCALE }: { descr
 }
 
 /**
- * FAQPage JSON-LD for a home page (phase 10, GEO): exactly the questions and answers displayed in its FAQ section, in
+ * FAQPage node of a home page's JSON-LD graph (phase 10, GEO): exactly the questions and answers displayed in its FAQ section, in
  * the page language — no extra claim. Search engines no longer show FAQ rich results for most sites; the markup still
  * gives answer engines a clean question → answer structure of content that is visible on the page.
  */
 export function faqJsonLd(items: ReadonlyArray<{ q: string; a: string }>, locale: Locale, pageUrl: string) {
   return {
-    '@context': 'https://schema.org',
     '@type': 'FAQPage',
     '@id': `${pageUrl}#faq`,
     url: pageUrl,
@@ -83,6 +83,3 @@ export function faqJsonLd(items: ReadonlyArray<{ q: string; a: string }>, locale
   };
 }
 
-export function FaqStructuredData({ items, locale, pageUrl }: { items: ReadonlyArray<{ q: string; a: string }>; locale: Locale; pageUrl: string }) {
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(items, locale, pageUrl)).replace(/</g, '\\u003c') }} />;
-}

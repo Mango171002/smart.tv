@@ -107,7 +107,7 @@ const sv: Dictionary = {
   },
   benefits: [
     { title: 'Snabb beställning', text: 'På under en minut' },
-    { title: 'Flexibla paket', text: 'Upp till 4 skärmar, 1 till 3 år' },
+    { title: 'Flexibla paket', text: 'Upp till 4 enheter, 1 till 3 år' },
     { title: 'Flera enheter', text: 'Tv, mobil, surfplatta, dator' },
     { title: 'Gratis provperiod', text: 'Testa innan du betalar' },
     { title: '24/7-support', text: 'E-post och WhatsApp, 6 språk' },
@@ -578,6 +578,7 @@ const sv: Dictionary = {
     chips: ['Flera enheter', 'Testa gratis'],
     linksTitle: 'Länkar',
     helpFaq: 'Hjälp / Vanliga frågor',
+    faq: 'Vanliga frågor',
     contact: 'Kontakt',
     social: 'Följ oss',
     socialSoon: '{name} (kommer snart)',

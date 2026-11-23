@@ -88,7 +88,7 @@ const en = {
   },
   benefits: [
     { title: 'Quick order', text: 'In less than a minute' },
-    { title: 'Flexible plans', text: 'Up to 4 screens, 1 to 3 years' },
+    { title: 'Flexible plans', text: 'Up to 4 devices, 1 to 3 years' },
     { title: 'Multi-device', text: 'TV, mobile, tablet, PC' },
     { title: 'Free trial', text: 'Try before you pay' },
     { title: '24/7 support', text: 'Email & WhatsApp, 6 languages' },
@@ -157,7 +157,7 @@ const en = {
     catalogueChannels: '**+{n}** live TV channels',
     catalogueVod: '**+{n}** movies & series (VOD)',
     recommended: 'Recommended',
-    choose: 'Get {plan}',
+    choose: 'Choose {plan}',
     tiers: {
       starter: {
         name: 'Starter',
@@ -290,7 +290,7 @@ const en = {
     title: 'From selection to streaming.',
     sub: 'Everything you need. Nothing you don’t.',
     steps: [
-      { title: 'Explore plans', text: 'Choose your package' },
+      { title: 'Explore plans', text: 'Choose your plan' },
       { title: 'Order', text: 'In less than a minute' },
       { title: 'Get activated', text: 'Quickly, on WhatsApp' },
       { title: 'Start watching', text: 'Enjoy your experience' },
@@ -548,7 +548,7 @@ const en = {
       imprint: {
         title: 'Legal notice',
         intro: 'The company behind SYGMA TV+.',
-        metaDescription: 'SYGMA TV+ legal notice: the website is published by Sygma TV LLC, Albuquerque, New Mexico (USA). Registered address, EIN, e-mail and WhatsApp contact.',
+        metaDescription: 'SYGMA TV+ legal notice: the website is published by Sygma TV LLC, Albuquerque, New Mexico (USA). Registered address, EIN, email and WhatsApp contact.',
       },
     },
   },
@@ -560,6 +560,8 @@ const en = {
     chips: ['Multi-device', 'Free trial'],
     linksTitle: 'Links',
     helpFaq: 'Help / FAQ',
+    /** Footer link to the home FAQ when the Help center is published (« Help / FAQ » would duplicate it). */
+    faq: 'FAQ',
     contact: 'Contact',
     social: 'Follow us',
     socialSoon: '{name} (coming soon)',

@@ -85,8 +85,8 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           <ul>
             <li><Link href={localizedPath(locale, '#plans')}>{dict.nav.plans}</Link></li>
             <li><Link href={localizedPath(locale, '#how')}>{dict.nav.how}</Link></li>
-            {/* With the Help center published, « Help / FAQ » would duplicate it: the link keeps its target and reads « FAQ ». */}
-            <li><Link href={localizedPath(locale, '#faq')}>{contentPagesEnabled() ? 'FAQ' : f.helpFaq}</Link></li>
+            {/* With the Help center published, « Help / FAQ » would duplicate it: the link keeps its target and reads « FAQ » (footer.faq, per language). */}
+            <li><Link href={localizedPath(locale, '#faq')}>{contentPagesEnabled() ? f.faq : f.helpFaq}</Link></li>
             {contentPagesEnabled() && (
               <>
                 <li><Link href={localizedPath(locale, '/help')}>{info.hub.name}</Link></li>

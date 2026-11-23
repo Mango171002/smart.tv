@@ -152,7 +152,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
 
   test('"Choose" on a plan card selects it in the simulator', async ({ page }) => {
     await openHome(page, '/');
-    await page.getByRole('button', { name: 'Get Ultra+' }).click();
+    await page.getByRole('button', { name: 'Choose Ultra+' }).click();
     await expect(page.locator('.simulator [data-tier="ultra"]')).toHaveAttribute('aria-pressed', 'true');
     await expect(page.getByTestId('price')).toHaveText('$99');
   });

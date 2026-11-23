@@ -147,12 +147,17 @@ describe.each(LANGS)('language %s', (lang) => {
       for (const tier of Object.values(d.plans.tiers)) {
         for (const f of tier.features) expect(plain(f.text).length, plain(f.text)).toBeLessThanOrEqual(22);
         expect(tier.tagline.length, tier.tagline).toBeLessThanOrEqual(34);
-        expect(tier.note.length, tier.note).toBeLessThanOrEqual(62);
+        // Phase 12: 70 (was 62) for the approved « Ons meest complete abonnement · … » (nl 67), « Vårt mest komplette abonnement · … »
+        // (nb 69) and « Nuestro plan más completo · … » (es 69). Measured: at most 3 lines (320–1920 px), as other notes already are at 1024 px.
+        expect(tier.note.length, tier.note).toBeLessThanOrEqual(70);
       }
-      for (const c of d.footer.chips) expect(c.length, c).toBeLessThanOrEqual(13);
+      // Phase 12: 16 (was 13) for the German « Mehrere Geräte » / « Kostenlos testen »; the footer layout is checked in
+      // tests/e2e/responsive.spec.ts (chips inside their column, 8 widths, every language in the preview build).
+      for (const c of d.footer.chips) expect(c.length, c).toBeLessThanOrEqual(16);
       expect(d.plans.compare.feature.length).toBeLessThanOrEqual(10);
       for (const c of d.hero.checks) expect(c.length, c).toBeLessThanOrEqual(24);
-      for (const b of d.benefits) { expect(b.title.length, b.title).toBeLessThanOrEqual(20); expect(b.text.length, b.text).toBeLessThanOrEqual(34); }
+      // Phase 12: text 35 (was 34) for « Hasta 4 dispositivos, de 1 a 3 años » (es) and « Fino a 4 dispositivi, da 1 a 3 anni » (it).
+      for (const b of d.benefits) { expect(b.title.length, b.title).toBeLessThanOrEqual(20); expect(b.text.length, b.text).toBeLessThanOrEqual(35); }
       expect(d.footer.tagline.length).toBeLessThanOrEqual(34);
     });
 

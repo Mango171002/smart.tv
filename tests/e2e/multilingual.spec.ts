@@ -77,6 +77,8 @@ for (const lang of BUILT) {
         }
         const text = await page.locator('body').innerText();
         for (const m of ENGLISH_MARKERS) expect(text, `English left: ${m}`).not.toContain(m);
+        // Phase 12: the footer FAQ link is in the language (« Help / FAQ », or footer.faq once the Help center is published).
+        await expect(page.locator(`footer a[href="/${lang}#faq"]`)).toHaveText(CONTENT ? d.footer.faq : d.footer.helpFaq);
       });
     }
 

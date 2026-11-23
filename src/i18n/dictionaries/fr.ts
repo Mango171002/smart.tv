@@ -309,7 +309,7 @@ const fr: Dictionary = {
     title: 'Du choix au streaming.',
     sub: 'Tout ce qu’il vous faut. Rien de superflu.',
     steps: [
-      { title: 'Découvrez les formules', text: 'Choisissez votre bouquet' },
+      { title: 'Découvrez les formules', text: 'Choisissez votre formule' },
       { title: 'Commandez', text: 'En moins d’une minute' },
       { title: 'Activation', text: 'Rapidement, sur WhatsApp' },
       { title: 'Regardez', text: 'Profitez de vos programmes' },
@@ -578,6 +578,7 @@ const fr: Dictionary = {
     chips: ['Multi-écrans', 'Essai gratuit'],
     linksTitle: 'Liens',
     helpFaq: 'Aide / FAQ',
+    faq: 'FAQ',
     contact: 'Contact',
     social: 'Suivez-nous',
     socialSoon: '{name} (bientôt disponible)',

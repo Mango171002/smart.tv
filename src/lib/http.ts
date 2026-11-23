@@ -32,8 +32,39 @@ export function jsonError(status: number, error: string, extra: Record<string, u
   return NextResponse.json({ ok: false, error, ...extra }, { status, headers });
 }
 
+/**
+ * Reads a JSON body of at most `maxBytes` characters (the limit is unchanged: it applies to the decoded text).
+ * The body is never buffered without bound: a declared Content-Length, or a streamed body, larger than what such a
+ * text can take in UTF-8 (at most 3 bytes per UTF-16 unit; 4× here for margin) is refused before/while reading.
+ */
 export async function readJson(req: Request, maxBytes = 16_384): Promise<unknown> {
-  const text = await req.text();
+  const text = await readBodyText(req, maxBytes * 4);
   if (text.length > maxBytes) throw new Error('payload_too_large');
   return JSON.parse(text);
+}
+
+async function readBodyText(req: Request, byteCap: number): Promise<string> {
+  const declared = Number(req.headers.get('content-length'));
+  if (Number.isFinite(declared) && declared > byteCap) throw new Error('payload_too_large');
+  if (!req.body) return '';
+  const reader = req.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > byteCap) {
+      await reader.cancel().catch(() => undefined);
+      throw new Error('payload_too_large');
+    }
+    chunks.push(value);
+  }
+  const all = new Uint8Array(total);
+  let offset = 0;
+  for (const c of chunks) {
+    all.set(c, offset);
+    offset += c.byteLength;
+  }
+  return new TextDecoder().decode(all);
 }

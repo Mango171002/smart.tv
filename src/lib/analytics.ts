@@ -220,6 +220,26 @@ function removeCookies(pattern: RegExp): void {
 const ANALYTICS_COOKIES = /^(_ga|_gid|_gat|_clck|_clsk|CLID|ANONCHK|MR|MUID|SM)/;
 // Google Ads, Meta, TikTok, Microsoft Ads first-party cookies (set later by GTM tags, phase 2).
 const MARKETING_COOKIES = /^(_gcl_|_gac_|_fbp|_fbc|_ttp|_tt_|ttcsid|_uet)/;
+// Browser storage written by the same tags (measured 23/11/2026: Clarity keeps `_cltk` in sessionStorage, the Google
+// Ads conversion linker keeps `_gcl_ls` in localStorage). Removed on withdrawal, like the cookies. Never a sygma_* key.
+const ANALYTICS_STORAGE = /^(_cltk|_clck|_clsk)/;
+const MARKETING_STORAGE = /^(_gcl_|_gac_|_fbp|_fbc|_ttp|_tt_|tt_|ttcsid|_uet)/;
+
+/** Storage keys (localStorage / sessionStorage) to delete when a consent is withdrawn. */
+export function withdrawnStorageKeys(keys: readonly string[], lost: { analytics: boolean; marketing: boolean }): string[] {
+  return keys.filter((k) => (lost.analytics && ANALYTICS_STORAGE.test(k)) || (lost.marketing && MARKETING_STORAGE.test(k)));
+}
+
+function removeStorage(lost: { analytics: boolean; marketing: boolean }): void {
+  for (const name of ['localStorage', 'sessionStorage'] as const) {
+    try {
+      const store = window[name];
+      for (const k of withdrawnStorageKeys(Object.keys(store), lost)) store.removeItem(k);
+    } catch {
+      // Storage blocked: nothing to remove.
+    }
+  }
+}
 
 /** Saves both choices; withdrawing a consent removes its cookies and reloads the page (scripts fully unloaded). */
 export function saveConsent(next: ConsentState): void {
@@ -241,6 +261,7 @@ export function saveConsent(next: ConsentState): void {
       removeCookies(ANALYTICS_COOKIES);
     }
     if (lostMarketing) removeCookies(MARKETING_COOKIES);
+    removeStorage({ analytics: lostAnalytics, marketing: lostMarketing });
     window.location.reload();
     return;
   }

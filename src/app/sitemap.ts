@@ -13,8 +13,12 @@ const CONTENT_PATHS = ['/about', '/help', ...HELP_SLUGS.map((s) => `/help/${s}`)
  * Clean public URLs: one entry per page and per ENABLED language where the page exists (English only today:
  * no language prefix, no alternates). Preview and disabled languages are never listed, even in the preview environment. Once a second language is enabled,
  * each entry carries its hreflang alternates (xhtml:link), the same set as the page's HTML.
+ *
+ * Non-indexable builds (staging, previews: NEXT_PUBLIC_ALLOW_INDEXING !== 'true', the same switch as robots.txt)
+ * list NO URL: an empty <urlset>, never a list of pages that are all served with noindex.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
+  if (!siteConfig.allowIndexing) return [];
   const paths = contentPagesIndexable() ? [...ALL_PATHS, ...CONTENT_PATHS] : ALL_PATHS;
   const reviewed = isoDate(INFO_REVIEWED);
   return paths.flatMap((path) => {

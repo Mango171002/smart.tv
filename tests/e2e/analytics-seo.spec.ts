@@ -221,6 +221,12 @@ test.describe('technical SEO', () => {
     expect(sm.status()).toBe(200);
     const xml = await sm.text();
     expect(xml).toContain('<urlset');
+    if (!INDEXABLE) {
+      // Private build (staging): the sitemap follows robots.txt and lists no URL at all.
+      expect(xml).not.toContain('<url>');
+      expect(await (await request.get('/robots.txt')).text(), 'private build: no sitemap advertised, everything disallowed').toMatch(PRIVATE_ROBOTS);
+      return;
+    }
     expect(xml).toMatch(/<loc>[^<]+\/<\/loc>/);
     expect(xml).toContain('/legal/terms</loc>');
     expect(xml).not.toContain('/blog</loc>');

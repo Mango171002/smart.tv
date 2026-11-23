@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ABOUT, HELP_HUB, HELP_TOPICS } from '@/content/en/info';
 import { siteConfig } from '@/config/site';
 
@@ -64,6 +64,8 @@ describe('About us + Help center content (phase 5C, not published)', () => {
 });
 
 describe('sitemap and the content-pages switch', () => {
+  // Production build (.env.production: indexing allowed). A non-indexable build lists no URL (sitemap-staging.test.ts).
+  beforeEach(() => { vi.stubEnv('NEXT_PUBLIC_ALLOW_INDEXING', 'true'); vi.resetModules(); });
   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
 
   it('off (production today): the 6 current URLs only', async () => {

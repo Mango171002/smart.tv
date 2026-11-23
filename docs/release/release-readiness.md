@@ -149,7 +149,9 @@ Recommended in **three separate, independently reversible steps**:
 Before:
 1. Written approval of the step; release candidate commit identified.
 2. CI green on the exact commit (lint, types, unit, build, E2E, Cloudflare build).
-3. Note the current Cloudflare Worker version (Workers → `iptv-international` → Deployments) for rollback.
+3. Record the **active version ID** of the Cloudflare Worker before deploying (Workers → `iptv-international` →
+   Deployments, or `npx wrangler deployments list`). The deploy workflow then creates several versions (the deploy
+   itself, then one per `wrangler secret put`), so « the previous version » after a deploy can be the new code.
 4. Snapshot: `curl https://sygmatv.com/sitemap.xml`, `/robots.txt`, `/api/health` (saved for comparison).
 
 Deploy:
@@ -171,7 +173,7 @@ After (within 15 minutes):
 
 | Situation | Action | Time |
 |---|---|---|
-| Any regression after a deploy | Cloudflare dashboard → Workers → `iptv-international` → Deployments → **Rollback** to the previous version (or `npx wrangler rollback`) | < 1 minute, no rebuild |
+| Any regression after a deploy | Cloudflare dashboard → Workers → `iptv-international` → Deployments → **Rollback** to the version ID recorded in step 3 (or `npx wrangler rollback <version-id>`). Never use `wrangler rollback` without an ID: the secret updates of the deploy workflow create extra versions, so the default target can be the new code (Phase 13 security report, D13-001) | < 1 minute, no rebuild |
 | Then, keep the source aligned | `git revert` of the released commits on `claude/intelligent-shannon-uwa4fi` (new commits, no force push) — this redeploys the previous code | one workflow run |
 | R2 only (About / Help) | Remove `NEXT_PUBLIC_CONTENT_PAGES=live` and redeploy: pages disappear, `/help` redirects to `/#faq` again | one workflow run |
 | R3 only (French) | Remove `NEXT_PUBLIC_RELEASED_LANGUAGES=fr` from `.env.production` and redeploy: `/fr/*` redirects to English again | one workflow run |

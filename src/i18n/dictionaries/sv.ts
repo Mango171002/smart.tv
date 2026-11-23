@@ -416,7 +416,7 @@ const sv: Dictionary = {
     send: 'Skicka förfrågan',
     sending: 'Skickar…',
     successTitle: 'Förfrågan skickad!',
-    successText: 'Tack, {name}. Vårt team kontaktar dig via e-post eller telefon.',
+    successText: 'Tack, {name}. Vårt team kontaktar dig via e-post eller telefon. Vår personal hjälper dig på engelska.',
     errors: {
       name: 'Ange ditt namn.',
       email: 'Ange en giltig e-postadress.',
@@ -472,7 +472,7 @@ const sv: Dictionary = {
     regionLabel: 'Ditt land',
     deviceLabel: 'Huvudenhet',
     phoneLabel: 'WhatsApp-nummer',
-    phoneHint: 'Vårt team kontaktar dig på WhatsApp för att aktivera din åtkomst.',
+    phoneHint: 'Vårt team kontaktar dig på WhatsApp för att aktivera din åtkomst. Vår personal hjälper dig på engelska.',
     phonePlaceholder: 'Telefonnummer',
     phoneCountry: 'Landsnummer',
     deviceOptions: ['Smart TV', 'Android TV / Google TV', 'Fire TV', 'Apple TV', 'Annan tv-box eller tv-sticka', 'Android-mobil / surfplatta', 'iPhone / iPad', 'Dator (Windows / Mac)', 'Webbläsare'],
@@ -494,7 +494,7 @@ const sv: Dictionary = {
     finish: 'Bekräfta min beställning',
     sending: 'Skickar…',
     doneTitle: 'Vi har tagit emot din beställning!',
-    doneText: 'Vårt team kontaktar dig snart på WhatsApp för att aktivera din åtkomst. En bekräftelse har skickats till {email}.',
+    doneText: 'Vårt team kontaktar dig snart på WhatsApp för att aktivera din åtkomst. En bekräftelse har skickats till {email}. Vår personal hjälper dig på engelska.',
     returnToSite: 'Tillbaka till webbplatsen',
     errors: {
       email: 'Ange en giltig e-postadress.',

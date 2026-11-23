@@ -25,7 +25,7 @@ export const OWNER_FACTS = {
   usualActivation: 'binnen een uur nadat je bestelling via WhatsApp is bevestigd',
   languages: ['Engels', 'Frans', 'Arabisch', 'Duits', 'Spaans', 'Italiaans'],
   /** Arranged by our team on WhatsApp once the subscription is active — none of them is charged on this website. */
-  paymentMethods: ['Creditcard (Visa / Mastercard)', 'PayPal', 'Cryptovaluta (USDT via Binance)', 'Bankoverschrijving', 'Western Union', 'MoneyGram'],
+  paymentMethods: ['Kaart (Visa / Mastercard)', 'PayPal', 'Cryptovaluta (USDT via Binance)', 'Bankoverschrijving', 'Western Union', 'MoneyGram'],
 } as const;
 
 const F = OWNER_FACTS;
@@ -98,7 +98,7 @@ const ABOUT: InfoPage = {
       body: [
         { p: `Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is. We antwoorden meestal ${F.usualReply}. Dit is onze gebruikelijke reactietijd, geen contractuele garantie.` },
         { chips: [...F.languages], label: 'Talen van de klantenservice' },
-        { note: 'Onze klantenservice spreekt deze zes talen; onze juridische documenten zijn in het Engels.' },
+        { note: 'Onze klantenservice spreekt deze zes talen, dus persoonlijke hulp krijg je in het Engels. Ook onze juridische documenten zijn in het Engels.' },
       ],
     },
     {
@@ -264,11 +264,11 @@ const HELP_TOPICS: InfoPage[] = [
         `WhatsApp of telefoon: ${PHONE}.`,
         'Het contactformulier: klik op “Contact” onderaan elke pagina.',
       ] }] },
-      { id: 'availability', icon: 'clock', title: 'Wanneer antwoorden jullie?', body: [{ p: `Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is. We antwoorden meestal ${F.usualReply}. Dit is onze gebruikelijke reactietijd, geen contractuele garantie.` }] },
+      { id: 'availability', icon: 'clock', title: 'Wanneer antwoorden jullie?', body: [{ p: `Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is. Onze medewerkers helpen je in het Engels. We antwoorden meestal ${F.usualReply}. Dit is onze gebruikelijke reactietijd, geen contractuele garantie.` }] },
       { id: 'languages', icon: 'globe', title: 'Welke talen?', body: [
         { p: `Je kunt ons schrijven in het ${LANGS}.` },
         { chips: [...F.languages], label: 'Talen van de klantenservice' },
-        { note: 'Onze juridische documenten zijn in het Engels.' },
+        { note: 'Nederlands hoort er niet bij: onze medewerkers helpen je graag in het Engels. Ook onze juridische documenten zijn in het Engels.' },
       ] },
       { id: 'include', icon: 'pencil', title: 'Wat je het best vermeldt', body: [{ list: [
         'Je bestelreferentie, als je die hebt.',

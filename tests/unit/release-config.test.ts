@@ -66,6 +66,10 @@ describe('production build settings (.env.production): effective values', () => 
     expect(env.FEATURE_CONTACT_FORM).toBe('false');
     expect(env.SALES_ENABLED).toBe('false');
   });
+
+  it('content pages: absent (off) or exactly « live » (release D1) — « preview » or a typo would silently keep them unpublished', () => {
+    if ('NEXT_PUBLIC_CONTENT_PAGES' in env) expect(env.NEXT_PUBLIC_CONTENT_PAGES).toBe('live');
+  });
 });
 
 describe('production Worker (wrangler.jsonc): effective values', () => {

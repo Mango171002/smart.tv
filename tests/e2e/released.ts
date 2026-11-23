@@ -7,3 +7,11 @@ export function expectedSet(path: string): Record<string, string> {
   out['x-default'] = path || '/';
   return out;
 }
+
+/**
+ * Indexing of the build under test. Default: indexable (production rules, strictly checked). E2E_ALLOW_INDEXING=false
+ * for the private staging build (NEXT_PUBLIC_ALLOW_INDEXING=false): robots.txt must block everything and advertise no
+ * sitemap — the opposite expectation, checked just as strictly.
+ */
+export const INDEXABLE = process.env.E2E_ALLOW_INDEXING !== 'false';
+export const PRIVATE_ROBOTS = /^User-Agent: \*\s*\nDisallow: \/\s*$/;

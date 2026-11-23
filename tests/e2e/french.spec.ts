@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { RELEASED_LANGS, expectedSet } from './released';
+import { INDEXABLE, PRIVATE_ROBOTS, RELEASED_LANGS, expectedSet } from './released';
 
 /**
  * Phase 7B — French preview.
@@ -111,7 +111,8 @@ test.describe('French — preview / released', () => {
       expect(xml).not.toMatch(/xhtml:link/);
     }
     const robots = await (await request.get('/robots.txt')).text();
-    expect(robots).toMatch(/Sitemap:/);
+    if (INDEXABLE) expect(robots).toMatch(/Sitemap:/);
+    else expect(robots, 'private build: no sitemap advertised, everything disallowed').toMatch(PRIVATE_ROBOTS);
   });
 
   test('English pages stay English; French is linked only from the language switcher', async ({ page }) => {

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { RELEASED_LANGS } from './released';
+import { RELEASED_LANGS, INDEXABLE, PRIVATE_ROBOTS } from './released';
 
 /**
  * Consent, analytics events and technical SEO.
@@ -229,8 +229,12 @@ test.describe('technical SEO', () => {
     expect(xml).toMatch(/<loc>[^<]+\/<\/loc>\n(?:<xhtml:link [^>]+\/>\n)*<changefreq>/);
     expect(xml.match(/<lastmod>/g)).toHaveLength(5);
     const robots = await (await request.get('/robots.txt')).text();
-    expect(robots).toMatch(/Sitemap: https?:\/\/[^\s]+\/sitemap\.xml/);
-    expect(robots).toMatch(/Disallow: \/api\//);
+    if (INDEXABLE) {
+      expect(robots).toMatch(/Sitemap: https?:\/\/[^\s]+\/sitemap\.xml/);
+      expect(robots).toMatch(/Disallow: \/api\//);
+    } else {
+      expect(robots, 'private build: no sitemap advertised, everything disallowed').toMatch(PRIVATE_ROBOTS);
+    }
   });
 
   test('home: branded title, description, canonical, social cards and JSON-LD', async ({ page }) => {

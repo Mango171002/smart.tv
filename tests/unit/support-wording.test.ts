@@ -64,12 +64,14 @@ const NO_PROMISE: Record<Lang, RegExp> = {
 describe('nl / sv / nb: human support in English', () => {
   const ENGLISH = { nl: /Engels/, sv: /engelska/, nb: /engelsk/ } as const;
   for (const [lang, re] of Object.entries(ENGLISH) as Array<['nl' | 'sv' | 'nb', RegExp]>) {
-    it(`${lang}: order window, request forms, About note and Contact-support languages say so`, () => {
+    it(`${lang}: order window, request forms, prelaunch note, About note and Contact-support languages say so`, () => {
       const d = DICTS[lang];
       for (const [key, text] of [
         ['checkout.phoneHint', d.checkout.phoneHint],
         ['checkout.doneText', d.checkout.doneText],
         ['request.successText', d.request.successText],
+        // Prelaunch window note (phase 12): the general-questions e-mail is answered by people, in English.
+        ['prelaunch.contactNote', d.prelaunch.contactNote],
         ['About support note', aboutNote(lang)],
         ['Contact support › availability', availability(lang)],
         ['Contact support › languages', languagesSection(lang)],

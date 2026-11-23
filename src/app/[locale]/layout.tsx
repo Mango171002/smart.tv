@@ -15,6 +15,7 @@ import { getDictionary } from '@/i18n/dictionaries';
 import { OG_IMAGE } from '@/lib/seo';
 import { CONSENT_DEFAULT_SCRIPT } from '@/lib/consent-default';
 import { isContactFormEnabled } from '@/lib/features';
+import { prelaunchCopy } from '@/lib/prelaunch-copy';
 
 export const dynamicParams = false;
 
@@ -27,7 +28,7 @@ export const viewport: Viewport = { themeColor: '#070d17', width: 'device-width'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const dict = getDictionary(isLocale(locale) ? locale : 'en');
+  const dict = prelaunchCopy(getDictionary(isLocale(locale) ? locale : 'en'), isContactFormEnabled());
   // A preview language (phase 7B) is never indexable: default robots for all its pages (each page also sets it).
   const preview = isLocale(locale) && !isPublicLocale(locale);
   return {

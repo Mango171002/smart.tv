@@ -1,7 +1,9 @@
 import { siteConfig } from '@/config/site';
 import { OG_IMAGE } from '@/lib/seo';
 import { OWNER_FACTS } from '@/content/en/info';
-import { DEFAULT_LOCALE, localeSeo, type Locale } from '@/i18n/config';
+import { DEFAULT_LOCALE, LOCALES, localeSeo, type Locale } from '@/i18n/config';
+import en from '@/i18n/dictionaries/en';
+import { prelaunchCopy } from '@/lib/prelaunch-copy';
 
 /**
  * Profiles listed in `sameAs`: stable public identities only. A Telegram invite link (t.me/+… or
@@ -13,9 +15,19 @@ export function sameAsProfiles(social: Record<string, string | null>): string[] 
   return Object.values(social).filter((v): v is string => Boolean(v) && !invite.test(v as string));
 }
 
+/**
+ * Organization and WebSite are ONE entity each (same @id on every language's home page), so they carry one value
+ * everywhere: the English description (the open or the prelaunch one, per FEATURE_CONTACT_FORM) and, for the WebSite,
+ * every language this build serves. Only the FAQPage node is per page and per language.
+ */
+export function siteEntityFacts(ordersOpen: boolean) {
+  return { description: prelaunchCopy(en, ordersOpen).meta.homeDescription, inLanguage: LOCALES.map((l) => localeSeo(l).htmlLang) };
+}
+
 /** JSON-LD (Organization + WebSite) for the home page. Only verified, public facts. */
-export function StructuredData({ description, locale = DEFAULT_LOCALE, faq }: { description: string; locale?: Locale; faq?: { items: ReadonlyArray<{ q: string; a: string }>; pageUrl: string } }) {
+export function StructuredData({ ordersOpen, locale = DEFAULT_LOCALE, faq }: { ordersOpen: boolean; locale?: Locale; faq?: { items: ReadonlyArray<{ q: string; a: string }>; pageUrl: string } }) {
   const url = siteConfig.siteUrl;
+  const { description, inLanguage } = siteEntityFacts(ordersOpen);
   const sameAs = sameAsProfiles(siteConfig.social);
   const data = {
     '@context': 'https://schema.org',
@@ -58,7 +70,7 @@ export function StructuredData({ description, locale = DEFAULT_LOCALE, faq }: { 
         url: `${url}/`,
         name: siteConfig.brandName,
         description,
-        inLanguage: localeSeo(locale).htmlLang,
+        inLanguage,
         publisher: { '@id': `${url}/#organization` },
       },
       ...(faq ? [faqJsonLd(faq.items, locale, faq.pageUrl)] : []),

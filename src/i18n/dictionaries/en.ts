@@ -381,7 +381,7 @@ const en = {
   prelaunch: {
     orderTitleA: 'Orders opening',
     orderTitleHl: 'soon',
-    orderText: 'Online orders are not open yet. Your selection stays below so you can compare at your own pace: nothing is sent and nothing is charged.',
+    orderText: 'Online orders are not open yet. Your selection is shown below for reference: nothing is sent and nothing is charged.',
     trialTitleA: 'Free trials opening',
     trialTitleHl: 'soon',
     trialText: 'Free trial requests are not open yet. You will soon be able to try SYGMA TV+ on your own device before you pay.',
@@ -393,6 +393,25 @@ const en = {
     back: 'Back to the plans',
     close: 'Close',
     faqSubscribe: 'Not yet: online orders are opening soon. You can already compare the plans, durations and prices with the plan simulator.',
+    /** FAQ answers 2 and 3 while closed (they invite people to ask for a free trial). */
+    faqCountries: 'Our team confirms availability for your country before you order. Online orders and free trials are opening soon.',
+    faqDevices: 'Smart TVs, streaming boxes and sticks, smartphones, tablets and computers. Free trials are opening soon: you will be able to check your own device before you pay.',
+    /** Home meta description (≤ 155 characters) and Organization / WebSite description while closed. */
+    metaDescription: 'Live TV, movies and series on Smart TV, mobile and computer. Yearly plans for 1 to 4 devices. Online orders and free 24-hour trials are opening soon.',
+    /** Banner at the top of the About and Help center pages while closed. */
+    pagesTitle: 'Orders and free trials opening soon',
+    pagesText: 'Online orders and free trials are not open yet. This page explains how they will work once they open. Orders and free trials cannot be arranged by e-mail, WhatsApp or in any other way yet.',
+    /** Home copy while closed (src/lib/prelaunch-copy.ts): replaces texts that present ordering or trials as open now. */
+    home: {
+      heroLead: 'Movies, series and live TV on your TV, mobile and computer. Online orders and free trials are opening soon.',
+      orderBenefitTitle: 'Orders opening soon',
+      orderBenefitText: 'Compare the plans now',
+      trialBenefitText: 'Opening soon',
+      orderStepText: 'Opening soon',
+      activationStepText: 'Once orders open',
+      howNote: 'Orders and free trials opening soon · 7-day money-back guarantee',
+      trialGuarantee: 'Free trials opening soon. 7-day money-back guarantee.',
+    },
   },
   request: {
     trialTitle: 'Request a Trial',

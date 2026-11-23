@@ -209,6 +209,8 @@ test.describe('pre-registration', () => {
     await dialog.getByRole('combobox', { name: 'Type a country…' }).fill('cana');
     await page.keyboard.press('Enter');
     await expect(dialog.getByRole('button', { name: 'Country calling code' })).toHaveText(/Canada \(\+1\)/);
+    // WCAG 2.5.3 label in name: the accessible name starts with the visible text.
+    await expect(dialog.getByRole('button', { name: 'Country calling code' })).toHaveAccessibleName('Canada (+1), Country calling code');
     await dialog.getByLabel('WhatsApp number').fill('(415) 555-0123');
     await dialog.getByLabel('Main device').selectOption('ios_mobile');
     await dialog.getByLabel(/I agree to be contacted/).check();

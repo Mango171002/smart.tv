@@ -4,10 +4,13 @@ import { ArrowRight } from 'lucide-react';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { HelpActions } from '@/components/HelpActions';
 import { INFO_ICONS, InfoContent } from '@/components/InfoContent';
+import { PrelaunchBanner } from '@/components/PrelaunchBanner';
 import { JsonLd } from '@/components/JsonLd';
 import { contentPagesEnabled } from '@/config/content-pages';
-import { getInfo } from '@/content/info';
+import { infoFor } from '@/content/info';
 import { isLocale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/dictionaries';
+import { isContactFormEnabled } from '@/lib/features';
 import { abs, infoMetadata, webPageLd } from '@/lib/info-pages';
 import { localizedPath } from '@/lib/routes';
 import s from '@/components/info.module.css';
@@ -19,18 +22,21 @@ const FACT_ACCENTS = ['var(--color-lime)', 'var(--color-cyan)', 'var(--color-mag
 export async function generateMetadata({ params }: { params: Params }) {
   const { locale } = await params;
   if (!contentPagesEnabled() || !isLocale(locale)) return {};
-  const { hub } = getInfo(locale);
+  const { hub } = infoFor(locale, isContactFormEnabled());
   return infoMetadata(locale, '/help', hub.metaTitle, hub.description);
 }
 
 export default async function HelpCenter({ params }: { params: Params }) {
   const { locale } = await params;
   if (!contentPagesEnabled() || !isLocale(locale)) notFound();
-  const { hub, topics, reviewed, ui } = getInfo(locale);
+  const ordersOpen = isContactFormEnabled();
+  const { hub, topics, reviewed, ui } = infoFor(locale, ordersOpen);
+  const prelaunch = getDictionary(locale).prelaunch;
   const path = localizedPath(locale, '/help');
   return (
     <div className="wrap page-head" style={{ paddingBottom: 60 }}>
       <Breadcrumbs label={ui.breadcrumb} items={[{ name: ui.home, path: localizedPath(locale) }, { name: hub.name, path }]} />
+      {!ordersOpen && <PrelaunchBanner title={prelaunch.pagesTitle} text={prelaunch.pagesText} plans={{ label: ui.actions.plans, href: ui.actions.plansHref }} />}
       <header className={s.hero}>
         <div className="eyebrow">{ui.support}</div>
         <h1 className="page-title">{hub.title}</h1>
@@ -70,7 +76,7 @@ export default async function HelpCenter({ params }: { params: Params }) {
       </dl>
 
       <InfoContent lang={locale} sections={[]} reviewed={reviewed} labels={ui.content} contactIntro={ui.hubContact} related={ui.hubRelated}>
-        <HelpActions {...(locale === 'en' ? {} : { labels: ui.actions })} />
+        <HelpActions labels={ui.actions} />
       </InfoContent>
       <JsonLd
         data={webPageLd('CollectionPage', path, hub.title, hub.description, {

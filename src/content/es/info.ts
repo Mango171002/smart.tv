@@ -122,6 +122,15 @@ const ABOUT: InfoPage = {
       ],
     },
   ],
+  prelaunch: {
+    sections: {
+      how: { body: [
+        { p: 'Haces tu pedido con un breve formulario y una persona real de nuestro equipo se encarga del resto por WhatsApp. Primero activamos tu suscripción: solo pagas cuando tu acceso ya está activo.' },
+        { steps: ORDER_STEPS },
+        { p: `Las pruebas gratuitas abrirán muy pronto: podrás probar el servicio durante ${TRIAL} antes de comprar.` },
+      ] },
+    },
+  },
 };
 
 // ---------------------------------------------------------------- Centro de ayuda
@@ -149,6 +158,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Cómo funciona SYGMA TV+, de elegir un plan a empezar a ver: prueba gratuita, formulario de pedido, contacto y activación por WhatsApp, y después el pago.',
     summary: 'De elegir un plan a tu primera reproducción.',
     intro: 'Empezar solo lleva unos pasos. Puedes comenzar con una prueba gratuita o hacer tu pedido directamente.',
+    prelaunch: { intro: 'Los pedidos en línea y las pruebas gratuitas abrirán muy pronto. Así funcionará el proceso para empezar.' },
     sections: [
       { id: 'steps', icon: 'rocket', title: 'Los pasos', body: [{ steps: [
         { title: 'Elige tu plan', text: 'En la sección Planes, elige el plan, la duración (12, 24 o 36 meses) y el número de dispositivos.' },
@@ -192,6 +202,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Prueba SYGMA TV+ gratis durante ${TRIAL} en tu dispositivo antes de comprar. Cómo solicitar la prueba y qué pasa después: nada que pagar ni cancelar.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)}, gratis, nada que cancelar.`,
     intro: `La prueba gratuita te permite probar SYGMA TV+ durante ${TRIAL} en tu propio dispositivo y con tu conexión, antes de decidirte.`,
+    prelaunch: { sections: { request: { body: [{ p: 'Las solicitudes de prueba gratuita abrirán muy pronto. Hasta entonces, no es posible conseguir una prueba por correo electrónico ni por ningún otro medio.' }] } } },
     sections: [
       { id: 'request', icon: 'rocket', title: '¿Cómo la solicito?', body: [{ steps: [
         { title: 'Abre el formulario', text: 'Selecciona «Prueba gratis» en la parte superior de cualquier página.' },
@@ -214,6 +225,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Cómo pedir SYGMA TV+: envía el formulario, nuestro equipo te contacta por WhatsApp y activa tu acceso, y después pagas. Te explicamos los métodos de pago.',
     summary: 'Formulario de pedido, activación y después pago.',
     intro: 'Haces tu pedido con un breve formulario. Nuestro equipo se pone en contacto contigo por WhatsApp y activa tu acceso, y pagas después de la activación. En esta web no se cobra nada.',
+    prelaunch: { sections: { order: { title: 'Cómo funcionará el pedido', body: [
+      { p: 'Los pedidos en línea abrirán muy pronto. Ya puedes comparar los planes, las duraciones y los precios en la sección Planes.' },
+      { steps: ORDER_STEPS },
+    ] } } },
     sections: [
       { id: 'order', icon: 'rocket', title: '¿Cómo hago un pedido?', body: [
         { p: 'El pedido tiene seis pasos, desde el formulario de nuestra web hasta la confirmación de tu pago. Para empezar, selecciona «Pedir ahora» en la sección Planes.' },
@@ -256,6 +271,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Contacta con el soporte de SYGMA TV+ ${F.supportHours} por correo electrónico, WhatsApp o el formulario, en seis idiomas. Qué incluir para que te respondamos antes.`,
     summary: `${F.supportHours}, correo o WhatsApp, seis idiomas.`,
     intro: `Escríbenos por correo electrónico o por WhatsApp. Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario.`,
+    prelaunch: {
+      description: `Contacta con el soporte de SYGMA TV+ ${F.supportHours} por correo electrónico o WhatsApp, en seis idiomas. Qué incluir para que te respondamos antes.`,
+      sections: { reach: { body: [{ list: [`Correo electrónico: ${EMAIL}.`, `WhatsApp o teléfono: ${PHONE}.`] }] } },
+    },
     sections: [
       { id: 'reach', icon: 'mail', title: 'Cómo contactarnos', body: [{ list: [
         `Correo electrónico: ${EMAIL}.`,

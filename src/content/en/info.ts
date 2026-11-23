@@ -63,6 +63,17 @@ export interface InfoPage {
   summary?: string;
   icon: LegalSection['icon'];
   sections: InfoSection[];
+  /**
+   * Prelaunch variants (online orders and free trials closed, FEATURE_CONTACT_FORM=false): only the blocks that would
+   * present ordering or a trial as available now. Selected server-side by infoFor() (src/content/info.ts); a section
+   * listed here replaces the title and/or body of the section with the same id. Open: never used.
+   */
+  prelaunch?: InfoPrelaunch;
+}
+export interface InfoPrelaunch {
+  description?: string;
+  intro?: string;
+  sections?: Record<string, { title?: string; body?: InfoBlock[] }>;
 }
 
 const F = OWNER_FACTS;
@@ -161,6 +172,15 @@ export const ABOUT: InfoPage = {
       ],
     },
   ],
+  prelaunch: {
+    sections: {
+      how: { body: [
+        { p: 'You order with a short form and a real person from our team takes it from there on WhatsApp. We activate your subscription first: you pay only once your access is active.' },
+        { steps: ORDER_STEPS },
+        { p: `Free trials are opening soon: you will be able to test the service for ${TRIAL} before you buy.` },
+      ] },
+    },
+  },
 };
 
 // ---------------------------------------------------------------- Help center
@@ -189,6 +209,7 @@ export const HELP_TOPICS: InfoPage[] = [
     description: 'How SYGMA TV+ works, from choosing a plan to watching: free trial, order form, contact and activation on WhatsApp, then payment.',
     summary: 'From choosing a plan to your first stream.',
     intro: 'Getting started takes a few steps. You can begin with a free trial or order directly.',
+    prelaunch: { intro: 'Online orders and free trials are opening soon. Here is how getting started will work.' },
     sections: [
       { id: 'steps', icon: 'rocket', title: 'The steps', body: [{ steps: [
         { title: 'Choose your plan', text: 'In the Plans section, choose the plan, the duration (12, 24 or 36 months) and the number of devices.' },
@@ -232,6 +253,7 @@ export const HELP_TOPICS: InfoPage[] = [
     description: `Test SYGMA TV+ free for ${TRIAL} on your own device before you buy. How to request your trial and what happens next — nothing to pay, nothing to cancel.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)}, free, nothing to cancel.`,
     intro: `The free trial lets you test SYGMA TV+ for ${TRIAL} on your own device and connection, before you decide.`,
+    prelaunch: { sections: { request: { body: [{ p: 'Free trial requests are opening soon. Until then, a trial cannot be arranged by e-mail or in any other way.' }] } } },
     sections: [
       { id: 'request', icon: 'rocket', title: 'How do I request it?', body: [{ steps: [
         { title: 'Open the form', text: 'Select “Free trial” at the top of any page.' },
@@ -254,6 +276,10 @@ export const HELP_TOPICS: InfoPage[] = [
     description: 'How to order SYGMA TV+: send the order form, our team contacts you on WhatsApp and activates your access, then you pay. Payment methods explained.',
     summary: 'Order form, activation, then payment.',
     intro: 'You order with a short form. Our team contacts you on WhatsApp and activates your access, and you pay after activation. Nothing is charged on this website.',
+    prelaunch: { sections: { order: { title: 'How ordering will work', body: [
+      { p: 'Online orders are opening soon. You can already compare plans, durations and prices in the Plans section.' },
+      { steps: ORDER_STEPS },
+    ] } } },
     sections: [
       { id: 'order', icon: 'rocket', title: 'How do I order?', body: [
         { p: 'Ordering takes six steps, from the form on our website to the confirmation of your payment. Select “Order now” in the Plans section to start.' },
@@ -296,6 +322,11 @@ export const HELP_TOPICS: InfoPage[] = [
     description: `Reach SYGMA TV+ support ${F.supportHours} by email, WhatsApp or the contact form, in six languages. What to include for a faster answer.`,
     summary: `${F.supportHours}, email or WhatsApp, six languages.`,
     intro: `Contact us by email or on WhatsApp. Our automated assistant is available ${F.supportHours}, with human support when needed.`,
+    // The contact form is closed while online requests are: not offered as a way to reach us.
+    prelaunch: {
+      description: `Reach SYGMA TV+ support ${F.supportHours} by email or WhatsApp, in six languages. What to include for a faster answer.`,
+      sections: { reach: { body: [{ list: [`Email: ${EMAIL}.`, `WhatsApp or phone: ${PHONE}.`] }] } },
+    },
     sections: [
       { id: 'reach', icon: 'mail', title: 'How to reach us', body: [{ list: [
         `Email: ${EMAIL}.`,

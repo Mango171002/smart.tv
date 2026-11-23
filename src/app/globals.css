@@ -977,6 +977,8 @@ section.content-tight .cat-grid { margin-top: 0; }
 .sim-summary .price-sub { text-align: center; margin: 2px 0 0; font-size: 13px; }
 .sim-summary .savings { display: block; max-width: 210px; margin-top: 6px; font-size: 12px; color: var(--tier); }
 .sim-cta { background: var(--tier); color: var(--color-bg); border-color: transparent; white-space: nowrap; }
+/* Narrow simulator (phones): the full-width button may wrap its label (« Les commandes ouvrent bientôt » at 320 px) instead of widening the card. */
+@container (max-width: 480px) { .sim-cta { white-space: normal; text-align: center; line-height: 1.25; min-width: 0; } }
 @media (hover: hover) { .sim-cta:hover { box-shadow: 0 8px 26px color-mix(in srgb, var(--tier) 35%, transparent); } }
 
 @media (max-width: 1180px) {
@@ -1729,7 +1731,8 @@ html { scroll-padding-top: 84px; }
   .faq-layout { grid-template-columns: 1fr; gap: 18px; }
   /* Closing CTA: both buttons and the trust row on one line */
   .cta-actions { flex-wrap: nowrap; gap: 8px; }
-  .cta-actions .btn { flex: 1 1 0; min-width: 0; padding: 0 10px; min-height: 48px; font-size: 14px; white-space: nowrap; }
+  /* Labels may wrap to two lines (long « Free trials opening soon » labels in de / nl / sv / nb): never cut or overflowing. */
+  .cta-actions .btn { flex: 1 1 0; min-width: 0; padding: 6px 10px; min-height: 48px; font-size: 14px; line-height: 1.2; white-space: normal; text-align: center; }
   .cta-actions .btn svg { width: 16px; height: 16px; flex: none; }
   .cta-trust { flex-direction: row; flex-wrap: nowrap; gap: 0; font-size: 11px; }
   .cta-trust li { padding: 0 6px; white-space: nowrap; gap: 4px; }
@@ -2518,3 +2521,12 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
 .prelaunch-contact a { color: var(--color-cyan); font-weight: 700; overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 3px; }
 .prelaunch-note { margin: 0; font-size: 13px; line-height: 1.5; color: var(--color-muted); }
 .prelaunch-action { width: 100%; min-height: 48px; font-size: 16px; }
+/* Banner at the top of the About and Help center pages (same look as the windows' notice, as a page box). */
+.prelaunch-banner {
+  gap: 8px; margin: 6px 0 22px; padding: 16px 18px; border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--color-cyan) 35%, transparent); background: color-mix(in srgb, var(--color-cyan) 8%, transparent);
+}
+.prelaunch-banner-title { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 17px; font-weight: 800; line-height: 1.35; color: var(--color-ink); }
+.prelaunch-banner-title svg { color: var(--color-cyan); flex: none; }
+.prelaunch-banner .prelaunch-text { font-size: 15px; }
+.prelaunch-banner .prelaunch-note a { color: var(--color-cyan); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }

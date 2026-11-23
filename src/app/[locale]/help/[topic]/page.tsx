@@ -4,10 +4,13 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { HelpActions } from '@/components/HelpActions';
 import { InfoContent } from '@/components/InfoContent';
 import { JsonLd } from '@/components/JsonLd';
+import { PrelaunchBanner } from '@/components/PrelaunchBanner';
 import { contentPagesEnabled } from '@/config/content-pages';
 import { HELP_SLUGS } from '@/content/en/info';
-import { getInfo, helpTopicFor } from '@/content/info';
+import { helpTopicFor, infoFor } from '@/content/info';
 import { LOCALES, isLocale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/dictionaries';
+import { isContactFormEnabled } from '@/lib/features';
 import { abs, infoMetadata, webPageLd } from '@/lib/info-pages';
 import { localizedPath } from '@/lib/routes';
 import s from '@/components/info.module.css';
@@ -23,7 +26,7 @@ type Params = Promise<{ locale: string; topic: string }>;
 export async function generateMetadata({ params }: { params: Params }) {
   const { locale, topic } = await params;
   if (!contentPagesEnabled() || !isLocale(locale)) return {};
-  const t = helpTopicFor(locale, topic);
+  const t = helpTopicFor(locale, topic, isContactFormEnabled());
   if (!t) return {};
   return infoMetadata(locale, `/help/${t.slug}`, t.metaTitle, t.description);
 }
@@ -42,10 +45,12 @@ const CTA: Record<string, { trial: boolean; plans: boolean }> = {
 export default async function HelpTopicPage({ params }: { params: Params }) {
   const { locale, topic } = await params;
   if (!contentPagesEnabled() || !isLocale(locale)) notFound();
-  const t = helpTopicFor(locale, topic);
+  const ordersOpen = isContactFormEnabled();
+  const t = helpTopicFor(locale, topic, ordersOpen);
   if (!t) notFound();
-  const { hub, topics, reviewed, ui } = getInfo(locale);
-  const i = topics.indexOf(t);
+  const { hub, topics, reviewed, ui } = infoFor(locale, ordersOpen);
+  const prelaunch = getDictionary(locale).prelaunch;
+  const i = topics.findIndex((x) => x.slug === t.slug);
   const prev = topics[i - 1];
   const next = topics[i + 1];
   const extra = t.slug === 'refunds' ? [ui.refundPolicy] : t.slug === 'ordering-payment' ? [ui.terms] : [];
@@ -55,11 +60,12 @@ export default async function HelpTopicPage({ params }: { params: Params }) {
   return (
     <div className="wrap page-head" style={{ paddingBottom: 60 }}>
       <Breadcrumbs label={ui.breadcrumb} items={[{ name: ui.home, path: localizedPath(locale) }, { name: hub.name, path: hubPath }, { name: t.name, path }]} />
+      {!ordersOpen && <PrelaunchBanner title={prelaunch.pagesTitle} text={prelaunch.pagesText} plans={{ label: ui.actions.plans, href: ui.actions.plansHref }} />}
       <div className="eyebrow">{hub.name}</div>
       <h1 className="page-title">{t.title}</h1>
       <p className="sub">{t.intro}</p>
       <InfoContent lang={locale} sections={t.sections} reviewed={reviewed} labels={ui.content} toc contactIntro={ui.topicContact} related={[...extra, { href: hubPath, label: ui.allTopics }]}>
-        <HelpActions trial={cta.trial} plans={cta.plans} {...(locale === 'en' ? {} : { labels: ui.actions })} />
+        <HelpActions trial={cta.trial} plans={cta.plans} labels={ui.actions} />
       </InfoContent>
       <nav className={s.pager} aria-label={ui.topics}>
         {prev && <Link href={localizedPath(locale, `/help/${prev.slug}`)}><small>{ui.prevTopic}</small>{prev.name}</Link>}

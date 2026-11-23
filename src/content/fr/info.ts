@@ -35,10 +35,10 @@ export const OWNER_FACTS_FR = {
 const F = OWNER_FACTS_FR;
 
 const ORDER_STEPS = [
-  { title: 'Choisissez votre formule', text: 'Choisissez la formule, la durée et le nombre d’appareils sur notre site. Le prix s’affiche immédiatement.' },
+  { title: 'Choisissez votre formule', text: 'Sélectionnez la formule, la durée et le nombre d’appareils sur notre site. Le prix s’affiche immédiatement.' },
   { title: 'Envoyez votre commande', text: 'Remplissez le court formulaire de commande : votre e-mail, votre pays et votre numéro WhatsApp. Rien n’est débité sur ce site. Vous recevez un e-mail confirmant la réception de votre commande.' },
   { title: 'Nous vous contactons sur WhatsApp', text: 'Un membre de notre équipe vous contacte sur WhatsApp pour confirmer votre commande.' },
-  { title: 'Nous activons votre abonnement', text: `Nous vous envoyons vos identifiants et les instructions d’installation sur WhatsApp. L’activation a lieu généralement ${F.usualActivation}.` },
+  { title: 'Nous activons votre abonnement', text: `Nous vous envoyons vos identifiants et les instructions d’installation sur WhatsApp. L’activation a généralement lieu ${F.usualActivation}.` },
   { title: 'Vous payez', text: 'Une fois votre accès activé, vous payez avec l’un des moyens de paiement proposés par notre équipe.' },
   { title: 'Paiement confirmé', text: 'Lorsque nous avons reçu et confirmé votre paiement, vous recevez un e-mail confirmant que votre abonnement est actif, avec votre numéro de commande.' },
 ];
@@ -59,7 +59,7 @@ export const ABOUT_FR: InfoPage = {
       id: 'who', icon: 'info', title: 'Qui sommes-nous',
       body: [
         { p: `SYGMA TV+ — «${N}One World. Endless Entertainment.${N}» — est une marque de ${siteConfig.legalEntity}, société créée en ${F.established} et immatriculée dans l’État du Nouveau-Mexique, aux États-Unis.` },
-        { p: 'Les formules sont annuelles (12, 24 ou 36 mois), pour 1 appareil inclus et jusqu’à 4. Avant d’acheter, vous pouvez tester le service sur votre propre appareil grâce à un essai gratuit.' },
+        { p: 'Les formules sont annuelles (12, 24 ou 36 mois) : 1 appareil inclus, jusqu’à 4 au choix. Avant d’acheter, vous pouvez tester le service sur votre propre appareil grâce à un essai gratuit.' },
       ],
     },
     {
@@ -119,7 +119,7 @@ export const ABOUT_FR: InfoPage = {
         { links: [
           { href: '/fr/help', label: 'Centre d’aide', text: 'Essai, commande, appareils, remboursements' },
           { href: '/fr/help/contact-support', label: 'Contacter l’assistance', text: `E-mail ou WhatsApp, ${F.supportHours}` },
-          { href: '/fr#plans', label: 'Formules', text: 'Choisissez votre formule et voyez le prix' },
+          { href: '/fr#plans', label: 'Formules', text: 'Choisissez votre formule et découvrez son prix' },
           { href: '/legal/refunds', label: 'Remboursements et annulations', text: 'Satisfait ou remboursé 7 jours (en anglais)' },
           { href: '/legal/terms', label: 'Conditions d’utilisation', text: 'Les règles, en langage clair (en anglais)' },
           { href: '/legal/imprint', label: 'Mentions légales', text: 'Informations sur la société (en anglais)' },
@@ -135,7 +135,7 @@ export const HELP_HUB_FR = {
   title: 'Centre d’aide',
   metaTitle: 'Centre d’aide : essai, commande, remboursement',
   description: 'Réponses sur l’essai gratuit SYGMA TV+, la commande et le paiement, les appareils compatibles, le dépannage, les remboursements et l’assistance.',
-  intro: `Des réponses claires sur l’essai gratuit, la commande, le paiement, les appareils et les remboursements. Toujours bloqué${N}? Notre équipe est disponible ${F.supportHours}.`,
+  intro: `Des réponses claires sur l’essai gratuit, la commande, le paiement, les appareils et les remboursements. Besoin d’aide supplémentaire${N}? Notre équipe est disponible ${F.supportHours}.`,
   popular: [
     { q: 'Quand et comment payer ?', href: '/fr/help/ordering-payment#pay' },
     { q: 'Combien de temps prend l’activation ?', href: '/fr/help/ordering-payment#activation' },
@@ -153,7 +153,7 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     metaTitle: 'Bien démarrer avec SYGMA TV+',
     description: 'Le fonctionnement de SYGMA TV+, du choix de la formule au visionnage : essai gratuit, commande, contact et activation sur WhatsApp, puis paiement.',
     summary: 'Du choix de la formule à votre premier visionnage.',
-    intro: 'Démarrer ne prend que quelques étapes. Vous pouvez commencer par un essai gratuit ou commander directement.',
+    intro: 'Quelques étapes suffisent pour démarrer. Vous pouvez commencer par un essai gratuit ou commander directement.',
     sections: [
       { id: 'steps', icon: 'rocket', title: 'Les étapes', body: [{ steps: [
         { title: 'Choisissez votre formule', text: 'Dans la section Formules, choisissez la formule, la durée (12, 24 ou 36 mois) et le nombre d’appareils.' },
@@ -175,7 +175,7 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     slug: 'devices', name: 'Appareils compatibles', icon: 'devices',
     title: 'Appareils compatibles',
     metaTitle: 'Appareils compatibles : TV, boîtiers, mobile',
-    description: 'SYGMA TV+ s’utilise sur Smart TV, boîtiers et clés de streaming, smartphones, tablettes et ordinateurs. Nombre d’appareils et vérification du vôtre.',
+    description: 'SYGMA TV+ s’utilise sur Smart TV, boîtiers et clés de streaming, smartphones, tablettes et ordinateurs. Nombre d’appareils et comment vérifier le vôtre.',
     summary: 'TV, boîtiers de streaming, mobile et ordinateur.',
     intro: 'SYGMA TV+ s’utilise sur les TV, les boîtiers de streaming, les mobiles et les ordinateurs. L’essai gratuit vous permet de vérifier votre appareil et votre connexion avant d’acheter.',
     sections: [
@@ -200,7 +200,7 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     sections: [
       { id: 'request', icon: 'rocket', title: 'Comment le demander ?', body: [{ steps: [
         { title: 'Ouvrez le formulaire', text: `Sélectionnez «${N}Essai gratuit${N}» en haut de n’importe quelle page.` },
-        { title: 'Laissez vos coordonnées', text: 'Votre nom complet, votre adresse e-mail et votre numéro de téléphone avec l’indicatif du pays, et acceptez d’être contacté.' },
+        { title: 'Laissez vos coordonnées', text: 'Indiquez votre nom complet, votre adresse e-mail et votre numéro de téléphone avec l’indicatif du pays, puis acceptez d’être contacté.' },
         { title: 'Recevez votre accès', text: 'Notre équipe vous contacte sur WhatsApp avec vos identifiants et l’application à installer.' },
       ] }] },
       { id: 'cost', icon: 'tag', title: 'Est-il vraiment gratuit ?', body: [{ p: 'Oui. Une demande d’essai est gratuite et n’engage à rien. L’essai prend fin de lui-même : il n’y a rien à résilier. Un seul essai gratuit par client.' }] },
@@ -216,7 +216,7 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     slug: 'ordering-payment', name: 'Commande et paiement', icon: 'card',
     title: 'Commande et paiement',
     metaTitle: 'Commande et paiement : comment ça marche',
-    description: 'Commander SYGMA TV+ : envoyez le formulaire, notre équipe vous contacte sur WhatsApp et active votre accès, puis vous payez. Les moyens de paiement.',
+    description: 'Commander SYGMA TV+ : envoyez le formulaire, notre équipe vous contacte sur WhatsApp et active votre accès, puis vous payez. Moyens de paiement détaillés.',
     summary: 'Formulaire de commande, activation, puis paiement.',
     intro: 'Vous commandez avec un court formulaire. Notre équipe vous contacte sur WhatsApp et active votre accès, et vous payez après l’activation. Rien n’est débité sur ce site.',
     sections: [
@@ -248,7 +248,7 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     sections: [
       { id: 'stutter', icon: 'activity', title: 'L’image saccade ou se fige', body: [{ p: 'Redémarrez votre box internet et votre appareil. Utilisez un câble réseau si possible, ou rapprochez l’appareil de votre box Wi-Fi, puis réessayez.' }] },
       { id: 'login', icon: 'lock', title: 'Mes identifiants sont refusés', body: [{ p: 'Vérifiez les espaces et les majuscules/minuscules, ou copiez-collez les identifiants depuis notre message WhatsApp. Si cela ne fonctionne toujours pas, envoyez-nous une photo de l’écran d’erreur.' }] },
-      { id: 'store', icon: 'tv', title: 'Je ne trouve pas l’application dans ma boutique', body: [{ p: 'Les boutiques d’applications dépendent du modèle de l’appareil et du pays. Envoyez-nous la marque, le modèle et l’année de votre appareil : nous vous dirons ce qui fonctionne.' }] },
+      { id: 'store', icon: 'tv', title: 'Je ne trouve pas l’application dans la boutique d’applications', body: [{ p: 'Les boutiques d’applications dépendent du modèle de l’appareil et du pays. Envoyez-nous la marque, le modèle et l’année de votre appareil : nous vous dirons ce qui fonctionne.' }] },
       { id: 'crash', icon: 'pause', title: 'L’application se ferme toute seule', body: [{ p: 'Redémarrez l’appareil, installez les mises à jour disponibles du système et de l’application, puis réessayez.' }] },
       { id: 'mobile', icon: 'devices', title: 'La lecture s’arrête en données mobiles', body: [{ p: 'La qualité dépend de votre réseau mobile et de votre forfait. Passez en Wi-Fi si possible.' }] },
       { id: 'still', icon: 'mail', title: 'Toujours un problème ?', body: [{ p: `Contactez-nous ${F.supportHours} avec le modèle de votre appareil et une photo du message d’erreur : notre équipe répond généralement en ${F.usualReply}.` }] },
@@ -285,12 +285,12 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     title: 'Remboursements et annulations',
     metaTitle: 'Remboursements : 7 jours et rétractation',
     description: 'Remboursements SYGMA TV+ : essai gratuit d’abord, 100 % remboursé sous 7 jours après activation, rétractation de 14 jours (UE et Royaume-Uni).',
-    summary: 'Satisfait ou remboursé 7 jours, comment demander.',
+    summary: 'Satisfait ou remboursé 7 jours : la marche à suivre.',
     intro: 'Essayez d’abord, puis faites-vous rembourser intégralement si vous n’êtes pas satisfait dans les 7 jours suivant l’activation. La politique complète figure sur notre page Remboursements (en anglais).',
     sections: [
       { id: 'guarantee', icon: 'refund', title: 'Satisfait ou remboursé 7 jours', body: [{ p: 'Pas satisfait ? Faites votre demande dans les 7 jours suivant l’activation et nous vous remboursons à 100 %, sans justification. Un seul remboursement par client ; non disponible pour les comptes suspendus pour partage ou revente de l’accès.' }] },
       { id: 'withdrawal', icon: 'scale', title: 'Clients de l’UE et du Royaume-Uni', body: [{ p: 'Vous disposez en outre de 14 jours pour vous rétracter. Après les 7 premiers jours, nous remboursons la partie non utilisée de votre abonnement.' }] },
-      { id: 'how', icon: 'mail', title: 'Comment demander', body: [{ p: `Envoyez votre référence de commande à ${EMAIL} ou sur WhatsApp. Vous êtes remboursé sous 14 jours, sur le moyen de paiement utilisé.` }] },
+      { id: 'how', icon: 'mail', title: 'Comment demander un remboursement', body: [{ p: `Envoyez votre référence de commande à ${EMAIL} ou sur WhatsApp. Vous êtes remboursé sous 14 jours, sur le moyen de paiement utilisé.` }] },
       { id: 'after', icon: 'pause', title: 'Après ces délais', body: [{ p: 'Les abonnements ne sont pas remboursables après ces délais, sauf si la loi l’exige. Ils ne se renouvellent jamais automatiquement.' }] },
     ],
   },
@@ -308,7 +308,7 @@ export const INFO_UI_FR: InfoUi = {
     { k: 'Disponibilité', v: F.supportHours, small: 'E-mail et WhatsApp' },
     { k: 'Délai de réponse habituel', v: 'Moins d’une heure', small: 'Délai habituel, non garanti' },
     { k: 'Langues', v: String(F.languages.length), small: F.languages.join(' · ') },
-    { k: 'Activation', v: 'Généralement < 1 h', small: 'Avant le paiement, après confirmation de votre commande' },
+    { k: 'Activation', v: 'Généralement < 1 h', small: 'Avant le paiement, après confirmation de votre commande' },
   ],
   aboutFacts: [
     { k: 'Création', v: F.established, small: F.basedIn },

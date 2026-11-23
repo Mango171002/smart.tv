@@ -96,7 +96,7 @@ const fr: Dictionary = {
   hero: {
     titleA: 'Le streaming premium.',
     titleB: 'Films, séries, TV en direct.',
-    lead: 'Films, séries et TV en direct sur votre TV, votre mobile et votre ordinateur — avec d’abord un essai gratuit, et une vraie équipe qui vous accompagne sur WhatsApp pour l’installation.',
+    lead: 'Films, séries et TV en direct sur votre TV, votre mobile et votre ordinateur — avec un essai gratuit d’abord et une vraie équipe qui vous accompagne sur WhatsApp pour l’installation.',
     ctaPrimary: 'Voir les formules',
     ctaSecondary: 'Comment ça marche',
     checks: ['Installation rapide', 'Données jamais vendues', 'Multi-écrans', 'Formules flexibles', 'Assistance 24/7'],
@@ -271,13 +271,13 @@ const fr: Dictionary = {
       { title: 'Sport', text: 'Selon les chaînes disponibles dans votre pays', alt: 'Joueur de baseball glissant vers la base sous les projecteurs du stade' },
       { title: 'Films et séries', text: 'Cinéma, séries et contenus à la demande', alt: 'Femme effrayée dans un couloir sombre éclairé en rouge, scène de thriller' },
       { title: 'TV en direct', text: 'Chaînes classées par région, selon votre pays', alt: 'Présentateur de journal avec un micro dans un studio de télévision' },
-      { title: 'Documentaires', text: 'Nature, histoire, science et histoires vraies', alt: 'Famille de lions se reposant sur un rocher au coucher du soleil dans la savane' },
+      { title: 'Documentaires', text: 'Nature, histoire, sciences et faits réels', alt: 'Famille de lions se reposant sur un rocher au coucher du soleil dans la savane' },
     ],
   },
   devices: {
     eyebrow: 'Compatibilité',
     title: 'Conçu pour vos écrans préférés.',
-    sub: 'Fonctionne sur Smart TV, boîtiers de streaming, mobile et ordinateur. Vérifiez le vôtre avec l’essai gratuit.',
+    sub: 'Fonctionne sur Smart TV, boîtiers de streaming, mobile et ordinateur. Vérifiez votre appareil avec l’essai gratuit.',
     items: [
       { title: 'Smart TV', text: 'Applications TV compatibles' },
       { title: 'Boîtiers de streaming', text: 'Boîtiers et clés TV' },
@@ -291,13 +291,13 @@ const fr: Dictionary = {
     checklist: [
       'Les applications officiellement compatibles avec votre appareil',
       'Le débit internet minimum recommandé pour la HD et la 4K',
-      'Le nombre d’appareils pouvant regarder en même temps',
+      'Le nombre d’appareils utilisables en même temps',
       'Comment obtenir de l’aide si l’installation ne fonctionne pas',
     ],
   },
   preview: {
     eyebrow: 'Interface',
-    title: 'Une seule expérience sur tous les écrans.',
+    title: 'La même expérience sur tous les écrans.',
     sub: 'Un aperçu de l’interface sur TV, ordinateur et mobile.',
     labels: ['Smart TV', 'Ordinateur', 'Mobile'],
     caption: 'Aperçu de l’interface',
@@ -312,7 +312,7 @@ const fr: Dictionary = {
       { title: 'Découvrez les formules', text: 'Choisissez votre bouquet' },
       { title: 'Commandez', text: 'En moins d’une minute' },
       { title: 'Activation', text: 'Rapidement, sur WhatsApp' },
-      { title: 'Regardez', text: 'Profitez de votre expérience' },
+      { title: 'Regardez', text: 'Profitez de vos programmes' },
     ],
     cta: 'Découvrir les formules',
     note: 'Essai gratuit · Satisfait ou remboursé 7 jours',
@@ -350,7 +350,7 @@ const fr: Dictionary = {
         a: 'Oui. Choisissez votre formule et envoyez le court formulaire de commande : notre équipe vous contacte sur WhatsApp et active votre accès, et vous payez après l’activation. Vous pouvez aussi demander d’abord un essai gratuit.',
       },
       {
-        q: 'Quels pays sont disponibles ?',
+        q: 'Dans quels pays le service est-il disponible ?',
         a: 'Notre équipe confirme la disponibilité pour votre pays avant votre commande. Demandez un essai gratuit pour vérifier le service sur votre propre appareil.',
       },
       {
@@ -358,7 +358,7 @@ const fr: Dictionary = {
         a: 'Smart TV, boîtiers et clés de streaming, smartphones, tablettes et ordinateurs. Demandez un essai gratuit pour vérifier votre appareil.',
       },
       {
-        q: 'Combien ça coûte ?',
+        q: 'Combien coûte l’abonnement ?',
         a: 'Trois formules annuelles : Starter à 59 $ US, Plus à 69 $ US et Ultra+ à 99 $ US par an (hors taxes), avec 20 % de réduction sur 24 mois et 30 % sur 36 mois. Les taxes et le prix final sont toujours affichés avant tout achat.',
       },
       {
@@ -436,7 +436,7 @@ const fr: Dictionary = {
     message: 'Message',
     messageHint: 'Au moins 10 caractères. N’indiquez ni mot de passe ni coordonnées de paiement.',
     consent: 'J’accepte d’être contacté au sujet de cette demande. Données supprimées sous 12 mois.',
-    send: 'Envoyer la question',
+    send: 'Envoyer ma question',
     join: 'Me prévenir',
     sending: 'Envoi…',
     successSupport: 'Merci — votre question a bien été enregistrée.',
@@ -529,12 +529,12 @@ const fr: Dictionary = {
       privacy: {
         title: 'Politique de confidentialité',
         intro: 'Ce que nous collectons, pourquoi, et vos droits — en bref.',
-        metaDescription: 'Politique de confidentialité de SYGMA TV+ : données collectées, utilisation, protection, durée de conservation et vos droits. Nous ne vendons jamais vos données.',
+        metaDescription: 'Politique de confidentialité de SYGMA TV+ : données collectées, usage, protection, durée de conservation et vos droits. Nous ne vendons jamais vos données.',
       },
       cookies: {
         title: 'Politique de cookies',
         intro: 'Les cookies de sygmatv.com et comment les contrôler.',
-        metaDescription: 'Politique de cookies de SYGMA TV+ : cookies utilisés, finalité et durée. Les cookies facultatifs ne sont déposés qu’avec votre accord, modifiable à tout moment.',
+        metaDescription: 'Politique de cookies de SYGMA TV+ : cookies utilisés, finalité et durée. Cookies facultatifs uniquement avec votre accord, modifiable à tout moment.',
       },
       refunds: {
         title: 'Remboursements et annulations',

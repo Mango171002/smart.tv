@@ -48,7 +48,7 @@ const ABOUT: InfoPage = {
   name: 'Over ons',
   title: 'Over SYGMA TV+',
   metaTitle: 'Over ons: bedrijf, klantenservice en beloften',
-  description: 'SYGMA TV+ is een merk voor digitaal entertainment van Sygma TV LLC, opgericht in 2026 in de Verenigde Staten. Hoe het werkt, beloften en klantenservice.',
+  description: 'SYGMA TV+ is een merk voor digitaal entertainment van Sygma TV LLC, opgericht in 2026 in de Verenigde Staten. Werkwijze, beloften en klantenservice.',
   intro: `SYGMA TV+ is een internationaal merk voor digitaal entertainment, opgericht in ${F.established} in de ${F.basedIn}. We bieden streamingabonnementen voor je tv, mobiel en computer, met een klantenservice die ${F.supportHours} bereikbaar is in zes talen.`,
   icon: 'info',
   sections: [
@@ -131,7 +131,7 @@ const HELP_HUB = {
   name: 'Helpcentrum',
   title: 'Helpcentrum',
   metaTitle: 'Helpcentrum: proefperiode, bestellen, apparaten',
-  description: 'Antwoorden over de gratis proefperiode van SYGMA TV+, bestellen en betalen, apparaten, problemen oplossen, terugbetaling en de klantenservice.',
+  description: 'Antwoorden over de gratis proefperiode van SYGMA TV+, bestellen en betalen, apparaten, problemen oplossen, terugbetaling en contact met de klantenservice.',
   intro: `Duidelijke antwoorden over de gratis proefperiode, bestellen, betalen, apparaten en terugbetaling. Kom je er niet uit? Ons team is ${F.supportHours} bereikbaar.`,
   popular: [
     { q: 'Wanneer en hoe betaal ik?', href: '/nl/help/ordering-payment#pay' },
@@ -150,12 +150,12 @@ const HELP_TOPICS: InfoPage[] = [
     metaTitle: 'Aan de slag met SYGMA TV+',
     description: 'Zo werkt SYGMA TV+, van abonnement kiezen tot kijken: gratis proefperiode, bestelformulier, contact en activering via WhatsApp, daarna betaling.',
     summary: 'Van je abonnementskeuze tot je eerste stream.',
-    intro: 'Aan de slag gaan kost maar een paar stappen. Je kunt beginnen met een gratis proefperiode of direct bestellen.',
+    intro: 'Aan de slag gaan doe je in een paar stappen. Je kunt beginnen met een gratis proefperiode of direct bestellen.',
     sections: [
       { id: 'steps', icon: 'rocket', title: 'De stappen', body: [{ steps: [
         { title: 'Kies je abonnement', text: 'Kies in het onderdeel Abonnementen het abonnement, de looptijd (12, 24 of 36 maanden) en het aantal apparaten.' },
         { title: 'Proefperiode of bestelling', text: 'Vraag een gratis proefperiode aan, of verstuur je bestelling met het korte formulier: je e-mailadres, je land en je WhatsApp-nummer.' },
-        { title: 'We nemen contact op via WhatsApp', text: 'Ons team neemt via WhatsApp contact met je op, stuurt je inloggegevens en vertelt je welke app je installeert.' },
+        { title: 'We nemen contact op via WhatsApp', text: 'Ons team neemt via WhatsApp contact met je op, stuurt je inloggegevens en vertelt je welke app je moet installeren.' },
         { title: 'Activering, daarna betaling', text: `Bij een bestelling activeren we eerst je abonnement — meestal ${F.usualActivation}. Je betaalt zodra je toegang actief is.` },
         { title: 'Begin met kijken', text: 'Installeer de app, voer je inloggegevens in en start een stream.' },
       ] }] },
@@ -172,7 +172,7 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'devices', name: 'Ondersteunde apparaten', icon: 'devices',
     title: 'Ondersteunde apparaten',
     metaTitle: 'Ondersteunde apparaten: tv, boxen, mobiel',
-    description: 'Je gebruikt SYGMA TV+ op Smart TV’s, streamingboxen en -sticks, smartphones, tablets en computers. Hoeveel apparaten mogen en hoe je het jouwe test.',
+    description: 'Je gebruikt SYGMA TV+ op Smart TV’s, streamingboxen en -sticks, smartphones, tablets en computers. Het aantal apparaten en hoe je je eigen apparaat test.',
     summary: 'Tv, streamingapparaten, mobiel en computer.',
     intro: 'Je gebruikt SYGMA TV+ op tv’s, streamingapparaten, mobiele telefoons en computers. Met de gratis proefperiode test je je eigen apparaat en verbinding voordat je koopt.',
     sections: [
@@ -181,7 +181,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Streamingboxen en -sticks.',
         'Smartphones en tablets.',
         'Computers.',
-      ] }, { p: 'Samen met je inloggegevens vertelt ons team je welke app je op je apparaat installeert, en het helpt je bij de installatie.' }] },
+      ] }, { p: 'Samen met je inloggegevens laat ons team je weten welke app je op je apparaat moet installeren, en we helpen je bij de installatie.' }] },
       { id: 'how-many', icon: 'users', title: 'Hoeveel apparaten tegelijk?', body: [{ p: 'Elk abonnement bevat 1 apparaat. Bij je bestelling kun je apparaten toevoegen, tot maximaal 4. Het abonnement is voor persoonlijk gebruik binnen je huishouden: toegang delen of doorverkopen is niet toegestaan.' }] },
       { id: 'quality', icon: 'activity', title: 'Beeldkwaliteit', body: [{ p: 'De beeldkwaliteit hangt af van je abonnement, de content, je apparaat en je internetverbinding. Een stabiele verbinding — liefst een netwerkkabel, of een apparaat dicht bij je wifirouter — maakt het grootste verschil.' }] },
       { id: 'check', icon: 'check', title: 'Test eerst je apparaat', body: [{ p: `Vraag een gratis proefperiode van ${TRIAL} aan: je test de dienst op je eigen apparaat en verbinding voordat je koopt.` }] },
@@ -191,19 +191,19 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'free-trial', name: 'Gratis proefperiode', icon: 'calendar',
     title: 'De gratis proefperiode',
     metaTitle: 'Gratis proefperiode: SYGMA TV+ uitproberen',
-    description: `Probeer SYGMA TV+ ${TRIAL} gratis op je eigen apparaat voordat je koopt. Zo vraag je die aan en wat er daarna gebeurt — niets betalen, niets opzeggen.`,
+    description: `Probeer SYGMA TV+ ${TRIAL} gratis op je eigen apparaat voordat je koopt. Hoe aanvragen werkt en wat er daarna gebeurt — niets betalen, niets opzeggen.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)} gratis, niets op te zeggen.`,
     intro: `Met de gratis proefperiode test je SYGMA TV+ ${TRIAL} lang op je eigen apparaat en verbinding, voordat je beslist.`,
     sections: [
-      { id: 'request', icon: 'rocket', title: 'Hoe vraag ik die aan?', body: [{ steps: [
-        { title: 'Open het formulier', text: 'Kies “Gratis proberen” bovenaan elke pagina.' },
+      { id: 'request', icon: 'rocket', title: 'Hoe vraag ik de proefperiode aan?', body: [{ steps: [
+        { title: 'Open het formulier', text: 'Klik op “Gratis proberen” bovenaan elke pagina.' },
         { title: 'Laat je gegevens achter', text: 'Je volledige naam, je e-mailadres en je telefoonnummer met landcode, en geef toestemming om contact met je op te nemen.' },
-        { title: 'Ontvang je toegang', text: 'Ons team neemt via WhatsApp contact met je op met je inloggegevens en de app die je installeert.' },
+        { title: 'Ontvang je toegang', text: 'Ons team stuurt je via WhatsApp je inloggegevens en vertelt je welke app je moet installeren.' },
       ] }] },
       { id: 'cost', icon: 'tag', title: 'Is het echt gratis?', body: [{ p: 'Ja. Een proefperiode aanvragen is gratis en verplicht je tot niets. De proefperiode stopt vanzelf: je hoeft niets op te zeggen. Eén gratis proefperiode per klant.' }] },
-      { id: 'check', icon: 'check', title: 'Wat controleer ik tijdens de proefperiode?', body: [{ list: [
+      { id: 'check', icon: 'check', title: 'Wat kan ik tijdens de proefperiode testen?', body: [{ list: [
         'Of de app werkt op je apparaat.',
-        'Of het beeld vloeiend is op je internetverbinding.',
+        'Of het beeld vloeiend loopt via je internetverbinding.',
         'Hoeveel apparaten je nodig hebt.',
         'Hoe je ons bereikt als de installatie niet lukt.',
       ] }] },
@@ -213,12 +213,12 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'ordering-payment', name: 'Bestellen en betalen', icon: 'card',
     title: 'Bestellen en betalen',
     metaTitle: 'Bestellen en betalen: zo werkt het',
-    description: 'Zo bestel je SYGMA TV+: verstuur het formulier, ons team neemt via WhatsApp contact op en activeert je toegang, daarna betaal je. Betaalmethoden uitgelegd.',
+    description: 'Zo bestel je SYGMA TV+: formulier versturen, contact en activering via WhatsApp, daarna betalen. Met uitleg over de betaalmethoden.',
     summary: 'Bestelformulier, activering, daarna betaling.',
     intro: 'Je bestelt met een kort formulier. Ons team neemt via WhatsApp contact met je op en activeert je toegang, en je betaalt na de activering. Op deze website wordt niets afgerekend.',
     sections: [
       { id: 'order', icon: 'rocket', title: 'Hoe bestel ik?', body: [
-        { p: 'Bestellen gaat in zes stappen, van het formulier op onze website tot de bevestiging van je betaling. Kies “Nu bestellen” in het onderdeel Abonnementen om te beginnen.' },
+        { p: 'Bestellen gaat in zes stappen, van het formulier op onze website tot de bevestiging van je betaling. Klik om te beginnen op “Nu bestellen” in het onderdeel Abonnementen.' },
         { steps: ORDER_STEPS },
       ] },
       { id: 'pay', icon: 'card', title: 'Wanneer en hoe betaal ik?', body: [
@@ -255,14 +255,14 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'contact-support', name: 'Contact met de klantenservice', icon: 'mail',
     title: 'Neem contact op met onze klantenservice',
     metaTitle: 'Klantenservice: e-mail en WhatsApp, 24/7',
-    description: `Bereik de klantenservice van SYGMA TV+ ${F.supportHours} per e-mail, via WhatsApp of met het contactformulier, in zes talen. Wat je vermeldt voor een sneller antwoord.`,
+    description: `Bereik de klantenservice van SYGMA TV+ ${F.supportHours} per e-mail, via WhatsApp of met het contactformulier, in zes talen. Tips voor een sneller antwoord.`,
     summary: `${F.supportHours}, e-mail of WhatsApp, zes talen.`,
     intro: `Ons team antwoordt per e-mail en via WhatsApp, ${F.supportHours}.`,
     sections: [
       { id: 'reach', icon: 'mail', title: 'Zo bereik je ons', body: [{ list: [
         `E-mail: ${EMAIL}.`,
         `WhatsApp of telefoon: ${PHONE}.`,
-        'Het contactformulier: kies “Contact” onderaan elke pagina.',
+        'Het contactformulier: klik op “Contact” onderaan elke pagina.',
       ] }] },
       { id: 'availability', icon: 'clock', title: 'Wanneer antwoorden jullie?', body: [{ p: `Ons team is ${F.supportHours} bereikbaar en antwoordt meestal ${F.usualReply}. Dit is onze gebruikelijke reactietijd, geen contractuele garantie.` }] },
       { id: 'languages', icon: 'globe', title: 'Welke talen?', body: [
@@ -270,7 +270,7 @@ const HELP_TOPICS: InfoPage[] = [
         { chips: [...F.languages], label: 'Talen van de klantenservice' },
         { note: 'Onze juridische documenten zijn in het Engels.' },
       ] },
-      { id: 'include', icon: 'pencil', title: 'Wat je vermeldt', body: [{ list: [
+      { id: 'include', icon: 'pencil', title: 'Wat je het best vermeldt', body: [{ list: [
         'Je bestelreferentie, als je die hebt.',
         'Je apparaat, met merk en model.',
         'Wat je aan het doen was toen het probleem begon, en een foto van een eventuele foutmelding.',

@@ -36,13 +36,13 @@ const F = OWNER_FACTS;
 /** The six steps of an order, in the real order: activation first, payment after, then the confirmation email. */
 const ORDER_STEPS = [
   { title: 'Tarif wählen', text: 'Wählen Sie auf unserer Website Ihren Tarif, die Laufzeit und die Anzahl der Geräte. Der Preis wird sofort angezeigt.' },
-  { title: 'Bestellung senden', text: 'Füllen Sie das kurze Bestellformular aus: E-Mail-Adresse, Land und WhatsApp-Nummer. Auf dieser Website wird nichts abgebucht. Sie erhalten eine E-Mail, die den Eingang Ihrer Bestellung bestätigt.' },
+  { title: 'Bestellung absenden', text: 'Füllen Sie das kurze Bestellformular aus: E-Mail-Adresse, Land und WhatsApp-Nummer. Auf dieser Website wird nichts abgebucht. Sie erhalten eine Eingangsbestätigung per E-Mail.' },
   { title: 'Wir kontaktieren Sie per WhatsApp', text: 'Ein Mitglied unseres Teams kontaktiert Sie per WhatsApp, um Ihre Bestellung zu bestätigen.' },
   { title: 'Wir aktivieren Ihr Abo', text: `Wir senden Ihnen Ihre Zugangsdaten und die Einrichtungsanleitung per WhatsApp. Die Aktivierung erfolgt in der Regel ${F.usualActivation}.` },
   { title: 'Sie bezahlen', text: 'Sobald Ihr Zugang aktiv ist, bezahlen Sie mit einer der Zahlungsmethoden, die unser Team Ihnen anbietet.' },
-  { title: 'Zahlung bestätigt', text: 'Sobald wir Ihre Zahlung erhalten und bestätigt haben, erhalten Sie eine E-Mail mit Ihrer Bestellnummer, die bestätigt, dass Ihr Abo aktiv ist.' },
+  { title: 'Zahlung bestätigt', text: 'Sobald Ihre Zahlung bei uns eingegangen und bestätigt ist, erhalten Sie eine E-Mail mit Ihrer Bestellnummer, die bestätigt, dass Ihr Abo aktiv ist.' },
 ];
-const CONFIRMATION_EMAIL = 'Sobald wir Ihre Zahlung erhalten und bestätigt haben, erhalten Sie eine E-Mail, die bestätigt, dass Ihr Abo aktiv ist – mit Ihrer Bestellnummer und den Details Ihres Abos.';
+const CONFIRMATION_EMAIL = 'Sobald Ihre Zahlung bei uns eingegangen und bestätigt ist, erhalten Sie eine E-Mail, die bestätigt, dass Ihr Abo aktiv ist – mit Ihrer Bestellnummer und den Details Ihres Abos.';
 const LANGS = `${F.languages.slice(0, -1).join(', ')} oder ${F.languages[F.languages.length - 1]}`;
 
 // ---------------------------------------------------------------- Über uns
@@ -51,15 +51,15 @@ const ABOUT: InfoPage = {
   name: 'Über uns',
   title: 'Über SYGMA TV+',
   metaTitle: 'Über uns: Unternehmen, Support und Versprechen',
-  description: 'SYGMA TV+ ist eine Marke für digitale Unterhaltung der Sygma TV LLC, 2026 in den USA gegründet. Funktionsweise, unsere Versprechen und der Support.',
+  description: 'SYGMA TV+ ist eine Marke der Sygma TV LLC für digitale Unterhaltung, 2026 in den USA gegründet. Funktionsweise, unsere Versprechen und der Support.',
   intro: `SYGMA TV+ ist eine internationale Marke für digitale Unterhaltung, gegründet ${F.established} in den ${F.basedIn}. Wir bieten Streaming-Abos für Ihren Fernseher, Ihr Smartphone und Ihren Computer – mit einem Support-Team, das Sie ${F.supportHours} in sechs Sprachen erreichen.`,
   icon: 'info',
   sections: [
     {
       id: 'who', icon: 'info', title: 'Wer wir sind',
       body: [
-        { p: `SYGMA TV+ — „One World. Endless Entertainment.“ — ist eine Marke der ${siteConfig.legalEntity}, eines ${F.established} gegründeten und im Bundesstaat New Mexico (USA) eingetragenen Unternehmens.` },
-        { p: 'Die Tarife laufen jährlich (12, 24 oder 36 Monate), mit 1 Gerät inklusive und bis zu 4 Geräten. Vor dem Kauf können Sie den Dienst mit einem kostenlosen Test auf Ihrem eigenen Gerät ausprobieren.' },
+        { p: `SYGMA TV+ – „One World. Endless Entertainment.“ – ist eine Marke der ${siteConfig.legalEntity}, eines ${F.established} gegründeten und im Bundesstaat New Mexico (USA) eingetragenen Unternehmens.` },
+        { p: 'Die Tarife laufen jährlich (12, 24 oder 36 Monate); 1 Gerät ist inklusive, bis zu 4 sind möglich. Vor dem Kauf können Sie den Dienst mit einem kostenlosen Testzugang auf Ihrem eigenen Gerät ausprobieren.' },
       ],
     },
     {
@@ -79,9 +79,9 @@ const ABOUT: InfoPage = {
     {
       id: 'how', icon: 'rocket', title: 'So funktioniert der Dienst',
       body: [
-        { p: 'Sie bestellen über ein kurzes Formular, und ein echter Mensch aus unserem Team übernimmt alles Weitere per WhatsApp. Wir aktivieren zuerst Ihr Abo: Sie bezahlen erst, wenn Ihr Zugang aktiv ist.' },
+        { p: 'Sie bestellen über ein kurzes Formular, und ein Mitglied unseres Teams kümmert sich persönlich per WhatsApp um alles Weitere. Wir aktivieren zuerst Ihr Abo: Sie bezahlen erst, wenn Ihr Zugang aktiv ist.' },
         { steps: ORDER_STEPS },
-        { p: `Noch unsicher? Fordern Sie zuerst einen kostenlosen ${TRIAL_ADJ}-Test an: nichts zu bezahlen, nichts zu kündigen.` },
+        { p: `Noch unsicher? Fordern Sie zuerst einen kostenlosen ${TRIAL_ADJ}-Testzugang an: Sie zahlen nichts und müssen nichts kündigen.` },
       ],
     },
     {
@@ -107,9 +107,9 @@ const ABOUT: InfoPage = {
     {
       id: 'payment', icon: 'card', title: 'Aktivierung, Zahlung und Bestätigung',
       body: [
-        { p: `Auf dieser Website wird nichts abgebucht. Wir aktivieren zuerst Ihr Abo — in der Regel ${F.usualActivation} — und Sie bezahlen, sobald Ihr Zugang aktiv ist, mit einer dieser Methoden:` },
+        { p: `Auf dieser Website wird nichts abgebucht. Wir aktivieren zuerst Ihr Abo – in der Regel ${F.usualActivation} – und Sie bezahlen, sobald Ihr Zugang aktiv ist, mit einer dieser Methoden:` },
         { chips: [...F.paymentMethods], label: 'Zahlungsmethoden' },
-        { note: 'Jede Zahlung wird manuell mit unserem Team per WhatsApp abgewickelt — keine wird automatisch auf dieser Website abgebucht. Unser Team sagt Ihnen, welche Methoden für Ihre Bestellung verfügbar sind.' },
+        { note: 'Jede Zahlung wird manuell mit unserem Team per WhatsApp abgewickelt – keine wird automatisch auf dieser Website abgebucht. Unser Team sagt Ihnen, welche Methoden für Ihre Bestellung verfügbar sind.' },
         { p: CONFIRMATION_EMAIL },
       ],
     },
@@ -117,7 +117,7 @@ const ABOUT: InfoPage = {
       id: 'links', icon: 'info', title: 'Nützliche Links',
       body: [
         { links: [
-          { href: '/de/help', label: 'Hilfe-Center', text: 'Test, Bestellung, Geräte, Erstattungen' },
+          { href: '/de/help', label: 'Hilfe-Center', text: 'Testzugang, Bestellung, Geräte, Erstattungen' },
           { href: '/de/help/contact-support', label: 'Support kontaktieren', text: `E-Mail oder WhatsApp, ${F.supportHours}` },
           { href: '/de#plans', label: 'Tarife', text: 'Tarif wählen und Preis ansehen' },
           { href: '/legal/refunds', label: 'Erstattungen & Kündigungen', text: '7 Tage Geld-zurück-Garantie (auf Englisch)' },
@@ -133,13 +133,13 @@ const ABOUT: InfoPage = {
 const HELP_HUB = {
   name: 'Hilfe-Center',
   title: 'Hilfe-Center',
-  metaTitle: 'Hilfe-Center: Test, Bestellung und Erstattung',
-  description: 'Antworten zum kostenlosen Test von SYGMA TV+, zu Bestellung und Zahlung, unterstützten Geräten, Fehlerbehebung, Erstattungen und zum Support.',
-  intro: `Klare Antworten zu kostenlosem Test, Bestellung, Zahlung, Geräten und Erstattungen. Noch Fragen offen? Unser Team ist ${F.supportHours} für Sie da.`,
+  metaTitle: 'Hilfe-Center: Testzugang, Bestellung, Erstattung',
+  description: 'Antworten zum kostenlosen Testzugang von SYGMA TV+, zu Bestellung und Zahlung, unterstützten Geräten, Fehlerbehebung, Erstattungen und zum Support.',
+  intro: `Klare Antworten zum kostenlosen Testzugang, zu Bestellung, Zahlung, Geräten und Erstattungen. Noch Fragen offen? Unser Team ist ${F.supportHours} für Sie da.`,
   popular: [
     { q: 'Wann und wie bezahle ich?', href: '/de/help/ordering-payment#pay' },
     { q: 'Wie lange dauert die Aktivierung?', href: '/de/help/ordering-payment#activation' },
-    { q: 'Ist der Test wirklich kostenlos?', href: '/de/help/free-trial#cost' },
+    { q: 'Ist der Testzugang wirklich kostenlos?', href: '/de/help/free-trial#cost' },
     { q: 'Welche Geräte kann ich nutzen?', href: '/de/help/devices#categories' },
     { q: 'Wie schnell antwortet der Support?', href: '/de/help/contact-support#availability' },
     { q: 'Wie erhalte ich eine Erstattung?', href: '/de/help/refunds#how' },
@@ -151,22 +151,22 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'getting-started', name: 'Erste Schritte', icon: 'rocket',
     title: 'Erste Schritte mit SYGMA TV+',
     metaTitle: 'Erste Schritte mit SYGMA TV+',
-    description: 'So funktioniert SYGMA TV+, von der Tarifwahl bis zum Streamen: kostenloser Test, Bestellformular, Kontakt und Aktivierung per WhatsApp, dann Zahlung.',
+    description: 'So funktioniert SYGMA TV+, von der Tarifwahl bis zum Streamen: kostenloser Testzugang, Bestellformular, Kontakt und Aktivierung per WhatsApp, dann Zahlung.',
     summary: 'Von der Tarifwahl bis zum ersten Stream.',
-    intro: 'Der Einstieg dauert nur wenige Schritte. Sie können mit einem kostenlosen Test beginnen oder direkt bestellen.',
+    intro: 'Der Einstieg gelingt in wenigen Schritten. Sie können mit einem kostenlosen Testzugang beginnen oder direkt bestellen.',
     sections: [
       { id: 'steps', icon: 'rocket', title: 'Die Schritte', body: [{ steps: [
-        { title: 'Tarif wählen', text: 'Wählen Sie im Bereich Tarife den Tarif, die Laufzeit (12, 24 oder 36 Monate) und die Anzahl der Geräte.' },
-        { title: 'Test oder Bestellung', text: 'Fordern Sie einen kostenlosen Test an oder senden Sie Ihre Bestellung über das kurze Formular: E-Mail-Adresse, Land und WhatsApp-Nummer.' },
+        { title: 'Tarif wählen', text: 'Wählen Sie im Bereich „Tarife“ Ihren Tarif, die Laufzeit (12, 24 oder 36 Monate) und die Anzahl der Geräte.' },
+        { title: 'Testzugang oder Bestellung', text: 'Fordern Sie einen kostenlosen Testzugang an oder senden Sie Ihre Bestellung über das kurze Formular: E-Mail-Adresse, Land und WhatsApp-Nummer.' },
         { title: 'Wir kontaktieren Sie per WhatsApp', text: 'Unser Team kontaktiert Sie per WhatsApp, sendet Ihnen Ihre Zugangsdaten und sagt Ihnen, welche App Sie installieren sollen.' },
-        { title: 'Erst Aktivierung, dann Zahlung', text: `Bei einer Bestellung aktivieren wir zuerst Ihr Abo — in der Regel ${F.usualActivation}. Sie bezahlen, sobald Ihr Zugang aktiv ist.` },
-        { title: 'Loslegen', text: 'Installieren Sie die App, geben Sie Ihre Zugangsdaten ein und starten Sie einen Stream.' },
+        { title: 'Erst Aktivierung, dann Zahlung', text: `Bei einer Bestellung aktivieren wir zuerst Ihr Abo – in der Regel ${F.usualActivation}. Sie bezahlen, sobald Ihr Zugang aktiv ist.` },
+        { title: 'Loslegen', text: 'Installieren Sie die App, geben Sie Ihre Zugangsdaten ein und starten Sie die Wiedergabe.' },
       ] }] },
       { id: 'good-to-know', icon: 'info', title: 'Gut zu wissen', body: [{ list: [
         'Auf dieser Website wird nichts abgebucht.',
-        'Sie bezahlen nach der Aktivierung Ihres Abos, mit einer Zahlungsmethode, die unser Team Ihnen anbietet.',
-        'Ein kostenloser Test pro Kunde.',
-        'Jeder Tarif enthält 1 Gerät; Sie können weitere hinzufügen, bis zu 4.',
+        'Sie bezahlen nach der Aktivierung Ihres Abos mit einer Zahlungsmethode, die unser Team Ihnen anbietet.',
+        'Ein kostenloser Testzugang pro Kunde.',
+        'Jeder Tarif enthält 1 Gerät; Sie können weitere hinzufügen, insgesamt bis zu 4.',
         'Tarife verlängern sich nie automatisch.',
       ] }] },
     ],
@@ -175,36 +175,36 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'devices', name: 'Unterstützte Geräte', icon: 'devices',
     title: 'Unterstützte Geräte',
     metaTitle: 'Unterstützte Geräte: TV, Boxen, Smartphone',
-    description: 'SYGMA TV+ läuft auf Smart-TVs, Streaming-Boxen und -Sticks, Smartphones, Tablets und Computern. Wie viele Geräte möglich sind und wie Sie Ihres prüfen.',
+    description: 'SYGMA TV+ läuft auf Smart-TVs, Streaming-Boxen und -Sticks, Smartphones, Tablets und Computern. Wie viele Geräte möglich sind und wie Sie Ihr Gerät prüfen.',
     summary: 'TV, Streaming-Geräte, Smartphone und Computer.',
-    intro: 'SYGMA TV+ läuft auf Fernsehern, Streaming-Geräten, Smartphones und Computern. Mit dem kostenlosen Test prüfen Sie Ihr eigenes Gerät und Ihre Verbindung, bevor Sie kaufen.',
+    intro: 'SYGMA TV+ läuft auf Fernsehern, Streaming-Geräten, Smartphones und Computern. Mit dem kostenlosen Testzugang prüfen Sie Ihr eigenes Gerät und Ihre Verbindung, bevor Sie kaufen.',
     sections: [
       { id: 'categories', icon: 'devices', title: 'Welche Geräte?', body: [{ list: [
         'Smart-TVs.',
         'Streaming-Boxen und -Sticks.',
         'Smartphones und Tablets.',
         'Computer.',
-      ] }, { p: 'Zusammen mit Ihren Zugangsdaten sagt Ihnen unser Team, welche App Sie auf Ihrem Gerät installieren, und hilft Ihnen bei der Einrichtung.' }] },
+      ] }, { p: 'Zusammen mit Ihren Zugangsdaten sagt Ihnen unser Team, welche App Sie auf Ihrem Gerät installieren sollen, und hilft Ihnen bei der Einrichtung.' }] },
       { id: 'how-many', icon: 'users', title: 'Wie viele Geräte gleichzeitig?', body: [{ p: 'Jeder Tarif enthält 1 Gerät. Bei der Bestellung können Sie weitere Geräte hinzufügen, bis zu 4. Das Abo ist für die private Nutzung in Ihrem Haushalt bestimmt: Das Teilen oder Weiterverkaufen des Zugangs ist nicht erlaubt.' }] },
-      { id: 'quality', icon: 'activity', title: 'Bildqualität', body: [{ p: 'Die Bildqualität hängt von Ihrem Tarif, dem Inhalt, Ihrem Gerät und Ihrer Internetverbindung ab. Eine stabile Verbindung — idealerweise per Netzwerkkabel oder mit dem Gerät nahe am WLAN-Router — macht den größten Unterschied.' }] },
-      { id: 'check', icon: 'check', title: 'Prüfen Sie zuerst Ihr Gerät', body: [{ p: `Fordern Sie einen kostenlosen ${TRIAL_ADJ}-Test an: Sie testen den Dienst auf Ihrem eigenen Gerät und mit Ihrer Verbindung, bevor Sie kaufen.` }] },
+      { id: 'quality', icon: 'activity', title: 'Bildqualität', body: [{ p: 'Die Bildqualität hängt von Ihrem Tarif, dem Inhalt, Ihrem Gerät und Ihrer Internetverbindung ab. Eine stabile Verbindung – idealerweise per Netzwerkkabel oder mit dem Gerät nahe am WLAN-Router – macht den größten Unterschied.' }] },
+      { id: 'check', icon: 'check', title: 'Prüfen Sie zuerst Ihr Gerät', body: [{ p: `Fordern Sie einen kostenlosen ${TRIAL_ADJ}-Testzugang an: So testen Sie den Dienst auf Ihrem eigenen Gerät und mit Ihrer Verbindung, bevor Sie kaufen.` }] },
     ],
   },
   {
-    slug: 'free-trial', name: 'Kostenloser Test', icon: 'calendar',
-    title: 'Der kostenlose Test',
-    metaTitle: 'Kostenloser Test: So testen Sie SYGMA TV+',
-    description: `Testen Sie SYGMA TV+ ${TRIAL} lang kostenlos auf Ihrem Gerät, bevor Sie kaufen. So fordern Sie den Test an – nichts zu zahlen, nichts zu kündigen.`,
+    slug: 'free-trial', name: 'Kostenloser Testzugang', icon: 'calendar',
+    title: 'Der kostenlose Testzugang',
+    metaTitle: 'Testzugang: So testen Sie SYGMA TV+ kostenlos',
+    description: `Testen Sie SYGMA TV+ ${TRIAL} lang kostenlos auf Ihrem Gerät, bevor Sie kaufen. So fordern Sie den Testzugang an – nichts zu zahlen, nichts zu kündigen.`,
     summary: `${TRIAL}, kostenlos, nichts zu kündigen.`,
-    intro: `Mit dem kostenlosen Test können Sie SYGMA TV+ ${TRIAL} lang auf Ihrem eigenen Gerät und mit Ihrer Verbindung ausprobieren, bevor Sie sich entscheiden.`,
+    intro: `Mit dem kostenlosen Testzugang können Sie SYGMA TV+ ${TRIAL} lang auf Ihrem eigenen Gerät und mit Ihrer Verbindung ausprobieren, bevor Sie sich entscheiden.`,
     sections: [
       { id: 'request', icon: 'rocket', title: 'Wie fordere ich ihn an?', body: [{ steps: [
-        { title: 'Formular öffnen', text: 'Wählen Sie oben auf einer beliebigen Seite „Kostenlos testen“.' },
-        { title: 'Daten angeben', text: 'Ihr vollständiger Name, Ihre E-Mail-Adresse und Ihre Telefonnummer mit Ländervorwahl – und Ihre Zustimmung, kontaktiert zu werden.' },
+        { title: 'Formular öffnen', text: 'Klicken Sie oben auf einer beliebigen Seite auf „Kostenlos testen“.' },
+        { title: 'Daten angeben', text: 'Ihr Vor- und Nachname, Ihre E-Mail-Adresse und Ihre Telefonnummer mit Ländervorwahl – und Ihre Zustimmung, kontaktiert zu werden.' },
         { title: 'Zugang erhalten', text: 'Unser Team kontaktiert Sie per WhatsApp mit Ihren Zugangsdaten und der App, die Sie installieren sollen.' },
       ] }] },
-      { id: 'cost', icon: 'tag', title: 'Ist er wirklich kostenlos?', body: [{ p: 'Ja. Eine Testanfrage ist kostenlos und unverbindlich. Der Test endet von selbst: Sie müssen nichts kündigen. Ein kostenloser Test pro Kunde.' }] },
-      { id: 'check', icon: 'check', title: 'Was sollte ich während des Tests prüfen?', body: [{ list: [
+      { id: 'cost', icon: 'tag', title: 'Ist er wirklich kostenlos?', body: [{ p: 'Ja. Eine Testanfrage ist kostenlos und unverbindlich. Der Testzugang endet von selbst: Sie müssen nichts kündigen. Ein kostenloser Testzugang pro Kunde.' }] },
+      { id: 'check', icon: 'check', title: 'Was sollte ich während des Testzeitraums prüfen?', body: [{ list: [
         'Ob die App auf Ihrem Gerät funktioniert.',
         'Ob das Bild mit Ihrer Internetverbindung flüssig läuft.',
         'Wie viele Geräte Sie brauchen.',
@@ -216,25 +216,25 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'ordering-payment', name: 'Bestellung und Zahlung', icon: 'card',
     title: 'Bestellung und Zahlung',
     metaTitle: 'Bestellung und Zahlung: So funktioniert es',
-    description: 'So bestellen Sie SYGMA TV+: Formular senden, unser Team kontaktiert Sie per WhatsApp und aktiviert Ihren Zugang, dann zahlen Sie. Die Zahlungsmethoden.',
+    description: 'So bestellen Sie SYGMA TV+: Formular senden, unser Team kontaktiert Sie per WhatsApp und aktiviert Ihren Zugang, dann zahlen Sie. Zahlungsmethoden erklärt.',
     summary: 'Bestellformular, Aktivierung, dann Zahlung.',
     intro: 'Sie bestellen über ein kurzes Formular. Unser Team kontaktiert Sie per WhatsApp und aktiviert Ihren Zugang, und Sie bezahlen nach der Aktivierung. Auf dieser Website wird nichts abgebucht.',
     sections: [
       { id: 'order', icon: 'rocket', title: 'Wie bestelle ich?', body: [
-        { p: 'Die Bestellung erfolgt in sechs Schritten, vom Formular auf unserer Website bis zur Bestätigung Ihrer Zahlung. Wählen Sie im Bereich Tarife „Jetzt bestellen“, um zu beginnen.' },
+        { p: 'Die Bestellung erfolgt in sechs Schritten, vom Formular auf unserer Website bis zur Bestätigung Ihrer Zahlung. Klicken Sie zum Start im Bereich „Tarife“ auf „Jetzt bestellen“.' },
         { steps: ORDER_STEPS },
       ] },
       { id: 'pay', icon: 'card', title: 'Wann und wie bezahle ich?', body: [
-        { p: 'Sie bezahlen, nachdem Ihr Zugang aktiviert wurde — nie auf dieser Website. Hier werden weder eine Zahlung noch Kartendaten verlangt: Unser Team sendet Ihnen die Zahlungsoptionen per WhatsApp. Akzeptierte Methoden:' },
+        { p: 'Sie bezahlen, nachdem Ihr Zugang aktiviert wurde – nie auf dieser Website. Hier werden weder eine Zahlung noch Kartendaten verlangt: Unser Team sendet Ihnen die Zahlungsmethoden per WhatsApp. Akzeptierte Zahlungsmethoden:' },
         { chips: [...F.paymentMethods], label: 'Zahlungsmethoden' },
         { note: 'Alle Zahlungen werden manuell mit unserem Team abgewickelt; keine wird automatisch auf dieser Website abgebucht. Unser Team sagt Ihnen, welche Methoden für Ihre Bestellung verfügbar sind.' },
       ] },
-      { id: 'activation', icon: 'clock', title: 'Wie lange dauert die Aktivierung?', body: [{ p: `Unser Team aktiviert Ihren Zugang in der Regel ${F.usualActivation} — ein üblicher Wert, keine Garantie. Sie bezahlen, sobald Ihr Zugang aktiv ist.` }] },
+      { id: 'activation', icon: 'clock', title: 'Wie lange dauert die Aktivierung?', body: [{ p: `Unser Team aktiviert Ihren Zugang in der Regel ${F.usualActivation} – ein üblicher Wert, keine Garantie. Sie bezahlen, sobald Ihr Zugang aktiv ist.` }] },
       { id: 'emails', icon: 'mail', title: 'Welche E-Mails erhalte ich?', body: [{ list: [
-        'Direkt nach dem Absenden des Formulars: eine E-Mail, die den Eingang Ihrer Bestellung bestätigt.',
+        'Direkt nach dem Absenden des Formulars: eine Eingangsbestätigung per E-Mail.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Preise und Steuern', body: [{ p: 'Die Preise werden in US-Dollar (USD) zzgl. Steuern angezeigt, und den Preis Ihres Tarifs sehen Sie, bevor Sie Ihre Bestellung senden. Längere Laufzeiten kosten weniger pro Jahr: Die aktuellen Preise finden Sie im Bereich Tarife.' }] },
+      { id: 'prices', icon: 'tag', title: 'Preise und Steuern', body: [{ p: 'Die Preise werden in US-Dollar (USD) zzgl. Steuern angezeigt, und den Preis Ihres Tarifs sehen Sie, bevor Sie Ihre Bestellung absenden. Längere Laufzeiten kosten weniger pro Jahr: Die aktuellen Preise finden Sie im Bereich „Tarife“.' }] },
       { id: 'contract', icon: 'scale', title: 'Wann beginnt mein Abo?', body: [{ p: 'Der Vertrag beginnt, wenn unser Team Ihre Bestellung bestätigt. Tarife verlängern sich nie automatisch.' }] },
     ],
   },
@@ -246,11 +246,11 @@ const HELP_TOPICS: InfoPage[] = [
     summary: 'Bild-, Login- und App-Probleme.',
     intro: 'Die meisten Probleme liegen an der Verbindung oder an einem Tippfehler in den Zugangsdaten. Probieren Sie zuerst diese Schritte.',
     sections: [
-      { id: 'stutter', icon: 'activity', title: 'Das Bild ruckelt oder friert ein', body: [{ p: 'Starten Sie Ihren Internet-Router und Ihr Gerät neu. Nutzen Sie nach Möglichkeit ein Netzwerkkabel oder stellen Sie das Gerät näher an Ihren WLAN-Router, und versuchen Sie es dann erneut.' }] },
+      { id: 'stutter', icon: 'activity', title: 'Das Bild ruckelt oder friert ein', body: [{ p: 'Starten Sie Ihren Router und Ihr Gerät neu. Nutzen Sie nach Möglichkeit ein Netzwerkkabel oder stellen Sie das Gerät näher an Ihren WLAN-Router, und versuchen Sie es dann erneut.' }] },
       { id: 'login', icon: 'lock', title: 'Meine Zugangsdaten werden abgelehnt', body: [{ p: 'Prüfen Sie Leerzeichen sowie Groß- und Kleinschreibung, oder kopieren Sie die Daten aus unserer WhatsApp-Nachricht und fügen Sie sie ein. Klappt es immer noch nicht, senden Sie uns ein Foto der Fehlermeldung.' }] },
       { id: 'store', icon: 'tv', title: 'Ich finde die App nicht in meinem Store', body: [{ p: 'Das App-Angebot hängt vom Gerätemodell und vom Land ab. Senden Sie uns Marke, Modell und Baujahr Ihres Geräts: Wir sagen Ihnen, was dafür funktioniert.' }] },
       { id: 'crash', icon: 'pause', title: 'Die App schließt sich von selbst', body: [{ p: 'Starten Sie das Gerät neu, installieren Sie die verfügbaren System- und App-Updates und versuchen Sie es dann erneut.' }] },
-      { id: 'mobile', icon: 'devices', title: 'Die Wiedergabe stoppt bei mobilen Daten', body: [{ p: 'Die Qualität hängt von Ihrem Mobilfunknetz und Ihrem Datentarif ab. Wechseln Sie nach Möglichkeit ins WLAN.' }] },
+      { id: 'mobile', icon: 'devices', title: 'Die Wiedergabe bricht über mobile Daten ab', body: [{ p: 'Die Qualität hängt von Ihrem Mobilfunknetz und Ihrem Datentarif ab. Wechseln Sie nach Möglichkeit ins WLAN.' }] },
       { id: 'still', icon: 'mail', title: 'Funktioniert es immer noch nicht?', body: [{ p: `Kontaktieren Sie uns ${F.supportHours} mit Ihrem Gerätemodell und einem Foto der Fehlermeldung: Unser Team antwortet in der Regel ${F.usualReply}.` }] },
     ],
   },
@@ -258,14 +258,14 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'contact-support', name: 'Support kontaktieren', icon: 'mail',
     title: 'Unser Support-Team kontaktieren',
     metaTitle: 'Support kontaktieren: E-Mail und WhatsApp, 24/7',
-    description: `Erreichen Sie den Support von SYGMA TV+ ${F.supportHours} per E-Mail, WhatsApp oder Kontaktformular, in sechs Sprachen. Was Sie für eine schnellere Antwort angeben.`,
+    description: `Support von SYGMA TV+: ${F.supportHours} per E-Mail, WhatsApp oder Kontaktformular, in sechs Sprachen – und was Sie für eine schnellere Antwort angeben sollten.`,
     summary: `${F.supportHours}, E-Mail oder WhatsApp, sechs Sprachen.`,
     intro: `Unser Team antwortet per E-Mail und WhatsApp, ${F.supportHours}.`,
     sections: [
       { id: 'reach', icon: 'mail', title: 'So erreichen Sie uns', body: [{ list: [
         `E-Mail: ${EMAIL}.`,
         `WhatsApp oder Telefon: ${PHONE}.`,
-        'Das Kontaktformular: Wählen Sie „Kontakt“ unten auf einer beliebigen Seite.',
+        'Kontaktformular: Klicken Sie unten auf einer beliebigen Seite auf „Kontakt“.',
       ] }] },
       { id: 'availability', icon: 'clock', title: 'Wann antworten Sie?', body: [{ p: `Unser Team ist ${F.supportHours} erreichbar und antwortet in der Regel ${F.usualReply}. Das ist unsere übliche Antwortzeit, keine vertragliche Garantie.` }] },
       { id: 'languages', icon: 'globe', title: 'Welche Sprachen?', body: [
@@ -317,7 +317,7 @@ const INFO_UI: InfoUi = {
     { k: 'Support-Sprachen', v: String(F.languages.length), small: F.languages.join(' · ') },
   ],
   aboutContact: `Fragen zu SYGMA TV+? Unser Team ist ${F.supportHours} für Sie da.`,
-  hubContact: 'Keine Antwort gefunden? Schreiben Sie uns — nennen Sie Ihr Gerät und, falls vorhanden, Ihre Bestellreferenz.',
+  hubContact: 'Keine Antwort gefunden? Schreiben Sie uns – nennen Sie Ihr Gerät und, falls vorhanden, Ihre Bestellreferenz.',
   topicContact: `Brauchen Sie weitere Hilfe? Unser Team antwortet per E-Mail und WhatsApp, ${F.supportHours}.`,
   hubRelated: [
     { href: '/de/about', label: 'Über uns' },
@@ -334,11 +334,11 @@ const INFO_UI: InfoUi = {
     contactUs: 'Kontakt',
     email: 'E-Mail',
     phone: 'Telefon / WhatsApp',
-    related: 'Verwandte Seiten',
+    related: 'Weiterführende Seiten',
     onThisPage: 'Auf dieser Seite',
     lastReviewed: 'Zuletzt geprüft: ',
   },
-  actions: { trial: 'Kostenlosen Test anfordern', support: 'Support kontaktieren', plans: 'Tarife ansehen', plansHref: '/de#plans' },
+  actions: { trial: 'Jetzt kostenlos testen', support: 'Support kontaktieren', plans: 'Tarife ansehen', plansHref: '/de#plans' },
 };
 
 export const INFO: InfoContentSet = {

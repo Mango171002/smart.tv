@@ -56,7 +56,7 @@ const ABOUT: InfoPage = {
       id: 'who', icon: 'info', title: 'Vilka vi är',
       body: [
         { p: `SYGMA TV+ – ”One World. Endless Entertainment.” – är ett varumärke som tillhör ${siteConfig.legalEntity}, ett företag som grundades ${F.established} och är registrerat i delstaten New Mexico i USA.` },
-        { p: 'Paketen gäller per år (12, 24 eller 36 månader), med 1 enhet som ingår och upp till 4. Innan du köper kan du testa tjänsten på din egen enhet med en gratis provperiod.' },
+        { p: 'Paketen gäller per år (12, 24 eller 36 månader), med 1 enhet som ingår och möjlighet till upp till 4. Innan du köper kan du testa tjänsten på din egen enhet med en gratis provperiod.' },
       ],
     },
     {
@@ -76,7 +76,7 @@ const ABOUT: InfoPage = {
     {
       id: 'how', icon: 'rocket', title: 'Så fungerar tjänsten',
       body: [
-        { p: 'Du beställer via ett kort formulär, och sedan tar en riktig person i vårt team över på WhatsApp. Vi aktiverar ditt abonnemang först: du betalar först när din åtkomst är aktiv.' },
+        { p: 'Du beställer via ett kort formulär, och sedan tar en riktig person i vårt team över på WhatsApp. Vi aktiverar ditt abonnemang först – du betalar inte förrän din åtkomst är aktiv.' },
         { steps: ORDER_STEPS },
         { p: `Inte säker än? Be om en gratis provperiod på ${TRIAL} först: inget att betala och inget att säga upp.` },
       ],
@@ -106,7 +106,7 @@ const ABOUT: InfoPage = {
       body: [
         { p: `Inget debiteras på den här webbplatsen. Vi aktiverar ditt abonnemang först – vanligtvis ${F.usualActivation} – och du betalar när din åtkomst är aktiv, med något av dessa betalsätt:` },
         { chips: [...F.paymentMethods], label: 'Betalsätt' },
-        { note: 'Varje betalning ordnas manuellt med vårt team på WhatsApp – ingen debiteras automatiskt på den här webbplatsen. Vårt team berättar vilka betalsätt som finns för din beställning.' },
+        { note: 'Varje betalning ordnas manuellt med vårt team på WhatsApp – inget debiteras automatiskt på den här webbplatsen. Vårt team berättar vilka betalsätt som finns för din beställning.' },
         { p: CONFIRMATION_EMAIL },
       ],
     },
@@ -156,7 +156,7 @@ const HELP_TOPICS: InfoPage[] = [
         { title: 'Välj ditt paket', text: 'I avsnittet Paket väljer du paket, period (12, 24 eller 36 månader) och antal enheter.' },
         { title: 'Provperiod eller beställning', text: 'Be om en gratis provperiod, eller skicka din beställning via det korta formuläret: din e-postadress, ditt land och ditt WhatsApp-nummer.' },
         { title: 'Vi kontaktar dig på WhatsApp', text: 'Vårt team kontaktar dig på WhatsApp, skickar dina inloggningsuppgifter och berättar vilken app du ska installera.' },
-        { title: 'Aktivering, sedan betalning', text: `För en beställning aktiverar vi ditt abonnemang först – vanligtvis ${F.usualActivation}. Du betalar när din åtkomst är aktiv.` },
+        { title: 'Aktivering, sedan betalning', text: `Vid en beställning aktiverar vi ditt abonnemang först – vanligtvis ${F.usualActivation}. Du betalar när din åtkomst är aktiv.` },
         { title: 'Börja titta', text: 'Installera appen, ange dina inloggningsuppgifter och börja titta.' },
       ] }] },
       { id: 'good-to-know', icon: 'info', title: 'Bra att veta', body: [{ list: [
@@ -172,7 +172,7 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'devices', name: 'Enheter som stöds', icon: 'devices',
     title: 'Enheter som stöds',
     metaTitle: 'Enheter som stöds: tv, streamingboxar, mobil',
-    description: 'SYGMA TV+ används på smarta tv-apparater, streamingboxar och -stickor, mobiler, surfplattor och datorer. Antal enheter och hur du kollar din.',
+    description: 'SYGMA TV+ används på smarta tv-apparater, streamingboxar och -stickor, mobiler, surfplattor och datorer. Antal enheter och hur du testar din.',
     summary: 'Tv, streamingenheter, mobil och dator.',
     intro: 'SYGMA TV+ används på tv-apparater, streamingenheter, mobiler och datorer. Med den gratis provperioden kan du kontrollera din egen enhet och uppkoppling innan du köper.',
     sections: [
@@ -197,10 +197,10 @@ const HELP_TOPICS: InfoPage[] = [
     sections: [
       { id: 'request', icon: 'rocket', title: 'Hur begär jag den?', body: [{ steps: [
         { title: 'Öppna formuläret', text: 'Välj ”Testa gratis” högst upp på valfri sida.' },
-        { title: 'Lämna dina uppgifter', text: 'Ditt fullständiga namn, din e-postadress och ditt telefonnummer med landsnummer – och godkänn att bli kontaktad.' },
+        { title: 'Lämna dina uppgifter', text: 'Ditt fullständiga namn, din e-postadress och ditt telefonnummer med landsnummer – och godkänn att vi kontaktar dig.' },
         { title: 'Få din åtkomst', text: 'Vårt team kontaktar dig på WhatsApp med dina inloggningsuppgifter och appen du ska installera.' },
       ] }] },
-      { id: 'cost', icon: 'tag', title: 'Är den verkligen gratis?', body: [{ p: 'Ja. Att begära en provperiod är gratis och förpliktar dig inte till något. Provperioden tar slut av sig själv: det finns inget att säga upp. En gratis provperiod per kund.' }] },
+      { id: 'cost', icon: 'tag', title: 'Är den verkligen gratis?', body: [{ p: 'Ja. Att begära en provperiod är gratis och förpliktar dig inte till något. Provperioden upphör automatiskt: det finns inget att säga upp. En gratis provperiod per kund.' }] },
       { id: 'check', icon: 'check', title: 'Vad ska jag kontrollera under provperioden?', body: [{ list: [
         'Att appen fungerar på din enhet.',
         'Att bilden flyter på med din internetuppkoppling.',
@@ -213,7 +213,7 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'ordering-payment', name: 'Beställning och betalning', icon: 'card',
     title: 'Beställning och betalning',
     metaTitle: 'Beställning och betalning: så går det till',
-    description: 'Så beställer du SYGMA TV+: skicka formuläret, vårt team kontaktar dig på WhatsApp och aktiverar din åtkomst, sedan betalar du. Betalsätten förklarade.',
+    description: 'Så beställer du SYGMA TV+: skicka formuläret, vårt team kontaktar dig på WhatsApp och aktiverar din åtkomst, sedan betalar du. Betalsätten i korthet.',
     summary: 'Beställningsformulär, aktivering, sedan betalning.',
     intro: 'Du beställer via ett kort formulär. Vårt team kontaktar dig på WhatsApp och aktiverar din åtkomst, och du betalar efter aktiveringen. Inget debiteras på den här webbplatsen.',
     sections: [
@@ -224,14 +224,14 @@ const HELP_TOPICS: InfoPage[] = [
       { id: 'pay', icon: 'card', title: 'När och hur betalar jag?', body: [
         { p: 'Du betalar efter att din åtkomst har aktiverats – aldrig på den här webbplatsen. Här efterfrågas varken betalning eller kortuppgifter: vårt team skickar betalningsalternativen till dig på WhatsApp. Godkända betalsätt:' },
         { chips: [...F.paymentMethods], label: 'Betalsätt' },
-        { note: 'Alla betalningar ordnas manuellt med vårt team; ingen debiteras automatiskt på den här webbplatsen. Vårt team berättar vilka betalsätt som finns för din beställning.' },
+        { note: 'Alla betalningar ordnas manuellt med vårt team; inget debiteras automatiskt på den här webbplatsen. Vårt team berättar vilka betalsätt som finns för din beställning.' },
       ] },
       { id: 'activation', icon: 'clock', title: 'Hur lång tid tar aktiveringen?', body: [{ p: `Vårt team aktiverar vanligtvis din åtkomst ${F.usualActivation} – en normal tid, inte en garanti. Du betalar när din åtkomst är aktiv.` }] },
       { id: 'emails', icon: 'mail', title: 'Vilka mejl får jag?', body: [{ list: [
         'Direkt efter att du har skickat formuläret: ett mejl som bekräftar att vi har tagit emot din beställning.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Priser och skatter', body: [{ p: 'Priserna visas i amerikanska dollar (USD) exklusive skatter, och priset för ditt paket visas innan du skickar din beställning. Längre perioder kostar mindre per år: se aktuella priser i avsnittet Paket.' }] },
+      { id: 'prices', icon: 'tag', title: 'Priser och skatt', body: [{ p: 'Priserna visas i amerikanska dollar (USD) exklusive skatt, och priset för ditt paket visas innan du skickar din beställning. Längre perioder kostar mindre per år: se aktuella priser i avsnittet Paket.' }] },
       { id: 'contract', icon: 'scale', title: 'När börjar mitt abonnemang?', body: [{ p: 'Avtalet börjar gälla när vårt team bekräftar din beställning. Paketen förnyas aldrig automatiskt.' }] },
     ],
   },
@@ -244,10 +244,10 @@ const HELP_TOPICS: InfoPage[] = [
     intro: 'De flesta problem beror på uppkopplingen eller ett skrivfel i inloggningsuppgifterna. Prova de här stegen först.',
     sections: [
       { id: 'stutter', icon: 'activity', title: 'Bilden hackar eller fryser', body: [{ p: 'Starta om din router och din enhet. Använd nätverkskabel om du kan, eller flytta enheten närmare din wifi-router, och försök sedan igen.' }] },
-      { id: 'login', icon: 'lock', title: 'Mina inloggningsuppgifter godtas inte', body: [{ p: 'Kontrollera mellanslag och stora/små bokstäver, eller kopiera och klistra in uppgifterna från vårt WhatsApp-meddelande. Om det fortfarande inte fungerar kan du skicka ett foto av felskärmen till oss.' }] },
+      { id: 'login', icon: 'lock', title: 'Mina inloggningsuppgifter godtas inte', body: [{ p: 'Kontrollera mellanslag och stora/små bokstäver, eller kopiera och klistra in uppgifterna från vårt WhatsApp-meddelande. Om det fortfarande inte fungerar kan du skicka ett foto av skärmen med felmeddelandet till oss.' }] },
       { id: 'store', icon: 'tv', title: 'Jag hittar inte appen i min appbutik', body: [{ p: 'Vilka appar som finns i appbutiken beror på enhetsmodell och land. Skicka märke, modell och årsmodell för din enhet till oss, så berättar vi vad som fungerar för den.' }] },
       { id: 'crash', icon: 'pause', title: 'Appen stängs av sig själv', body: [{ p: 'Starta om enheten, installera tillgängliga system- och appuppdateringar och försök sedan igen.' }] },
-      { id: 'mobile', icon: 'devices', title: 'Uppspelningen stannar på mobildata', body: [{ p: 'Kvaliteten beror på ditt mobilnät och ditt surfabonnemang. Byt till wifi om du kan.' }] },
+      { id: 'mobile', icon: 'devices', title: 'Uppspelningen avbryts på mobildata', body: [{ p: 'Kvaliteten beror på ditt mobilnät och ditt surfabonnemang. Byt till wifi om du kan.' }] },
       { id: 'still', icon: 'mail', title: 'Fungerar det fortfarande inte?', body: [{ p: `Kontakta oss ${F.supportHours} med din enhetsmodell och ett foto av eventuellt felmeddelande: vårt team svarar vanligtvis på ${F.usualReply}.` }] },
     ],
   },
@@ -265,14 +265,14 @@ const HELP_TOPICS: InfoPage[] = [
         'Kontaktformuläret: välj ”Kontakt” längst ned på valfri sida.',
       ] }] },
       { id: 'availability', icon: 'clock', title: 'När svarar ni?', body: [{ p: `Vårt team finns tillgängligt ${F.supportHours} och svarar vanligtvis på ${F.usualReply}. Det är vår normala svarstid, inte en avtalad garanti.` }] },
-      { id: 'languages', icon: 'globe', title: 'Vilka språk?', body: [
+      { id: 'languages', icon: 'globe', title: 'På vilka språk?', body: [
         { p: `Du kan skriva till oss på ${LANGS}.` },
         { chips: [...F.languages], label: 'Supportspråk' },
         { note: 'Våra juridiska dokument är skrivna på engelska.' },
       ] },
       { id: 'include', icon: 'pencil', title: 'Det här bör du ta med', body: [{ list: [
         'Ditt ordernummer, om du har ett.',
-        'Din enhet, dess märke och modell.',
+        'Vilken enhet du har, med märke och modell.',
         'Vad du gjorde när problemet uppstod, och ett foto av eventuellt felmeddelande.',
       ] }] },
     ],
@@ -282,7 +282,7 @@ const HELP_TOPICS: InfoPage[] = [
     title: 'Återbetalning och uppsägning',
     metaTitle: 'Återbetalning: 7 dagars garanti och ångerrätt',
     description: 'Återbetalning hos SYGMA TV+: gratis provperiod först, 100 % tillbaka inom 7 dagar från aktivering, 14 dagars ångerrätt i EU och UK, och hur du begär den.',
-    summary: '7 dagars pengarna-tillbaka-garanti, så begär du.',
+    summary: '7 dagars pengarna-tillbaka-garanti – så gör du.',
     intro: 'Testa först och få sedan full återbetalning om du inte är nöjd inom 7 dagar från aktiveringen. Hela policyn finns på vår sida om återbetalning (på engelska).',
     sections: [
       { id: 'guarantee', icon: 'refund', title: '7 dagars pengarna-tillbaka-garanti', body: [{ p: 'Inte nöjd? Hör av dig inom 7 dagar från aktiveringen så betalar vi tillbaka 100 %, utan att du behöver ange något skäl. En återbetalning per kund; gäller inte konton som stängts av för att åtkomsten delats eller sålts vidare.' }] },
@@ -298,7 +298,7 @@ const INFO_UI: InfoUi = {
   home: 'Hem',
   breadcrumb: 'Brödsmulor',
   support: 'Support',
-  popular: 'Vanliga frågor',
+  popular: 'Populära frågor',
   topics: 'Hjälpämnen',
   glance: 'Supporten i korthet',
   helpFacts: [

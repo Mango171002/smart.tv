@@ -32,13 +32,13 @@ const F = OWNER_FACTS;
 
 const ORDER_STEPS = [
   { title: 'Scegli il tuo piano', text: 'Scegli sul nostro sito il piano, la durata e il numero di dispositivi. Il prezzo viene mostrato subito.' },
-  { title: 'Invia il tuo ordine', text: 'Compila il breve modulo d’ordine: la tua email, il tuo paese e il tuo numero WhatsApp. Nessun addebito su questo sito. Ricevi un’email che conferma la ricezione del tuo ordine.' },
+  { title: 'Invia il tuo ordine', text: 'Compila il breve modulo d’ordine: la tua email, il tuo paese e il tuo numero WhatsApp. Nessun addebito su questo sito. Riceverai un’email che conferma la ricezione del tuo ordine.' },
   { title: 'Ti contattiamo su WhatsApp', text: 'Un membro del nostro team ti contatta su WhatsApp per confermare il tuo ordine.' },
   { title: 'Attiviamo il tuo abbonamento', text: `Ti inviamo su WhatsApp i dati di accesso e le istruzioni per la configurazione. L’attivazione avviene di solito ${F.usualActivation}.` },
-  { title: 'Paghi', text: 'Una volta attivato il tuo accesso, paghi con uno dei metodi di pagamento proposti dal nostro team.' },
-  { title: 'Pagamento confermato', text: 'Quando abbiamo ricevuto e confermato il tuo pagamento, ricevi un’email che conferma che il tuo abbonamento è attivo, con il numero d’ordine.' },
+  { title: 'Effettui il pagamento', text: 'Una volta attivato il tuo accesso, paghi con uno dei metodi di pagamento proposti dal nostro team.' },
+  { title: 'Pagamento confermato', text: 'Quando avremo ricevuto e confermato il tuo pagamento, riceverai un’email con la conferma che il tuo abbonamento è attivo e il numero d’ordine.' },
 ];
-const CONFIRMATION_EMAIL = 'Quando abbiamo ricevuto e confermato il tuo pagamento, ricevi un’email che conferma che il tuo abbonamento è attivo, con il numero d’ordine e i dettagli dell’abbonamento.';
+const CONFIRMATION_EMAIL = 'Quando avremo ricevuto e confermato il tuo pagamento, riceverai un’email con la conferma che il tuo abbonamento è attivo, il numero d’ordine e i dettagli dell’abbonamento.';
 const LANGS = `${F.languages.slice(0, -1).map((l) => l.toLowerCase()).join(', ')} o ${F.languages[F.languages.length - 1]!.toLowerCase()}`;
 
 // ---------------------------------------------------------------- Chi siamo
@@ -54,7 +54,7 @@ const ABOUT: InfoPage = {
     {
       id: 'who', icon: 'info', title: 'Chi siamo',
       body: [
-        { p: `SYGMA TV+ — “One World. Endless Entertainment.” — è un marchio di ${siteConfig.legalEntity}, società fondata nel ${F.established} e registrata nello Stato del Nuovo Messico, negli Stati Uniti.` },
+        { p: `SYGMA TV+ — «One World. Endless Entertainment.» — è un marchio di ${siteConfig.legalEntity}, società fondata nel ${F.established} e registrata nello Stato del Nuovo Messico, negli Stati Uniti.` },
         { p: 'I piani sono annuali (12, 24 o 36 mesi), con 1 dispositivo incluso e fino a 4. Prima di acquistare puoi provare il servizio sul tuo dispositivo con una prova gratuita.' },
       ],
     },
@@ -77,7 +77,7 @@ const ABOUT: InfoPage = {
       body: [
         { p: 'Ordini con un breve modulo e una persona vera del nostro team ti segue su WhatsApp. Prima attiviamo il tuo abbonamento: paghi solo quando il tuo accesso è attivo.' },
         { steps: ORDER_STEPS },
-        { p: `Non sei ancora sicuro? Chiedi prima una prova gratuita di ${TRIAL}: niente da pagare e niente da disdire.` },
+        { p: `Hai ancora qualche dubbio? Chiedi prima una prova gratuita di ${TRIAL}: niente da pagare e niente da disdire.` },
       ],
     },
     {
@@ -130,7 +130,7 @@ const HELP_HUB = {
   name: 'Centro assistenza',
   title: 'Centro assistenza',
   metaTitle: 'Centro assistenza: prova, ordini e rimborsi',
-  description: 'Risposte su prova gratuita SYGMA TV+, ordini e pagamento, dispositivi supportati, risoluzione dei problemi, rimborsi e contatti dell’assistenza.',
+  description: 'Risposte su prova gratuita di SYGMA TV+, ordini e pagamento, dispositivi supportati, risoluzione dei problemi, rimborsi e contatti dell’assistenza.',
   intro: `Risposte chiare su prova gratuita, ordini, pagamento, dispositivi e rimborsi. Ti serve ancora aiuto? Il nostro team è disponibile ${F.supportHours}.`,
   popular: [
     { q: 'Quando e come pago?', href: '/it/help/ordering-payment#pay' },
@@ -182,7 +182,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Computer.',
       ] }, { p: 'Insieme ai dati di accesso, il nostro team ti indica quale app installare sul tuo dispositivo e ti aiuta a configurarla.' }] },
       { id: 'how-many', icon: 'users', title: 'Quanti dispositivi contemporaneamente?', body: [{ p: 'Ogni piano include 1 dispositivo. Puoi aggiungerne altri al momento dell’ordine, fino a 4. L’abbonamento è per uso personale all’interno del tuo nucleo familiare: non è consentito condividere o rivendere l’accesso.' }] },
-      { id: 'quality', icon: 'activity', title: 'Qualità dell’immagine', body: [{ p: 'La qualità dell’immagine dipende dal piano, dal contenuto, dal dispositivo e dalla connessione internet. Una connessione stabile — idealmente un cavo di rete, o un dispositivo vicino al router Wi-Fi — è ciò che fa più differenza.' }] },
+      { id: 'quality', icon: 'activity', title: 'Qualità dell’immagine', body: [{ p: 'La qualità dell’immagine dipende dal piano, dal contenuto, dal dispositivo e dalla connessione internet. Una connessione stabile — idealmente un cavo di rete, o un dispositivo vicino al router Wi-Fi — è il fattore che conta di più.' }] },
       { id: 'check', icon: 'check', title: 'Prima verifica il tuo dispositivo', body: [{ p: `Chiedi una prova gratuita di ${TRIAL}: provi il servizio sul tuo dispositivo e con la tua connessione prima di acquistare.` }] },
     ],
   },
@@ -195,7 +195,7 @@ const HELP_TOPICS: InfoPage[] = [
     intro: `La prova gratuita ti permette di provare SYGMA TV+ per ${TRIAL} sul tuo dispositivo e con la tua connessione, prima di decidere.`,
     sections: [
       { id: 'request', icon: 'rocket', title: 'Come la richiedo?', body: [{ steps: [
-        { title: 'Apri il modulo', text: 'Seleziona “Prova gratuita” in alto su qualsiasi pagina.' },
+        { title: 'Apri il modulo', text: 'Seleziona «Prova gratuita» in alto in qualsiasi pagina.' },
         { title: 'Lascia i tuoi dati', text: 'Nome e cognome, indirizzo email e numero di telefono con il prefisso internazionale, e autorizzaci a contattarti.' },
         { title: 'Ricevi il tuo accesso', text: 'Il nostro team ti contatta su WhatsApp con i dati di accesso e l’app da installare.' },
       ] }] },
@@ -217,7 +217,7 @@ const HELP_TOPICS: InfoPage[] = [
     intro: 'Ordini con un breve modulo. Il nostro team ti contatta su WhatsApp e attiva il tuo accesso, e paghi dopo l’attivazione. Nessun addebito su questo sito.',
     sections: [
       { id: 'order', icon: 'rocket', title: 'Come ordino?', body: [
-        { p: 'L’ordine si svolge in sei passaggi, dal modulo sul nostro sito alla conferma del pagamento. Per iniziare, seleziona “Ordina ora” nella sezione Piani.' },
+        { p: 'L’ordine si svolge in sei passaggi, dal modulo sul nostro sito alla conferma del pagamento. Per iniziare, seleziona «Ordina ora» nella sezione Piani.' },
         { steps: ORDER_STEPS },
       ] },
       { id: 'pay', icon: 'card', title: 'Quando e come pago?', body: [
@@ -247,7 +247,7 @@ const HELP_TOPICS: InfoPage[] = [
       { id: 'store', icon: 'tv', title: 'Non trovo l’app nel mio store', body: [{ p: 'Gli store di app dipendono dal modello del dispositivo e dal paese. Inviaci marca, modello e anno del tuo dispositivo: ti diremo cosa funziona.' }] },
       { id: 'crash', icon: 'pause', title: 'L’app si chiude da sola', body: [{ p: 'Riavvia il dispositivo, installa gli aggiornamenti disponibili del sistema e dell’app, poi riprova.' }] },
       { id: 'mobile', icon: 'devices', title: 'La riproduzione si interrompe con i dati mobili', body: [{ p: 'La qualità dipende dalla rete mobile e dal tuo piano dati. Se puoi, passa al Wi-Fi.' }] },
-      { id: 'still', icon: 'mail', title: 'Ancora non funziona?', body: [{ p: `Contattaci ${F.supportHours} indicando il modello del tuo dispositivo e con una foto dell’eventuale messaggio di errore: il nostro team di solito risponde in ${F.usualReply}.` }] },
+      { id: 'still', icon: 'mail', title: 'Ancora non funziona?', body: [{ p: `Contattaci ${F.supportHours} indicando il modello del tuo dispositivo e allegando una foto dell’eventuale messaggio di errore: il nostro team di solito risponde in ${F.usualReply}.` }] },
     ],
   },
   {
@@ -259,9 +259,9 @@ const HELP_TOPICS: InfoPage[] = [
     intro: `Il nostro team risponde via email e su WhatsApp, ${F.supportHours}.`,
     sections: [
       { id: 'reach', icon: 'mail', title: 'Come contattarci', body: [{ list: [
-        `Via email: ${EMAIL}.`,
+        `Email: ${EMAIL}.`,
         `WhatsApp o telefono: ${PHONE}.`,
-        'Il modulo di contatto: seleziona “Contatti” in fondo a qualsiasi pagina.',
+        'Il modulo di contatto: seleziona «Contatti» in fondo a qualsiasi pagina.',
       ] }] },
       { id: 'availability', icon: 'clock', title: 'Quando rispondete?', body: [{ p: `Il nostro team è disponibile ${F.supportHours} e di solito risponde in ${F.usualReply}. È il nostro tempo di risposta abituale, non una garanzia contrattuale.` }] },
       { id: 'languages', icon: 'globe', title: 'In quali lingue?', body: [
@@ -279,14 +279,14 @@ const HELP_TOPICS: InfoPage[] = [
   {
     slug: 'refunds', name: 'Rimborsi', icon: 'refund',
     title: 'Rimborsi e disdette',
-    metaTitle: 'Rimborsi: garanzia di 7 giorni e recesso',
+    metaTitle: 'Rimborso entro 7 giorni e diritto di recesso',
     description: 'Rimborsi SYGMA TV+: prima la prova gratuita, rimborso al 100% entro 7 giorni dall’attivazione, recesso di 14 giorni (UE e Regno Unito) e come chiederlo.',
     summary: 'Rimborso entro 7 giorni, come chiederlo.',
     intro: 'Prima provi, poi, se non sei soddisfatto, ottieni il rimborso completo entro 7 giorni dall’attivazione. La politica completa è nella nostra pagina Rimborsi (in inglese).',
     sections: [
       { id: 'guarantee', icon: 'refund', title: 'Soddisfatti o rimborsati per 7 giorni', body: [{ p: 'Non sei soddisfatto? Chiedi entro 7 giorni dall’attivazione e ti rimborsiamo al 100%, senza domande. Un solo rimborso per cliente; non disponibile per gli account sospesi per condivisione o rivendita dell’accesso.' }] },
       { id: 'withdrawal', icon: 'scale', title: 'Clienti di UE e Regno Unito', body: [{ p: 'Hai inoltre 14 giorni per recedere. Dopo i primi 7 giorni, rimborsiamo la parte non utilizzata del tuo abbonamento.' }] },
-      { id: 'how', icon: 'mail', title: 'Come richiederlo', body: [{ p: `Invia il riferimento del tuo ordine a ${EMAIL} o su WhatsApp. Ricevi il rimborso entro 14 giorni, sullo stesso metodo di pagamento che hai usato.` }] },
+      { id: 'how', icon: 'mail', title: 'Come richiederlo', body: [{ p: `Invia il riferimento del tuo ordine a ${EMAIL} o su WhatsApp. Ricevi il rimborso entro 14 giorni, con lo stesso metodo di pagamento che hai usato.` }] },
       { id: 'after', icon: 'pause', title: 'Dopo questi periodi', body: [{ p: 'Dopo questi periodi gli abbonamenti non sono rimborsabili, salvo quanto previsto dalla legge. Non si rinnovano mai automaticamente.' }] },
     ],
   },
@@ -297,7 +297,7 @@ const INFO_UI: InfoUi = {
   home: 'Home',
   breadcrumb: 'Percorso di navigazione',
   support: 'Assistenza',
-  popular: 'Domande frequenti',
+  popular: 'Domande più comuni',
   topics: 'Argomenti di aiuto',
   glance: 'L’assistenza in breve',
   helpFacts: [

@@ -2027,6 +2027,31 @@ html { scroll-padding-top: 84px; }
   .offer-banner b { font-size: 16px; }
 }
 @media (max-width: 580px) { .modal-logo.brand-logo { height: 22px; } .neon-title { font-size: 26px; } }
+/* Phase 11 — order / trial / support windows on phones and tablets (≤ 900 px only; desktop unchanged).
+   - Step bar: never wider than the window. Only the current step's name may wrap onto two lines, connectors shrink, circles keep their place.
+   - Fields: a long country name / placeholder in the pickers no longer widens the form; it wraps inside its field instead of being cut.
+   - Height follows the visible screen (browser bars included); small notes readable (12.5 px); review values right-aligned when they wrap. */
+@media (max-width: 900px) {
+  .modal-neon { max-height: min(94vh, calc(100dvh - 30px)); overscroll-behavior: contain; }
+  .modal-neon .stepper li { flex: none; font-size: 14px; }
+  .modal-neon .stepper li[aria-current='step'] { flex: 0 1 auto; min-width: 0; }
+  .modal-neon .stepper li + li::before { flex: 0 1 auto; min-width: 10px; }
+  .modal-neon .stepper-num { flex: none; }
+  .modal-neon .stepper-label { white-space: normal; min-width: 0; line-height: 1.2; }
+  .modal-neon .form, .modal-neon .field { grid-template-columns: minmax(0, 1fr); }
+  .modal-neon .cpick-value { white-space: normal; text-overflow: clip; overflow-wrap: anywhere; line-height: 1.25; }
+  .modal-neon .form .hint, .modal-neon .footnote { font-size: 12.5px; line-height: 1.45; }
+  .modal-neon .orderline b { min-width: 0; text-align: right; overflow-wrap: break-word; }
+}
+@media (max-width: 580px) {
+  .modal-neon .stepper { gap: 6px; }
+  .modal-neon .stepper li { gap: 6px; }
+  .modal-neon .stepper li + li::before { width: clamp(10px, 3vw, 18px); }
+}
+@media (max-width: 520px) { .modal-neon .phone-row { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 400px) {
+  .modal-neon .stepper-num { width: 30px; height: 30px; font-size: 13px; }
+}
 
 /* ==========================================================================
    Motion: cards slide in from the right (categories, plans, FAQ) +

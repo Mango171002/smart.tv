@@ -52,11 +52,21 @@ describe('POST /api/quote', () => {
 });
 
 describe('GET /api/health', () => {
-  it('reports assisted ordering, with automatic online sales still disabled', async () => {
+  it('reports assisted ordering when online requests are open, with automatic online sales still disabled', async () => {
     vi.stubEnv('SALES_ENABLED', 'false');
+    vi.stubEnv('FEATURE_CONTACT_FORM', 'true');
+    vi.stubEnv('SUPABASE_URL', 'https://example.supabase.co');
+    vi.stubEnv('SUPABASE_PUBLISHABLE_KEY', 'sb_publishable_test');
     const { GET } = await import('@/app/api/health/route');
     const json = await (await GET()).json();
-    expect(json).toEqual({ status: 'ok', mode: 'assisted', salesEnabled: false, priceSource: 'static' });
+    expect(json).toMatchObject({ status: 'ok', mode: 'assisted', salesEnabled: false });
+  });
+  it('reports « prelaunch » while online requests are closed (phase 11B, as production 864f703)', async () => {
+    vi.stubEnv('SALES_ENABLED', 'false');
+    vi.stubEnv('FEATURE_CONTACT_FORM', 'false');
+    const { GET } = await import('@/app/api/health/route');
+    const json = await (await GET()).json();
+    expect(json).toEqual({ status: 'ok', mode: 'prelaunch', salesEnabled: false, priceSource: 'static' });
   });
 });
 

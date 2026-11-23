@@ -1,13 +1,14 @@
 import { expect, test } from '@playwright/test';
+import { ORDERS_OPEN } from './released';
 
 /** Assisted ordering (owner, 20/11/2026): the order form is the sales channel; no automatic online payment. */
 test.describe('assisted ordering status', () => {
   test.beforeEach(({ isMobile }) => test.skip(isMobile, 'API checks: desktop project only'));
 
-  test('/api/health: mode « assisted », automatic sales still disabled', async ({ request }) => {
+  test('/api/health: mode « prelaunch » while requests are closed (« assisted » when open), automatic sales still disabled', async ({ request }) => {
     const res = await request.get('/api/health');
     expect(res.status()).toBe(200);
-    expect(await res.json()).toMatchObject({ status: 'ok', mode: 'assisted', salesEnabled: false });
+    expect(await res.json()).toMatchObject({ status: 'ok', mode: ORDERS_OPEN ? 'assisted' : 'prelaunch', salesEnabled: false });
   });
 
   test('automatic online payment stays locked (/api/checkout → 403 sales_disabled)', async ({ request, baseURL }) => {

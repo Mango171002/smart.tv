@@ -12,7 +12,7 @@ import { ConsentBanner } from '@/components/ConsentBanner';
 import { siteConfig } from '@/config/site';
 import { LOCALES, isLocale, isPublicLocale, localeSeo } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
-import { OG_IMAGE } from '@/lib/seo';
+import { OG_IMAGE, TWITTER_IMAGE } from '@/lib/seo';
 import { CONSENT_DEFAULT_SCRIPT } from '@/lib/consent-default';
 import { isContactFormEnabled } from '@/lib/features';
 import { prelaunchCopy } from '@/lib/prelaunch-copy';
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     robots: siteConfig.allowIndexing && !preview ? undefined : { index: false, follow: false },
     applicationName: siteConfig.brandName,
     openGraph: { siteName: siteConfig.brandName, images: [OG_IMAGE] },
-    twitter: { card: 'summary_large_image', images: [OG_IMAGE.url] },
+    twitter: { card: 'summary_large_image', images: [TWITTER_IMAGE] },
   };
 }
 

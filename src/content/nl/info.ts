@@ -124,6 +124,15 @@ const ABOUT: InfoPage = {
       ],
     },
   ],
+  prelaunch: {
+    sections: {
+      how: { body: [
+        { p: 'Je bestelt met een kort formulier en daarna neemt een echte medewerker van ons team het over via WhatsApp. We activeren eerst je abonnement: je betaalt pas als je toegang actief is.' },
+        { steps: ORDER_STEPS },
+        { p: `Een gratis proefperiode aanvragen is binnenkort mogelijk: dan kun je de dienst ${TRIAL} testen voordat je koopt.` },
+      ] },
+    },
+  },
 };
 
 // ---------------------------------------------------------------- Helpcentrum
@@ -151,6 +160,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Zo werkt SYGMA TV+, van abonnement kiezen tot kijken: gratis proefperiode, bestelformulier, contact en activering via WhatsApp, daarna betaling.',
     summary: 'Van je abonnementskeuze tot je eerste stream.',
     intro: 'Aan de slag gaan doe je in een paar stappen. Je kunt beginnen met een gratis proefperiode of direct bestellen.',
+    prelaunch: { intro: 'Online bestellen en een gratis proefperiode aanvragen is binnenkort mogelijk. Hier lees je hoe je straks aan de slag gaat.' },
     sections: [
       { id: 'steps', icon: 'rocket', title: 'De stappen', body: [{ steps: [
         { title: 'Kies je abonnement', text: 'Kies in het onderdeel Abonnementen het abonnement, de looptijd (12, 24 of 36 maanden) en het aantal apparaten.' },
@@ -194,6 +204,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Probeer SYGMA TV+ ${TRIAL} gratis op je eigen apparaat voordat je koopt. Hoe aanvragen werkt en wat er daarna gebeurt — niets betalen, niets opzeggen.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)} gratis, niets op te zeggen.`,
     intro: `Met de gratis proefperiode test je SYGMA TV+ ${TRIAL} lang op je eigen apparaat en verbinding, voordat je beslist.`,
+    prelaunch: { sections: { request: { body: [{ p: 'Een gratis proefperiode aanvragen is binnenkort mogelijk. Tot die tijd kan een proefperiode niet per e-mail of via een ander kanaal worden geregeld.' }] } } },
     sections: [
       { id: 'request', icon: 'rocket', title: 'Hoe vraag ik de proefperiode aan?', body: [{ steps: [
         { title: 'Open het formulier', text: 'Klik op “Gratis proberen” bovenaan elke pagina.' },
@@ -216,6 +227,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Zo bestel je SYGMA TV+: formulier versturen, contact en activering via WhatsApp, daarna betalen. Met uitleg over de betaalmethoden.',
     summary: 'Bestelformulier, activering, daarna betaling.',
     intro: 'Je bestelt met een kort formulier. Ons team neemt via WhatsApp contact met je op en activeert je toegang, en je betaalt na de activering. Op deze website wordt niets afgerekend.',
+    prelaunch: { sections: { order: { title: 'Hoe bestellen straks werkt', body: [
+      { p: 'Online bestellen is binnenkort mogelijk. Je kunt de abonnementen, looptijden en prijzen nu al vergelijken in het onderdeel Abonnementen.' },
+      { steps: ORDER_STEPS },
+    ] } } },
     sections: [
       { id: 'order', icon: 'rocket', title: 'Hoe bestel ik?', body: [
         { p: 'Bestellen gaat in zes stappen, van het formulier op onze website tot de bevestiging van je betaling. Klik om te beginnen op “Nu bestellen” in het onderdeel Abonnementen.' },
@@ -258,6 +273,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Bereik de klantenservice van SYGMA TV+ ${F.supportHours} per e-mail, via WhatsApp of met het contactformulier, in zes talen. Tips voor een sneller antwoord.`,
     summary: `${F.supportHours}, e-mail of WhatsApp, zes talen.`,
     intro: `Neem contact op per e-mail of via WhatsApp. Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is.`,
+    prelaunch: {
+      description: `Bereik de klantenservice van SYGMA TV+ ${F.supportHours} per e-mail of via WhatsApp, in zes talen. Tips voor een sneller antwoord.`,
+      sections: { reach: { body: [{ list: [`E-mail: ${EMAIL}.`, `WhatsApp of telefoon: ${PHONE}.`] }] } },
+    },
     sections: [
       { id: 'reach', icon: 'mail', title: 'Zo bereik je ons', body: [{ list: [
         `E-mail: ${EMAIL}.`,

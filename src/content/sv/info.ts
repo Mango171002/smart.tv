@@ -124,6 +124,15 @@ const ABOUT: InfoPage = {
       ],
     },
   ],
+  prelaunch: {
+    sections: {
+      how: { body: [
+        { p: 'Du beställer via ett kort formulär, och sedan tar en riktig person i vårt team över på WhatsApp. Vi aktiverar ditt abonnemang först – du betalar inte förrän din åtkomst är aktiv.' },
+        { steps: ORDER_STEPS },
+        { p: `Gratis provperioder öppnar snart: då kan du testa tjänsten i ${TRIAL} innan du köper.` },
+      ] },
+    },
+  },
 };
 
 // ---------------------------------------------------------------- Hjälpcenter
@@ -151,6 +160,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Så fungerar SYGMA TV+, från val av paket till tittande: gratis provperiod, beställningsformulär, kontakt och aktivering på WhatsApp, sedan betalning.',
     summary: 'Från val av paket till att börja titta.',
     intro: 'Det tar bara några steg att komma igång. Du kan börja med en gratis provperiod eller beställa direkt.',
+    prelaunch: { intro: 'Beställningar online och gratis provperioder öppnar snart. Så här kommer det att gå till att komma igång.' },
     sections: [
       { id: 'steps', icon: 'rocket', title: 'Stegen', body: [{ steps: [
         { title: 'Välj ditt paket', text: 'I avsnittet Paket väljer du paket, period (12, 24 eller 36 månader) och antal enheter.' },
@@ -194,6 +204,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Testa SYGMA TV+ gratis i ${TRIAL} på din egen enhet innan du köper. Så begär du provperioden och vad som händer sedan – inget att betala eller säga upp.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)}, gratis, inget att säga upp.`,
     intro: `Med den gratis provperioden kan du testa SYGMA TV+ i ${TRIAL} på din egen enhet och uppkoppling innan du bestämmer dig.`,
+    prelaunch: { sections: { request: { body: [{ p: 'Förfrågningar om gratis provperiod öppnar snart. Fram till dess kan en provperiod inte ordnas via e-post eller någon annan kanal.' }] } } },
     sections: [
       { id: 'request', icon: 'rocket', title: 'Hur begär jag den?', body: [{ steps: [
         { title: 'Öppna formuläret', text: 'Välj ”Testa gratis” högst upp på valfri sida.' },
@@ -216,6 +227,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Så beställer du SYGMA TV+: skicka formuläret, vårt team kontaktar dig på WhatsApp och aktiverar din åtkomst, sedan betalar du. Betalsätten i korthet.',
     summary: 'Beställningsformulär, aktivering, sedan betalning.',
     intro: 'Du beställer via ett kort formulär. Vårt team kontaktar dig på WhatsApp och aktiverar din åtkomst, och du betalar efter aktiveringen. Inget debiteras på den här webbplatsen.',
+    prelaunch: { sections: { order: { title: 'Så kommer beställningen att gå till', body: [
+      { p: 'Beställningar online öppnar snart. Du kan redan nu jämföra paket, perioder och priser i avsnittet Paket.' },
+      { steps: ORDER_STEPS },
+    ] } } },
     sections: [
       { id: 'order', icon: 'rocket', title: 'Hur beställer jag?', body: [
         { p: 'En beställning sker i sex steg, från formuläret på vår webbplats till bekräftelsen av din betalning. Välj ”Beställ nu” i avsnittet Paket för att börja.' },
@@ -258,6 +273,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Nå supporten för SYGMA TV+ ${F.supportHours} via e-post, WhatsApp eller kontaktformuläret, på sex språk. Det här bör du ta med för ett snabbare svar.`,
     summary: `${F.supportHours}, e-post eller WhatsApp, sex språk.`,
     intro: `Kontakta oss via e-post eller på WhatsApp. Vår automatiska assistent finns tillgänglig ${F.supportHours}, med personlig hjälp när det behövs.`,
+    prelaunch: {
+      description: `Nå supporten för SYGMA TV+ ${F.supportHours} via e-post eller WhatsApp, på sex språk. Det här bör du ta med för ett snabbare svar.`,
+      sections: { reach: { body: [{ list: [`E-post: ${EMAIL}.`, `WhatsApp eller telefon: ${PHONE}.`] }] } },
+    },
     sections: [
       { id: 'reach', icon: 'mail', title: 'Så når du oss', body: [{ list: [
         `E-post: ${EMAIL}.`,

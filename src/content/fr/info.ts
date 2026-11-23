@@ -127,6 +127,15 @@ export const ABOUT_FR: InfoPage = {
       ],
     },
   ],
+  prelaunch: {
+    sections: {
+      how: { body: [
+        { p: 'Vous commandez avec un court formulaire, puis une vraie personne de notre équipe prend le relais sur WhatsApp. Nous activons d’abord votre abonnement : vous ne payez qu’une fois votre accès activé.' },
+        { steps: ORDER_STEPS },
+        { p: `Les essais gratuits ouvriront bientôt${N}: vous pourrez tester le service pendant ${TRIAL} avant d’acheter.` },
+      ] },
+    },
+  },
 };
 
 // ---------------------------------------------------------------- Centre d'aide
@@ -154,6 +163,7 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     description: 'Le fonctionnement de SYGMA TV+, du choix de la formule au visionnage : essai gratuit, commande, contact et activation sur WhatsApp, puis paiement.',
     summary: 'Du choix de la formule à votre premier visionnage.',
     intro: 'Quelques étapes suffisent pour démarrer. Vous pouvez commencer par un essai gratuit ou commander directement.',
+    prelaunch: { intro: 'Les commandes en ligne et les essais gratuits ouvriront bientôt. Voici comment se passera votre démarrage.' },
     sections: [
       { id: 'steps', icon: 'rocket', title: 'Les étapes', body: [{ steps: [
         { title: 'Choisissez votre formule', text: 'Dans la section Formules, choisissez la formule, la durée (12, 24 ou 36 mois) et le nombre d’appareils.' },
@@ -197,6 +207,7 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     description: `Testez SYGMA TV+ gratuitement pendant ${TRIAL} sur votre appareil avant d’acheter. Comment demander l’essai et la suite — rien à payer, rien à résilier.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)}, gratuit, rien à résilier.`,
     intro: `L’essai gratuit vous permet de tester SYGMA TV+ pendant ${TRIAL} sur votre propre appareil et votre connexion, avant de vous décider.`,
+    prelaunch: { sections: { request: { body: [{ p: 'Les demandes d’essai gratuit ouvriront bientôt. D’ici là, aucun essai ne peut être obtenu par e-mail ni par un autre moyen.' }] } } },
     sections: [
       { id: 'request', icon: 'rocket', title: 'Comment le demander ?', body: [{ steps: [
         { title: 'Ouvrez le formulaire', text: `Sélectionnez «${N}Essai gratuit${N}» en haut de n’importe quelle page.` },
@@ -219,6 +230,10 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     description: 'Commander SYGMA TV+ : envoyez le formulaire, notre équipe vous contacte sur WhatsApp et active votre accès, puis vous payez. Moyens de paiement détaillés.',
     summary: 'Formulaire de commande, activation, puis paiement.',
     intro: 'Vous commandez avec un court formulaire. Notre équipe vous contacte sur WhatsApp et active votre accès, et vous payez après l’activation. Rien n’est débité sur ce site.',
+    prelaunch: { sections: { order: { title: 'Comment se passera la commande', body: [
+      { p: 'Les commandes en ligne ouvriront bientôt. Vous pouvez déjà comparer les formules, les durées et les prix dans la section Formules.' },
+      { steps: ORDER_STEPS },
+    ] } } },
     sections: [
       { id: 'order', icon: 'rocket', title: 'Comment commander ?', body: [
         { p: `La commande se fait en six étapes, du formulaire sur notre site à la confirmation de votre paiement. Sélectionnez «${N}Commander${N}» dans la section Formules pour commencer.` },
@@ -261,6 +276,10 @@ export const HELP_TOPICS_FR: InfoPage[] = [
     description: `Contactez l’assistance SYGMA TV+ ${F.supportHours} par e-mail, WhatsApp ou formulaire, en six langues. Ce qu’il faut indiquer pour une réponse plus rapide.`,
     summary: `${F.supportHours}, e-mail ou WhatsApp, six langues.`,
     intro: `Contactez-nous par e-mail ou sur WhatsApp. Notre assistant automatisé est disponible ${F.supportHours}, avec une assistance humaine si nécessaire.`,
+    prelaunch: {
+      description: `Contactez l’assistance SYGMA TV+ ${F.supportHours} par e-mail ou WhatsApp, en six langues. Ce qu’il faut indiquer pour une réponse plus rapide.`,
+      sections: { reach: { body: [{ list: [`E-mail : ${EMAIL}.`, `WhatsApp ou téléphone : ${PHONE}.`] }] } },
+    },
     sections: [
       { id: 'reach', icon: 'mail', title: 'Comment nous joindre', body: [{ list: [
         `E-mail : ${EMAIL}.`,

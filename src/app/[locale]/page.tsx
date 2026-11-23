@@ -7,28 +7,28 @@ import { displayMoney } from '@/lib/money-display';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
 import { StructuredData } from '@/components/StructuredData';
 import { isContactFormEnabled } from '@/lib/features';
-import { faqItems } from '@/lib/faq';
+import { prelaunchCopy } from '@/lib/prelaunch-copy';
 import { absoluteUrl } from '@/lib/routes';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await resolveLocale(params);
-  const d = getDictionary(locale).meta;
+  const d = prelaunchCopy(getDictionary(locale), isContactFormEnabled()).meta;
   return buildMetadata({ locale, path: '', title: d.homeTitle, description: d.homeDescription, absoluteTitle: true });
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await resolveLocale(params);
-  const dict = getDictionary(locale);
+  // Online orders closed (FEATURE_CONTACT_FORM=false): prelaunch copy (src/lib/prelaunch-copy.ts) and order window.
+  const ordersOpen = isContactFormEnabled();
+  const dict = prelaunchCopy(getDictionary(locale), ordersOpen);
   const { table } = await getPriceTable();
   const starter = computeQuote(table, { tier: 'starter', term: '12m', streams: 1 });
   const fromMonthly = displayMoney(starter.monthlyEquivalentMinor ?? starter.amountMinor, table.currency, locale);
-  // Online orders closed (FEATURE_CONTACT_FORM=false): prelaunch order window and FAQ answer.
-  const ordersOpen = isContactFormEnabled();
-  const faq = faqItems(dict, ordersOpen);
+  const faq = dict.faq.items;
   return (
     <>
       {/* FAQPage node: the same questions and answers as the visible FAQ section below (<Faq>, all items). */}
-      <StructuredData description={dict.meta.homeDescription} locale={locale} faq={{ items: faq, pageUrl: absoluteUrl(locale) }} />
+      <StructuredData ordersOpen={ordersOpen} locale={locale} faq={{ items: faq, pageUrl: absoluteUrl(locale) }} />
       <Hero locale={locale} dict={dict} />
       <ContentCategories locale={locale} dict={dict} showHeading={false} />
       {/* Below-the-fold islands hydrate only when they come near the viewport. */}

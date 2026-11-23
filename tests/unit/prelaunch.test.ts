@@ -78,16 +78,26 @@ describe('prelaunch texts and FAQ', () => {
     for (const d of Object.values(DICTS)) expect(d.faq.items).toHaveLength(en.faq.items.length);
   });
   for (const [lang, d] of Object.entries(DICTS)) {
-    it(`${lang}: prelaunch block complete; FAQ answer replaced only while closed`, () => {
-      for (const [k, v] of Object.entries(d.prelaunch)) expect(v.trim(), `${lang}.prelaunch.${k}`).not.toBe('');
-      expect(Object.keys(d.prelaunch).sort()).toEqual(Object.keys(en.prelaunch).sort());
+    it(`${lang}: prelaunch block complete; FAQ answers 1–3 replaced only while closed`, () => {
+      const flat = (o: object, at = ''): Array<[string, string]> =>
+        Object.entries(o).flatMap(([k, v]) => (typeof v === 'string' ? [[`${at}${k}`, v] as [string, string]] : flat(v as object, `${at}${k}.`)));
+      for (const [k, v] of flat(d.prelaunch)) expect(v.trim(), `${lang}.prelaunch.${k}`).not.toBe('');
+      expect(flat(d.prelaunch).map(([k]) => k).sort()).toEqual(flat(en.prelaunch).map(([k]) => k).sort());
       const closed = faqItems(d, false);
-      expect(closed[0]!.a).toBe(d.prelaunch.faqSubscribe);
-      expect(closed[0]!.q).toBe(d.faq.items[0]!.q);
-      expect(closed.slice(1)).toEqual(d.faq.items.slice(1));
+      expect(closed.map((i) => i.a).slice(0, 3)).toEqual([d.prelaunch.faqSubscribe, d.prelaunch.faqCountries, d.prelaunch.faqDevices]);
+      expect(closed.map((i) => i.q)).toEqual(d.faq.items.map((i) => i.q));
+      expect(closed.slice(3)).toEqual(d.faq.items.slice(3));
       expect(faqItems(d, true)).toBe(d.faq.items);
-      // No price, date or guarantee in the prelaunch messages.
-      expect(Object.values(d.prelaunch).join(' ')).not.toMatch(/\$|USD|\d{1,2}[./]\d{1,2}|guarant|garant/i);
+      // The open answers keep their factual first sentence (countries: confirmed by our team; devices: the list).
+      for (const i of [1, 2]) expect(closed[i]!.a.startsWith(d.faq.items[i]!.a.split(/(?<=\.) /)[0]!), `${lang} FAQ ${i + 1}`).toBe(true);
+      // No price, date or guarantee in the prelaunch messages — except the two home lines that keep the guarantee
+      // wording of the open text they replace (« How it works » note, closing banner / simulator point).
+      const { howNote, trialGuarantee } = d.prelaunch.home;
+      const own = flat(d.prelaunch).filter(([k]) => k !== 'home.howNote' && k !== 'home.trialGuarantee').map(([, v]) => v);
+      expect(own.join(' ')).not.toMatch(/\$|USD|\d{1,2}[./]\d{1,2}|guarant|garant|rembours|reembolso|rimborsat|geld-terug|pengarna|pengene/i);
+      expect(d.how.note.toLowerCase()).toContain(howNote.split(' · ')[1]!.toLowerCase());
+      expect(d.cta.text2.toLowerCase()).toContain(trialGuarantee.split(/(?<=\.) /)[1]!.toLowerCase());
+      expect(`${howNote} ${trialGuarantee}`).not.toMatch(/\$|USD|\d{1,2}[./]\d{1,2}/);
     });
   }
 });

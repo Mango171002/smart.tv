@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import en from '../../src/i18n/dictionaries/en';
-import { ORDERS_OPEN } from './released';
+import { ORDERS_OPEN, TRIAL_LABEL } from './released';
 
 /**
  * Phase 5C content pages. Default run = production build (switch off): nothing exists, nothing changes.
@@ -82,7 +82,7 @@ test.describe('content pages — preview', () => {
     await page.locator('main').getByRole('button', { name: 'Contact support' }).click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await page.goto('/help/free-trial');
-    await page.locator('main').getByRole('button', { name: 'Request a free trial' }).click();
+    await page.locator('main').getByRole('button', { name: TRIAL_LABEL }).click();
     // Online requests closed (prelaunch): the same window opens with « Free trials opening soon ».
     await expect(page.getByRole('dialog', { name: ORDERS_OPEN ? 'Request a Trial' : `${en.prelaunch.trialTitleA} ${en.prelaunch.trialTitleHl}` })).toBeVisible();
   });

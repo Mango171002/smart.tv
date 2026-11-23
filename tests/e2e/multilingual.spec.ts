@@ -21,7 +21,7 @@ const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
 const BUILT = (Object.keys(DICTS) as Lang[]).filter((l) => PREVIEW || RELEASED_LANGS.includes(l));
 const OG: Record<Lang, string> = { de: 'de_DE', es: 'es_ES', it: 'it_IT', nl: 'nl_NL', sv: 'sv_SE', nb: 'nb_NO' };
 /** English sentences that must never appear on a translated page. */
-const ENGLISH_MARKERS = [en.hero.lead, en.plans.sub, en.faq.title, en.footer.about, en.cta.text2, en.how.sub, en.nav.getStarted];
+const ENGLISH_MARKERS = [en.hero.lead, en.plans.sub, en.faq.title, en.footer.about, en.cta.text2, en.how.sub, en.nav.getStarted, en.prelaunch.home.heroLead, en.prelaunch.home.trialGuarantee, en.prelaunch.pagesText];
 
 test.describe('other languages — production build (not built)', () => {
   test.skip(BUILT.length > 0, 'production-mode checks');
@@ -73,7 +73,11 @@ for (const lang of BUILT) {
           expect(href, href).toMatch(new RegExp(`^/${lang}(/|#|$)`));
         }
         for (const ld of (await page.locator('script[type="application/ld+json"]').allTextContents()).map((t) => JSON.parse(t))) {
-          for (const node of ld['@graph'] ?? [ld]) if (node.inLanguage) expect(node.inLanguage).toBe(lang);
+          for (const node of ld['@graph'] ?? [ld]) {
+            // The WebSite is one entity on every language's home: it lists every language the build serves.
+            if (node['@type'] === 'WebSite') expect(node.inLanguage).toEqual(expect.arrayContaining(['en', lang]));
+            else if (node.inLanguage) expect(node.inLanguage).toBe(lang);
+          }
         }
         const text = await page.locator('body').innerText();
         for (const m of ENGLISH_MARKERS) expect(text, `English left: ${m}`).not.toContain(m);

@@ -123,6 +123,15 @@ const ABOUT: InfoPage = {
       ],
     },
   ],
+  prelaunch: {
+    sections: {
+      how: { body: [
+        { p: 'Ordini con un breve modulo e una persona vera del nostro team ti segue su WhatsApp. Prima attiviamo il tuo abbonamento: paghi solo quando il tuo accesso è attivo.' },
+        { steps: ORDER_STEPS },
+        { p: `Le prove gratuite apriranno a breve: potrai provare il servizio per ${TRIAL} prima di acquistare.` },
+      ] },
+    },
+  },
 };
 
 // ---------------------------------------------------------------- Centro assistenza
@@ -150,6 +159,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Come funziona SYGMA TV+, dalla scelta del piano alla visione: prova gratuita, modulo d’ordine, contatto e attivazione su WhatsApp, poi il pagamento.',
     summary: 'Dalla scelta del piano alla prima visione.',
     intro: 'Bastano pochi passaggi per iniziare. Puoi partire da una prova gratuita oppure ordinare direttamente.',
+    prelaunch: { intro: 'Gli ordini online e le prove gratuite apriranno a breve. Ecco come funzionerà l’avvio.' },
     sections: [
       { id: 'steps', icon: 'rocket', title: 'I passaggi', body: [{ steps: [
         { title: 'Scegli il tuo piano', text: 'Nella sezione Piani, scegli il piano, la durata (12, 24 o 36 mesi) e il numero di dispositivi.' },
@@ -193,6 +203,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Prova SYGMA TV+ gratis per ${TRIAL} sul tuo dispositivo prima di acquistare. Come richiederla e cosa succede dopo: niente da pagare, niente da disdire.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)}, gratis, niente da disdire.`,
     intro: `La prova gratuita ti permette di provare SYGMA TV+ per ${TRIAL} sul tuo dispositivo e con la tua connessione, prima di decidere.`,
+    prelaunch: { sections: { request: { body: [{ p: 'Le richieste di prova gratuita apriranno a breve. Fino ad allora non è possibile ottenere una prova via email né tramite altri canali.' }] } } },
     sections: [
       { id: 'request', icon: 'rocket', title: 'Come la richiedo?', body: [{ steps: [
         { title: 'Apri il modulo', text: 'Seleziona «Prova gratuita» in alto in qualsiasi pagina.' },
@@ -215,6 +226,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Come ordinare SYGMA TV+: invia il modulo, il nostro team ti contatta su WhatsApp e attiva il tuo accesso, poi paghi. Ecco i metodi di pagamento.',
     summary: 'Modulo d’ordine, attivazione, poi pagamento.',
     intro: 'Ordini con un breve modulo. Il nostro team ti contatta su WhatsApp e attiva il tuo accesso, e paghi dopo l’attivazione. Nessun addebito su questo sito.',
+    prelaunch: { sections: { order: { title: 'Come funzionerà l’ordine', body: [
+      { p: 'Gli ordini online apriranno a breve. Puoi già confrontare piani, durate e prezzi nella sezione Piani.' },
+      { steps: ORDER_STEPS },
+    ] } } },
     sections: [
       { id: 'order', icon: 'rocket', title: 'Come ordino?', body: [
         { p: 'L’ordine si svolge in sei passaggi, dal modulo sul nostro sito alla conferma del pagamento. Per iniziare, seleziona «Ordina ora» nella sezione Piani.' },
@@ -257,6 +272,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Contatta l’assistenza SYGMA TV+ ${F.supportHours} via email, WhatsApp o modulo di contatto, in sei lingue. Cosa indicare per ricevere una risposta più rapida.`,
     summary: `${F.supportHours}, email o WhatsApp, sei lingue.`,
     intro: `Contattaci via email o su WhatsApp. Il nostro assistente automatico è disponibile ${F.supportHours}, con assistenza umana quando serve.`,
+    prelaunch: {
+      description: `Contatta l’assistenza SYGMA TV+ ${F.supportHours} via email o WhatsApp, in sei lingue. Cosa indicare per ricevere una risposta più rapida.`,
+      sections: { reach: { body: [{ list: [`Email: ${EMAIL}.`, `WhatsApp o telefono: ${PHONE}.`] }] } },
+    },
     sections: [
       { id: 'reach', icon: 'mail', title: 'Come contattarci', body: [{ list: [
         `Email: ${EMAIL}.`,

@@ -23,8 +23,11 @@ const LANGS = (Object.keys(DICTS) as Lang[]).filter((l) => l === 'en' || PREVIEW
 const home = (l: Lang) => (l === 'en' ? '/' : `/${l}`);
 const norm = (s: string) => s.replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim();
 const EMAIL = 'support@sygmatv.com';
-
-test.skip(ORDERS_OPEN, 'build with online requests open (E2E_ORDERS_OPEN=true)');
+const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+const CLOSED_ONLY = 'build with online requests open (E2E_ORDERS_OPEN=true)';
+const orderLabel = (p: (typeof en)['prelaunch']) => norm(`${p.orderTitleA} ${p.orderTitleHl}`);
+const trialLabel = (p: (typeof en)['prelaunch']) => norm(`${p.trialTitleA} ${p.trialTitleHl}`);
+const graph = async (page: Page) => JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!)['@graph'] as Array<Record<string, unknown>>;
 
 async function openPlans(page: Page, path: string) {
   await page.goto(path);
@@ -41,6 +44,7 @@ for (const lang of LANGS) {
   const d = DICTS[lang];
   const p = d.prelaunch;
   test.describe(`${lang}: prelaunch`, () => {
+    test.skip(ORDERS_OPEN, CLOSED_ONLY);
     test.beforeEach(({ isMobile }) => test.skip(isMobile, 'desktop flows; phones are covered below'));
 
     test('order window: « Orders opening soon », the selection and its price, no form; back to the plans', async ({ page }) => {
@@ -86,20 +90,111 @@ for (const lang of LANGS) {
       await expect(dialog).toBeHidden();
     });
 
-    test('FAQ « Can I subscribe now? » is answered accurately, in the page and in the FAQPage data', async ({ page }) => {
+    test('FAQ 1–3 (subscribe now, countries, devices) are answered accurately, in the page and in the FAQPage data', async ({ page }) => {
       await page.goto(home(lang));
-      const first = page.locator('#faq details').first();
-      await first.locator('summary').click();
-      await expect(first).toContainText(p.faqSubscribe);
-      const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
-      const faq = ld['@graph'].find((n: { '@type': string }) => n['@type'] === 'FAQPage');
-      expect(faq.mainEntity[0].acceptedAnswer.text).toBe(p.faqSubscribe);
-      expect(faq.mainEntity[0].name).toBe(d.faq.items[0]!.q);
+      const ld = await graph(page);
+      const faq = ld.find((n) => n['@type'] === 'FAQPage') as { mainEntity: Array<{ name: string; acceptedAnswer: { text: string } }> };
+      for (const [i, answer] of [p.faqSubscribe, p.faqCountries, p.faqDevices].entries()) {
+        const item = page.locator('#faq details').nth(i);
+        if (i > 0) await item.locator('summary').click();
+        await expect(item).toContainText(answer);
+        expect(faq.mainEntity[i]!.acceptedAnswer.text).toBe(answer);
+        expect(faq.mainEntity[i]!.name).toBe(d.faq.items[i]!.q);
+      }
+      // The open answers (« Ask for a free trial… ») are nowhere on the page.
+      for (const i of [1, 2]) await expect(page.locator('#faq')).not.toContainText(d.faq.items[i]!.a);
+    });
+
+    test('buttons: simulator « Orders opening soon », closing banner « Free trials opening soon »; same windows', async ({ page }) => {
+      await openPlans(page, home(lang));
+      const order = page.getByTestId('configurator').locator('button.btn').last();
+      await expect(order).toHaveText(orderLabel(p));
+      await order.click();
+      await expect(page.getByTestId('checkout-dialog').getByTestId('prelaunch-notice')).toBeVisible();
+      await page.keyboard.press('Escape');
+      const trial = page.locator('.cta-actions button');
+      await expect(trial).toHaveText(trialLabel(p));
+      await trial.click();
+      const dialog = page.getByTestId('request-dialog');
+      await expect(dialog.getByRole('heading', { level: 2 })).toHaveText(trialLabel(p));
+      await expectNoForm(dialog);
+    });
+
+    test('home copy and search snippet: nothing presents ordering or a trial as open now', async ({ page }) => {
+      await page.goto(home(lang));
+      const h = p.home;
+      await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', p.metaDescription);
+      await expect(page.locator('.hero .lead')).toHaveText(h.heroLead);
+      await expect(page.locator('.features-bar li').first()).toContainText(h.orderBenefitTitle);
+      await expect(page.locator('.features-bar li').nth(3)).toContainText(h.trialBenefitText);
+      await expect(page.locator('.how3-steps li').nth(1)).toContainText(h.orderStepText);
+      await expect(page.locator('.how3-steps li').nth(2)).toContainText(h.activationStepText);
+      await expect(page.locator('.how3-note')).toHaveText(h.howNote);
+      await expect(page.locator('.cta-text2')).toHaveText(h.trialGuarantee);
+      const body = await page.locator('main').innerText();
+      for (const open of [d.hero.lead, d.benefits[0]!.title, d.how.note, d.cta.text2, d.plans.previewCheckout, d.cta.trial]) expect(body, open).not.toContain(open);
+      // Organization / WebSite: one entity — the English description on every language's home, every built language.
+      const ld = await graph(page);
+      for (const t of ['Organization', 'WebSite']) expect(ld.find((n) => n['@type'] === t)!.description, t).toBe(en.prelaunch.metaDescription);
+      const languages = ld.find((n) => n['@type'] === 'WebSite')!.inLanguage as string[];
+      expect(languages).toEqual(expect.arrayContaining(['en', lang]));
+      expect(languages).toHaveLength(PREVIEW ? 8 : 1 + RELEASED_LANGS.length);
+    });
+
+    test('About and Help center: prelaunch banner first, no « do it now » instruction', async ({ page }) => {
+      test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview');
+      const base = lang === 'en' ? '' : `/${lang}`;
+      for (const path of ['/about', '/help', '/help/getting-started', '/help/devices', '/help/free-trial', '/help/ordering-payment', '/help/troubleshooting', '/help/contact-support', '/help/refunds']) {
+        await page.goto(`${base}${path}`);
+        const banner = page.getByTestId('prelaunch-banner');
+        await expect(banner, path).toBeVisible();
+        await expect(banner).toContainText(p.pagesTitle);
+        await expect(banner).toContainText(p.pagesText);
+        await expect(banner.locator('form, input, button')).toHaveCount(0);
+        // Above the page title.
+        const [b, h1] = [await banner.boundingBox(), await page.getByRole('heading', { level: 1 }).boundingBox()];
+        expect(b!.y, path).toBeLessThan(h1!.y);
+        const trial = page.locator('main').getByRole('button', { name: trialLabel(p) });
+        if (await trial.count()) await expect(trial).toBeVisible();
+      }
+      await page.goto(`${base}/help/free-trial`);
+      await expect(page.locator('#request ol')).toHaveCount(0);
+      await page.goto(`${base}/help/contact-support`);
+      await expect(page.locator('#reach li')).toHaveCount(2);
+      await expect(page.locator('meta[name="description"]')).not.toHaveAttribute('content', /form|formul|Formular|modulo|skjema/i);
     });
   });
 }
 
+test.describe('orders open: today\'s texts, no prelaunch variant', () => {
+  test.skip(!ORDERS_OPEN, 'build with online requests open only (E2E_ORDERS_OPEN=true)');
+  test.beforeEach(({ isMobile }) => test.skip(isMobile, 'markup check (desktop only)'));
+  for (const lang of LANGS) {
+    const d = DICTS[lang];
+    test(`${lang}: buttons, home copy, FAQ and description are the open ones`, async ({ page }) => {
+      await openPlans(page, home(lang));
+      await expect(page.getByTestId('configurator').locator('button.btn').last()).toHaveText(norm(d.plans.previewCheckout));
+      await expect(page.locator('.cta-actions button')).toHaveText(norm(d.cta.trial));
+      await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', d.meta.homeDescription);
+      await expect(page.locator('.hero .lead')).toHaveText(d.hero.lead);
+      await expect(page.locator('.how3-note')).toHaveText(d.how.note);
+      await expect(page.locator('.cta-text2')).toHaveText(d.cta.text2);
+      const ld = await graph(page);
+      const faq = ld.find((n) => n['@type'] === 'FAQPage') as { mainEntity: Array<{ acceptedAnswer: { text: string } }> };
+      expect(faq.mainEntity.map((q) => q.acceptedAnswer.text)).toEqual(d.faq.items.map((i) => i.a));
+      expect(ld.find((n) => n['@type'] === 'WebSite')!.description).toBe(en.meta.homeDescription);
+      await expect(page.getByTestId('prelaunch-banner')).toHaveCount(0);
+      if (CONTENT) {
+        await page.goto(`${lang === 'en' ? '' : `/${lang}`}/help/free-trial`);
+        await expect(page.getByTestId('prelaunch-banner')).toHaveCount(0);
+        await expect(page.locator('#request ol li')).toHaveCount(3);
+      }
+    });
+  }
+});
+
 test.describe('prelaunch — server, phones, accessibility', () => {
+  test.skip(ORDERS_OPEN, CLOSED_ONLY);
   test('the API refuses orders, trials and support requests (503), before storing anything', async ({ request, baseURL, isMobile }) => {
     test.skip(isMobile, 'once');
     const headers = { origin: new URL(baseURL!).origin, 'content-type': 'application/json' };
@@ -137,6 +232,29 @@ test.describe('prelaunch — server, phones, accessibility', () => {
         expect((await dialog.getByTestId('prelaunch-action').boundingBox())!.height).toBeGreaterThanOrEqual(44);
         await page.keyboard.press('Escape');
         await expect(dialog).toBeHidden();
+      }
+    }
+  });
+
+  test('phones: « Orders opening soon » / « Free trials opening soon » buttons fit at 320 / 375 px in every built language', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'explicit viewport sizes');
+    for (const lang of LANGS) {
+      for (const width of [320, 375]) {
+        await page.setViewportSize({ width, height: 800 });
+        await openPlans(page, home(lang));
+        for (const sel of ['[data-testid="configurator"] .sim-cta', '.cta-actions button', '.cta-actions a']) {
+          const el = page.locator(sel);
+          await el.scrollIntoViewIfNeeded();
+          const r = await el.evaluate((e) => {
+            const b = e.getBoundingClientRect();
+            return { sw: e.scrollWidth, cw: e.clientWidth, left: b.left, right: b.right, h: b.height, vw: document.documentElement.clientWidth, page: document.documentElement.scrollWidth };
+          });
+          expect(r.sw, `${lang} @${width} ${sel} text overflow`).toBeLessThanOrEqual(r.cw + 1);
+          expect(r.left, `${lang} @${width} ${sel}`).toBeGreaterThanOrEqual(0);
+          expect(r.right, `${lang} @${width} ${sel}`).toBeLessThanOrEqual(r.vw);
+          expect(r.h, `${lang} @${width} ${sel} touch target`).toBeGreaterThanOrEqual(44);
+          expect(r.page, `${lang} @${width} page scroll`).toBeLessThanOrEqual(r.vw);
+        }
       }
     }
   });

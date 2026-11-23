@@ -85,7 +85,11 @@ test.describe('French — preview / released', () => {
       await expect(page.locator('footer a[href^="/legal/"]').first()).toHaveAttribute('hreflang', 'en');
       const lds = await page.locator('script[type="application/ld+json"]').allTextContents();
       for (const ld of lds.map((t) => JSON.parse(t))) {
-        for (const node of ld['@graph'] ?? [ld]) if (node.inLanguage) expect(node.inLanguage).toBe('fr');
+        for (const node of ld['@graph'] ?? [ld]) {
+          // The WebSite is one entity on every language's home: it lists every language the build serves.
+          if (node['@type'] === 'WebSite') expect(node.inLanguage).toEqual(expect.arrayContaining(['en', 'fr']));
+          else if (node.inLanguage) expect(node.inLanguage).toBe('fr');
+        }
       }
     });
   }

@@ -94,7 +94,7 @@ const ABOUT: InfoPage = {
     {
       id: 'support', icon: 'users', title: 'Soporte multilingüe',
       body: [
-        { p: `Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando la necesites. Normalmente respondemos en ${F.usualReply}. Es nuestro tiempo de respuesta habitual, no una garantía contractual.` },
+        { p: `Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario. Normalmente respondemos en ${F.usualReply}. Es nuestro tiempo de respuesta habitual, no una garantía contractual.` },
         { chips: [...F.languages], label: 'Idiomas de soporte' },
         { note: 'Nuestro equipo de soporte habla estos seis idiomas; los documentos legales están redactados en inglés.' },
       ],
@@ -130,7 +130,7 @@ const HELP_HUB = {
   title: 'Centro de ayuda',
   metaTitle: 'Centro de ayuda: prueba, pedidos y reembolsos',
   description: 'Respuestas sobre la prueba gratuita de SYGMA TV+, pedidos y pagos, dispositivos compatibles, problemas técnicos, reembolsos y cómo contactar con soporte.',
-  intro: `Respuestas claras sobre la prueba gratuita, los pedidos, el pago, los dispositivos y los reembolsos. ¿Todavía tienes dudas? Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando la necesites.`,
+  intro: `Respuestas claras sobre la prueba gratuita, los pedidos, el pago, los dispositivos y los reembolsos. ¿Todavía tienes dudas? Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario.`,
   popular: [
     { q: '¿Cuándo y cómo pago?', href: '/es/help/ordering-payment#pay' },
     { q: '¿Cuánto tarda la activación?', href: '/es/help/ordering-payment#activation' },
@@ -255,14 +255,14 @@ const HELP_TOPICS: InfoPage[] = [
     metaTitle: 'Contactar con soporte: correo y WhatsApp, 24/7',
     description: `Contacta con el soporte de SYGMA TV+ ${F.supportHours} por correo electrónico, WhatsApp o el formulario, en seis idiomas. Qué incluir para que te respondamos antes.`,
     summary: `${F.supportHours}, correo o WhatsApp, seis idiomas.`,
-    intro: `Escríbenos por correo electrónico o por WhatsApp. Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando la necesites.`,
+    intro: `Escríbenos por correo electrónico o por WhatsApp. Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario.`,
     sections: [
       { id: 'reach', icon: 'mail', title: 'Cómo contactarnos', body: [{ list: [
         `Correo electrónico: ${EMAIL}.`,
         `WhatsApp o teléfono: ${PHONE}.`,
         'El formulario de contacto: selecciona «Contacto» en la parte inferior de cualquier página.',
       ] }] },
-      { id: 'availability', icon: 'clock', title: '¿Cuándo responde el soporte?', body: [{ p: `Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando la necesites. Normalmente respondemos en ${F.usualReply}. Es nuestro tiempo de respuesta habitual, no una garantía contractual.` }] },
+      { id: 'availability', icon: 'clock', title: '¿Cuándo responde el soporte?', body: [{ p: `Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario. Normalmente respondemos en ${F.usualReply}. Es nuestro tiempo de respuesta habitual, no una garantía contractual.` }] },
       { id: 'languages', icon: 'globe', title: '¿En qué idiomas?', body: [
         { p: `Puedes escribirnos en ${LANGS}.` },
         { chips: [...F.languages], label: 'Idiomas de soporte' },
@@ -311,9 +311,9 @@ const INFO_UI: InfoUi = {
     { k: 'Soporte', v: F.supportHours, small: `Suele responder en ${F.usualReply}` },
     { k: 'Idiomas de soporte', v: String(F.languages.length), small: F.languages.join(' · ') },
   ],
-  aboutContact: `¿Tienes preguntas sobre SYGMA TV+? Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando la necesites.`,
+  aboutContact: `¿Tienes preguntas sobre SYGMA TV+? Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario.`,
   hubContact: '¿No encuentras tu respuesta? Escríbenos — indícanos tu dispositivo y, si la tienes, tu referencia de pedido.',
-  topicContact: `¿Necesitas más ayuda? Escríbenos por correo electrónico o por WhatsApp. Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando la necesites.`,
+  topicContact: `¿Necesitas más ayuda? Escríbenos por correo electrónico o por WhatsApp. Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario.`,
   hubRelated: [
     { href: '/es/about', label: 'Sobre nosotros' },
     { href: '/es#faq', label: 'Preguntas frecuentes' },

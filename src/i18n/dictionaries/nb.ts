@@ -415,7 +415,7 @@ const nb: Dictionary = {
     send: 'Send forespørsel',
     sending: 'Sender…',
     successTitle: 'Forespørselen er sendt!',
-    successText: 'Takk, {name}. Teamet vårt kontakter deg på e-post eller telefon.',
+    successText: 'Takk, {name}. Teamet vårt kontakter deg på e-post eller telefon. Medarbeiderne våre hjelper deg på engelsk.',
     errors: {
       name: 'Skriv inn navnet ditt.',
       email: 'Skriv inn en gyldig e-postadresse.',
@@ -471,7 +471,7 @@ const nb: Dictionary = {
     regionLabel: 'Landet ditt',
     deviceLabel: 'Hovedenhet',
     phoneLabel: 'WhatsApp-nummer',
-    phoneHint: 'Teamet vårt kontakter deg på WhatsApp for å aktivere tilgangen din.',
+    phoneHint: 'Teamet vårt kontakter deg på WhatsApp for å aktivere tilgangen din. Medarbeiderne våre hjelper deg på engelsk.',
     phonePlaceholder: 'Telefonnummer',
     phoneCountry: 'Landskode',
     deviceOptions: ['Smart TV', 'Android TV / Google TV', 'Fire TV', 'Apple TV', 'Annen TV-boks eller -pinne', 'Android-telefon / -nettbrett', 'iPhone / iPad', 'Datamaskin (Windows / Mac)', 'Nettleser'],
@@ -493,7 +493,7 @@ const nb: Dictionary = {
     finish: 'Bekreft bestillingen',
     sending: 'Sender…',
     doneTitle: 'Bestillingen er mottatt!',
-    doneText: 'Teamet vårt kontakter deg snart på WhatsApp for å aktivere tilgangen din. En bekreftelse er sendt til {email}.',
+    doneText: 'Teamet vårt kontakter deg snart på WhatsApp for å aktivere tilgangen din. En bekreftelse er sendt til {email}. Medarbeiderne våre hjelper deg på engelsk.',
     returnToSite: 'Tilbake til nettstedet',
     errors: {
       email: 'Skriv inn en gyldig e-postadresse.',

@@ -185,7 +185,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Smartphones und Tablets.',
         'Computer.',
       ] }, { p: 'Zusammen mit Ihren Zugangsdaten sagt Ihnen unser Team, welche App Sie auf Ihrem Gerät installieren sollen, und hilft Ihnen bei der Einrichtung.' }] },
-      { id: 'how-many', icon: 'users', title: 'Wie viele Geräte gleichzeitig?', body: [{ p: 'Jeder Tarif enthält 1 Gerät. Bei der Bestellung können Sie weitere Geräte hinzufügen, bis zu 4. Das Abo ist für die private Nutzung in Ihrem Haushalt bestimmt: Das Teilen oder Weiterverkaufen des Zugangs ist nicht erlaubt.' }] },
+      { id: 'how-many', icon: 'users', title: 'Wie viele Geräte gleichzeitig?', body: [{ p: 'Jeder Tarif enthält 1 Gerät. Bei der Bestellung können Sie weitere Geräte hinzufügen, insgesamt bis zu 4. Das Abo ist für die private Nutzung in Ihrem Haushalt bestimmt: Das Teilen oder Weiterverkaufen des Zugangs ist nicht erlaubt.' }] },
       { id: 'quality', icon: 'activity', title: 'Bildqualität', body: [{ p: 'Die Bildqualität hängt von Ihrem Tarif, dem Inhalt, Ihrem Gerät und Ihrer Internetverbindung ab. Eine stabile Verbindung – idealerweise per Netzwerkkabel oder mit dem Gerät nahe am WLAN-Router – macht den größten Unterschied.' }] },
       { id: 'check', icon: 'check', title: 'Prüfen Sie zuerst Ihr Gerät', body: [{ p: `Fordern Sie einen kostenlosen ${TRIAL_ADJ}-Testzugang an: So testen Sie den Dienst auf Ihrem eigenen Gerät und mit Ihrer Verbindung, bevor Sie kaufen.` }] },
     ],

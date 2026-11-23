@@ -196,7 +196,7 @@ const nl: Dictionary = {
       plus: {
         name: 'Plus',
         artAlt: 'Vrienden juichen met popcorn voor de tv',
-        tagline: 'Ideaal voor de meeste huishoudens',
+        tagline: 'Voordelig voor de meeste gezinnen',
         features: [
           { icon: 'tv', text: 'Pakket **Uitgebreid**', accent: true },
           { icon: 'news', text: 'Live-tv en on demand', accent: true },
@@ -416,7 +416,7 @@ const nl: Dictionary = {
     send: 'Aanvraag versturen',
     sending: 'Bezig met versturen…',
     successTitle: 'Aanvraag verstuurd!',
-    successText: 'Bedankt, {name}. Ons team neemt per e-mail of telefonisch contact met je op.',
+    successText: 'Bedankt, {name}. Ons team neemt per e-mail of telefonisch contact met je op. Onze medewerkers helpen je in het Engels.',
     errors: {
       name: 'Vul je naam in.',
       email: 'Vul een geldig e-mailadres in.',
@@ -472,7 +472,7 @@ const nl: Dictionary = {
     regionLabel: 'Je land',
     deviceLabel: 'Hoofdapparaat',
     phoneLabel: 'WhatsApp-nummer',
-    phoneHint: 'Ons team neemt via WhatsApp contact met je op om je toegang te activeren.',
+    phoneHint: 'Ons team neemt via WhatsApp contact met je op om je toegang te activeren. Onze medewerkers helpen je in het Engels.',
     phonePlaceholder: 'Telefoonnummer',
     phoneCountry: 'Landcode',
     deviceOptions: ['Smart TV', 'Android TV / Google TV', 'Fire TV', 'Apple TV', 'Andere tv-box of -stick', 'Android-telefoon / -tablet', 'iPhone / iPad', 'Computer (Windows of Mac)', 'Webbrowser'],
@@ -494,7 +494,7 @@ const nl: Dictionary = {
     finish: 'Mijn bestelling bevestigen',
     sending: 'Bezig met versturen…',
     doneTitle: 'Bestelling ontvangen!',
-    doneText: 'Ons team neemt binnenkort via WhatsApp contact met je op om je toegang te activeren. We hebben een bevestiging gestuurd naar {email}.',
+    doneText: 'Ons team neemt binnenkort via WhatsApp contact met je op om je toegang te activeren. We hebben een bevestiging gestuurd naar {email}. Onze medewerkers helpen je in het Engels.',
     returnToSite: 'Terug naar de website',
     errors: {
       email: 'Vul een geldig e-mailadres in.',

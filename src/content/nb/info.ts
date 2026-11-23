@@ -96,7 +96,7 @@ const ABOUT: InfoPage = {
       body: [
         { p: `Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov. Vi svarer vanligvis på ${F.usualReply}. Dette er den vanlige svartiden vår, ikke en avtalefestet garanti.` },
         { chips: [...F.languages], label: 'Språk for kundestøtte' },
-        { note: 'Kundestøtteteamet vårt snakker disse seks språkene; de juridiske dokumentene våre er på engelsk.' },
+        { note: 'Kundestøtteteamet vårt snakker disse seks språkene, så personlig hjelp får du på engelsk. De juridiske dokumentene våre er også på engelsk.' },
       ],
     },
     {
@@ -262,11 +262,11 @@ const HELP_TOPICS: InfoPage[] = [
         `WhatsApp eller telefon: ${PHONE}.`,
         'Kontaktskjemaet: velg «Kontakt» nederst på en hvilken som helst side.',
       ] }] },
-      { id: 'availability', icon: 'clock', title: 'Når svarer dere?', body: [{ p: `Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov. Vi svarer vanligvis på ${F.usualReply}. Dette er den vanlige svartiden vår, ikke en avtalefestet garanti.` }] },
+      { id: 'availability', icon: 'clock', title: 'Når svarer dere?', body: [{ p: `Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov. Medarbeiderne våre hjelper deg på engelsk. Vi svarer vanligvis på ${F.usualReply}. Dette er den vanlige svartiden vår, ikke en avtalefestet garanti.` }] },
       { id: 'languages', icon: 'globe', title: 'Hvilke språk?', body: [
         { p: `Du kan skrive til oss på ${LANGS}.` },
         { chips: [...F.languages], label: 'Språk for kundestøtte' },
-        { note: 'De juridiske dokumentene våre er på engelsk.' },
+        { note: 'Norsk er ikke blant dem: medarbeiderne våre hjelper deg gjerne på engelsk. De juridiske dokumentene våre er også på engelsk.' },
       ] },
       { id: 'include', icon: 'pencil', title: 'Hva du bør ta med', body: [{ list: [
         'Ordrereferansen din, hvis du har en.',

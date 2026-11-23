@@ -98,11 +98,11 @@ jobs:
         run: |
           sleep 10
           curl -fsS https://sygmatv.com/api/health
-          curl -fsS -o /dev/null -w "%{http_code}\n" https://sygmatv.com/en
+          curl -fsS -o /dev/null -w "%{http_code}\n" https://sygmatv.com/
       - name: Lighthouse audit of the live site (mobile + desktop)
         run: |
           set -o pipefail
-          U=https://sygmatv.com/en
+          U=https://sygmatv.com/
           npm i --no-save lighthouse@13.6.0 >/dev/null 2>&1
           # 3 runs per profile, the median run is kept (shared runners are noisy).
           for preset in mobile desktop; do

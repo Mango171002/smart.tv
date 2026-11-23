@@ -88,7 +88,9 @@ async function openOrderByKeyboard(page: Page, tier: string, term: string, n: nu
   await c.locator(`button[data-tier="${tier}"]`).click();
   await c.locator(`button[data-term="${term}"]`).click();
   await c.locator(`button[data-stream="${n}"]`).click();
+  await focusSettled(page);
   await c.locator('button.sim-cta').focus();
+  await expect(c.locator('button.sim-cta')).toBeFocused();
   await page.keyboard.press('Enter');
   const dialog = page.getByTestId('checkout-dialog');
   await expect(dialog.getByTestId('prelaunch-notice')).toBeVisible();
@@ -97,14 +99,26 @@ async function openOrderByKeyboard(page: Page, tier: string, term: string, n: nu
 }
 
 /** « Free trial » from the header (in the menu where the header is collapsed), opened with the keyboard. */
+/** Focus returns to the opener on the next animation frame after a window closes (RequestHost/CheckoutDialog):
+ *  wait two frames so the next keyboard action is not overtaken by that return (a person cannot act within a frame). */
+async function focusSettled(page: Page) {
+  await page.evaluate(() => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))));
+}
+
 async function openTrialByKeyboard(page: Page) {
+  await focusSettled(page);
   await page.evaluate(() => window.scrollTo(0, 0));
   const menu = page.locator('.mobile-menu');
   if (await menu.isVisible()) {
     await menu.focus();
     await page.keyboard.press('Enter');
+    // Wait until the menu is open, as a keyboard user would, before moving to its « Free trial » button.
+    await expect(menu).toHaveAttribute('aria-expanded', 'true');
   }
-  await page.locator('.nav-ctas button').first().focus();
+  const trial = page.locator('.nav-ctas button').first();
+  await expect(trial).toBeVisible();
+  await trial.focus();
+  await expect(trial).toBeFocused();
   await page.keyboard.press('Enter');
   const dialog = page.getByTestId('request-dialog');
   await expect(dialog.getByTestId('prelaunch-notice')).toBeVisible();
@@ -114,7 +128,10 @@ async function openTrialByKeyboard(page: Page) {
 
 /** Support window, from the floating button (keyboard). */
 async function openSupportByKeyboard(page: Page) {
-  await page.locator('.support-fab').focus();
+  await focusSettled(page);
+  const fab = page.locator('.support-fab');
+  await fab.focus();
+  await expect(fab).toBeFocused();
   await page.keyboard.press('Enter');
   const dialog = page.getByTestId('request-dialog');
   await expect(dialog.getByTestId('prelaunch-notice')).toBeVisible();

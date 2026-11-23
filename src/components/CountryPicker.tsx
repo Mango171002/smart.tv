@@ -134,9 +134,9 @@ export function CountryPicker({
         className="input cpick-btn"
         aria-haspopup="listbox"
         aria-expanded={open}
-        // WCAG 2.5.3 (label in name): the accessible name starts with the visible text (country and calling code),
-        // then the field's purpose — e.g. « Sweden (+46), Country calling code ».
-        aria-label={[selected ? `${selected.name}${withDial ? ` (+${selected.dial})` : ''}` : placeholder, ariaLabel].filter(Boolean).join(', ')}
+        // WCAG 2.5.3 (label in name): when the picker is named by ariaLabel (phone code), the name starts with the
+        // visible text, then the purpose — « Sweden (+46), Country calling code ». Otherwise its <label> names it.
+        aria-label={ariaLabel ? [selected ? `${selected.name}${withDial ? ` (+${selected.dial})` : ''}` : placeholder, ariaLabel].filter(Boolean).join(', ') : undefined}
         data-invalid={invalid || undefined}
         aria-describedby={describedBy}
         onClick={() => (open ? setOpen(false) : openList())}

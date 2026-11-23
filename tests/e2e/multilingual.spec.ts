@@ -95,6 +95,8 @@ for (const lang of BUILT) {
       const dialog = page.getByTestId('checkout-dialog');
       await expect(dialog).toContainText(d.checkout.headHl);
       await dialog.getByLabel(d.checkout.emailLabel).fill('staging-check@example.test');
+      // Named by its visible <label> in every language (regression guard for the country picker's accessible name).
+      await expect(dialog.getByRole('button', { name: d.checkout.regionLabel, exact: true })).toBeVisible();
       await dialog.getByLabel(d.checkout.regionLabel).click();
       const country = new Intl.DisplayNames([lang], { type: 'region' }).of('CH')!;
       await dialog.getByRole('combobox', { name: d.common.countrySearch }).fill(country);

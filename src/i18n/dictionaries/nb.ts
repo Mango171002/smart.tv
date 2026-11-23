@@ -480,6 +480,8 @@ const nb: Dictionary = {
     reviewIntro: 'Se over bestillingen din.',
     region: 'Land',
     plan: 'Abonnement',
+    /** Order summary shown from the first step (phase 11). */
+    summary: { title: 'Ditt valg', duration: 'Varighet', devices: 'Enheter', change: 'Endre', changeLabel: 'Endre valget ditt' },
     whatsapp: 'WhatsApp',
     subtotal: 'Pris',
     taxes: 'Avgifter',

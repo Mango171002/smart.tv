@@ -481,6 +481,8 @@ const sv: Dictionary = {
     reviewIntro: 'Kontrollera din beställning.',
     region: 'Land',
     plan: 'Paket',
+    /** Order summary shown from the first step (phase 11). */
+    summary: { title: 'Ditt val', duration: 'Period', devices: 'Enheter', change: 'Ändra', changeLabel: 'Ändra ditt val' },
     whatsapp: 'WhatsApp',
     subtotal: 'Pris',
     taxes: 'Skatt',

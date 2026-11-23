@@ -481,6 +481,8 @@ const nl: Dictionary = {
     reviewIntro: 'Controleer je bestelling.',
     region: 'Land',
     plan: 'Abonnement',
+    /** Order summary shown from the first step (phase 11). */
+    summary: { title: 'Je keuze', duration: 'Looptijd', devices: 'Apparaten', change: 'Wijzigen', changeLabel: 'Je keuze wijzigen' },
     whatsapp: 'WhatsApp',
     subtotal: 'Prijs',
     taxes: 'Belastingen',

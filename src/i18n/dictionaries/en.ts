@@ -462,6 +462,8 @@ const en = {
     reviewIntro: 'Check your order.',
     region: 'Country',
     plan: 'Plan',
+    /** Order summary shown from the first step (phase 11). */
+    summary: { title: 'Your selection', duration: 'Duration', devices: 'Devices', change: 'Change', changeLabel: 'Change your selection' },
     whatsapp: 'WhatsApp',
     subtotal: 'Price',
     taxes: 'Taxes',

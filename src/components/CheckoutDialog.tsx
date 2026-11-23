@@ -39,12 +39,15 @@ export function CheckoutDialog({
   dict,
   selection,
   clientPrice,
+  clientAmount,
   onClose,
 }: {
   locale: Locale;
   dict: Pick<Dictionary, 'checkout' | 'common' | 'markets' | 'plans'>;
   selection: PlanSelection;
   clientPrice: string;
+  /** Price of the selection from the plan simulator (same price source), formatted here with its currency code. */
+  clientAmount?: { amountMinor: number; currency: string };
   onClose: () => void;
 }) {
   const c = dict.checkout;
@@ -189,6 +192,14 @@ export function CheckoutDialog({
   const regionLabel = countryName ? `${countryFlag(country)} ${countryName}` : '';
   const planLabel = `${dict.plans.tiers[selection.tier].name} · ${dict.plans.terms[selection.term]} · ${plural(dict.common, 'device', selection.streams)}`;
   const subtotal = quote ? displayMoneyWithCode(quote.amountMinor, quote.currency, locale) : clientPrice;
+  // Order summary (phase 11): the visitor's current selection, shown from the first step. Only known values are
+  // displayed; the price is the simulator's price (no second calculation), confirmed by the server at the review step.
+  const summary = {
+    plan: dict.plans.tiers[selection.tier]?.name,
+    duration: dict.plans.terms[selection.term],
+    devices: selection.streams ? plural(dict.common, 'device', selection.streams) : undefined,
+    price: clientAmount ? displayMoneyWithCode(clientAmount.amountMinor, clientAmount.currency, locale) : clientPrice || undefined,
+  };
 
   // Rendered in <body> through a portal: a transformed ancestor (e.g. a card's hover
   // lift) would otherwise become the containing block of this fixed overlay.
@@ -237,6 +248,20 @@ export function CheckoutDialog({
               void review();
             }}
           >
+            <section className="order-summary" aria-labelledby="order-summary-title" data-testid="order-summary">
+              <div className="order-summary-head">
+                <h3 id="order-summary-title">{c.summary.title}</h3>
+                <button type="button" className="order-summary-change" aria-label={c.summary.changeLabel} onClick={onClose}>
+                  {c.summary.change}
+                </button>
+              </div>
+              <dl className="order-summary-grid">
+                {summary.plan && (<div><dt>{c.plan}</dt><dd data-testid="summary-plan">{summary.plan}</dd></div>)}
+                {summary.duration && (<div><dt>{c.summary.duration}</dt><dd data-testid="summary-duration">{summary.duration}</dd></div>)}
+                {summary.devices && (<div><dt>{c.summary.devices}</dt><dd data-testid="summary-devices">{summary.devices}</dd></div>)}
+                {summary.price && (<div className="order-summary-price"><dt>{c.subtotal}</dt><dd data-testid="summary-price">{summary.price}</dd></div>)}
+              </dl>
+            </section>
             <div className="offer-banner">
               <Gift size={30} strokeWidth={1.75} aria-hidden="true" />
               <div>

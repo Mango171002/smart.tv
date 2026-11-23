@@ -354,6 +354,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
           dict={dict}
           selection={{ tier, term, streams }}
           clientPrice={money(quote.amountMinor)}
+          clientAmount={{ amountMinor: quote.amountMinor, currency: table.currency }}
           onClose={() => {
             setCheckoutOpen(false);
             requestAnimationFrame(() => openerRef.current?.focus());

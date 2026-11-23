@@ -481,6 +481,8 @@ const fr: Dictionary = {
     reviewIntro: 'Vérifiez votre commande.',
     region: 'Pays',
     plan: 'Formule',
+    /** Order summary shown from the first step (phase 11). */
+    summary: { title: 'Votre sélection', duration: 'Durée', devices: 'Appareils', change: 'Modifier', changeLabel: 'Modifier votre sélection' },
     whatsapp: 'WhatsApp',
     subtotal: 'Prix',
     taxes: 'Taxes',

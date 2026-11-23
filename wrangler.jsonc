@@ -25,7 +25,7 @@
   "vars": {
     "SUPABASE_URL": "https://gsxgfefpkosrlflggdxv.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_9ToDpQ-FqIDKRHc7yindZA_uHKYes2P",
-    "FEATURE_CONTACT_FORM": "true",
+    "FEATURE_CONTACT_FORM": "false",
     "SALES_ENABLED": "false"
   }
 }

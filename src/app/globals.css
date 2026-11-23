@@ -2328,3 +2328,20 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
   .legal-table td::before { content: attr(data-label); display: block; color: var(--cat); font-size: 11.5px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
   .legal-facts div { grid-template-columns: 1fr; gap: 2px; }
 }
+
+/* ==========================================================================
+   Prelaunch state (phase 11B) — order / free-trial / support windows while online requests are closed
+   ========================================================================== */
+.prelaunch { display: grid; gap: 14px; }
+.prelaunch-text { margin: 0; font-size: 16px; line-height: 1.55; color: var(--color-ink); opacity: .9; }
+.prelaunch-contact {
+  display: flex; align-items: center; gap: 10px; margin: 0; padding: 12px 14px; border-radius: 14px;
+  border: 1px solid var(--line-strong); background: var(--color-surface); font-size: 15px; color: var(--color-ink);
+}
+.prelaunch-contact svg { color: var(--color-cyan); flex: none; }
+.prelaunch-contact span { min-width: 0; }
+/* The address moves to its own line rather than breaking inside it; 44 px tall touch target without a taller box (U-015). */
+.prelaunch-contact a { display: inline-block; padding-block: 12px; margin-block: -12px; color: var(--color-cyan); font-weight: 700; overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 3px; }
+.prelaunch-note { margin: 0; font-size: 13px; line-height: 1.5; color: var(--color-muted); }
+.prelaunch-action { width: 100%; min-height: 48px; font-size: 16px; }
+@media (max-width: 360px) { .prelaunch-contact svg { display: none; } }

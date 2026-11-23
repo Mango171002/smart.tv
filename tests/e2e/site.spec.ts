@@ -1,5 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { ORDERS_OPEN, ORDER_BUTTON } from './released';
+
+const CLOSED = 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts';
 
 const ROUTES = [
   '/', '/blog', '/legal/terms', '/legal/privacy', '/legal/cookies', '/legal/refunds', '/legal/imprint',
@@ -176,6 +179,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
 
 test.describe('pre-registration', () => {
   test('pre-registers with the selected plan in three steps', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, CLOSED);
     let sent: Record<string, unknown> | null = null;
     await page.route('**/api/contact', async (route) => {
       sent = route.request().postDataJSON();
@@ -185,7 +189,7 @@ test.describe('pre-registration', () => {
     await page.locator('.simulator [data-tier="ultra"]').click();
     await page.locator('[data-term="24m"]').click();
     await page.locator('[data-stream="2"]').click();
-    const opener = page.getByRole('button', { name: /^Order now/ });
+    const opener = page.getByRole('button', { name: ORDER_BUTTON });
     await opener.click();
     const dialog = page.getByTestId('checkout-dialog');
     await expect(dialog).toHaveAccessibleName('Complete your order');
@@ -218,8 +222,9 @@ test.describe('pre-registration', () => {
   });
 
   test('requires a valid email and consent before continuing', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, CLOSED);
     await openHome(page, '/');
-    await page.getByRole('button', { name: /^Order now/ }).click();
+    await page.getByRole('button', { name: ORDER_BUTTON }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByRole('button', { name: /^Continue/ }).click();
     await expect(dialog.getByText('Enter a valid email address.')).toBeVisible();
@@ -232,8 +237,9 @@ test.describe('pre-registration', () => {
 
   test('dialog stays still when hovered and lives in <body> (regression)', async ({ page, isMobile }) => {
     test.skip(isMobile, 'hover only exists on desktop');
+    test.skip(!ORDERS_OPEN, CLOSED);
     await openHome(page, '/');
-    await page.getByRole('button', { name: /^Order now/ }).click();
+    await page.getByRole('button', { name: ORDER_BUTTON }).click();
     const checkbox = page.getByTestId('checkout-dialog').getByLabel(/I agree to be contacted/);
     await checkbox.hover();
     const before = await checkbox.boundingBox();
@@ -243,9 +249,10 @@ test.describe('pre-registration', () => {
   });
 
   test('shows a clear message when rate limited', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, CLOSED);
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
     await openHome(page, '/');
-    await page.getByRole('button', { name: /^Order now/ }).click();
+    await page.getByRole('button', { name: ORDER_BUTTON }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
     await dialog.getByLabel('Your country').click();
@@ -261,7 +268,7 @@ test.describe('pre-registration', () => {
   test('traps focus and closes with Escape, restoring focus', async ({ page, isMobile }) => {
     test.skip(isMobile, 'keyboard test runs on desktop');
     await openHome(page, '/');
-    const opener = page.getByRole('button', { name: /^Order now/ });
+    const opener = page.getByRole('button', { name: ORDER_BUTTON });
     await opener.click();
     const dialog = page.getByRole('dialog');
     for (let i = 0; i < 8; i++) {
@@ -404,6 +411,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
   });
 
   test('"Request a trial" opens a window: name, email, phone with country code', async ({ page, isMobile }) => {
+    test.skip(!ORDERS_OPEN, CLOSED);
     let sent: Record<string, unknown> | null = null;
     await page.route('**/api/contact', async (route) => {
       sent = route.request().postDataJSON();
@@ -433,6 +441,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
   });
 
   test('floating support button and footer Contact open the support window (question required)', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, CLOSED);
     let sent: Record<string, unknown> | null = null;
     await page.route('**/api/contact', async (route) => {
       sent = route.request().postDataJSON();
@@ -461,6 +470,7 @@ test.describe('one-page navigation, trial & support requests (network mocked)', 
   });
 
   test('request window shows a rate-limit message', async ({ page }) => {
+    test.skip(!ORDERS_OPEN, CLOSED);
     await page.route('**/api/contact', (route) => route.fulfill({ status: 429, json: { ok: false } }));
     await page.goto('/');
     await page.locator('footer').getByRole('button', { name: 'Contact', exact: true }).click();
@@ -494,7 +504,7 @@ test.describe('accessibility (axe, WCAG 2.1 AA)', () => {
 
   test('checkout dialog has no violations', async ({ page }) => {
     await openHome(page, '/');
-    await page.getByRole('button', { name: /^Order now/ }).click();
+    await page.getByRole('button', { name: ORDER_BUTTON }).click();
     await expect(page.getByRole('dialog')).toBeVisible(); // the dialog is loaded on demand
     const results = await new AxeBuilder({ page }).include('[role="dialog"]').withTags(['wcag2a', 'wcag2aa']).analyze();
     expect(results.violations.map((v) => v.id)).toEqual([]);

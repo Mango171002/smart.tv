@@ -95,12 +95,14 @@ const CheckoutDialog = dynamic(loadDialog, { ssr: false });
 export interface ConfiguratorProps {
   locale: Locale;
   table: PriceTable;
-  dict: Pick<Dictionary, 'plans' | 'common' | 'markets' | 'checkout'>;
+  dict: Pick<Dictionary, 'plans' | 'common' | 'markets' | 'checkout' | 'prelaunch'>;
+  /** false while online orders are closed: the order window shows « Orders opening soon » (no form). */
+  ordersOpen?: boolean;
   /** Rendered between the plan cards and the simulator (server-rendered content). */
   children?: ReactNode;
 }
 
-export function PlanConfigurator({ locale, table, dict, children }: ConfiguratorProps) {
+export function PlanConfigurator({ locale, table, dict, ordersOpen = true, children }: ConfiguratorProps) {
   const [tier, setTier] = useState<Tier>('plus');
   const [term, setTerm] = useState<Term>('12m');
   const [streams, setStreams] = useState<StreamCount>(1);
@@ -333,7 +335,8 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
               className="btn sim-cta"
               onClick={() => {
                 const item = itemFor(tier, term, streams);
-                track('begin_checkout', { currency: table.currency, value: item.price, items: [item] });
+                // Orders closed: no « begin_checkout » (it would count checkouts that cannot happen); interest is measured apart.
+                track(ordersOpen ? 'begin_checkout' : 'prelaunch_order_interest', { currency: table.currency, value: item.price, items: [item] });
                 setCheckoutOpen(true);
               }}
               onPointerEnter={() => void loadDialog()}
@@ -352,6 +355,7 @@ export function PlanConfigurator({ locale, table, dict, children }: Configurator
           dict={dict}
           selection={{ tier, term, streams }}
           clientPrice={money(quote.amountMinor)}
+          ordersOpen={ordersOpen}
           onClose={() => {
             setCheckoutOpen(false);
             requestAnimationFrame(() => openerRef.current?.focus());

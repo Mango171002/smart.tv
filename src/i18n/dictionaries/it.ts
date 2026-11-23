@@ -215,7 +215,7 @@ const it: Dictionary = {
         tagline: 'L’esperienza completa',
         features: [
           { icon: 'tv', text: 'Pacchetto **Completo**', accent: true },
-          { icon: 'globe', text: 'La scelta **più ampia**', accent: true },
+          { icon: 'globe', text: 'La **massima** scelta', accent: true },
           { icon: 'quality', text: '**4K Ultra HD e HDR**', accent: true },
           { icon: 'shield', text: 'Nessun tacito rinnovo' },
           { icon: 'guide', text: 'Guida TV (EPG)' },

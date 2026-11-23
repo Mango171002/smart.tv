@@ -297,7 +297,7 @@ const nl: Dictionary = {
   },
   preview: {
     eyebrow: 'Interface',
-    title: 'Eén ervaring op elk scherm.',
+    title: 'Dezelfde ervaring op tv, computer en mobiel.',
     sub: 'Een voorbeeld van de interface op tv, computer en mobiel.',
     labels: ['Smart TV', 'Computer', 'Mobiel'],
     caption: 'Voorbeeld van de interface',
@@ -322,7 +322,7 @@ const nl: Dictionary = {
     globeAlt: 'De aarde bij nacht vanuit de ruimte, met stadslichten over de continenten',
     titleA: 'Klaar om te gaan',
     titleHl: 'kijken?',
-    text: 'Live-tv, films en series op al je schermen, in HD tot 4K waar beschikbaar — vanaf {price}/maand.',
+    text: 'Live-tv, films en series op je tv, mobiel en computer, in HD tot 4K waar beschikbaar — vanaf {price}/maand.',
     text2: 'Eerst gratis proberen, 7 dagen geld-terug-garantie.',
     choose: 'Kies mijn abonnement',
     trial: 'Vraag een gratis proefperiode aan',
@@ -331,7 +331,7 @@ const nl: Dictionary = {
   blog: {
     eyebrow: 'Blog',
     title: 'Handleidingen, tips en nieuws.',
-    sub: 'Installatiehandleidingen voor elk apparaat, streamingtips en nieuws. We schrijven nu de eerste artikelen.',
+    sub: 'Installatiehandleidingen voor populaire apparaten, streamingtips en nieuws. We schrijven nu de eerste artikelen.',
     empty: 'Nog geen artikelen — kijk binnenkort nog eens.',
     back: 'Terug naar de startpagina',
     metaTitle: 'Blog',

@@ -296,7 +296,7 @@ const nb: Dictionary = {
   },
   preview: {
     eyebrow: 'Grensesnitt',
-    title: 'Én opplevelse på alle skjermer.',
+    title: 'Samme opplevelse på TV, datamaskin og mobil.',
     sub: 'En forhåndsvisning av grensesnittet på TV, datamaskin og mobil.',
     labels: ['Smart TV', 'Datamaskin', 'Mobil'],
     caption: 'Forhåndsvisning av grensesnittet',
@@ -321,7 +321,7 @@ const nb: Dictionary = {
     globeAlt: 'Jorden om natten sett fra verdensrommet, med bylys over kontinentene',
     titleA: 'Klar til å',
     titleHl: 'begynne å se?',
-    text: 'Direkte-TV, filmer og serier på alle skjermene dine, i HD og opptil 4K der tilgjengelig — fra {price}/måned.',
+    text: 'Direkte-TV, filmer og serier på TV, mobil og datamaskin, i HD og opptil 4K der tilgjengelig — fra {price}/måned.',
     text2: 'Gratis prøveperiode først, 7 dagers pengene-tilbake-garanti.',
     choose: 'Velg abonnement',
     trial: 'Be om gratis prøveperiode',
@@ -330,7 +330,7 @@ const nb: Dictionary = {
   blog: {
     eyebrow: 'Blogg',
     title: 'Guider, tips og nyheter.',
-    sub: 'Oppsettsguider for alle enheter, strømmetips og nyheter. De første artiklene er under arbeid.',
+    sub: 'Oppsettsguider for vanlige enheter, strømmetips og nyheter. De første artiklene er under arbeid.',
     empty: 'Ingen artikler ennå — kom tilbake snart.',
     back: 'Tilbake til forsiden',
     metaTitle: 'Blogg',

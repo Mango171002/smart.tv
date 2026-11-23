@@ -66,3 +66,23 @@ export function StructuredData({ description, locale = DEFAULT_LOCALE }: { descr
   // JSON-LD is data, not executed; `<` is escaped so the content cannot close the script tag.
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }} />;
 }
+
+/**
+ * FAQPage JSON-LD for a home page (phase 10, GEO): exactly the questions and answers displayed in its FAQ section, in
+ * the page language — no extra claim. Search engines no longer show FAQ rich results for most sites; the markup still
+ * gives answer engines a clean question → answer structure of content that is visible on the page.
+ */
+export function faqJsonLd(items: ReadonlyArray<{ q: string; a: string }>, locale: Locale, pageUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${pageUrl}#faq`,
+    url: pageUrl,
+    inLanguage: localeSeo(locale).htmlLang,
+    mainEntity: items.map((it) => ({ '@type': 'Question', name: it.q, acceptedAnswer: { '@type': 'Answer', text: it.a } })),
+  };
+}
+
+export function FaqStructuredData({ items, locale, pageUrl }: { items: ReadonlyArray<{ q: string; a: string }>; locale: Locale; pageUrl: string }) {
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(items, locale, pageUrl)).replace(/</g, '\\u003c') }} />;
+}

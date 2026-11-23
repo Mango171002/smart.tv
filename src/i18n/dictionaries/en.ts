@@ -278,7 +278,7 @@ const en = {
   },
   preview: {
     eyebrow: 'Interface',
-    title: 'One experience on every screen.',
+    title: 'One experience on TV, computer and mobile.',
     sub: 'A preview of the interface on TV, computer and mobile.',
     labels: ['Smart TV', 'Computer', 'Mobile'],
     caption: 'Interface preview',
@@ -303,7 +303,7 @@ const en = {
     globeAlt: 'Earth at night seen from space, city lights across the continents',
     titleA: 'Ready to start',
     titleHl: 'watching?',
-    text: 'Live TV, movies and series on all your screens, in HD to 4K where available — from {price}/month.',
+    text: 'Live TV, movies and series on your TV, mobile and computer, in HD to 4K where available — from {price}/month.',
     text2: 'Free trial first, 7-day money-back guarantee.',
     choose: 'Choose my plan',
     trial: 'Request a free trial',
@@ -312,7 +312,7 @@ const en = {
   blog: {
     eyebrow: 'Blog',
     title: 'Guides, tips and news.',
-    sub: 'Setup guides for every device, streaming tips and news. The first articles are being written.',
+    sub: 'Setup guides for popular devices, streaming tips and news. The first articles are being written.',
     empty: 'No articles yet — come back soon.',
     back: 'Back to home',
     metaTitle: 'Blog',

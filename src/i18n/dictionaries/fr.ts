@@ -297,7 +297,7 @@ const fr: Dictionary = {
   },
   preview: {
     eyebrow: 'Interface',
-    title: 'La même expérience sur tous les écrans.',
+    title: 'La même expérience sur TV, ordinateur et mobile.',
     sub: 'Un aperçu de l’interface sur TV, ordinateur et mobile.',
     labels: ['Smart TV', 'Ordinateur', 'Mobile'],
     caption: 'Aperçu de l’interface',
@@ -322,7 +322,7 @@ const fr: Dictionary = {
     globeAlt: 'La Terre de nuit vue de l’espace, les lumières des villes sur les continents',
     titleA: 'Prêt à',
     titleHl: 'commencer ?',
-    text: 'TV en direct, films et séries sur tous vos écrans, de la HD à la 4K selon disponibilité — à partir de {price} par mois.',
+    text: 'TV en direct, films et séries sur votre TV, mobile et ordinateur, de la HD à la 4K selon disponibilité — à partir de {price} par mois.',
     text2: 'Essai gratuit d’abord, satisfait ou remboursé 7 jours.',
     choose: 'Choisir ma formule',
     trial: 'Demander un essai gratuit',
@@ -331,7 +331,7 @@ const fr: Dictionary = {
   blog: {
     eyebrow: 'Blog',
     title: 'Guides, conseils et actualités.',
-    sub: 'Guides d’installation pour chaque appareil, conseils streaming et actualités. Les premiers articles sont en cours de rédaction.',
+    sub: 'Guides d’installation pour les appareils les plus courants, conseils streaming et actualités. Les premiers articles sont en cours de rédaction.',
     empty: 'Aucun article pour le moment — revenez bientôt.',
     back: 'Retour à l’accueil',
     metaTitle: 'Blog',

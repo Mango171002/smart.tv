@@ -297,7 +297,7 @@ const sv: Dictionary = {
   },
   preview: {
     eyebrow: 'Gränssnitt',
-    title: 'Samma upplevelse på alla skärmar.',
+    title: 'Samma upplevelse på tv, dator och mobil.',
     sub: 'En förhandsvisning av gränssnittet på tv, dator och mobil.',
     labels: ['Smart TV', 'Dator', 'Mobil'],
     caption: 'Förhandsvisning av gränssnittet',
@@ -322,7 +322,7 @@ const sv: Dictionary = {
     globeAlt: 'Jorden på natten sedd från rymden, med städernas ljus över kontinenterna',
     titleA: 'Redo att börja',
     titleHl: 'titta?',
-    text: 'Live-tv, filmer och serier på alla dina skärmar, i HD och upp till 4K i mån av tillgång – från {price}/månad.',
+    text: 'Live-tv, filmer och serier på tv, mobil och dator, i HD och upp till 4K i mån av tillgång – från {price}/månad.',
     text2: 'Gratis provperiod först, 7 dagars pengarna-tillbaka-garanti.',
     choose: 'Välj mitt paket',
     trial: 'Begär en gratis provperiod',
@@ -331,7 +331,7 @@ const sv: Dictionary = {
   blog: {
     eyebrow: 'Blogg',
     title: 'Guider, tips och nyheter.',
-    sub: 'Installationsguider för alla enheter, streamingtips och nyheter. De första artiklarna håller på att skrivas.',
+    sub: 'Installationsguider för vanliga enheter, streamingtips och nyheter. De första artiklarna håller på att skrivas.',
     empty: 'Inga artiklar än – titta in snart igen.',
     back: 'Tillbaka till startsidan',
     metaTitle: 'Blogg',

@@ -298,7 +298,7 @@ const it: Dictionary = {
   },
   preview: {
     eyebrow: 'Interfaccia',
-    title: 'Un’unica esperienza su ogni schermo.',
+    title: 'La stessa esperienza su TV, computer e smartphone.',
     sub: 'Un’anteprima dell’interfaccia su TV, computer e smartphone.',
     labels: ['Smart TV', 'Computer', 'Smartphone'],
     caption: 'Anteprima dell’interfaccia',
@@ -323,7 +323,7 @@ const it: Dictionary = {
     globeAlt: 'La Terra di notte vista dallo spazio, con le luci delle città sui continenti',
     titleA: 'Pronto a',
     titleHl: 'iniziare?',
-    text: 'TV in diretta, film e serie su tutti i tuoi schermi, dall’HD al 4K dove disponibile — da {price}/mese.',
+    text: 'TV in diretta, film e serie su TV, smartphone e computer, dall’HD al 4K dove disponibile — da {price}/mese.',
     text2: 'Prima la prova gratuita, poi soddisfatti o rimborsati per 7 giorni.',
     choose: 'Scegli il mio piano',
     trial: 'Richiedi una prova gratuita',
@@ -332,7 +332,7 @@ const it: Dictionary = {
   blog: {
     eyebrow: 'Blog',
     title: 'Guide, consigli e novità.',
-    sub: 'Guide alla configurazione per ogni dispositivo, consigli sullo streaming e novità. I primi articoli sono in preparazione.',
+    sub: 'Guide alla configurazione per i dispositivi più diffusi, consigli sullo streaming e novità. I primi articoli sono in preparazione.',
     empty: 'Ancora nessun articolo. Torna a trovarci presto.',
     back: 'Torna alla home',
     metaTitle: 'Blog',

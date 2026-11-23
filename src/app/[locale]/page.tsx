@@ -5,7 +5,8 @@ import { getPriceTable } from '@/lib/price-source';
 import { computeQuote } from '@/lib/pricing';
 import { displayMoney } from '@/lib/money-display';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
-import { StructuredData } from '@/components/StructuredData';
+import { FaqStructuredData, StructuredData } from '@/components/StructuredData';
+import { absoluteUrl } from '@/lib/routes';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await resolveLocale(params);
@@ -22,6 +23,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <>
       <StructuredData description={dict.meta.homeDescription} locale={locale} />
+      {/* Same questions and answers as the visible FAQ section below (<Faq>, all items). */}
+      <FaqStructuredData items={dict.faq.items} locale={locale} pageUrl={absoluteUrl(locale)} />
       <Hero locale={locale} dict={dict} />
       <ContentCategories locale={locale} dict={dict} showHeading={false} />
       {/* Below-the-fold islands hydrate only when they come near the viewport. */}

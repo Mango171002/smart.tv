@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CheckCircle2, Mail, MessageSquareText, Phone, ShieldCheck, UserRound, Zap, X } from 'lucide-react';
 import { Brand } from './Brand';
@@ -20,6 +20,14 @@ const EU = new Set(['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 
 import { toE164 } from '@/lib/phone';
 import { track } from '@/lib/analytics';
 export { toE164 };
+
+/** Keyboard-reachable controls of the window, in order: no tabindex="-1" (anti-spam field) and nothing hidden. */
+function tabbables(root: HTMLElement | null | undefined): HTMLElement[] {
+  if (!root) return [];
+  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+    (el) => el.tabIndex >= 0 && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden',
+  );
+}
 
 function guessCountry(): string {
   if (typeof navigator === 'undefined') return 'US';
@@ -52,8 +60,10 @@ export function RequestDialog({
   const dial = useMemo(() => countries.find((c) => c.code === country)?.dial ?? '1', [country]);
 
   useEffect(() => {
-    // First visible field (never the hidden anti-spam field).
-    dialogRef.current?.querySelector<HTMLElement>('input.input')?.focus();
+    // Focus moves inside on open (WCAG 2.4.3): the first visible field (never the hidden anti-spam field), else — prelaunch
+    // version, no form — the first focusable control (the Close button).
+    const root = dialogRef.current;
+    (root?.querySelector<HTMLElement>('input.input') ?? tabbables(root)[0])?.focus();
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
@@ -77,23 +87,30 @@ export function RequestDialog({
     return () => document.removeEventListener('keydown', onEsc);
   }, [onClose]);
 
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key !== 'Tab' || !dialogRef.current) return;
-      const nodes = Array.from(dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE));
+  // Tab stays inside the window (as in the order window), also when the focus is somewhere outside it (e.g. on <body>).
+  useEffect(() => {
+    const onTab = (e: KeyboardEvent) => {
+      const root = dialogRef.current;
+      if (e.key !== 'Tab' || e.defaultPrevented || !root) return;
+      const nodes = tabbables(root);
       const first = nodes[0];
       const last = nodes[nodes.length - 1];
       if (!first || !last) return;
-      if (e.shiftKey && document.activeElement === first) {
+      const active = document.activeElement;
+      if (!root.contains(active)) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      } else if (e.shiftKey && active === first) {
         e.preventDefault();
         last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
+      } else if (!e.shiftKey && active === last) {
         e.preventDefault();
         first.focus();
       }
-    },
-    [onClose],
-  );
+    };
+    document.addEventListener('keydown', onTab);
+    return () => document.removeEventListener('keydown', onTab);
+  }, []);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -150,7 +167,7 @@ export function RequestDialog({
 
   return createPortal(
     <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={dialogRef} className="modal request-modal modal-neon" role="dialog" aria-modal="true" aria-labelledby="request-title" onKeyDown={onKeyDown} data-testid="request-dialog" data-clarity-mask="true">
+      <div ref={dialogRef} className="modal request-modal modal-neon" role="dialog" aria-modal="true" aria-labelledby="request-title" data-testid="request-dialog" data-clarity-mask="true">
         <div className="modalhead neon-head">
           <Brand className="modal-logo" />
           <button type="button" className="close" aria-label={dict.common.close} onClick={onClose}>

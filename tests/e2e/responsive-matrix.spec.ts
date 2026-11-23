@@ -73,25 +73,10 @@ async function reachable(page: Page, selector: string) {
  * matrix as test.fixme until fixed; remove the entry once the layout is corrected. The site font is Inter when the
  * device has it, otherwise the system font; the E2E runs use the fallback font (FONTCONFIG without Inter), which is
  * wider, so « fallback font » defects show where a longer rendering of the same text breaks the layout.
+ * Phase 12 (UI fixes) corrected all four entries found at 0df474f: sv hero title (hyphenation + shrinkable hero
+ * column), de / nl open-menu buttons (U-007), de categories (shrinkable grid columns), nl hero feature bar (wraps).
  */
-const KNOWN_DEFECTS: Record<string, string> = {
-  // Swedish hero: the one-word title « Premiumstreaming. » cannot wrap, so the hero grid column grows to its width and
-  // the title, lead text and both buttons are cut at the right edge (h1 16→371 px with Inter, 16→425 px with the
-  // fallback font). No hyphenation / overflow-wrap on .hero-title.
-  'sv@320': 'sv hero title wider than the phone (also with Inter)',
-  'sv@375': 'sv hero title wider than the phone (fallback font)',
-  'sv@390': 'sv hero title wider than the phone (fallback font)',
-  'sv@412': 'sv hero title wider than the phone (fallback font)',
-  // German menu at 320 px: the two header buttons « Kostenlos testen » + « Jetzt starten » do not wrap; the row is
-  // centred and sticks out on both sides (-3→323 px with Inter, -19→339 px with the fallback font), so both buttons
-  // are cut. With the fallback font the categories grid is also cut (« Filme & Serien », « Dokumentationen » 134→330 px).
-  'de@320': 'de header buttons outside the open menu (also with Inter); categories cut (fallback font)',
-  // Dutch menu at 320 px with the fallback font: « Gratis proberen » + « Aan de slag » row -11→331 px.
-  'nl@320': 'nl header buttons outside the open menu (fallback font)',
-  // Dutch hero bar at 1024 px with the fallback font: the « hero-checks » bar is one non-wrapping row 102→1118 px, the
-  // last item (« 24/7 klantenservice ») is cut by the page edge.
-  'nl@1024': 'nl hero checks bar wider than the viewport (fallback font)',
-};
+const KNOWN_DEFECTS: Record<string, string> = {};
 
 test.describe('responsive matrix (home)', () => {
   test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly (desktop project)'));

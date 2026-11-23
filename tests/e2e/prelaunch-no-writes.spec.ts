@@ -181,13 +181,8 @@ for (const lang of LANGS) {
       await expect(support).toBeHidden();
     });
 
-    // DEFECT (found by Agent Q, commit 0df474f): in prelaunch the free-trial and support windows never move the
-    // keyboard focus inside. src/components/RequestDialog.tsx focuses only the first `input.input` on mount, and the
-    // prelaunch window has no input, so focus stays on the opener (« Free trial » / support button) behind the
-    // aria-modal window; Tab then walks through the page behind it (the window's Tab trap only acts once focus is
-    // inside). The order window (CheckoutDialog, first focusable element) is not affected. WCAG 2.4.3 / modal dialog
-    // pattern. Remove test.fixme once fixed.
-    test.fixme('free-trial and support windows by keyboard: focus moves into the window and stays there', async ({ page }) => {
+    // Was a test.fixme at 0df474f (U-001: RequestDialog focused only `input.input`); fixed in phase 12.
+    test('free-trial and support windows by keyboard: focus moves into the window and stays there', async ({ page }) => {
       await openHome(page, lang);
       const trial = await openTrialByKeyboard(page);
       expectFocusInside(await tabThrough(page, trial), `${lang} free trial`);

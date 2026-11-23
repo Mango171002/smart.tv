@@ -97,6 +97,8 @@ test.describe('order summary — review step and mobile', () => {
 
   test('phones: the summary fits the window in every built language (320 px)', async ({ page, isMobile }) => {
     test.skip(isMobile, 'explicit viewport sizes');
+    // 8 languages × 2 widths = 16 page loads: the default 30 s budget is too short on a loaded machine (assertions unchanged).
+    test.setTimeout(90_000);
     for (const lang of LANGS) {
       for (const width of [320, 375]) {
         await page.setViewportSize({ width, height: 800 });

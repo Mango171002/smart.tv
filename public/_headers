@@ -10,3 +10,11 @@
 # so a new deployment always uses new URLs. Safe to cache for one year (Cloudflare default is max-age=0).
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
+# Security headers for every static file served by Cloudflare Workers Assets (images, videos, /brand, /_next/static,
+# favicon…). Those responses never reach the Worker, so the headers of next.config.ts do not apply to them; pages and
+# API responses (served by the Worker) are not affected by this file. Same values as next.config.ts.
+/*
+  X-Content-Type-Options: nosniff
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY

@@ -30,13 +30,15 @@ const SETS: Record<Locale, InfoContentSet> = {
 /** A language's content as written (the open state). Pages use infoFor(), which knows whether requests are open. */
 export const getInfo = (locale: Locale): InfoContentSet => SETS[locale];
 
-/** A page with its prelaunch variants applied (description, intro, and the sections listed in `prelaunch.sections`). */
+/** A page with its prelaunch variants applied (title, description, summary, intro, and the sections listed in `prelaunch.sections`). */
 function prelaunchPage(page: InfoPage): InfoPage {
   const o = page.prelaunch;
   if (!o) return page;
   return {
     ...page,
+    metaTitle: o.metaTitle ?? page.metaTitle,
     description: o.description ?? page.description,
+    summary: o.summary ?? page.summary,
     intro: o.intro ?? page.intro,
     sections: page.sections.map((s) => (o.sections?.[s.id] ? { ...s, ...o.sections[s.id] } : s)),
   };
@@ -45,12 +47,25 @@ function prelaunchPage(page: InfoPage): InfoPage {
 /**
  * The content of the About and Help center pages for the current state of online requests (pass
  * isContactFormEnabled()). Open: exactly the written content. Closed (prelaunch): each page's `prelaunch` variants,
- * and the free-trial button reads « Free trials opening soon » (it opens the prelaunch trial window).
+ * the free-trial button reads « Free trials opening soon » (it opens the prelaunch trial window), and WhatsApp and the
+ * phone are not offered as a way to reach us (`ui.prelaunch`: topic contact text, Help center availability line; the
+ * contact box shows the e-mail only, see InfoContent `phone`). Company facts and the legal pages keep every contact detail.
  */
 export function infoFor(locale: Locale, ordersOpen: boolean): InfoContentSet {
   const set = SETS[locale];
   if (ordersOpen) return set;
   const trial = prelaunchTrialLabel(getDictionary(locale).prelaunch);
-  return { ...set, about: prelaunchPage(set.about), topics: set.topics.map(prelaunchPage), ui: { ...set.ui, actions: { ...set.ui.actions, trial } } };
+  const { topicContact, availability } = set.ui.prelaunch;
+  return {
+    ...set,
+    about: prelaunchPage(set.about),
+    topics: set.topics.map(prelaunchPage),
+    ui: {
+      ...set.ui,
+      topicContact,
+      helpFacts: set.ui.helpFacts.map((f, i) => (i === 0 ? { ...f, small: availability } : f)),
+      actions: { ...set.ui.actions, trial },
+    },
+  };
 }
 export const helpTopicFor = (locale: Locale, slug: string, ordersOpen: boolean) => infoFor(locale, ordersOpen).topics.find((t) => t.slug === slug);

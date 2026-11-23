@@ -85,7 +85,7 @@ function Sections({ sections, lang }: { sections: InfoSection[]; lang: string })
 
 /** Content-page body: same charter as the legal pages (numbered sections, icons, contact box), optional table of contents. */
 export function InfoContent({
-  sections, reviewed, related = [], contactIntro, toc = false, labels = INFO_UI.content, lang = 'en', children,
+  sections, reviewed, related = [], contactIntro, toc = false, labels = INFO_UI.content, lang = 'en', phone: showPhone = true, children,
 }: {
   sections: InfoSection[];
   reviewed: string;
@@ -97,11 +97,16 @@ export function InfoContent({
   contactIntro: string;
   /** Sticky « On this page » list (desktop), stacked on mobile. */
   toc?: boolean;
+  /**
+   * Show the phone / WhatsApp line in the contact box. Pages pass isContactFormEnabled(): while online requests are
+   * closed (prelaunch) the box shows the e-mail only (the legal notice keeps every contact detail).
+   */
+  phone?: boolean;
   /** Extra block rendered inside the contact box (calls to action). */
   children?: React.ReactNode;
 }) {
   const email = siteConfig.supportEmail;
-  const phone = siteConfig.supportPhone;
+  const phone = showPhone ? siteConfig.supportPhone : null;
   const body = (
     <div className="terms-body">
       <Sections sections={sections} lang={lang} />

@@ -160,7 +160,9 @@ for (const lang of LANGS) {
       await page.goto(`${base}/help/free-trial`);
       await expect(page.locator('#request ol')).toHaveCount(0);
       await page.goto(`${base}/help/contact-support`);
-      await expect(page.locator('#reach li')).toHaveCount(2);
+      // Phase 13 (D8): e-mail only while requests are closed (no contact form, no WhatsApp / phone).
+      await expect(page.locator('#reach li')).toHaveCount(1);
+      await expect(page.locator('#reach')).toContainText(EMAIL);
       await expect(page.locator('meta[name="description"]')).not.toHaveAttribute('content', /form|formul|Formular|modulo|skjema/i);
     });
   });

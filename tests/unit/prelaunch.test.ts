@@ -94,7 +94,8 @@ describe('prelaunch texts and FAQ', () => {
       // wording of the open text they replace (« How it works » note, closing banner / simulator point).
       const { howNote, trialGuarantee } = d.prelaunch.home;
       const own = flat(d.prelaunch).filter(([k]) => k !== 'home.howNote' && k !== 'home.trialGuarantee').map(([, v]) => v);
-      expect(own.join(' ')).not.toMatch(/\$|USD|\d{1,2}[./]\d{1,2}|guarant|garant|rembours|reembolso|rimborsat|geld-terug|pengarna|pengene/i);
+      // « 24/7 » (the automated assistant, comparison-table support line) is not a date.
+      expect(own.join(' ').replace(/24\/7/g, '')).not.toMatch(/\$|USD|\d{1,2}[./]\d{1,2}|guarant|garant|rembours|reembolso|rimborsat|geld-terug|pengarna|pengene/i);
       expect(d.how.note.toLowerCase()).toContain(howNote.split(' · ')[1]!.toLowerCase());
       expect(d.cta.text2.toLowerCase()).toContain(trialGuarantee.split(/(?<=\.) /)[1]!.toLowerCase());
       expect(`${howNote} ${trialGuarantee}`).not.toMatch(/\$|USD|\d{1,2}[./]\d{1,2}/);

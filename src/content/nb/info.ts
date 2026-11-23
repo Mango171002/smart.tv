@@ -41,19 +41,29 @@ const CONFIRMATION_EMAIL = 'Når vi har mottatt og bekreftet betalingen din, få
 const LANGS = `${F.languages.slice(0, -1).map((l) => l.toLowerCase()).join(', ')} eller ${F.languages[F.languages.length - 1]!.toLowerCase()}`;
 
 // ---------------------------------------------------------------- Om oss
+const WHO_BRAND = { p: `SYGMA TV+ — «One World. Endless Entertainment.» — er et merke fra ${siteConfig.legalEntity}, et selskap etablert i ${F.established} og registrert i delstaten New Mexico i USA.` };
+/** Useful links of the About page; `contact` describes the Contact support page (e-mail only while requests are closed). */
+const aboutLinks = (contact: string) => ({ links: [
+  { href: '/nb/help', label: 'Hjelpesenter', text: 'Prøveperiode, bestilling, enheter, refusjon' },
+  { href: '/nb/help/contact-support', label: 'Kontakt kundestøtte', text: contact },
+  { href: '/nb#plans', label: 'Abonnementer', text: 'Velg abonnement og se prisen' },
+  { href: '/legal/refunds', label: 'Refusjon og oppsigelse', text: '7 dagers pengene-tilbake-garanti (på engelsk)' },
+  { href: '/legal/terms', label: 'Brukervilkår', text: 'Reglene, forklart enkelt (på engelsk)' },
+  { href: '/legal/imprint', label: 'Juridisk informasjon', text: 'Selskapsopplysninger (på engelsk)' },
+] });
 const ABOUT: InfoPage = {
   slug: 'about',
   name: 'Om oss',
   title: 'Om SYGMA TV+',
   metaTitle: 'Om oss: selskap, kundestøtte og forpliktelser',
   description: 'SYGMA TV+ er et merke for digital underholdning fra Sygma TV LLC, etablert i USA i 2026. Les om tjenesten, forpliktelsene våre og kundestøtten.',
-  intro: `SYGMA TV+ er et internasjonalt merke for digital underholdning, etablert i ${F.basedIn} i ${F.established}. Vi tilbyr strømmeabonnementer for TV, mobil og datamaskin, med kundestøtte ${F.supportHours} på seks språk.`,
+  intro: `SYGMA TV+ er et internasjonalt merke for digital underholdning, etablert i ${F.basedIn} i ${F.established}. Vi tilbyr strømmeabonnementer for TV, mobil og datamaskin, med en automatisk assistent som er tilgjengelig ${F.supportHours}, og personlig hjelp ved behov.`,
   icon: 'info',
   sections: [
     {
       id: 'who', icon: 'info', title: 'Hvem vi er',
       body: [
-        { p: `SYGMA TV+ — «One World. Endless Entertainment.» — er et merke fra ${siteConfig.legalEntity}, et selskap etablert i ${F.established} og registrert i delstaten New Mexico i USA.` },
+        WHO_BRAND,
         { p: 'Abonnementene tegnes for hele år (12, 24 eller 36 måneder), med 1 enhet inkludert og opptil 4. Før du kjøper, kan du teste tjenesten på din egen enhet med en gratis prøveperiode.' },
       ],
     },
@@ -110,25 +120,22 @@ const ABOUT: InfoPage = {
     },
     {
       id: 'links', icon: 'info', title: 'Nyttige lenker',
-      body: [
-        { links: [
-          { href: '/nb/help', label: 'Hjelpesenter', text: 'Prøveperiode, bestilling, enheter, refusjon' },
-          { href: '/nb/help/contact-support', label: 'Kontakt kundestøtte', text: `E-post eller WhatsApp, ${F.supportHours}` },
-          { href: '/nb#plans', label: 'Abonnementer', text: 'Velg abonnement og se prisen' },
-          { href: '/legal/refunds', label: 'Refusjon og oppsigelse', text: '7 dagers pengene-tilbake-garanti (på engelsk)' },
-          { href: '/legal/terms', label: 'Brukervilkår', text: 'Reglene, forklart enkelt (på engelsk)' },
-          { href: '/legal/imprint', label: 'Juridisk informasjon', text: 'Selskapsopplysninger (på engelsk)' },
-        ] },
-      ],
+      body: [aboutLinks(`E-post eller WhatsApp · automatisk assistent ${F.supportHours}`)],
     },
   ],
   prelaunch: {
     sections: {
+      who: { body: [
+        WHO_BRAND,
+        { p: 'Abonnementene tegnes for hele år (12, 24 eller 36 måneder), med 1 enhet inkludert og opptil 4. Gratis prøveperioder åpner snart: da kan du teste tjenesten på din egen enhet før du kjøper.' },
+      ] },
       how: { body: [
         { p: 'Du bestiller med et kort skjema, og et ekte menneske fra teamet vårt følger opp på WhatsApp. Vi aktiverer abonnementet ditt først, og du betaler ikke før tilgangen din er aktiv.' },
         { steps: ORDER_STEPS },
         { p: `Gratis prøveperioder åpner snart: da kan du teste tjenesten i ${TRIAL} før du kjøper.` },
       ] },
+      // WhatsApp and the phone are not offered as a way to reach us while requests are closed (e-mail only).
+      links: { body: [aboutLinks(`På e-post · automatisk assistent ${F.supportHours}`)] },
     },
   },
 };
@@ -158,7 +165,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Slik fungerer SYGMA TV+, fra du velger abonnement til du er i gang: gratis prøveperiode, bestillingsskjema, kontakt og aktivering på WhatsApp, så betaling.',
     summary: 'Fra valg av abonnement til første avspilling.',
     intro: 'Du kommer i gang med noen få steg. Du kan begynne med en gratis prøveperiode eller bestille direkte.',
-    prelaunch: { intro: 'Bestilling på nett og gratis prøveperioder åpner snart. Slik vil det fungere å komme i gang.' },
+    prelaunch: { description: 'Slik kommer SYGMA TV+ til å fungere når bestilling og prøveperioder åpner: velg abonnement, bestillingsskjema, kontakt og aktivering på WhatsApp, betaling.', intro: 'Bestilling på nett og gratis prøveperioder åpner snart. Slik vil det fungere å komme i gang.' },
     sections: [
       { id: 'steps', icon: 'rocket', title: 'Stegene', body: [{ steps: [
         { title: 'Velg abonnement', text: 'Under «Abonnementer» velger du abonnement, varighet (12, 24 eller 36 måneder) og antall enheter.' },
@@ -183,6 +190,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'SYGMA TV+ brukes på smart-TV-er, strømmebokser og -pinner, mobiler, nettbrett og datamaskiner. Hvor mange enheter du kan bruke, og hvordan du sjekker din.',
     summary: 'TV, strømmeenheter, mobil og datamaskin.',
     intro: 'SYGMA TV+ brukes på TV-er, strømmeenheter, mobiler og datamaskiner. Med den gratis prøveperioden kan du sjekke din egen enhet og tilkobling før du kjøper.',
+    prelaunch: {
+      intro: 'SYGMA TV+ brukes på TV-er, strømmeenheter, mobiler og datamaskiner. Gratis prøveperioder åpner snart: da kan du sjekke din egen enhet og tilkobling før du kjøper.',
+      sections: { check: { body: [{ p: `Gratis prøveperioder åpner snart: da kan du teste tjenesten i ${TRIAL} på din egen enhet og tilkobling før du kjøper.` }] } },
+    },
     sections: [
       { id: 'categories', icon: 'devices', title: 'Hvilke enheter?', body: [{ list: [
         'Smart-TV-er.',
@@ -202,7 +213,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Test SYGMA TV+ gratis i ${TRIAL} på din egen enhet før du kjøper. Slik ber du om prøveperioden og hva som skjer etterpå — ingenting å betale eller si opp.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)}, gratis, ingenting å si opp.`,
     intro: `Med den gratis prøveperioden kan du teste SYGMA TV+ i ${TRIAL} på din egen enhet og tilkobling før du bestemmer deg.`,
-    prelaunch: { sections: { request: { body: [{ p: 'Forespørsler om gratis prøveperiode åpner snart. Inntil da kan en prøveperiode ikke ordnes på e-post eller via andre kanaler.' }] } } },
+    prelaunch: { description: `Gratis prøveperioder åpner snart: da kan du teste SYGMA TV+ i ${TRIAL} på din egen enhet før du kjøper. Slik kommer prøveperioden til å fungere.`, sections: { request: { body: [{ p: 'Forespørsler om gratis prøveperiode åpner snart. Inntil da kan en prøveperiode ikke ordnes på e-post eller via andre kanaler.' }] } } },
     sections: [
       { id: 'request', icon: 'rocket', title: 'Hvordan ber jeg om den?', body: [{ steps: [
         { title: 'Åpne skjemaet', text: 'Velg «Prøv gratis» øverst på en hvilken som helst side.' },
@@ -225,7 +236,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Slik bestiller du SYGMA TV+: send skjemaet, teamet vårt kontakter deg på WhatsApp og aktiverer tilgangen, så betaler du. Betalingsmåtene forklart.',
     summary: 'Bestillingsskjema, aktivering, så betaling.',
     intro: 'Du bestiller med et kort skjema. Teamet vårt kontakter deg på WhatsApp og aktiverer tilgangen din, og du betaler etter aktiveringen. Du blir ikke belastet på dette nettstedet.',
-    prelaunch: { sections: { order: { title: 'Slik vil bestillingen fungere', body: [
+    prelaunch: { description: 'Bestilling på nett åpner snart. Slik kommer bestillingen til å fungere: bestillingsskjema, kontakt og aktivering på WhatsApp, deretter betaling.', sections: { order: { title: 'Slik vil bestillingen fungere', body: [
       { p: 'Bestilling på nett åpner snart. Du kan allerede nå sammenligne abonnementer, varigheter og priser under «Abonnementer».' },
       { steps: ORDER_STEPS },
     ] } } },
@@ -261,19 +272,23 @@ const HELP_TOPICS: InfoPage[] = [
       { id: 'store', icon: 'tv', title: 'Jeg finner ikke appen i appbutikken', body: [{ p: 'Utvalget i appbutikkene avhenger av enhetsmodell og land. Send oss merke, modell og årsmodell for enheten din, så forteller vi deg hva som fungerer på den.' }] },
       { id: 'crash', icon: 'pause', title: 'Appen lukker seg av seg selv', body: [{ p: 'Start enheten på nytt, installer tilgjengelige system- og appoppdateringer, og prøv igjen.' }] },
       { id: 'mobile', icon: 'devices', title: 'Avspillingen stopper på mobildata', body: [{ p: 'Kvaliteten avhenger av mobilnettet og mobilabonnementet ditt. Bytt til Wi-Fi hvis du kan.' }] },
-      { id: 'still', icon: 'mail', title: 'Fungerer det fortsatt ikke?', body: [{ p: `Kontakt oss ${F.supportHours} med enhetsmodellen din og et bilde av eventuelle feilmeldinger: vi svarer vanligvis på ${F.usualReply}.` }] },
+      { id: 'still', icon: 'mail', title: 'Fungerer det fortsatt ikke?', body: [{ p: `Kontakt oss med enhetsmodellen din og et bilde av eventuelle feilmeldinger. Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov; vi svarer vanligvis på ${F.usualReply}.` }] },
     ],
   },
   {
     slug: 'contact-support', name: 'Kontakt kundestøtte', icon: 'mail',
     title: 'Kontakt kundestøtteteamet vårt',
-    metaTitle: 'Kundestøtte: e-post og WhatsApp, 24/7',
-    description: `Kontakt kundestøtten til SYGMA TV+ ${F.supportHours} på e-post, WhatsApp eller via kontaktskjemaet, på seks språk. Dette bør du ta med for å få raskere svar.`,
-    summary: `${F.supportHours}, e-post eller WhatsApp, seks språk.`,
+    metaTitle: 'Kundestøtte: e-post og WhatsApp',
+    description: `Kontakt kundestøtten til SYGMA TV+ på e-post, WhatsApp eller via kontaktskjemaet. Automatisk assistent ${F.supportHours}, personlig hjelp ved behov.`,
+    summary: `E-post eller WhatsApp, automatisk assistent ${F.supportHours}.`,
     intro: `Kontakt oss på e-post eller WhatsApp. Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
+    // While online requests are closed, the contact form, WhatsApp and the phone are not offered as a way to reach us: e-mail only.
     prelaunch: {
-      description: `Kontakt kundestøtten til SYGMA TV+ ${F.supportHours} på e-post eller WhatsApp, på seks språk. Dette bør du ta med for å få raskere svar.`,
-      sections: { reach: { body: [{ list: [`E-post: ${EMAIL}.`, `WhatsApp eller telefon: ${PHONE}.`] }] } },
+      metaTitle: 'Kontakt kundestøtte på e-post',
+      description: `Kontakt kundestøtten til SYGMA TV+ på e-post med generelle spørsmål. Automatisk assistent ${F.supportHours}, personlig hjelp ved behov. Dette bør du ta med.`,
+      summary: `På e-post, automatisk assistent ${F.supportHours}.`,
+      intro: `Kontakt oss på e-post. Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
+      sections: { reach: { body: [{ list: [`E-post: ${EMAIL}.`] }] } },
     },
     sections: [
       { id: 'reach', icon: 'mail', title: 'Slik når du oss', body: [{ list: [
@@ -299,6 +314,8 @@ const HELP_TOPICS: InfoPage[] = [
     title: 'Refusjon og oppsigelse',
     metaTitle: 'Refusjon: pengene tilbake i 7 dager og angrerett',
     description: 'Refusjon hos SYGMA TV+: prøv gratis først, 100 % refusjon innen 7 dager etter aktivering, 14 dagers angrerett i EU og Storbritannia, og slik ber du om det.',
+    // While free trials are closed, only the « free trial first » fragment changes (refund and withdrawal wording unchanged).
+    prelaunch: { description: 'Refusjon hos SYGMA TV+: gratis test snart, 100 % refusjon innen 7 dager etter aktivering, 14 dagers angrerett i EU og Storbritannia, og slik ber du om det.' },
     summary: '7 dagers pengene-tilbake-garanti, slik ber du om det.',
     intro: 'Prøv først, og få full refusjon hvis du ikke er fornøyd innen 7 dager etter aktivering. De fullstendige retningslinjene finner du på refusjonssiden vår (på engelsk).',
     sections: [
@@ -319,16 +336,16 @@ const INFO_UI: InfoUi = {
   topics: 'Hjelpeemner',
   glance: 'Kundestøtte i korte trekk',
   helpFacts: [
-    { k: 'Tilgjengelighet', v: F.supportHours, small: 'E-post og WhatsApp' },
+    { k: 'Automatisk assistent', v: F.supportHours, small: 'Personlig hjelp på e-post og WhatsApp' },
     { k: 'Vanlig svartid', v: 'Under en time', small: 'Vanlig tid, ikke en garanti' },
-    { k: 'Språk', v: String(F.languages.length), small: F.languages.join(' · ') },
+    { k: 'Språk', v: String(F.languages.length), small: `${F.languages.join(' · ')}. Personlig hjelp får du på engelsk.` },
     { k: 'Aktivering', v: 'Vanligvis < 1 time', small: 'Før betaling, etter at bestillingen er bekreftet' },
   ],
   aboutFacts: [
     { k: 'Etablert', v: F.established, small: F.basedIn },
     { k: 'Selskap', v: siteConfig.legalEntity ?? '', small: 'New Mexico (USA)' },
-    { k: 'Kundestøtte', v: F.supportHours, small: `Svarer vanligvis på ${F.usualReply}` },
-    { k: 'Språk for kundestøtte', v: String(F.languages.length), small: F.languages.join(' · ') },
+    { k: 'Automatisk assistent', v: F.supportHours, small: 'Personlig hjelp ved behov' },
+    { k: 'Språk for kundestøtte', v: String(F.languages.length), small: `${F.languages.join(' · ')}. Personlig hjelp får du på engelsk.` },
   ],
   aboutContact: `Spørsmål om SYGMA TV+? Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
   hubContact: 'Finner du ikke svaret? Skriv til oss — oppgi enheten din og eventuelt ordrereferansen din.',
@@ -353,6 +370,10 @@ const INFO_UI: InfoUi = {
     lastReviewed: 'Sist gjennomgått: ',
   },
   actions: { trial: 'Be om gratis prøveperiode', support: 'Kontakt kundestøtte', plans: 'Se abonnementene', plansHref: '/nb#plans' },
+  prelaunch: {
+    topicContact: `Trenger du fortsatt hjelp? Kontakt oss på e-post. Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
+    availability: 'Personlig hjelp på e-post',
+  },
 };
 
 export const INFO: InfoContentSet = {

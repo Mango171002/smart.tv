@@ -317,8 +317,10 @@ test.describe('home page (approved mock-up)', () => {
     const carousel = page.getByRole('region', { name: 'Featured genres' });
     await expect(carousel).toHaveAttribute('data-ready', 'true'); // wait for hydration
     await expect(carousel.getByRole('group')).toHaveCount(15);
-    await expect(carousel.getByRole('group', { name: /American football/ })).toContainText('International');
-    await expect(carousel.getByRole('group', { name: /Ice hockey/ })).toContainText('International');
+    // Phase 13 (D6): no « International » label — the tiles say « Where available » (no licensed territory yet).
+    await expect(carousel.getByRole('group', { name: /American football/ })).toContainText('Where available');
+    await expect(carousel.getByRole('group', { name: /Ice hockey/ })).toContainText('Where available');
+    await expect(carousel).not.toContainText('International');
     if (!isMobile) {
       const next = carousel.getByRole('button', { name: 'Next' });
       await expect(next).toBeVisible();

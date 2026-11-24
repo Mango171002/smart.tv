@@ -22,6 +22,7 @@ gone: those rows now show the rewritten text. No file under `src/` was changed.
 | `review-<lang>.csv` (7) | reviewers without Excel | the « Strings » sheet: same columns, same rows, UTF-8 with BOM |
 | `import-review.mjs` | integration lead | reads a returned CSV or XLSX and prints the decisions and proposed changes per key (never writes `src/`) |
 | `verify-workbooks.mjs` | integration lead | checks the workbooks against the current source files (see « Verification ») |
+| `tools/` | integration lead | the generator: `regenerate.sh` and its steps (see « How to regenerate ») |
 
 « Strings » columns: ID · Priority (P1–P6) · Risk · Page / URL · Location · Key · English reference · Current translation ·
 Max length · Flags · AI note or question · **Reviewer decision** (dropdown: Approved / Approved with change / Rejected /
@@ -136,3 +137,29 @@ unique IDs and keys; priority order; reviewer columns and « Sign-off » fields 
 filter, no protected sheet; reconciliation with `docs/i18n/phase13/review-<lang>.md` (pack + added − removed = workbook,
 every removed key now identical to English). Result on 24 November 2026: all checks passed. Re-run it after any change
 to the translation files: a mismatch means the workbook is out of date and must be regenerated before it is sent.
+
+## How to regenerate
+
+When a translation file changes, regenerate before sending (never edit the workbooks by hand):
+
+```bash
+bash docs/i18n/review-workbooks/tools/regenerate.sh
+```
+
+Needs node ≥ 22.6 and python3 with openpyxl. Steps (all paths relative to the repository; intermediate files in
+`docs/i18n/review-workbooks/tools/build/`, ignored by git):
+
+1. `tools/flat.mjs` (with `tools/hooks.mjs`, `tools/register-hooks.mjs`) imports the TS dictionaries and About / Help
+   content of `src/` and writes every rendered string to `build/flat.json`; it does the same for the files of `5c3635f`
+   (the source of the Phase 13 pack, extracted with `git archive`) into `build/pack-flat.json`.
+2. `tools/build.cjs` builds the rows with `tools/gen14.cjs` (the Phase 13 pack generator: scope, priorities, locations,
+   risk, legal flags, layout limits; AI notes from `tools/notes.cjs` and the Phase 11 register from `tools/register.cjs`).
+   Rows whose text differs from `pack-flat.json` get the « new / rewritten / safe fix applied » note instead of the old
+   one. Output: `build/rows/<lang>.json`, `build/summary.json` (the counts of the table above), `build/langinfo.json`.
+3. `tools/make_workbooks.py` writes `review-<lang>.xlsx` and `review-<lang>.csv` into this folder. The « Source » line of
+   the Instructions sheet names the last commit that changed `src/` (set `REVIEW_SOURCE_LABEL` to override it).
+4. `verify-workbooks.mjs` runs the checks of « Verification ».
+
+Then update the counts in this README from `build/summary.json` if they changed. A regenerated workbook starts empty
+again: send it only to reviewers who have not started, or import their returned file first. `docs/i18n/phase13/` is the
+historical pack and is not regenerated.

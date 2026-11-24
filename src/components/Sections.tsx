@@ -201,7 +201,9 @@ export function HowItWorks({ locale, dict }: { locale: Locale; dict: Dictionary 
         </ol>
         <div className="how3-actions">
           <Link className="btn btn-lime how3-cta" href={localizedPath(locale, '#plans')}>
-            {h.cta} <ArrowRight size={18} strokeWidth={2} aria-hidden="true" />
+            <span className="btn-label">
+              {h.cta} <ArrowRight className="btn-icon-end" size={18} strokeWidth={2} aria-hidden="true" />
+            </span>
           </Link>
           <p className="how3-note">{h.note}</p>
         </div>
@@ -387,11 +389,16 @@ export function CtaBanner({ locale, dict, fromMonthly }: { locale: Locale; dict:
           <p className="cta-text">{c.text.replace('{price}', fromMonthly)}</p>
           <p className="cta-text2">{c.text2}</p>
           <div className="cta-actions">
+            {/* .btn-label: the icon sits in the text line, so it stays next to the words when the label wraps. */}
             <Link className="btn cta-outline" href={localizedPath(locale, '#plans')}>
-              <Play size={20} strokeWidth={2} aria-hidden="true" /> {c.choose}
+              <span className="btn-label">
+                <Play size={20} strokeWidth={2} aria-hidden="true" /> {c.choose}
+              </span>
             </Link>
             <RequestButton mode="trial" className="btn btn-lime">
-              <UserPlus size={20} strokeWidth={2} aria-hidden="true" /> {c.trial}
+              <span className="btn-label">
+                <UserPlus size={20} strokeWidth={2} aria-hidden="true" /> {c.trial}
+              </span>
             </RequestButton>
           </div>
           <ul className="cta-trust">

@@ -43,8 +43,11 @@ async function ready(page: Page) {
 
 async function injectLong(page: Page, lang: string) {
   await page.evaluate(([trial, order]) => {
+    // The label's text nodes, wherever they sit in the button (directly, or in its .btn-label span).
     const set = (btn: Element | null, txt: string) => {
-      const nodes = [...(btn?.childNodes ?? [])].filter((n) => n.nodeType === 3 && n.textContent?.trim());
+      const nodes: Node[] = [];
+      if (btn) for (let w = document.createTreeWalker(btn, NodeFilter.SHOW_TEXT), n = w.nextNode(); n; n = w.nextNode()) if (n.textContent?.trim()) nodes.push(n);
+      if (btn && !nodes.length) throw new Error('no label text to replace');
       nodes.forEach((n, i) => (n.textContent = i === nodes.length - 1 ? ` ${txt}` : ''));
     };
     set(document.querySelector('.cta-actions .btn-lime'), trial!);
@@ -150,6 +153,143 @@ test.describe('help and about headings wrap (U-005)', () => {
           return Math.max(0, ...[...r.getClientRects()].map((x) => x.right - card.right));
         }));
         expect(over.every((o) => o <= 0), `${lang}${p}: ${over}`).toBe(true);
+      }
+    });
+  }
+});
+
+/**
+ * Phase 13 regression sweep (A-001, A-002, A-005), checked against the CI fallback fonts:
+ * - a button label that wraps keeps its icon next to the words (the icon is in the text line, not pinned to the edge);
+ * - simulator duration / device labels never break inside a word (no « maan-den », « dispo-sitivos »);
+ * - help / about headings never hyphenate a short word (« com-mitments »): only long compounds may break.
+ */
+/** Per button: number of label lines and the distance from each icon to the nearest text (px). */
+const iconGaps = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].filter((b) => b.getClientRects().length).map((b) => {
+  const lines: DOMRect[] = [];
+  for (let w = document.createTreeWalker(b, NodeFilter.SHOW_TEXT), n = w.nextNode(); n; n = w.nextNode()) {
+    if (!n.textContent?.trim()) continue;
+    const r = document.createRange();
+    r.selectNodeContents(n);
+    lines.push(...[...r.getClientRects()].filter((x) => x.width > 0.5));
+  }
+  const rows = new Set(lines.map((x) => Math.round(x.top / 4))).size;
+  const gaps = [...b.querySelectorAll('svg')].map((svg) => {
+    const i = svg.getBoundingClientRect();
+    const cy = i.top + i.height / 2;
+    // Nearest text box on the icon's own line (or any line if none is level with it).
+    const level = lines.filter((x) => cy >= x.top - 2 && cy <= x.bottom + 2);
+    const pool = level.length ? level : lines;
+    return Math.round(Math.min(...pool.map((x) => (i.right <= x.left + 1 ? x.left - i.right : x.right <= i.left + 1 ? i.left - x.right : 0))));
+  });
+  return { text: b.innerText.trim().slice(0, 40), rows, gaps, levelled: gaps.length > 0 };
+});
+
+/** Words of the matched elements that the browser split over two lines (hyphenation or overflow-wrap). */
+const splitWords = (sel: string, minLen: number) => {
+  const out: string[] = [];
+  for (const e of document.querySelectorAll(sel)) {
+    if (!e.getClientRects().length) continue;
+    for (let w = document.createTreeWalker(e, NodeFilter.SHOW_TEXT), n = w.nextNode(); n; n = w.nextNode()) {
+      const re = /[\p{L}\p{N}]+/gu;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(n.textContent ?? ''))) {
+        if (m[0].length < 3 || m[0].length >= minLen) continue;
+        const r = document.createRange();
+        r.setStart(n, m.index);
+        r.setEnd(n, m.index + m[0].length);
+        if (new Set([...r.getClientRects()].filter((x) => x.width > 0.5).map((x) => Math.round(x.top / 3))).size > 1) out.push(m[0]);
+      }
+    }
+  }
+  return out;
+};
+
+test.describe('wrapped button labels keep their icon next to the words (A-001)', () => {
+  test.describe.configure({ timeout: 120_000 });
+  test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly'));
+  for (const lang of LANGS) {
+    test(`${lang}: closing banner, « How it works » and simulator buttons at 320–414 px, also with « opening soon » labels`, async ({ page }) => {
+      for (const width of [320, 375, 414, 1366]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(home(lang));
+        await ready(page);
+        for (const label of ['current', 'long']) {
+          if (label === 'long') await injectLong(page, lang);
+          const res = await page.evaluate((fn) => (new Function(`return (${fn})`)() as (s: string) => Array<{ text: string; rows: number; gaps: number[] }>)('.cta-actions .btn, .sim-cta, .how3-cta'), iconGaps.toString());
+          expect(res.length, 'buttons found').toBeGreaterThanOrEqual(4);
+          for (const r of res) {
+            expect(r.gaps.length, `${lang}@${width} « ${r.text} » has its icon`).toBe(1);
+            // 8 px design spacing; the flex layout left 20–105 px between the icon and a wrapped label.
+            expect(r.gaps.every((g) => g >= 2 && g <= 12), `${lang}@${width} ${label} « ${r.text} » (${r.rows} lines): icon gap ${r.gaps}`).toBe(true);
+          }
+        }
+      }
+    });
+  }
+});
+
+test.describe('simulator labels never break inside a word (A-002)', () => {
+  test.describe.configure({ timeout: 180_000 });
+  test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly'));
+  for (const lang of LANGS) {
+    test(`${lang}: duration and device labels at 320–1920 px`, async ({ page }) => {
+      for (const width of [320, 330, 340, 360, 375, 414, 768, 900, 1024, 1280, 1440, 1920]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(home(lang));
+        await ready(page);
+        await page.getByTestId('configurator').scrollIntoViewIfNeeded();
+        const split = await page.evaluate((fn) => (new Function(`return (${fn})`)() as (s: string, n: number) => string[])('.simulator [data-term] .choice-text b, .simulator [data-stream] .choice-text b', 99), splitWords.toString());
+        expect(split, `${lang}@${width}: words broken over two lines`).toEqual([]);
+      }
+    });
+  }
+});
+
+test.describe('help and about headings hyphenate long compounds only (A-005)', () => {
+  test.describe.configure({ timeout: 120_000 });
+  test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview');
+  test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly'));
+  for (const lang of LANGS) {
+    test(`${lang}: no word under 14 letters split at 320–414 px`, async ({ page }) => {
+      for (const width of [320, 375, 414]) {
+        await page.setViewportSize({ width, height: 800 });
+        for (const p of ['/about', '/help/free-trial', '/help/troubleshooting']) {
+          await page.goto((lang === 'en' ? '' : `/${lang}`) + p);
+          const split = await page.evaluate((fn) => (new Function(`return (${fn})`)() as (s: string, n: number) => string[])('.terms-section h2, .terms-contact h2', 14), splitWords.toString());
+          expect(split, `${lang}${p}@${width}`).toEqual([]);
+        }
+      }
+    });
+  }
+});
+
+test.describe('footer links break long words at a hyphenation point (A-008)', () => {
+  test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly'));
+  for (const lang of LANGS) {
+    test(`${lang}: no bare mid-word break in the footer at 320–414 px`, async ({ page }) => {
+      for (const width of [320, 375, 414]) {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(home(lang));
+        const bare = await page.evaluate(() => {
+          const out: string[] = [];
+          for (const e of document.querySelectorAll<HTMLElement>('.footer-col a, .footer-link-btn')) {
+            for (let w = document.createTreeWalker(e, NodeFilter.SHOW_TEXT), n = w.nextNode(); n; n = w.nextNode()) {
+              const re = /[\p{L}\p{N}]+/gu;
+              let m: RegExpExecArray | null;
+              while ((m = re.exec(n.textContent ?? ''))) {
+                const r = document.createRange();
+                r.setStart(n, m.index);
+                r.setEnd(n, m.index + m[0].length);
+                const split = new Set([...r.getClientRects()].filter((x) => x.width > 0.5).map((x) => Math.round(x.top / 3))).size > 1;
+                // A word may only be split when it is long and the browser hyphenates it (a visible « - » at the break).
+                if (split && (m[0].length < 14 || getComputedStyle(e).hyphens !== 'auto')) out.push(m[0]);
+              }
+            }
+          }
+          return out;
+        });
+        expect(bare, `${lang}@${width}`).toEqual([]);
       }
     });
   }

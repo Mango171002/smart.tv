@@ -29,11 +29,19 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
     };
     // A tap or click outside the header closes it (same as the language list).
     const onDown = (e: PointerEvent) => !root.current?.contains(e.target as Node) && setOpen(false);
+    // Tabbing out of the open menu closes it: the next control would otherwise sit under the open panel (A-003).
+    const onFocusOut = (e: FocusEvent) => {
+      const next = e.relatedTarget as Node | null;
+      if (next && !root.current?.contains(next)) setOpen(false);
+    };
+    const header = root.current;
     document.addEventListener('keydown', onKey);
     document.addEventListener('pointerdown', onDown);
+    header?.addEventListener('focusout', onFocusOut);
     return () => {
       document.removeEventListener('keydown', onKey);
       document.removeEventListener('pointerdown', onDown);
+      header?.removeEventListener('focusout', onFocusOut);
     };
   }, [open]);
 

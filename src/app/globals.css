@@ -2583,3 +2583,42 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
   .footer-col ul { gap: 0; }
   .footer-col a, .footer-link-btn { display: inline-flex; align-items: center; min-height: 44px; }
 }
+
+/* ==========================================================================
+   Phase 13 regression sweep (SAFE-TECH) — no visual redesign
+   ========================================================================== */
+/* A-001: icon + label in one text line (.btn-label), so a label that wraps keeps its icon next to the words instead of
+   pinned to the button edge. Same 8 px icon spacing as the flex gap (space ≈ .25em + .25em margin). */
+.btn-label { min-width: 0; text-align: center; text-wrap: balance; }
+.btn-label > svg { display: inline-block; vertical-align: middle; margin-block: -4px; position: relative; top: -1px; }
+.btn-label > svg { margin-inline-end: .25em; }
+.btn-label > svg.btn-icon-end { margin-inline: .25em 0; }
+/* A-002: duration / device labels never break inside a word (« maan-den », « dispo-sitivos »): no automatic hyphenation
+   (text-wrap: balance hyphenated words that fit), and in the narrowest simulators a little more room so the longest word
+   (nl « maanden », sv « månader ») fits on its line with the widest fallback font. break-word stays as a last resort. */
+.simulator .choice-term .choice-text b { hyphens: manual; }
+@container (max-width: 300px) {
+  .simulator .choice-term { padding-inline: 4px; }
+  .simulator .choice-term .choice-text b { font-size: 12.5px; }
+}
+/* A-004: <main tabindex="-1"> is only a programmatic focus target (skip link, dialog fallback): no ring around the page. */
+#main:focus { outline: none; }
+/* A-005: help / about section headings hyphenate only long compounds (14+ letters, e.g. « Unternehmensangaben ») that may
+   not fit a phone line; shorter words wrap whole (« Our com-mitments », « wirk-lich » came from hyphens: auto). */
+.terms-section h2, .terms-contact h2 { hyphenate-limit-chars: 14 4 4; }
+/* A-008: a footer link too long for its phone column (de « Nutzungsbedingungen », sv « Företagsinformation »,
+   « Cookieinställningar ») breaks at a hyphenation point instead of anywhere (« Företagsinformati|on »). */
+.footer-col a, .footer-link-btn { hyphens: auto; hyphenate-limit-chars: 14 4 4; }
+/* A-007: touch screens — 44 px hit areas for the remaining small targets, without moving the layout (same technique as
+   U-013): logo link, help contact links, footer links at least 44 px wide, order summary « Change » on tablets too. */
+@media (pointer: coarse) {
+  .brand-link { padding-block: 10px; margin-block: -10px; }
+  .terms-contact li a { padding-block: 10.5px; margin-block: -10.5px; }
+  .footer-col a, .footer-link-btn { min-width: 44px; }
+  .order-summary-change { min-height: 44px; }
+  /* Order form (orders open): a one-line checkbox label (24 px) is the checkbox's target; 44 px tall without moving. */
+  .neon-check { padding-block: 10px; margin-block: -10px; }
+  /* Wide header on touch tablets: short links (« Help », 34 px) get 44 px wide hit areas; the 24 px gap keeps them apart. */
+  #navlinks:not(.open) > a { padding-inline: 6px; margin-inline: -6px; }
+  #navlinks:not(.open) > a[aria-current='page']::after { left: 6px; right: 6px; }
+}

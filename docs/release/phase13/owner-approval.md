@@ -39,7 +39,7 @@ Owner decisions and statements (recorded as stated by the owner) and verified re
 4. **Supplier-confirmed overall catalogue specifications** (owner statement): **35,000+ TV channels; 200,000+ movies
    and series; 4K HDR on compatible content and devices.** These are overall catalogue figures, **not per-plan
    guarantees and not broadcasting rights**. The written supplier confirmation is not in the repository. Presentation
-   proposal in preparation: **see supplier-specs proposal** (`docs/release/final/supplier-specs-proposal.md`, branch
+   proposal ready (commit `5edf71a`): **see supplier-specs proposal** (`docs/release/final/supplier-specs-proposal.md`, branch
    `claude/f14-specs`).
 5. **Proposals prepared in parallel** (referenced, not summarised here): DB language migration
    `docs/release/final/db-locale-migration.md` (B10); data retention `docs/release/final/data-retention.md` (C6);
@@ -66,11 +66,11 @@ Prelaunch = public 8-language prelaunch (activation of `8dbb442`, orders closed)
 | A12 | Monitoring log output (D13-010) | 1 Technical | No | No | Open |
 | A13 | CI / secrets hardening (D13-003/004/005, 012) | 1 Technical | Rec. | Rec. | Open |
 | B1 | Reopening rule (reg. D16) | 1 Technical | No | **Yes** | Open |
-| B10 | DB language migration (`contact_requests.locale`) | 1 Technical | No | **Yes** | Proposal in preparation |
+| B10 | DB language migration (`contact_requests.locale`) | 1 Technical | No | **Yes** | Proposal ready (`1c8c794`), not applied |
 | B11 | Engineering checks before reopening | 1 Technical | No | **Yes** | Open |
 | C7 | Payment and activation providers | 1 Technical | No | **Yes** | Open |
 | D-1…D-6 | Design choices (reg. D13) | 1 Technical | No | No | Open (optional) |
-| A4 | Cookie policy and banner (reg. D9) | 2 Legal | **Yes** (rec.) | **Yes** | Draft + reconciliation in preparation |
+| A4 | Cookie policy and banner (reg. D9) | 2 Legal | **Yes** (rec.) | **Yes** | Reconciliation + exact texts ready, not published |
 | A7 | Prelaunch wording touching legal topics | 2 Legal | Rec. | **Yes** | Open |
 | B3 | Withdrawal right (reg. D3, L-03) | 2 Legal | Rec. (nb page) | **Yes** | Counsel to draft |
 | B4 | Refunds (reg. D4, L-04) | 2 Legal | No | **Yes** | Counsel to draft |
@@ -80,18 +80,18 @@ Prelaunch = public 8-language prelaunch (activation of `8dbb442`, orders closed)
 | B8 | Legal-page languages; 36 sensitive wordings (reg. D10, D11) | 2 Legal | Rec. | **Yes** | Open |
 | B12 | Auto-renewal and guarantee labels (reg. D12) | 2 Legal | No | **Yes** | Open |
 | C5 | Seller identity (L-07) | 2 Legal | Rec. | **Yes** | Open |
-| C6 | Data retention (L-06) | 2 Legal | No | **Yes** | Proposal in preparation |
+| C6 | Data retention (L-06) | 2 Legal | No | **Yes** | Proposal ready (`71a9583`), not applied |
 | C9 | EU/UK representative, processors (L-06) | 2 Legal | No | **Yes** | Open |
 | B2 | Tax line and tax wording (reg. D2, L-02) | 3 Tax | Rec. (via A7) | **Yes** | Open |
 | C2 | Tax registrations and price display (L-02) | 3 Tax | No | **Yes** | Open |
 | C3 | Amount actually received; past conversions (L-09) | 3 Tax | No | **Yes** | Open |
 | C4 | Invoices (L-08) | 3 Tax | No | **Yes** | Open |
 | A2 | Content and device wording, Terms « sports » (reg. D6) | 4 Rights | **Yes** | **Yes** | Implemented in part, awaiting approval |
-| A2b | Supplier-confirmed catalogue figures (reg. D6) | 4 Rights | No | No | Proposal in preparation |
+| A2b | Supplier-confirmed catalogue figures (reg. D6) | 4 Rights | No | No | Proposal ready (`5edf71a`), not merged |
 | B9 | Country gate for orders (L-01) | 4 Rights | No | **Yes** | Open |
 | C1 | Distribution rights per territory (L-01) | 4 Rights | Rec. | **Yes** | Open |
 | C8 | Trademark and platform names (L-13) | 4 Rights | Rec. | **Yes** | Open |
-| A5 | Native-speaker sign-off fr, de, es, it, nl, sv, nb (reg. D15) | 5 Native | **Yes** (each language) | **Yes** (legal-adjacent text) | Workbooks in preparation; 0 of 7 signed |
+| A5 | Native-speaker sign-off fr, de, es, it, nl, sv, nb (reg. D15) | 5 Native | **Yes** (each language) | **Yes** (legal-adjacent text) | Workbooks ready (`docs/i18n/review-workbooks/`); 0 of 7 signed |
 
 **Before activating the 8-language prelaunch (`8dbb442`):** A1 activation approval, A2, A3, A4, A5 (all seven
 languages, because all are released together), A6, A8, A10 — and, recommended, A7, B3 (nb page), B5, B8, C1, C5, C8.
@@ -251,8 +251,16 @@ languages, because all are released together), A6, A8, A10 — and, recommended,
   `check (locale in ('en', 'fr'))`, not widened by a later migration; same pattern in
   `20261108134733_catalog.sql:13` and `20261108134827_customers_orders.sql:17`. The order window sends the page
   locale; inserts from de/es/it/nl/sv/nb pages may be refused once forms reopen. The live constraint was not queried.
-- **Recommended option / alternatives:** see `docs/release/final/db-locale-migration.md`.
-- **Consequences:** see that file.
+- **Recommended option:** apply migration `20261124120000_locales_8_languages.sql` (branch `claude/f14-db`, commit
+  `1c8c794`) **before** forms reopen with the 8 languages released: it widens the three en/fr checks to the 8 site
+  languages (NOT VALID + VALIDATE, idempotent, writes no row). Steps: backup → owner applies via Supabase dashboard/CLI
+  → verify. Tested on an isolated PostgreSQL 16 with synthetic data: all 24 migrations, en/fr rows byte-identical,
+  inserts in 8 languages through the API's insert path, invalid locales rejected (`docs/release/final/db-locale-migration.md`).
+- **Alternatives:** (a) apply it now, while forms are closed (no effect on visitors; earliest safety); (b) keep en/fr
+  and reopen forms in English/French only.
+- **Consequences:** recommended/(a): requests from de/es/it/nl/sv/nb pages are stored once forms reopen; rollback
+  scripts exist (strict, or map new-language rows to `en` — irreversible for those rows). (b): those requests fail
+  with HTTP 502 `storage_failed`.
 - **Blocks public prelaunch?** No (forms closed). **Blocks commercial sales?** Yes (before reopening forms).
 - **Owner answer:** ☐ approve the option recommended in the file ☐ other: ____ · Date ____ Initials ____
 
@@ -309,9 +317,18 @@ Date ____ Initials ____
   Measured (Phase 13): consent gating works (nothing before a choice, nothing after « Decline all »); with Marketing
   consent, Google Ads conversion **and remarketing** run; no Meta/TikTok tag; Cloudflare Web Analytics request for
   every visitor (cookie-less) not mentioned (`d9-cookie-policy-draft.md` §1). Exact texts: wording annex W4.
-- **Recommended option / alternatives:** see `docs/release/final/cookie-analytics-reconciliation.md` (Phase 13 draft:
-  `d9-cookie-policy-draft.md`).
-- **Consequences:** see that file.
+- **Recommended option** (`docs/release/final/cookie-analytics-reconciliation.md`, measured on `7a6577f`): consent
+  gating is correct (nothing before a choice, after « Decline all » or after withdrawal). (1) **Now, no deploy:** switch
+  Google Ads **remarketing off** (GTM: `allow_ad_personalization_signals=false` on AW-18577285546; Google Ads: audience
+  collection off), keep conversion measurement; (2) then publish **policy + banner version A** in one deploy (no
+  re-consent needed: narrower scope); (3) remove Meta and TikTok from the banner (not in the container); disclose
+  Clarity session recording and Cloudflare Web Analytics (cookie-less, every visitor). Exact texts (policy in English,
+  banner in 8 languages, AI drafts) are in the reconciliation file.
+- **Alternatives:** (b) keep remarketing → publish version B and raise `consentVersion` to 3 (everyone asked again);
+  (c) no advertising until orders open → pause the Ads tags in GTM.
+- **Consequences:** (1)–(3): texts match reality; minimal ad loss (no audience lists). (b): full disclosure needed and
+  a new consent prompt for all visitors. (c): no conversion data until orders open. In all options: if counsel says
+  Cloudflare Web Analytics needs consent, switch it off in the Cloudflare dashboard (no deploy).
 - **Blocks public prelaunch?** Yes (recommended: the mismatch is visible to every visitor). **Blocks sales?** Yes.
 - **Owner answer:** ☐ approve the option recommended in the file after privacy counsel's review ☐ other: ____ ·
   GTM tag list attached ☐ · Counsel sign-off ☐ · Date ____ Initials ____
@@ -438,8 +455,20 @@ Date ____ Initials ____
   (`src/content/legal.ts:84`); forms « Data deleted within 12 months » (`en.ts:464`, `:492`); no purge job in
   `supabase/migrations` or `src/`; table comment « Retention policy to be confirmed by counsel »
   (`supabase/migrations/20261108134848_contact_requests.sql:28-29`).
-- **Recommended option / alternatives:** see `docs/release/final/data-retention.md`.
-- **Consequences:** see that file.
+- **Recommended option** (`docs/release/final/data-retention.md`, branch `claude/f14-db`, commit `71a9583`): apply
+  migration `20261124130000_retention_purge.sql` and the route `/api/cron/retention`, dry-run by default
+  (`RETENTION_PURGE_ENABLED` absent everywhere, no cron trigger). A real run **anonymises** contact requests older
+  than 12 months (name, phone, subject, message cleared; e-mail replaced), closes their open lead cards, deletes
+  never-paid draft/cancelled orders; logs counts only; at most 500 rows/table/run; refuses a cutoff under 12 months.
+  Activation: counsel approval → backup → owner applies migration → dry run, review counts → set the flag.
+- **Exceptions needing a decision (the purge only counts these rows):** invoices; converted customers (subscription
+  end not stored); marketing-consent proofs; open support cases and `retention_hold`; payment records and webhook
+  events; `customers` and Auth users; anonymise vs delete (« Data deleted within 12 months »); Telegram cards and
+  Brevo/Cloudflare logs (outside the database; Telegram messages older than 48 h cannot be deleted by a bot);
+  boundary « strictly older than 12 months ».
+- **Alternatives:** (b) delete instead of anonymise; (c) manual yearly export-and-delete procedure.
+- **Consequences:** recommended: policy enforced with statistics kept; deleted/anonymised data cannot be restored.
+  (b): simpler, loses statistics. (c): error-prone, no log.
 - **Blocks public prelaunch?** No (no data is collected while forms are closed). **Blocks commercial sales?** Yes.
 - **Owner answer:** ☐ approve the option recommended in the file after privacy counsel's review ☐ other: ____ ·
   Date ____ Initials ____
@@ -533,9 +562,16 @@ Date ____ Initials ____
 - **Current implementation:** hidden in `7a6577f` (`src/config/catalogue.ts:14-16` all `null`); production `8797d7c`
   shows per-plan figures and « from multiple countries » (Fact 1). The figures are not per-plan guarantees and not
   broadcasting rights (Fact 4). Exact texts: W2.
-- **Recommended option / alternatives:** see supplier-specs proposal (`docs/release/final/supplier-specs-proposal.md`,
-  branch `claude/f14-specs`).
-- **Consequences:** see that file. Keep the written supplier confirmation with the rights documentation (C1).
+- **Recommended option** (`docs/release/final/supplier-specs-proposal.md`, branch `claude/f14-specs`, commit `5edf71a`):
+  one footnote under the « Compare the plans » table, after « 4K/HDR where available. Catalogue may vary by country. »:
+  EN « Supplier catalogue: 35,000+ TV channels and 200,000+ movies & series, in up to 4K HDR on compatible content and
+  devices. What you can watch depends on your country and device. » (8 languages, AI drafts). Not in any plan card,
+  not tied to a plan, not in title/meta/JSON-LD; `src/config/catalogue.ts` stays null; never with « international »
+  or sports/broadcaster names. Tested (739 unit, 802 E2E, no overflow at 320 px, axe).
+- **Alternatives:** (b) closing banner sentence (rejected: globe image and « from {price}/month » would imply the
+  totals for every plan/country); (c) keep hidden until rights are documented.
+- **Consequences:** recommended: figures visible with qualifiers; must be native-reviewed (adds 1 string per
+  language). (c): no figures; production still shows the old per-plan figures until Step A. Keep the written supplier confirmation with the rights documentation (C1).
 - **Blocks public prelaunch?** No (figures hidden in the candidate). **Blocks commercial sales?** No.
 - **Owner answer:** ☐ approve the option recommended in the proposal ☐ keep hidden ☐ other: ____ · Supplier
   confirmation filed ☐ · Date ____ Initials ____
@@ -585,8 +621,17 @@ Date ____ Initials ____
 - **Current implementation:** all 7 translations are AI translations, « pending native review »
   (`docs/i18n/phase13/README.md`); 14 safe fixes applied (`b7772bd`); `src/i18n/locales.ts:66-72` status `preview`.
   No row is native-reviewed.
-- **Recommended option / alternatives:** see `docs/i18n/review-workbooks/`.
-- **Consequences:** see the workbooks. Under A1 as decided, activation waits for the last required sign-off.
+- **Recommended option:** send each reviewer `docs/i18n/review-workbooks/review-<lang>.xlsx` (or the CSV): sheet
+  « Strings » (English reference, current translation, page/location, max length, flags, AI note, reviewer decision,
+  proposed text, comment, name, date) and sheet « Sign-off ». Require **P1–P3 signed before activation** (prelaunch
+  block, FAQ, plans/simulator/summary/buttons/metadata, consent and legal-adjacent labels — the latter also need
+  counsel); P4–P6 within the first weeks after release. Import returned files with `import-review.mjs` (prints the
+  proposed changes per key; nothing is written into `src/` automatically). Rows: fr 715, de 720, es 724, it 719,
+  nl 717, sv 732, nb 731 (P1–P3 ≈ 230–240 rows per language).
+- **Alternatives:** (b) full review (P1–P6) before activation — safest, slowest; (c) release the languages whose P1–P3
+  are signed and hold the others (contradicts A1's simultaneous release).
+- **Consequences:** recommended: release date set by the slowest P1–P3 sign-off; remaining P4–P6 errors possible on
+  help pages for a short time. (b): longer delay. (c): requires changing A1.
 - **Blocks public prelaunch?** Yes, per language (all 7 with the simultaneous release). **Blocks commercial sales?**
   Yes, for legal-adjacent wording in that language (B8).
 - **Owner answer:** ☐ approve the option recommended in the workbooks ☐ other: ____ · Date ____ Initials ____

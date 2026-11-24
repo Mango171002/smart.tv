@@ -14,8 +14,6 @@ import { LOCALES, isLocale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
 import { OG_IMAGE } from '@/lib/seo';
 import { CONSENT_DEFAULT_SCRIPT } from '@/lib/consent-default';
-import { isContactFormEnabled } from '@/lib/features';
-import { prelaunchCopy } from '@/lib/prelaunch-copy';
 
 export const dynamicParams = false;
 
@@ -27,8 +25,7 @@ export const viewport: Viewport = { themeColor: '#070d17', width: 'device-width'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  // Online requests closed (FEATURE_CONTACT_FORM=false): default description in its prelaunch version.
-  const dict = prelaunchCopy(getDictionary(isLocale(locale) ? locale : 'en'), isContactFormEnabled());
+  const dict = getDictionary(isLocale(locale) ? locale : 'en');
   return {
     metadataBase: new URL(siteConfig.siteUrl),
     title: { default: `${siteConfig.brandName} — ${dict.meta.siteTitle}`, template: `%s | ${siteConfig.brandName}` },
@@ -67,8 +64,7 @@ export default async function LocaleLayout({
         <SectionLinkHandler />
         <ConsentBanner dict={dict.consent} />
         <Analytics />
-        {/* Online requests closed (FEATURE_CONTACT_FORM=false): the trial / support windows show the prelaunch message. */}
-        <RequestHost locale={locale} dict={{ request: dict.request, forms: dict.forms, common: dict.common, prelaunch: dict.prelaunch }} ordersOpen={isContactFormEnabled()} />
+        <RequestHost locale={locale} dict={{ request: dict.request, forms: dict.forms, common: dict.common }} />
       </body>
     </html>
   );

@@ -379,40 +379,6 @@ const en = {
     supportUnavailable: 'The contact form is not connected in this environment.',
     supportContact: 'We reply by email to the address you provide.',
   },
-  /**
-   * Prelaunch state (phase 11B): shown instead of the order, free-trial and support forms while online requests are
-   * closed (FEATURE_CONTACT_FORM=false). No form, nothing sent. The e-mail is for general questions only.
-   */
-  prelaunch: {
-    orderTitleA: 'Orders opening',
-    orderTitleHl: 'soon',
-    orderText: 'Online orders are not open yet. Your selection is shown below for reference: nothing is sent and nothing is charged.',
-    trialTitleA: 'Free trials opening',
-    trialTitleHl: 'soon',
-    trialText: 'Free trial requests are not open yet. You will soon be able to try SYGMA TV+ on your own device before you pay.',
-    supportTitleA: 'Contact',
-    supportTitleHl: 'us',
-    supportText: 'Our online forms are not open yet.',
-    contactLead: 'General questions:',
-    contactNote: 'Orders and free trials cannot be arranged by e-mail or any other channel yet.',
-    back: 'Back to the plans',
-    close: 'Close',
-    faqSubscribe: 'Not yet: online orders are opening soon. You can already compare the plans, durations and prices with the plan simulator.',
-    /** FAQ answer « Which devices are supported? » while closed (the open answer invites people to ask for a free trial). */
-    faqDevices: 'Smart TVs, streaming boxes and sticks, smartphones, tablets and computers. Free trials are opening soon: you will be able to check your own device before you pay.',
-    /** Home meta description (≤ 155 characters) and Organization / WebSite description while closed. */
-    metaDescription: 'Live TV, movies and series on Smart TV, mobile and computer. Yearly plans for 1 to 4 devices. Online orders and free 24-hour trials are opening soon.',
-    /** Home copy while closed (src/lib/prelaunch-copy.ts): replaces texts that present ordering or trials as open now. */
-    home: {
-      orderBenefitTitle: 'Orders opening soon',
-      orderBenefitText: 'Compare the plans now',
-      trialBenefitText: 'Opening soon',
-      orderStepText: 'Opening soon',
-      activationStepText: 'Once orders open',
-      howNote: 'Orders and free trials opening soon · 7-day money-back guarantee',
-      trialGuarantee: 'Free trials opening soon. 7-day money-back guarantee.',
-    },
-  },
   request: {
     trialTitle: 'Request a Trial',
     trialHeadA: 'Request your',

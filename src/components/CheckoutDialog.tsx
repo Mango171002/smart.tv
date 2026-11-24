@@ -5,7 +5,6 @@ import { toE164 } from '@/lib/phone';
 import { track } from '@/lib/analytics';
 import { siteConfig } from '@/config/site';
 import { Brand } from './Brand';
-import { PrelaunchNotice } from './PrelaunchNotice';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -38,15 +37,12 @@ export function CheckoutDialog({
   dict,
   selection,
   clientPrice,
-  ordersOpen = true,
   onClose,
 }: {
   locale: Locale;
-  dict: Pick<Dictionary, 'checkout' | 'common' | 'markets' | 'plans' | 'prelaunch'>;
+  dict: Pick<Dictionary, 'checkout' | 'common' | 'markets' | 'plans'>;
   selection: PlanSelection;
   clientPrice: string;
-  /** false while online orders are closed (FEATURE_CONTACT_FORM=false): « Orders opening soon », no form. */
-  ordersOpen?: boolean;
   onClose: () => void;
 }) {
   const c = dict.checkout;
@@ -218,19 +214,9 @@ export function CheckoutDialog({
           </button>
         </div>
         <h2 id="checkout-title" className="neon-title" ref={titleRef} tabIndex={-1}>
-          {!ordersOpen ? <>{dict.prelaunch.orderTitleA} <span>{dict.prelaunch.orderTitleHl}</span></> : step === 3 ? c.doneTitle : <>{c.headA} <span>{c.headHl}</span></>}
+          {step === 3 ? c.doneTitle : <>{c.headA} <span>{c.headHl}</span></>}
         </h2>
-        {/* Online orders closed (prelaunch): the selection for reference, no form, nothing sent. */}
-        {!ordersOpen && (
-          <PrelaunchNotice text={dict.prelaunch.orderText} dict={dict.prelaunch} action={dict.prelaunch.back} onAction={onClose}>
-            <div data-testid="order-summary">
-              <div className="orderline"><span>{c.plan}</span><b data-testid="summary-plan">{planLabel}</b></div>
-              <div className="orderline"><span>{c.subtotal}</span><b data-testid="summary-price">{clientPrice}</b></div>
-            </div>
-          </PrelaunchNotice>
-        )}
-        {ordersOpen && step !== 3 && <p className="neon-sub">{c.headSub}</p>}
-        {ordersOpen && (
+        {step !== 3 && <p className="neon-sub">{c.headSub}</p>}
         <ol className="stepper" aria-label={c.title}>
           {c.steps.map((label, i) => (
             <li key={label} data-on={i < step} aria-current={i === step - 1 ? 'step' : undefined}>
@@ -239,9 +225,8 @@ export function CheckoutDialog({
             </li>
           ))}
         </ol>
-        )}
 
-        {ordersOpen && step === 1 && (
+        {step === 1 && (
           <form
             className="form"
             noValidate
@@ -377,7 +362,7 @@ export function CheckoutDialog({
           </form>
         )}
 
-        {ordersOpen && step === 2 && (
+        {step === 2 && (
           <div>
             <p className="muted">{c.reviewIntro}</p>
             <div className="orderline"><span>{c.region}</span><b data-testid="review-region">{regionLabel}</b></div>
@@ -406,7 +391,7 @@ export function CheckoutDialog({
           </div>
         )}
 
-        {ordersOpen && step === 3 && (
+        {step === 3 && (
           <div className="success">
             <div className="checkmark" aria-hidden="true"><CircleCheck size={56} strokeWidth={1.75} /></div>
             <p className="muted">{fill(c.doneText, { email: email.trim() })}</p>

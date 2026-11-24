@@ -1,9 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import en from '../../src/i18n/dictionaries/en';
-import { ORDERS_OPEN, ORDER_BUTTON } from './released';
-
-const CLOSED = 'online requests closed in this build (prelaunch): covered by prelaunch.spec.ts';
 
 /**
  * Consent, analytics events and technical SEO.
@@ -59,11 +55,10 @@ test.describe('cookie consent', () => {
     await expect(page.getByTestId('consent-banner')).toBeVisible();
     await page.locator('#plans').scrollIntoViewIfNeeded();
     await page.locator('.offers[data-ready]').waitFor();
-    await page.getByRole('button', { name: ORDER_BUTTON }).click();
+    await page.getByRole('button', { name: /^Order now/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     // Clickable = not covered by the banner (Playwright checks what receives the click).
-    // Orders closed (prelaunch): the window's main button is « Back to the plans ».
-    await dialog.getByRole('button', { name: ORDERS_OPEN ? /Continue/ : en.prelaunch.back }).click({ trial: true });
+    await dialog.getByRole('button', { name: /Continue/ }).click({ trial: true });
     await dialog.getByRole('button', { name: 'Close' }).click({ trial: true });
   });
 
@@ -167,7 +162,6 @@ test.describe('analytics events (consent granted)', () => {
   });
 
   test('plan view, plan selection, checkout and lead — without personal data', async ({ page }) => {
-    test.skip(!ORDERS_OPEN, CLOSED);
     await stubThirdParties(page);
     await prepare(page, 'granted');
     await page.route('**/api/contact', (route) => route.fulfill({ status: 201, json: { ok: true } }));
@@ -179,7 +173,7 @@ test.describe('analytics events (consent granted)', () => {
 
     await page.locator('.sim-layout [data-tier="ultra"]').click();
     await page.locator('[data-term="24m"]').click();
-    await page.getByRole('button', { name: ORDER_BUTTON }).click();
+    await page.getByRole('button', { name: /^Order now/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await expect(dialog).toHaveAttribute('data-clarity-mask', 'true');
     await dialog.getByLabel('Email address').fill('viewer@example.test');
@@ -204,21 +198,6 @@ test.describe('analytics events (consent granted)', () => {
     expect(lead.params).toMatchObject({ lead_type: 'order', currency: 'USD', item_id: 'ultra-24m-1' });
     // No personal data in any event.
     expect(JSON.stringify(events)).not.toMatch(/viewer@example\.test|4155550123|\+1415/);
-  });
-
-  test('orders closed: the prelaunch order window counts no checkout and no lead (interest event instead)', async ({ page }) => {
-    test.skip(ORDERS_OPEN, 'build with online requests open');
-    await stubThirdParties(page);
-    await prepare(page, 'granted');
-    await page.goto('/');
-    await page.locator('#plans').scrollIntoViewIfNeeded();
-    await page.locator('.offers[data-ready]').waitFor();
-    await page.getByRole('button', { name: ORDER_BUTTON }).click();
-    await expect(page.getByTestId('checkout-dialog').getByTestId('prelaunch-notice')).toBeVisible();
-    await expect.poll(async () => (await gaEvents(page)).some((e) => e.name === 'prelaunch_order_interest')).toBe(true);
-    const names = (await gaEvents(page)).map((e) => e.name);
-    expect(names).not.toContain('begin_checkout');
-    expect(names).not.toContain('generate_lead');
   });
 
   test('WhatsApp link clicks are tracked', async ({ page, context }) => {
@@ -354,7 +333,6 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
   });
 
   test('Accept all: ad events for view, checkout and lead — unique event_id, no personal data, GA4 unchanged', async ({ page }) => {
-    test.skip(!ORDERS_OPEN, CLOSED);
     await stubThirdParties(page);
     await prepare(page, 'granted');
     await page.route('**/api/contact', (route) => route.fulfill({ status: 201, json: { ok: true } }));
@@ -363,7 +341,7 @@ test.describe('marketing consent (Google Tag Manager, phase 1)', () => {
     await page.locator('.offers[data-ready]').waitFor();
     await page.locator('.tier-grid').scrollIntoViewIfNeeded();
     await page.locator('.sim-layout [data-tier="ultra"]').click();
-    await page.getByRole('button', { name: ORDER_BUTTON }).click();
+    await page.getByRole('button', { name: /^Order now/ }).click();
     const dialog = page.getByTestId('checkout-dialog');
     await dialog.getByLabel('Email address').fill('ads.qa@example.test');
     await dialog.getByLabel('Your country').click();

@@ -5,20 +5,16 @@ import { getPriceTable } from '@/lib/price-source';
 import { computeQuote, formatMoney } from '@/lib/pricing';
 import { buildMetadata, resolveLocale } from '@/lib/seo';
 import { StructuredData } from '@/components/StructuredData';
-import { isContactFormEnabled } from '@/lib/features';
-import { prelaunchCopy } from '@/lib/prelaunch-copy';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await resolveLocale(params);
-  const d = prelaunchCopy(getDictionary(locale), isContactFormEnabled()).meta;
+  const d = getDictionary(locale).meta;
   return buildMetadata({ locale, path: '', title: d.homeTitle, description: d.homeDescription, absoluteTitle: true });
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = await resolveLocale(params);
-  // Online orders closed (FEATURE_CONTACT_FORM=false): prelaunch home copy, FAQ answers and order window.
-  const ordersOpen = isContactFormEnabled();
-  const dict = prelaunchCopy(getDictionary(locale), ordersOpen);
+  const dict = getDictionary(locale);
   const { table } = await getPriceTable();
   const starter = computeQuote(table, { tier: 'starter', term: '12m', streams: 1 });
   const fromMonthly = formatMoney(starter.monthlyEquivalentMinor ?? starter.amountMinor, table.currency, locale);
@@ -42,8 +38,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <PlansIsland
             locale={locale}
             table={table}
-            dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout, prelaunch: dict.prelaunch }}
-            ordersOpen={ordersOpen}
+            dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout }}
           >
             <PlanExtras dict={dict} />
           </PlansIsland>

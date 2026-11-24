@@ -108,6 +108,9 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=()' },
           { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
+          // D13-012: isolates the window from cross-origin openers; popups the site opens (WhatsApp, social links)
+          // keep working. Note: a page opened BY another site (e.g. GTM Tag Assistant preview) loses window.opener.
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' },
         ],
       },
       { source: '/api/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }, { key: 'X-Robots-Tag', value: 'noindex' }] },

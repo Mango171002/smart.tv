@@ -4,7 +4,9 @@ import { checkSameOrigin, clientIp, jsonError, readJson } from '@/lib/http';
 import { isContactFormEnabled } from '@/lib/features';
 import { createRateLimiter } from '@/lib/rate-limit';
 import { getPublicSupabase } from '@/lib/supabase/server';
-import { contactSchema, DEVICE_DETAILS } from '@/lib/validation';
+import { contactSchema, DEVICE_DETAILS, isOrderTerritoryAllowed } from '@/lib/validation';
+import { getPriceTable } from '@/lib/price-source';
+import { computeQuote } from '@/lib/pricing';
 import { notifyNewRequest } from '@/lib/telegram/ops';
 import { sendCustomerEmail } from '@/lib/email/send';
 
@@ -34,6 +36,11 @@ export async function POST(req: Request) {
   const input = parsed.data;
   // Honeypot filled: pretend success, store nothing.
   if (input.website) return NextResponse.json({ ok: true });
+  // B9 territory gate (after the FEATURE_CONTACT_FORM gate): orders and free trials only from licensed territories —
+  // the form's country and Cloudflare's visitor country must both be licensed. Empty list = every order / trial refused.
+  if (input.kind !== 'support' && !isOrderTerritoryAllowed(siteConfig.licensedTerritories, input.country, req.headers.get('cf-ipcountry'))) {
+    return jsonError(403, 'territory_not_licensed');
+  }
 
   const supabase = getPublicSupabase();
   if (!supabase) return jsonError(503, 'contact_unavailable');
@@ -77,9 +84,20 @@ export async function POST(req: Request) {
   if (input.kind === 'trial_request') {
     after(() => sendCustomerEmail('trial_received', input.email, { name: input.name, phone: input.phone }).then(() => undefined));
   } else if (input.kind === 'launch_waitlist') {
-    after(() =>
-      sendCustomerEmail('preregistration_received', input.email, { name: input.name, tier: input.tier, term: input.term, streams: input.streams }).then(() => undefined),
-    );
+    const { tier, term, streams } = input;
+    after(async () => {
+      // Plan price as quoted by the server (the site's price table), shown in the confirmation; no tax amount.
+      let quote: { amountMinor: number; currency: string } | null = null;
+      if (tier && term && streams) {
+        try {
+          const q = computeQuote((await getPriceTable()).table, { tier, term, streams });
+          quote = { amountMinor: q.amountMinor, currency: q.currency };
+        } catch {
+          // No price for this plan: the e-mail is sent without it.
+        }
+      }
+      await sendCustomerEmail('preregistration_received', input.email, { name: input.name, tier, term, streams, quote });
+    });
   }
   return NextResponse.json({ ok: true }, { status: 201 });
 }

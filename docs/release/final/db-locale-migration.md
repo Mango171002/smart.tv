@@ -91,3 +91,123 @@ npx vitest run tests/unit/db-locales.test.ts
    This should show 3 rows with 8 values each.
 5. No flag is needed. The production site keeps accepting `en` only until a language is released (registry +
    `NEXT_PUBLIC_RELEASED_LANGUAGES`, owner decision).
+
+## 7. Backup, execution and verification runbook (B10 — owner runs it)
+
+Nothing below has been run against Supabase by engineering. The owner (or a person the owner designates) runs each
+step, in order, and keeps the outputs. Files referenced here live on branch `claude/f14-db` until it is merged:
+`supabase/migrations/20261124120000_locales_8_languages.sql` and the two rollback scripts in `supabase/rollback/`.
+Use only the file content from the approved commit; do not retype the SQL.
+
+### 7.1 Before you start
+
+- Pick a quiet time: online requests are closed today (`FEATURE_CONTACT_FORM=false`), so no form writes to
+  `contact_requests` during the change.
+- Have the Supabase project open (dashboard → the production project) with an owner/admin account.
+- Write down the date, time and the approved commit hash of the migration file.
+
+### 7.2 Backup / export
+
+1. **Platform backup.** Dashboard → *Database* → *Backups*: confirm the latest daily backup is recent (or, if the plan
+   offers it, note the point-in-time-recovery window). Screenshot it.
+2. **Logical export of the three tables touched** (read-only). Either:
+   - CLI from the owner's own computer: `pg_dump "<connection string from Dashboard → Connect>" --data-only
+     --table=public.contact_requests --table=public.markets --table=public.customers > backup-b10-YYYYMMDD.sql`
+     (add `--schema-only` in a second file to keep the definitions), or
+   - Dashboard → *Table editor* → each table → *Export* → CSV.
+   Store the files outside the repository (they contain personal data).
+3. **Snapshot of the current rules and counts** — SQL editor, run and keep the output:
+
+```sql
+select conrelid::regclass as tbl, conname, pg_get_constraintdef(oid) as def
+  from pg_constraint
+ where contype = 'c' and conname in ('contact_requests_locale_check', 'markets_default_locale_check', 'customers_preferred_locale_check')
+ order by 1;
+select 'contact_requests' as tbl, locale as value, count(*) from public.contact_requests group by locale
+union all select 'markets', default_locale, count(*) from public.markets group by default_locale
+union all select 'customers', preferred_locale, count(*) from public.customers group by preferred_locale
+order by 1, 2;
+```
+
+   Expected today: three rows with `CHECK ((locale = ANY (ARRAY['en'::text, 'fr'::text])))` (or the equivalent
+   `IN`); values only `en` / `fr`. If a constraint has another name or another definition, **stop** and send the
+   output to engineering (the migration's final assertion would refuse it anyway).
+
+### 7.3 Apply
+
+Option A — **SQL editor** (recommended, single transaction):
+1. Dashboard → *SQL editor* → *New query*.
+2. Type `begin;` on the first line, paste the full content of `20261124120000_locales_8_languages.sql`, then
+   `commit;` on the last line.
+3. Run once. Success = « Success. No rows returned ». Any error (for example
+   `expected exactly one check constraint …`) rolls everything back: nothing changed; send the error to engineering.
+
+Option B — **Supabase CLI** from an approved checkout on the owner's computer:
+1. `supabase link --project-ref <project ref>` (owner login).
+2. `supabase migration list` — check that the remote history matches the repository up to
+   `20261116220000_trial_followups` and that `20261124120000` is the only pending local migration you intend to push
+   (if other pending files appear, e.g. `20261124130000_retention_purge.sql`, do **not** push: move them aside or use
+   Option A).
+3. `supabase db push` (it asks for confirmation and lists the files).
+
+### 7.4 Verify
+
+```sql
+-- 1. Exactly one locale check per column, each with the 8 languages.
+select conrelid::regclass as tbl, conname, convalidated, pg_get_constraintdef(oid) as def
+  from pg_constraint
+ where contype = 'c' and conname like '%locale_check'
+ order by 1;
+-- Expected: 3 rows, convalidated = true, each listing en, fr, de, es, it, nl, sv, nb.
+
+-- 2. No row changed (compare with the counts kept in 7.2 step 3).
+select 'contact_requests' as tbl, locale as value, count(*) from public.contact_requests group by locale
+union all select 'markets', default_locale, count(*) from public.markets group by default_locale
+union all select 'customers', preferred_locale, count(*) from public.customers group by preferred_locale
+order by 1, 2;
+
+-- 3a. A new language is accepted — run alone; nothing is kept (rollback).
+begin;
+  insert into public.contact_requests (kind, email, locale, consent_given, consent_text_version)
+  values ('launch_waitlist', 'b10-check@example.invalid', 'de', true, 'b10-check');
+rollback;
+-- Expected: success (then rolled back).
+
+-- 3b. An unknown language is still refused — run alone in a NEW query.
+begin;
+  insert into public.contact_requests (kind, email, locale, consent_given, consent_text_version)
+  values ('launch_waitlist', 'b10-check@example.invalid', 'pt', true, 'b10-check');
+rollback;
+-- Expected: ERROR 23514 « violates check constraint "contact_requests_locale_check" » (nothing written).
+
+-- 3c. Confirm the probes left nothing behind.
+select count(*) from public.contact_requests where email = 'b10-check@example.invalid';  -- expected 0
+```
+
+If check 3a fails on another rule first (for example the database throttle, PT429), the inserts are only a probe: rely on checks 1 and 2 and tell engineering. Also verify that the production site still answers
+(`https://sygmatv.com/api/health` → `"status":"ok"`); the site does not need a deploy for this change.
+
+### 7.5 Rollback (only if needed)
+
+1. Check whether any row already uses a new language:
+   `select count(*) from public.contact_requests where locale not in ('en','fr');` (same for `markets.default_locale`
+   and `customers.preferred_locale`).
+2. If all counts are 0: run `supabase/rollback/20261124120000_locales_8_languages.rollback.sql` in the SQL editor (it
+   has its own `begin; … commit;`). Then re-run the verification query 1: three rows with `en`, `fr` only.
+3. If some rows use a new language: export them first
+   (`select id, locale from public.contact_requests where locale not in ('en','fr');`), then either keep the
+   migration or run `…rollback_map_to_en.sql` (irreversible for those rows: their language becomes `en`).
+4. Last resort: restore the platform backup of 7.2 step 1 (this also discards every write made after it).
+
+### 7.6 Related B10 item — offered terms
+
+The application now refuses `lifetime` and any term other than `12m`, `24m`, `36m` (and device counts other than 1–4)
+in `/api/quote`, `/api/contact` and `/api/checkout` (`src/lib/validation.ts` `OFFERED_TERMS`). The database rule on
+`contact_requests.interest_term` (`20261110230034_plan_tiers.sql:44`) still allows `lifetime`; narrowing it is
+optional (the API is the only writer) and is **not** proposed as a migration here. If the owner wants it, engineering
+prepares a separate, tested migration with the same backup / verify / rollback steps.
+
+### 7.7 Record
+
+Add a line to `docs/release/phase13/owner-approval.md` (B10): date, who ran it, Option A or B, the outputs of 7.2
+step 3 and 7.4 checks 1–2.

@@ -2,6 +2,14 @@
 # Requires ONE repository secret that you create in GitHub:
 #   CLOUDFLARE_API_TOKEN  (Cloudflare token with the "Edit Cloudflare Workers" permissions)
 # Live URL: https://sygmatv.com
+# Hardening (A13, security report D13-003/004/005):
+# - the whole CI (.github/workflows/ci.yml: lint, typecheck, unit, build, E2E, Cloudflare bundle, database) must pass
+#   first (job « ci », reusable workflow) — nothing is deployed otherwise;
+# - the Cloudflare token is given only to the steps that call Cloudflare (env: on the step), never via $GITHUB_ENV;
+# - dependencies are installed with --ignore-scripts (no install script runs next to secrets);
+# - third-party actions are pinned to full commit SHAs;
+# - the job runs in the GitHub Environment « production » (auto-created on the first run if it does not exist; the
+#   owner adds deployment-branch rules and moves the secrets there — docs/release/final/a13-ci-hardening.md).
 name: Deploy to Cloudflare
 
 on:
@@ -17,51 +25,80 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  ci:
+    # The full CI on the same commit, required before the production deploy (D13-005).
+    uses: ./.github/workflows/ci.yml
+
   deploy:
+    needs: ci
     runs-on: ubuntu-latest
+    environment: production
     env:
       CLOUDFLARE_ACCOUNT_ID: 9a7bb862febedb1b8e70a005037adee5
     steps:
-      - uses: actions/checkout@v4
-      - name: Prepare and verify the Cloudflare token
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Verify the Cloudflare token (not exported to later steps)
         env:
           RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          # Accept a bare token, a token with stray spaces/line breaks, or the whole
-          # "curl ... -H 'Authorization: Bearer <token>'" snippet shown by Cloudflare.
+          # Cloudflare token for THIS step only (never written to $GITHUB_ENV): bare token, stray spaces / line
+          # breaks, or the whole « curl … -H 'Authorization: Bearer <token>' » snippet shown by Cloudflare.
           if printf '%s' "$RAW_TOKEN" | grep -q 'Bearer'; then
-            T="$(printf '%s' "$RAW_TOKEN" | tr '\n' ' ' | sed -E 's/.*Bearer[[:space:]]+([A-Za-z0-9_.-]+).*/\1/')"
+            CLOUDFLARE_API_TOKEN="$(printf '%s' "$RAW_TOKEN" | tr '\n' ' ' | sed -E 's/.*Bearer[[:space:]]+([A-Za-z0-9_.-]+).*/\1/')"
           else
-            T="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
+            CLOUDFLARE_API_TOKEN="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
           fi
-          if [ -z "$T" ]; then
+          echo "::add-mask::$CLOUDFLARE_API_TOKEN"
+          export CLOUDFLARE_API_TOKEN
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
             echo "::error::Add the CLOUDFLARE_API_TOKEN secret in GitHub → Settings → Secrets and variables → Actions."
             exit 1
           fi
-          echo "::add-mask::$T"
-          status="$(curl -s -o verify.json -w '%{http_code}' -H "Authorization: Bearer $T" https://api.cloudflare.com/client/v4/user/tokens/verify)"
+          status="$(curl -s -o verify.json -w '%{http_code}' -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" https://api.cloudflare.com/client/v4/user/tokens/verify)"
           if [ "$status" != "200" ]; then
             echo "::error::Cloudflare rejected the token (HTTP $status). Re-create the CLOUDFLARE_API_TOKEN secret with only the token value."
             exit 1
           fi
           rm -f verify.json
-          echo "CLOUDFLARE_API_TOKEN=$T" >> "$GITHUB_ENV"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # No install script: esbuild / workerd resolve their prebuilt platform packages without their postinstall.
+      - run: npm ci --ignore-scripts
       - run: npm test
       - name: IndexNow — snapshot of the live public pages (before deploy)
         continue-on-error: true
         run: node scripts/indexnow.mjs snapshot --out "$RUNNER_TEMP/indexnow-before.json"
       - name: Build and deploy
         id: deploy
-        run: npx opennextjs-cloudflare build && npx opennextjs-cloudflare deploy
+        env:
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          # Cloudflare token for THIS step only (never written to $GITHUB_ENV): bare token, stray spaces / line
+          # breaks, or the whole « curl … -H 'Authorization: Bearer <token>' » snippet shown by Cloudflare.
+          if printf '%s' "$RAW_TOKEN" | grep -q 'Bearer'; then
+            CLOUDFLARE_API_TOKEN="$(printf '%s' "$RAW_TOKEN" | tr '\n' ' ' | sed -E 's/.*Bearer[[:space:]]+([A-Za-z0-9_.-]+).*/\1/')"
+          else
+            CLOUDFLARE_API_TOKEN="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
+          fi
+          echo "::add-mask::$CLOUDFLARE_API_TOKEN"
+          export CLOUDFLARE_API_TOKEN
+          npx opennextjs-cloudflare build && npx opennextjs-cloudflare deploy
       - name: Customer e-mails (Brevo) — API key
         env:
           BREVO_KEY: ${{ secrets.BREVO_API_KEY }}
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
+          # Cloudflare token for THIS step only (never written to $GITHUB_ENV): bare token, stray spaces / line
+          # breaks, or the whole « curl … -H 'Authorization: Bearer <token>' » snippet shown by Cloudflare.
+          if printf '%s' "$RAW_TOKEN" | grep -q 'Bearer'; then
+            CLOUDFLARE_API_TOKEN="$(printf '%s' "$RAW_TOKEN" | tr '\n' ' ' | sed -E 's/.*Bearer[[:space:]]+([A-Za-z0-9_.-]+).*/\1/')"
+          else
+            CLOUDFLARE_API_TOKEN="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
+          fi
+          echo "::add-mask::$CLOUDFLARE_API_TOKEN"
+          export CLOUDFLARE_API_TOKEN
           # Optional: customer e-mails stay off until the BREVO_API_KEY secret exists in GitHub.
           if [ -z "$BREVO_KEY" ]; then echo "::notice::No BREVO_API_KEY secret: customer e-mails are not sent yet."; exit 0; fi
           BREVO_KEY="$(printf '%s' "$BREVO_KEY" | tr -d '[:space:]')"
@@ -71,7 +108,17 @@ jobs:
         env:
           TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           SB_SECRET: ${{ secrets.SUPABASE_SECRET_KEY }}
+          RAW_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
+          # Cloudflare token for THIS step only (never written to $GITHUB_ENV): bare token, stray spaces / line
+          # breaks, or the whole « curl … -H 'Authorization: Bearer <token>' » snippet shown by Cloudflare.
+          if printf '%s' "$RAW_TOKEN" | grep -q 'Bearer'; then
+            CLOUDFLARE_API_TOKEN="$(printf '%s' "$RAW_TOKEN" | tr '\n' ' ' | sed -E 's/.*Bearer[[:space:]]+([A-Za-z0-9_.-]+).*/\1/')"
+          else
+            CLOUDFLARE_API_TOKEN="$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')"
+          fi
+          echo "::add-mask::$CLOUDFLARE_API_TOKEN"
+          export CLOUDFLARE_API_TOKEN
           # Optional: skipped until the TELEGRAM_BOT_TOKEN secret exists in GitHub.
           if [ -z "$TG_TOKEN" ]; then echo "No TELEGRAM_BOT_TOKEN secret: bot not configured."; exit 0; fi
           TG_TOKEN="$(printf '%s' "$TG_TOKEN" | tr -d '[:space:]')"

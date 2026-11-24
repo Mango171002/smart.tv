@@ -25,10 +25,13 @@ const ENGLISH_MARKERS = [en.hero.lead, en.plans.sub, en.faq.title, en.footer.abo
 
 test.describe('other languages — production build (not built)', () => {
   test.skip(BUILT.length > 0, 'production-mode checks');
-  test('/de, /es, /it, /nl, /sv, /nb do not exist; no link, no sitemap entry', async ({ page, request }) => {
+  test('/de, /es, /it, /nl, /sv, /nb are not served: their URLs redirect to English (rollback safety); no link, no sitemap entry', async ({ page, request }) => {
     for (const l of Object.keys(DICTS)) {
-      expect((await request.get(`/${l}`, { maxRedirects: 0 })).status(), l).toBe(404);
-      expect((await request.get(`/${l}/help`, { maxRedirects: 0 })).status(), l).toBe(404);
+      for (const [from, to] of [[`/${l}`, '/'], [`/${l}/help`, CONTENT ? '/help' : '/#faq'], [`/${l}/legal/terms`, '/legal/terms']] as const) {
+        const res = await request.get(from, { maxRedirects: 0 });
+        expect(res.status(), from).toBe(308);
+        expect(res.headers()['location'], from).toBe(to);
+      }
     }
     await page.goto('/');
     await expect(page.locator('a[href^="/de"], a[href^="/es"], a[href^="/it"], a[href^="/nl"], a[href^="/sv"], a[href^="/nb"]')).toHaveCount(0);

@@ -100,7 +100,7 @@ describe('release flag (NEXT_PUBLIC_RELEASED_LANGUAGES)', () => {
   });
 
   it('released French: /fr is served, former URLs point to the French home, legal URLs to the English pages (308)', () => {
-    expect(legacyLanguageRedirects(applyRelease(REGISTRY, ['fr']), false)).toEqual([{ source: '/fr/legal/:path*', destination: '/legal/:path*', permanent: true }]);
+    expect(legacyLanguageRedirects(applyRelease(REGISTRY, ['fr']), false).filter((r) => r.source.startsWith('/fr'))).toEqual([{ source: '/fr/legal/:path*', destination: '/legal/:path*', permanent: true }]);
   });
 });
 

@@ -12,6 +12,7 @@ import {
   enabledLanguages,
   formerPagePrefixes,
   languagesForMarket,
+  LEGACY_REDIRECT_LANGUAGES,
   legacyLanguageRedirects,
 } from '@/i18n/locales';
 import { absoluteUrl, localizedPath, splitLocale } from '@/lib/routes';
@@ -173,39 +174,48 @@ describe('metadata and sitemap (English only: output unchanged)', () => {
 });
 
 describe('redirects preserved (generated from the registry)', () => {
-  it('former French URLs keep redirecting while French is disabled', () => {
-    expect(legacyLanguageRedirects()).toEqual([
-      { source: '/fr', destination: '/', permanent: true },
-      { source: '/fr/:path*', destination: '/:path*', permanent: true },
-    ]);
-    expect(formerPagePrefixes()).toEqual(['en', 'fr']);
+  const LEGACY = ['fr', 'de', 'es', 'it', 'nl', 'sv', 'nb'];
+  const toEnglish = (codes: string[]) => codes.flatMap((c) => [
+    { source: `/${c}`, destination: '/', permanent: true },
+    { source: `/${c}/:path*`, destination: '/:path*', permanent: true },
+  ]);
+
+  it('former French URLs keep redirecting while French is disabled; so do the other unreleased languages', () => {
+    expect(LEGACY_REDIRECT_LANGUAGES).toEqual(LEGACY);
+    expect(legacyLanguageRedirects()).toEqual(toEnglish(LEGACY));
+    expect(formerPagePrefixes()).toEqual(['en', ...LEGACY]);
   });
 
   it('are removed in the same release that enables French (legal URLs keep pointing to the English pages)', () => {
-    expect(legacyLanguageRedirects(withEnabled('fr'))).toEqual([{ source: '/fr/legal/:path*', destination: '/legal/:path*', permanent: true }]);
-    expect(formerPagePrefixes(withEnabled('fr'))).toEqual(['en']);
+    expect(legacyLanguageRedirects(withEnabled('fr'))).toEqual([...toEnglish(LEGACY.slice(1)), { source: '/fr/legal/:path*', destination: '/legal/:path*', permanent: true }]);
+    expect(formerPagePrefixes(withEnabled('fr'))).toEqual(['en', ...LEGACY.slice(1)]);
+  });
+
+  it('rollback safety (D1): a released language has no redirect; un-released again, its URLs redirect to English (never 404)', () => {
+    const all = withEnabled(...LEGACY);
+    expect(legacyLanguageRedirects(all)).toEqual(LEGACY.map((c) => ({ source: `/${c}/legal/:path*`, destination: '/legal/:path*', permanent: true })));
+    expect(formerPagePrefixes(all)).toEqual(['en']);
+    // Rolling back every language but French: the six others go back to the English pages, French stays served.
+    expect(legacyLanguageRedirects(withEnabled('fr')).filter((r) => !r.source.includes('/legal/')).map((r) => r.source)).toEqual(LEGACY.slice(1).flatMap((c) => [`/${c}`, `/${c}/:path*`]));
+    // Every releasable language of the registry is covered.
+    expect([...LEGACY_REDIRECT_LANGUAGES].sort()).toEqual(REGISTRY.filter((l) => l.status === 'preview').map((l) => l.code).sort());
   });
 
   it('next.config redirects are exactly the pre-7A list (content pages off)', async () => {
     const redirects = await nextConfig.redirects!();
     expect(redirects).toEqual([
       { source: '/:path*', has: [{ type: 'host', value: 'www.sygmatv.com' }], destination: 'https://sygmatv.com/:path*', permanent: true },
-      { source: '/:locale(en|fr)/plans', destination: '/#plans', permanent: true },
+      { source: '/:locale(en|fr|de|es|it|nl|sv|nb)/plans', destination: '/#plans', permanent: true },
       { source: '/plans', destination: '/#plans', permanent: true },
-      { source: '/:locale(en|fr)/devices', destination: '/#content', permanent: true },
+      { source: '/:locale(en|fr|de|es|it|nl|sv|nb)/devices', destination: '/#content', permanent: true },
       { source: '/devices', destination: '/#content', permanent: true },
-      { source: '/:locale(en|fr)/coverage', destination: '/#content', permanent: true },
+      { source: '/:locale(en|fr|de|es|it|nl|sv|nb)/coverage', destination: '/#content', permanent: true },
       { source: '/coverage', destination: '/#content', permanent: true },
-      { source: '/:locale(en|fr)/help', destination: '/#faq', permanent: true },
+      { source: '/:locale(en|fr|de|es|it|nl|sv|nb)/help', destination: '/#faq', permanent: true },
       { source: '/help', destination: '/#faq', permanent: true },
       { source: '/en', destination: '/', permanent: true },
       { source: '/en/:path+', destination: '/:path+', permanent: true },
-      { source: '/fr', destination: '/', permanent: true },
-      { source: '/fr/:path*', destination: '/:path*', permanent: true },
+      ...toEnglish(LEGACY),
     ]);
-    // No redirect for prefixes that were never published.
-    for (const code of ['de', 'es', 'it', 'nl', 'sv', 'nb']) {
-      for (const r of redirects) expect(r.source === `/${code}` || r.source.startsWith(`/${code}/`) || r.source.includes(`|${code}`)).toBe(false);
-    }
   });
 });

@@ -3,7 +3,8 @@ import { localizedPath } from '@/lib/routes';
 import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
-import { legalHrefLang } from '@/i18n/format';
+import { fill, formatCount, legalHrefLang } from '@/i18n/format';
+import { SUPPLIER_CATALOGUE } from '@/config/supplier-catalogue';
 import { Check, Play, CircleHelp, BadgeCheck, UserPlus, Minus, Infinity as InfinityIcon, ArrowRight, Cast, CirclePlay, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tablet, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
 import { HeroVideoToggle } from './HeroVideoToggle';
@@ -283,11 +284,11 @@ const TRUST: { Icon: LucideIcon; cat: string }[] = [
   { Icon: RefreshCcw, cat: 'streaming' },
 ];
 
-export function PlanExtras({ dict }: { dict: Dictionary }) {
+export function PlanExtras({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const p = dict.plans;
   return (
     <div className="plan-extras">
-      <ComparisonTable dict={dict} />
+      <ComparisonTable dict={dict} locale={locale} />
       <div className="platforms-bar">
         <p className="platforms-title">
           <MonitorSmartphone size={34} strokeWidth={ICON_STROKE} aria-hidden="true" />
@@ -324,7 +325,7 @@ export function PlanExtras({ dict }: { dict: Dictionary }) {
 }
 
 /** Plans comparison table (owner request): features from the plan cards, honest values only. */
-function ComparisonTable({ dict }: { dict: Dictionary }) {
+function ComparisonTable({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const c = dict.plans.compare;
   const tiers = ['starter', 'plus', 'ultra'] as const;
   return (
@@ -366,6 +367,13 @@ function ComparisonTable({ dict }: { dict: Dictionary }) {
         </table>
       </div>
       <p className="footnote">{c.note}</p>
+      {/* Supplier-confirmed OVERALL catalogue (owner, 24/11/2026; D6): one qualified sentence, under the whole table and
+          not in any plan column or card; never in the title, meta description or JSON-LD (src/config/supplier-catalogue.ts). */}
+      {SUPPLIER_CATALOGUE ? (
+        <p className="footnote catalogue-note" data-testid="supplier-catalogue">
+          {fill(c.supplierCatalogue, { channels: formatCount(SUPPLIER_CATALOGUE.channels, locale), vod: formatCount(SUPPLIER_CATALOGUE.vod, locale) })}
+        </p>
+      ) : null}
     </div>
   );
 }

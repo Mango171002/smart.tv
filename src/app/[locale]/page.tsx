@@ -49,7 +49,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             dict={{ plans: dict.plans, common: dict.common, markets: dict.markets, checkout: dict.checkout, prelaunch: dict.prelaunch }}
             ordersOpen={ordersOpen}
           >
-            <PlanExtras dict={dict} />
+            <PlanExtras dict={dict} locale={locale} />
           </PlansIsland>
         </div>
       </section>

@@ -143,6 +143,9 @@ const en = {
         { label: 'Support', values: ['Email & WhatsApp, 24/7 assistant', 'Email & WhatsApp, 24/7 assistant', 'Email & WhatsApp, 24/7 assistant'] },
       ],
       note: '4K/HDR where available. Catalogue may vary by country.',
+      /** Supplier-confirmed OVERALL catalogue (owner, 24/11/2026; D6): not per plan, not a right in any country. Figures from src/config/supplier-catalogue.ts. */
+      supplierCatalogue:
+        'Supplier catalogue: {channels}+ TV channels and {vod}+ movies & series, in up to 4K HDR on compatible content and devices. What you can watch depends on your country and device.',
     },
     devicesBar: {
       title: 'Works on the screens you use',

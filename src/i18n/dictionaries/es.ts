@@ -162,6 +162,8 @@ const es: Dictionary = {
         { label: 'Soporte', values: ['Correo y WhatsApp, asistente 24/7', 'Correo y WhatsApp, asistente 24/7', 'Correo y WhatsApp, asistente 24/7'] },
       ],
       note: '4K/HDR según disponibilidad. El catálogo puede variar según el país.',
+      supplierCatalogue:
+        'Catálogo del proveedor: {channels}+ canales de TV y {vod}+ películas y series, hasta 4K HDR en contenidos y dispositivos compatibles. Lo que puedes ver depende de tu país y de tu dispositivo.',
     },
     devicesBar: {
       title: 'Funciona en las pantallas que usas',

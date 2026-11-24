@@ -161,6 +161,8 @@ const nb: Dictionary = {
         { label: 'Kundestøtte', values: ['E-post og WhatsApp, assistent 24/7', 'E-post og WhatsApp, assistent 24/7', 'E-post og WhatsApp, assistent 24/7'] },
       ],
       note: '4K/HDR der tilgjengelig. Katalogen kan variere fra land til land.',
+      supplierCatalogue:
+        'Leverandørens katalog: {channels}+ TV-kanaler og {vod}+ filmer og serier, i opptil 4K HDR på kompatibelt innhold og kompatible enheter. Hva du kan se, avhenger av landet ditt og enheten din.',
     },
     devicesBar: {
       title: 'Fungerer på skjermene du bruker',

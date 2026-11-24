@@ -162,6 +162,8 @@ const sv: Dictionary = {
         { label: 'Support', values: ['E-post och WhatsApp, assistent 24/7', 'E-post och WhatsApp, assistent 24/7', 'E-post och WhatsApp, assistent 24/7'] },
       ],
       note: '4K/HDR i mån av tillgång. Utbudet kan variera mellan länder.',
+      supplierCatalogue:
+        'Leverantörens utbud: {channels}+ tv-kanaler och {vod}+ filmer och serier, i upp till 4K HDR på kompatibelt innehåll och kompatibla enheter. Vad du kan titta på beror på ditt land och din enhet.',
     },
     devicesBar: {
       title: 'Fungerar på skärmarna du använder',

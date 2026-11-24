@@ -1514,6 +1514,8 @@ html { scroll-padding-top: 84px; }
 .compare-yes { color: var(--tier, var(--color-cyan)); vertical-align: middle; }
 .compare-no { color: var(--color-muted); opacity: .6; vertical-align: middle; }
 .compare .footnote { text-align: center; }
+/* Supplier catalogue sentence (proposal): same footnote style, a readable line length, wraps at 320 px. */
+.compare .catalogue-note { max-width: 68ch; margin: 6px auto 0; line-height: 1.5; overflow-wrap: break-word; }
 
 /* Closing call-to-action banner (after FAQ) */
 .cta-section { padding-top: 20px; }

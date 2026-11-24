@@ -162,6 +162,8 @@ const de: Dictionary = {
         { label: 'Support', values: ['E-Mail & WhatsApp, Assistent 24/7', 'E-Mail & WhatsApp, Assistent 24/7', 'E-Mail & WhatsApp, Assistent 24/7'] },
       ],
       note: '4K/HDR je nach Verfügbarkeit. Der Katalog kann je nach Land variieren.',
+      supplierCatalogue:
+        'Katalog des Lieferanten: {channels}+ TV-Sender und {vod}+ Filme und Serien, in bis zu 4K HDR bei kompatiblen Inhalten und Geräten. Was Sie sehen können, hängt von Ihrem Land und Ihrem Gerät ab.',
     },
     devicesBar: {
       title: 'Läuft auf den Bildschirmen, die Sie nutzen',

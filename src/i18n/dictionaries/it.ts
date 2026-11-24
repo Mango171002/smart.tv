@@ -163,6 +163,8 @@ const it: Dictionary = {
         { label: 'Assistenza', values: ['Email e WhatsApp, assistente 24/7', 'Email e WhatsApp, assistente 24/7', 'Email e WhatsApp, assistente 24/7'] },
       ],
       note: '4K/HDR dove disponibile. Il catalogo può variare in base al paese.',
+      supplierCatalogue:
+        'Catalogo del fornitore: {channels}+ canali TV e {vod}+ film e serie, fino al 4K HDR su contenuti e dispositivi compatibili. Cosa puoi guardare dipende dal tuo paese e dal tuo dispositivo.',
     },
     devicesBar: {
       title: 'Funziona sugli schermi che usi',

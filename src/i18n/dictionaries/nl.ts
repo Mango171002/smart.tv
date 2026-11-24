@@ -162,6 +162,8 @@ const nl: Dictionary = {
         { label: 'Klantenservice', values: ['E-mail en WhatsApp, assistent 24/7', 'E-mail en WhatsApp, assistent 24/7', 'E-mail en WhatsApp, assistent 24/7'] },
       ],
       note: '4K/HDR waar beschikbaar. De catalogus kan per land verschillen.',
+      supplierCatalogue:
+        'Catalogus van de leverancier: {channels}+ tv-zenders en {vod}+ films en series, tot 4K HDR op compatibele content en apparaten. Wat je kunt kijken, hangt af van je land en je apparaat.',
     },
     devicesBar: {
       title: 'Werkt op de schermen die je gebruikt',

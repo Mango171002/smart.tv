@@ -19,7 +19,7 @@ async function touchPage(browser: Browser, width: number, height: number): Promi
   return ctx.newPage();
 }
 
-/** Controls whose hit area is under 44 px (capped probe: 30 px each side of the centre). */
+/** Controls whose hit area is under 44 px (probe up to 60 px each side of the centre). */
 function smallTargets(page: Page, scope: string) {
   return page.evaluate((scope) => {
     const out: string[] = [];
@@ -34,12 +34,14 @@ function smallTargets(page: Page, scope: string) {
       if (b.width >= 44 && b.height >= 44) continue;
       const cx = b.left + b.width / 2;
       const cy = b.top + b.height / 2;
-      const hit = (x: number, y: number) => { const t = document.elementFromPoint(x, y); return !!t && (t === e || e.contains(t)); };
+      // A form control is also activated through its <label> (checkbox + text): the label is part of its target.
+      const labels = [...((e as HTMLInputElement).labels ?? [])];
+      const hit = (x: number, y: number) => { const t = document.elementFromPoint(x, y); return !!t && (e.contains(t) || labels.some((l) => l.contains(t))); };
       let up = 0, down = 0, left = 0, right = 0;
-      while (up < 30 && hit(cx, cy - up - 1)) up++;
-      while (down < 30 && hit(cx, cy + down + 1)) down++;
-      while (left < 30 && hit(cx - left - 1, cy)) left++;
-      while (right < 30 && hit(cx + right + 1, cy)) right++;
+      while (up < 60 && hit(cx, cy - up - 1)) up++;
+      while (down < 60 && hit(cx, cy + down + 1)) down++;
+      while (left < 60 && hit(cx - left - 1, cy)) left++;
+      while (right < 60 && hit(cx + right + 1, cy)) right++;
       const w = left + right + 1;
       const h = up + down + 1;
       if (w < 44 || h < 44) out.push(`${e.tagName.toLowerCase()}.${String(e.className).split(' ')[0]} « ${(e.innerText || e.getAttribute('aria-label') || '').trim().slice(0, 24)} » ${Math.round(b.width)}×${Math.round(b.height)} hit ${w}×${h}`);

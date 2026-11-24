@@ -2616,6 +2616,8 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
   .terms-contact li a { padding-block: 10.5px; margin-block: -10.5px; }
   .footer-col a, .footer-link-btn { min-width: 44px; }
   .order-summary-change { min-height: 44px; }
+  /* Order form (orders open): a one-line checkbox label (24 px) is the checkbox's target; 44 px tall without moving. */
+  .neon-check { padding-block: 10px; margin-block: -10px; }
   /* Wide header on touch tablets: short links (« Help », 34 px) get 44 px wide hit areas; the 24 px gap keeps them apart. */
   #navlinks:not(.open) > a { padding-inline: 6px; margin-inline: -6px; }
   #navlinks:not(.open) > a[aria-current='page']::after { left: 6px; right: 6px; }

@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import en from '../../src/i18n/dictionaries/en';
-import { RELEASED_LANGS, INDEXABLE, PRIVATE_ROBOTS, ORDERS_OPEN, ORDER_BUTTON } from './released';
+import { RELEASED_LANGS, INDEXABLE, PRIVATE_ROBOTS, ORDERS_OPEN, ORDER_BUTTON, CONTENT_INDEXED, CONTENT_PATHS } from './released';
 
 /**
  * Consent, analytics events and technical SEO.
@@ -236,7 +236,13 @@ test.describe('technical SEO', () => {
     expect(xml).toContain('/legal/privacy</loc>\n<lastmod>2026-11-16</lastmod>');
     // No lastmod on the home (its alternates, once French is released, come between <loc> and <changefreq>).
     expect(xml).toMatch(/<loc>[^<]+\/<\/loc>\n(?:<xhtml:link [^>]+\/>\n)*<changefreq>/);
-    expect(xml.match(/<lastmod>/g)).toHaveLength(5);
+    // Content pages (About us, Help center): listed only once « live », each with its « Last reviewed » date, in English and
+    // in every released language; never in « preview » (E2E_CONTENT_PAGES, tests/e2e/content-pages.spec.ts).
+    const contentEntries = CONTENT_INDEXED ? CONTENT_PATHS.length * (1 + RELEASED_LANGS.length) : 0;
+    expect(xml.match(/<lastmod>/g)).toHaveLength(5 + contentEntries);
+    // (Its alternates, once languages are released, come between <loc> and <lastmod>, as on the home.)
+    if (CONTENT_INDEXED) for (const p of CONTENT_PATHS) expect(xml, p).toMatch(new RegExp(`${p}</loc>\n(?:<xhtml:link [^>]+/>\n)*<lastmod>\\d{4}-\\d{2}-\\d{2}</lastmod>`));
+    else expect(xml).not.toMatch(/\/about<|\/help/);
     const robots = await (await request.get('/robots.txt')).text();
     if (INDEXABLE) {
       expect(robots).toMatch(/Sitemap: https?:\/\/[^\s]+\/sitemap\.xml/);

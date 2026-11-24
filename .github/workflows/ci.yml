@@ -23,6 +23,13 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npx playwright install --with-deps chromium
+      # Test what is built: `npm run build` reads .env.production, so the E2E suite expects the same released languages
+      # and content-pages mode (absent from .env.production → empty → English-only production expectations).
+      - name: E2E expectations from .env.production
+        run: |
+          get() { sed -n "s/^$1=//p" .env.production | tail -n 1 | tr -d '\r"' | xargs; }
+          echo "E2E_RELEASED=$(get NEXT_PUBLIC_RELEASED_LANGUAGES)" >> "$GITHUB_ENV"
+          echo "E2E_CONTENT_PAGES=$(get NEXT_PUBLIC_CONTENT_PAGES)" >> "$GITHUB_ENV"
       # No Supabase credentials in CI: the site falls back to the static illustrative tables.
       - run: npm run test:e2e
 

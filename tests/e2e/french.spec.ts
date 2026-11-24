@@ -1,18 +1,18 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { INDEXABLE, PRIVATE_ROBOTS, RELEASED_LANGS, expectedSet, ORDERS_OPEN } from './released';
+import { CONTENT_INDEXED, CONTENT_ON, CONTENT_PATHS, HELP_TOPICS as TOPICS, INDEXABLE, PRIVATE_ROBOTS, RELEASED_LANGS, expectedSet, ORDERS_OPEN } from './released';
 
 /**
  * Phase 7B — French preview.
  * Default run (production build): French does not exist, /fr keeps redirecting to the English page.
  * With E2E_SITE_MODE=preview (build made with NEXT_PUBLIC_SITE_MODE=preview): French pages, noindex, no sitemap,
- * no hreflang, French order window. With E2E_CONTENT_PAGES=preview as well: French About and Help center.
+ * no hreflang, French order window. With E2E_CONTENT_PAGES=preview or live as well: French About and Help center (indexable
+ * with hreflang once French is released and the content pages are « live »).
  */
 /** Phase 7C: E2E_RELEASED=fr = build made with NEXT_PUBLIC_RELEASED_LANGUAGES=fr (French public: indexable, hreflang, sitemap). */
 const RELEASED = RELEASED_LANGS.includes('fr');
 const FR = process.env.E2E_SITE_MODE === 'preview' || RELEASED;
-const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
-const TOPICS = ['getting-started', 'devices', 'free-trial', 'ordering-payment', 'troubleshooting', 'contact-support', 'refunds'];
+const CONTENT = CONTENT_ON;
 
 test.describe('French — production build (not built)', () => {
   test.skip(FR, 'production-mode checks');
@@ -50,8 +50,10 @@ test.describe('French — preview / released', () => {
       expect(res?.status()).toBe(200);
       await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`${p.path}$`));
-      // Indexable French pages = the home (the blog is noindex, the content pages are noindex in « preview » mode).
-      const indexable = RELEASED && p.path === '/fr';
+      // Indexable French pages = the home, and the content pages once « live » (the blog is noindex, the content pages are
+      // noindex in « preview » mode).
+      const enPath = p.path.replace(/^\/fr/, '');
+      const indexable = RELEASED && (p.path === '/fr' || (CONTENT_INDEXED && CONTENT_PATHS.includes(enPath)));
       if (RELEASED) {
         expect(res?.headers()['x-robots-tag']).toBeUndefined();
         await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', indexable ? 'index, follow' : 'noindex, follow');
@@ -63,8 +65,8 @@ test.describe('French — preview / released', () => {
         // Reciprocal set, identical on the English page.
         const set = async () => Object.fromEntries(await page.locator('link[rel="alternate"][hreflang]').evaluateAll((ls) => ls.map((l) => [l.getAttribute('hreflang'), new URL(l.getAttribute('href')!).pathname])));
         const frSet = await set();
-        expect(frSet).toEqual(expectedSet(''));
-        await page.goto('/');
+        expect(frSet).toEqual(expectedSet(enPath));
+        await page.goto(enPath || '/');
         expect(await set()).toEqual(frSet);
         await page.goto(p.path);
       } else {
@@ -110,6 +112,16 @@ test.describe('French — preview / released', () => {
       expect(alt(home)).toEqual(Object.entries(expectedSet('')).map(([k, v]) => `${k}=${v}`).sort());
       expect(alt(frHome)).toEqual(alt(home));
       expect(xml).not.toMatch(/\/fr\/legal|\/fr\/blog/);
+      // Content pages « live »: each French page listed with the same reciprocal alternates as its English page.
+      for (const path of CONTENT_INDEXED ? CONTENT_PATHS : []) {
+        const en = xml.split('<url>').find((u) => new RegExp(`<loc>https?://[^/<]+${path}</loc>`).test(u));
+        const fr = xml.split('<url>').find((u) => u.includes(`/fr${path}</loc>`));
+        expect(en, path).toBeDefined();
+        expect(fr, `/fr${path}`).toBeDefined();
+        expect(alt(fr!), `/fr${path}`).toEqual(Object.entries(expectedSet(path)).map(([k, v]) => `${k}=${v}`).sort());
+        expect(alt(en!), path).toEqual(alt(fr!));
+      }
+      if (!CONTENT_INDEXED) expect(xml).not.toMatch(/\/fr\/(about|help)/);
     } else {
       expect(xml).not.toMatch(/\/fr[/<]/);
       expect(xml).not.toMatch(/xhtml:link/);

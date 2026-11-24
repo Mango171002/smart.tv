@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { RELEASED_LANGS } from './released';
+import { RELEASED_LANGS, CONTENT_ON } from './released';
 
 /** Responsive layout: no horizontal scrolling, footer chips never overlap the next footer column, social icons stay inside the page margin. */
 const WIDTHS = [320, 375, 768, 1024, 1280, 1366, 1440, 1920];
 const INFO = ['/about', '/help', '/help/getting-started', '/help/devices', '/help/free-trial', '/help/ordering-payment', '/help/troubleshooting', '/help/contact-support', '/help/refunds'];
-const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+/** The content pages (About us, Help center) exist in the build under test: E2E_CONTENT_PAGES=preview or live. */
+const CONTENT = CONTENT_ON;
 /** French preview (E2E_SITE_MODE=preview): the same checks on the French pages (longer strings). */
 const FR = process.env.E2E_SITE_MODE === 'preview' || RELEASED_LANGS.includes('fr');
 /** Phase 8: the other languages (preview build, or released) — home, About, Help hub and one topic each. */

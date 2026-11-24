@@ -56,7 +56,9 @@ jobs:
           CRON="$(printf '%s:sygma-cron' "$KEY" | sha256sum | cut -c1-48)"
           echo "::add-mask::$CRON"
           code=$(curl -s -o result.json -w '%{http_code}' --max-time 60 -X POST -H "x-cron-secret: $CRON" "$SITE/api/cron/monitor?test=$TEST" || echo 000)
-          echo "HTTP $code"; cat result.json || true; echo
+          # Public logs (A12): only « healthy » and the names of the failing checks — never the details.
+          echo "HTTP $code"
+          jq -r '"healthy: \(if .healthy == null then "unknown" else (.healthy | tostring) end)", ((.checks // [])[] | select(.ok != true) | "failing: \(.name)")' result.json 2>/dev/null || echo "healthy: unknown (unreadable answer)"
           if [ "$code" = 200 ]; then echo "ok=1" >> "$GITHUB_OUTPUT"; else echo "ok=0" >> "$GITHUB_OUTPUT"; fi
           if grep -q '"healthy":false' result.json; then echo "unhealthy=1" >> "$GITHUB_OUTPUT"; fi
       - name: Alert on Telegram (site or check not answering)

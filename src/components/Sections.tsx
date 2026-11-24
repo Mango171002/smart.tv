@@ -4,7 +4,7 @@ import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { legalHrefLang } from '@/i18n/format';
-import { Check, Play, CircleHelp, BadgeCheck, UserPlus, Minus, Infinity as InfinityIcon, AppWindow, ArrowRight, CirclePlay, Flame, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
+import { Check, Play, CircleHelp, BadgeCheck, UserPlus, Minus, Infinity as InfinityIcon, ArrowRight, Cast, CirclePlay, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tablet, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
 import { HeroVideoToggle } from './HeroVideoToggle';
 import { BENEFIT_ICONS, CATEGORIES, ICON_STROKE } from './icons';
@@ -274,7 +274,8 @@ export function Faq({ dict, limit, locale = 'en', items: given }: { dict: Dictio
   );
 }
 
-const PLATFORM_ICONS: LucideIcon[] = [Tv, TvMinimalPlay, Flame, AppWindow, Smartphone, Laptop];
+/** Device categories of the devices bar (no platform brand: no app list is verified per platform yet). */
+const PLATFORM_ICONS: LucideIcon[] = [Tv, TvMinimalPlay, Cast, Smartphone, Tablet, Laptop];
 const TRUST: { Icon: LucideIcon; cat: string }[] = [
   { Icon: Zap, cat: 'sports' },
   { Icon: ShieldCheck, cat: 'live' },

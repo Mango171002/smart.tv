@@ -49,10 +49,14 @@ describe('home page wording (phase 6A)', () => {
     expect(items.find((i) => i.q === 'Which countries are available?')!.a).not.toMatch(/United States|Canada|Europe/);
   });
 
-  it('verified support facts are kept: 24/7, email & WhatsApp, six languages', () => {
-    expect(text).toMatch(/24\/7/);
-    expect(text).toMatch(/6 languages/);
+  it('support facts as approved: a 24/7 automated assistant, human help when needed, email & WhatsApp (phase 13, D8)', () => {
+    expect(text).toMatch(/24\/7 automated assistant/);
+    expect(text).toMatch(/human help when needed/);
     expect(text).toMatch(/WhatsApp/);
+    // « 24/7 » always names the assistant, never a support team; no language count on the home page (the six support
+    // languages are listed on the About and Contact support pages).
+    for (const s of strings(HOME).filter((x) => /24\/7/.test(x))) expect(s, s).toMatch(/assistant/i);
+    expect(text).not.toMatch(/24\/7 support|support 24\/7|\b(6|six) languages/i);
   });
 
   it('order window: activation first, then payment instructions on WhatsApp (phase 6B)', () => {

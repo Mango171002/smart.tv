@@ -47,7 +47,7 @@ export default async function AboutPage({ params }: { params: Params }) {
           ))}
         </dl>
       </header>
-      <InfoContent lang={locale} sections={about.sections} reviewed={reviewed} labels={ui.content} toc contactIntro={ui.aboutContact}>
+      <InfoContent lang={locale} phone={ordersOpen} sections={about.sections} reviewed={reviewed} labels={ui.content} toc contactIntro={ui.aboutContact}>
         <HelpActions labels={ui.actions} />
       </InfoContent>
       <JsonLd data={webPageLd('AboutPage', path, about.title, about.description, { about: ORG_REF(), mainEntity: ORG_REF() }, locale)} />

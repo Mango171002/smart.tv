@@ -64,7 +64,7 @@ export default async function HelpTopicPage({ params }: { params: Params }) {
       <div className="eyebrow">{hub.name}</div>
       <h1 className="page-title">{t.title}</h1>
       <p className="sub">{t.intro}</p>
-      <InfoContent lang={locale} sections={t.sections} reviewed={reviewed} labels={ui.content} toc contactIntro={ui.topicContact} related={[...extra, { href: hubPath, label: ui.allTopics }]}>
+      <InfoContent lang={locale} phone={ordersOpen} sections={t.sections} reviewed={reviewed} labels={ui.content} toc contactIntro={ui.topicContact} related={[...extra, { href: hubPath, label: ui.allTopics }]}>
         <HelpActions trial={cta.trial} plans={cta.plans} labels={ui.actions} />
       </InfoContent>
       <nav className={s.pager} aria-label={ui.topics}>

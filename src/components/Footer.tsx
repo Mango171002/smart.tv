@@ -69,6 +69,8 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
         <div className="footer-about">
           <b className="footer-title">{f.aboutTitle.replace('{brand}', siteConfig.brandName)}</b>
           <p>{f.about}</p>
+          {/* The publisher of the site, on every page (same facts as the About page and the legal notice). */}
+          {siteConfig.legalEntity && <p className="footer-entity"><small>{f.entity.replace('{entity}', siteConfig.legalEntity)}</small></p>}
           <ul className="footer-chips">
             {f.chips.map((c, i) => {
               const Icon = CHIP_ICONS[EN_CHIPS[i] ?? ''] ?? Zap;

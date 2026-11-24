@@ -75,7 +75,7 @@ export default async function HelpCenter({ params }: { params: Params }) {
         ))}
       </dl>
 
-      <InfoContent lang={locale} sections={[]} reviewed={reviewed} labels={ui.content} contactIntro={ui.hubContact} related={ui.hubRelated}>
+      <InfoContent lang={locale} phone={ordersOpen} sections={[]} reviewed={reviewed} labels={ui.content} contactIntro={ui.hubContact} related={ui.hubRelated}>
         <HelpActions labels={ui.actions} />
       </InfoContent>
       <JsonLd

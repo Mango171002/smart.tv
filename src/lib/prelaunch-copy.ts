@@ -11,8 +11,10 @@ export const prelaunchTrialLabel = (p: Dictionary['prelaunch']) => `${p.trialTit
  * isContactFormEnabled()). Open: the dictionary itself, unchanged. Closed (prelaunch): the same dictionary with the
  * texts that present ordering, free trials or activation as available now replaced by their `prelaunch` variants —
  * home meta description, hero lead, benefits, simulator button and point, « How it works », closing banner and the
- * FAQ answers (src/lib/faq.ts). Applied once, server-side, before the dictionary is passed to any component, so
- * client components only ever receive resolved strings; refund, price and legal wording is never touched.
+ * FAQ answers (src/lib/faq.ts) — and WhatsApp is not offered as a contact channel (support benefit, guided-setup item of
+ * the plans trust bar, « Support » row of the comparison table: e-mail only). Applied once, server-side, before the
+ * dictionary is passed to any component, so client components only ever receive resolved strings; refund, price and
+ * legal wording is never touched.
  */
 export function prelaunchCopy<D extends Dictionary>(dict: D, ordersOpen: boolean): D {
   if (ordersOpen) return dict;
@@ -23,11 +25,17 @@ export function prelaunchCopy<D extends Dictionary>(dict: D, ordersOpen: boolean
     ...dict,
     meta: { ...dict.meta, homeDescription: p.metaDescription },
     hero: { ...dict.hero, lead: h.heroLead },
-    benefits: at(at(dict.benefits, 0, () => ({ title: h.orderBenefitTitle, text: h.orderBenefitText })), 3, (b) => ({ ...b, text: h.trialBenefitText })),
+    benefits: at(at(at(dict.benefits, 0, () => ({ title: h.orderBenefitTitle, text: h.orderBenefitText })), 3, (b) => ({ ...b, text: h.trialBenefitText })), 4, (b) => ({ ...b, text: h.supportBenefitText })),
     plans: {
       ...dict.plans,
       previewCheckout: prelaunchOrderLabel(p),
       simulatorPoints: at(dict.plans.simulatorPoints, 3, () => h.trialGuarantee),
+      trust: at(dict.plans.trust, 0, (t) => ({ ...t, text: h.setupText })),
+      compare: {
+        ...dict.plans.compare,
+        // The « Support » row is the only one whose values are all texts (the others are ticks).
+        rows: dict.plans.compare.rows.map((r) => (r.values.every((v) => typeof v === 'string') ? { ...r, values: r.values.map(() => h.compareSupport) } : r)) as D['plans']['compare']['rows'],
+      },
     },
     how: {
       ...dict.how,

@@ -41,19 +41,29 @@ const CONFIRMATION_EMAIL = 'Cuando hayamos recibido y confirmado tu pago, recibi
 const LANGS = `${F.languages.slice(0, -1).map((l) => l.toLowerCase()).join(', ')} o ${F.languages[F.languages.length - 1]!.toLowerCase()}`;
 
 // ---------------------------------------------------------------- Sobre nosotros
+const WHO_BRAND = { p: `SYGMA TV+ — «One World. Endless Entertainment.» — es una marca de ${siteConfig.legalEntity}, una empresa fundada en ${F.established} y registrada en el estado de Nuevo México, Estados Unidos.` };
+/** Useful links of the About page; `contact` describes the Contact support page (e-mail only while requests are closed). */
+const aboutLinks = (contact: string) => ({ links: [
+  { href: '/es/help', label: 'Centro de ayuda', text: 'Prueba, pedidos, dispositivos, reembolsos' },
+  { href: '/es/help/contact-support', label: 'Contactar con soporte', text: contact },
+  { href: '/es#plans', label: 'Planes', text: 'Elige tu plan y consulta el precio' },
+  { href: '/legal/refunds', label: 'Reembolsos y cancelaciones', text: 'Garantía de reembolso de 7 días (en inglés)' },
+  { href: '/legal/terms', label: 'Condiciones del servicio', text: 'Las normas, en lenguaje claro (en inglés)' },
+  { href: '/legal/imprint', label: 'Aviso legal', text: 'Datos de la empresa (en inglés)' },
+] });
 const ABOUT: InfoPage = {
   slug: 'about',
   name: 'Sobre nosotros',
   title: 'Sobre SYGMA TV+',
   metaTitle: 'Sobre nosotros: empresa, soporte y compromisos',
   description: 'SYGMA TV+ es una marca de entretenimiento digital de Sygma TV LLC, fundada en Estados Unidos en 2026. Cómo funciona, nuestros compromisos y el soporte.',
-  intro: `SYGMA TV+ es una marca internacional de entretenimiento digital, fundada en ${F.basedIn} en ${F.established}. Ofrecemos suscripciones de streaming para tu tele, tu móvil y tu ordenador, con atención al cliente ${F.supportHours} en seis idiomas.`,
+  intro: `SYGMA TV+ es una marca internacional de entretenimiento digital, fundada en ${F.basedIn} en ${F.established}. Ofrecemos suscripciones de streaming para tu tele, tu móvil y tu ordenador, con un asistente automático disponible ${F.supportHours} y atención humana cuando sea necesario.`,
   icon: 'info',
   sections: [
     {
       id: 'who', icon: 'info', title: 'Quiénes somos',
       body: [
-        { p: `SYGMA TV+ — «One World. Endless Entertainment.» — es una marca de ${siteConfig.legalEntity}, una empresa fundada en ${F.established} y registrada en el estado de Nuevo México, Estados Unidos.` },
+        WHO_BRAND,
         { p: 'Los planes son anuales (12, 24 o 36 meses), con 1 dispositivo incluido y hasta 4. Antes de comprar, puedes probar el servicio en tu propio dispositivo con una prueba gratuita.' },
       ],
     },
@@ -110,25 +120,22 @@ const ABOUT: InfoPage = {
     },
     {
       id: 'links', icon: 'info', title: 'Enlaces útiles',
-      body: [
-        { links: [
-          { href: '/es/help', label: 'Centro de ayuda', text: 'Prueba, pedidos, dispositivos, reembolsos' },
-          { href: '/es/help/contact-support', label: 'Contactar con soporte', text: `Correo electrónico o WhatsApp, ${F.supportHours}` },
-          { href: '/es#plans', label: 'Planes', text: 'Elige tu plan y consulta el precio' },
-          { href: '/legal/refunds', label: 'Reembolsos y cancelaciones', text: 'Garantía de reembolso de 7 días (en inglés)' },
-          { href: '/legal/terms', label: 'Condiciones del servicio', text: 'Las normas, en lenguaje claro (en inglés)' },
-          { href: '/legal/imprint', label: 'Aviso legal', text: 'Datos de la empresa (en inglés)' },
-        ] },
-      ],
+      body: [aboutLinks(`Correo electrónico o WhatsApp · asistente automático ${F.supportHours}`)],
     },
   ],
   prelaunch: {
     sections: {
+      who: { body: [
+        WHO_BRAND,
+        { p: 'Los planes son anuales (12, 24 o 36 meses), con 1 dispositivo incluido y hasta 4. Las pruebas gratuitas abrirán muy pronto: podrás probar el servicio en tu propio dispositivo antes de comprar.' },
+      ] },
       how: { body: [
         { p: 'Haces tu pedido con un breve formulario y una persona real de nuestro equipo se encarga del resto por WhatsApp. Primero activamos tu suscripción: solo pagas cuando tu acceso ya está activo.' },
         { steps: ORDER_STEPS },
         { p: `Las pruebas gratuitas abrirán muy pronto: podrás probar el servicio durante ${TRIAL} antes de comprar.` },
       ] },
+      // WhatsApp and the phone are not offered as a way to reach us while requests are closed (e-mail only).
+      links: { body: [aboutLinks(`Por correo electrónico · asistente automático ${F.supportHours}`)] },
     },
   },
 };
@@ -158,7 +165,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Cómo funciona SYGMA TV+, de elegir un plan a empezar a ver: prueba gratuita, formulario de pedido, contacto y activación por WhatsApp, y después el pago.',
     summary: 'De elegir un plan a tu primera reproducción.',
     intro: 'Empezar solo lleva unos pasos. Puedes comenzar con una prueba gratuita o hacer tu pedido directamente.',
-    prelaunch: { intro: 'Los pedidos en línea y las pruebas gratuitas abrirán muy pronto. Así funcionará el proceso para empezar.' },
+    prelaunch: { description: 'Cómo funcionará SYGMA TV+ cuando abran los pedidos y las pruebas gratuitas: elegir un plan, formulario, contacto y activación por WhatsApp, y el pago.', intro: 'Los pedidos en línea y las pruebas gratuitas abrirán muy pronto. Así funcionará el proceso para empezar.' },
     sections: [
       { id: 'steps', icon: 'rocket', title: 'Los pasos', body: [{ steps: [
         { title: 'Elige tu plan', text: 'En la sección Planes, elige el plan, la duración (12, 24 o 36 meses) y el número de dispositivos.' },
@@ -183,6 +190,10 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'SYGMA TV+ se usa en Smart TV, reproductores y sticks de streaming, móviles, tablets y ordenadores. Cuántos dispositivos a la vez y cómo comprobar el tuyo.',
     summary: 'TV, dispositivos de streaming, móvil y ordenador.',
     intro: 'SYGMA TV+ se usa en televisores, dispositivos de streaming, móviles y ordenadores. Con la prueba gratuita puedes comprobar tu propio dispositivo y tu conexión antes de comprar.',
+    prelaunch: {
+      intro: 'SYGMA TV+ se usa en televisores, dispositivos de streaming, móviles y ordenadores. Las pruebas gratuitas abrirán muy pronto: podrás comprobar tu propio dispositivo y tu conexión antes de comprar.',
+      sections: { check: { body: [{ p: `Las pruebas gratuitas abrirán muy pronto: podrás probar el servicio durante ${TRIAL} en tu propio dispositivo y con tu conexión antes de comprar.` }] } },
+    },
     sections: [
       { id: 'categories', icon: 'devices', title: '¿Qué dispositivos?', body: [{ list: [
         'Smart TV.',
@@ -202,7 +213,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: `Prueba SYGMA TV+ gratis durante ${TRIAL} en tu dispositivo antes de comprar. Cómo solicitar la prueba y qué pasa después: nada que pagar ni cancelar.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)}, gratis, nada que cancelar.`,
     intro: `La prueba gratuita te permite probar SYGMA TV+ durante ${TRIAL} en tu propio dispositivo y con tu conexión, antes de decidirte.`,
-    prelaunch: { sections: { request: { body: [{ p: 'Las solicitudes de prueba gratuita abrirán muy pronto. Hasta entonces, no es posible conseguir una prueba por correo electrónico ni por ningún otro medio.' }] } } },
+    prelaunch: { description: `Las pruebas gratuitas abrirán muy pronto: podrás probar SYGMA TV+ durante ${TRIAL} en tu dispositivo antes de comprar. Cómo funcionará la prueba.`, sections: { request: { body: [{ p: 'Las solicitudes de prueba gratuita abrirán muy pronto. Hasta entonces, no es posible conseguir una prueba por correo electrónico ni por ningún otro medio.' }] } } },
     sections: [
       { id: 'request', icon: 'rocket', title: '¿Cómo la solicito?', body: [{ steps: [
         { title: 'Abre el formulario', text: 'Selecciona «Prueba gratis» en la parte superior de cualquier página.' },
@@ -225,7 +236,7 @@ const HELP_TOPICS: InfoPage[] = [
     description: 'Cómo pedir SYGMA TV+: envía el formulario, nuestro equipo te contacta por WhatsApp y activa tu acceso, y después pagas. Te explicamos los métodos de pago.',
     summary: 'Formulario de pedido, activación y después pago.',
     intro: 'Haces tu pedido con un breve formulario. Nuestro equipo se pone en contacto contigo por WhatsApp y activa tu acceso, y pagas después de la activación. En esta web no se cobra nada.',
-    prelaunch: { sections: { order: { title: 'Cómo funcionará el pedido', body: [
+    prelaunch: { description: 'Los pedidos en línea abrirán muy pronto. Cómo funcionará el pedido de SYGMA TV+: formulario, contacto y activación por WhatsApp y, después, el pago.', sections: { order: { title: 'Cómo funcionará el pedido', body: [
       { p: 'Los pedidos en línea abrirán muy pronto. Ya puedes comparar los planes, las duraciones y los precios en la sección Planes.' },
       { steps: ORDER_STEPS },
     ] } } },
@@ -261,19 +272,23 @@ const HELP_TOPICS: InfoPage[] = [
       { id: 'store', icon: 'tv', title: 'No encuentro la app en mi tienda', body: [{ p: 'Las tiendas de apps dependen del modelo del dispositivo y del país. Envíanos la marca, el modelo y el año de tu dispositivo: te diremos qué funciona en él.' }] },
       { id: 'crash', icon: 'pause', title: 'La app se cierra sola', body: [{ p: 'Reinicia el dispositivo, instala las actualizaciones disponibles del sistema y de la app, y vuelve a intentarlo.' }] },
       { id: 'mobile', icon: 'devices', title: 'La reproducción se corta con datos móviles', body: [{ p: 'La calidad depende de tu red móvil y de tu tarifa de datos. Si puedes, conéctate a una red wifi.' }] },
-      { id: 'still', icon: 'mail', title: '¿Sigue sin funcionar?', body: [{ p: `Contacta con nosotros ${F.supportHours} con el modelo de tu dispositivo y una foto del mensaje de error, si lo hay: normalmente respondemos en ${F.usualReply}.` }] },
+      { id: 'still', icon: 'mail', title: '¿Sigue sin funcionar?', body: [{ p: `Contacta con nosotros con el modelo de tu dispositivo y una foto del mensaje de error, si lo hay. Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario; normalmente respondemos en ${F.usualReply}.` }] },
     ],
   },
   {
     slug: 'contact-support', name: 'Contactar con soporte', icon: 'mail',
     title: 'Contacta con nuestro equipo de soporte',
-    metaTitle: 'Contactar con soporte: correo y WhatsApp, 24/7',
-    description: `Contacta con el soporte de SYGMA TV+ ${F.supportHours} por correo electrónico, WhatsApp o el formulario, en seis idiomas. Qué incluir para que te respondamos antes.`,
-    summary: `${F.supportHours}, correo o WhatsApp, seis idiomas.`,
+    metaTitle: 'Contactar con soporte: correo y WhatsApp',
+    description: `Contacta con el soporte de SYGMA TV+ por correo, WhatsApp o el formulario. Asistente automático ${F.supportHours}, ayuda humana si hace falta. Qué incluir.`,
+    summary: `Correo o WhatsApp, asistente automático ${F.supportHours}.`,
     intro: `Escríbenos por correo electrónico o por WhatsApp. Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario.`,
+    // While online requests are closed, the contact form, WhatsApp and the phone are not offered as a way to reach us: e-mail only.
     prelaunch: {
-      description: `Contacta con el soporte de SYGMA TV+ ${F.supportHours} por correo electrónico o WhatsApp, en seis idiomas. Qué incluir para que te respondamos antes.`,
-      sections: { reach: { body: [{ list: [`Correo electrónico: ${EMAIL}.`, `WhatsApp o teléfono: ${PHONE}.`] }] } },
+      metaTitle: 'Contactar con soporte por correo',
+      description: `Contacta con el soporte de SYGMA TV+ por correo electrónico para preguntas generales. Asistente automático ${F.supportHours}, ayuda humana si hace falta.`,
+      summary: `Por correo, asistente automático ${F.supportHours}.`,
+      intro: `Escríbenos por correo electrónico. Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario.`,
+      sections: { reach: { body: [{ list: [`Correo electrónico: ${EMAIL}.`] }] } },
     },
     sections: [
       { id: 'reach', icon: 'mail', title: 'Cómo contactarnos', body: [{ list: [
@@ -299,6 +314,8 @@ const HELP_TOPICS: InfoPage[] = [
     title: 'Reembolsos y cancelaciones',
     metaTitle: 'Reembolsos: garantía de 7 días y desistimiento',
     description: 'Reembolsos de SYGMA TV+: prueba gratuita primero, reembolso del 100 % en 7 días tras activar, desistimiento de 14 días (UE y Reino Unido) y cómo pedirlo.',
+    // While free trials are closed, only the « free trial first » fragment changes (refund and withdrawal wording unchanged).
+    prelaunch: { description: 'Reembolsos de SYGMA TV+: pruebas gratis pronto, reembolso del 100 % en 7 días tras activar, desistimiento de 14 días (UE y Reino Unido) y cómo pedirlo.' },
     summary: 'Garantía de reembolso de 7 días y cómo solicitarlo.',
     intro: 'Primero pruebas y, si no quedas satisfecho, te devolvemos todo en los 7 días siguientes a la activación. La política completa está en nuestra página de Reembolsos (en inglés).',
     sections: [
@@ -319,7 +336,7 @@ const INFO_UI: InfoUi = {
   topics: 'Temas de ayuda',
   glance: 'El soporte de un vistazo',
   helpFacts: [
-    { k: 'Disponibilidad', v: F.supportHours, small: 'Correo electrónico y WhatsApp' },
+    { k: 'Asistente automático', v: F.supportHours, small: 'Ayuda humana por correo y WhatsApp' },
     { k: 'Tiempo de respuesta habitual', v: 'Menos de una hora', small: 'Tiempo habitual, no garantizado' },
     { k: 'Idiomas', v: String(F.languages.length), small: F.languages.join(' · ') },
     { k: 'Activación', v: 'Normalmente < 1 hora', small: 'Antes del pago, tras confirmar tu pedido' },
@@ -327,7 +344,7 @@ const INFO_UI: InfoUi = {
   aboutFacts: [
     { k: 'Fundación', v: F.established, small: F.basedIn },
     { k: 'Empresa', v: siteConfig.legalEntity ?? '', small: 'Nuevo México, EE. UU.' },
-    { k: 'Soporte', v: F.supportHours, small: `Suele responder en ${F.usualReply}` },
+    { k: 'Asistente automático', v: F.supportHours, small: 'Ayuda humana cuando sea necesario' },
     { k: 'Idiomas de soporte', v: String(F.languages.length), small: F.languages.join(' · ') },
   ],
   aboutContact: `¿Tienes preguntas sobre SYGMA TV+? Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario.`,
@@ -353,6 +370,10 @@ const INFO_UI: InfoUi = {
     lastReviewed: 'Última revisión: ',
   },
   actions: { trial: 'Solicitar una prueba gratuita', support: 'Contactar con soporte', plans: 'Ver los planes', plansHref: '/es#plans' },
+  prelaunch: {
+    topicContact: `¿Necesitas más ayuda? Escríbenos por correo electrónico. Nuestro asistente automático está disponible ${F.supportHours}, con atención humana cuando sea necesario.`,
+    availability: 'Ayuda humana por correo',
+  },
 };
 
 export const INFO: InfoContentSet = {

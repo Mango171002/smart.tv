@@ -34,6 +34,7 @@ import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { fill, plural } from '@/i18n/format';
 import { CATALOGUE } from '@/config/catalogue';
+import { PROMOTIONS } from '@/config/promotions';
 import { displayMoney } from '@/lib/money-display';
 import { computeQuote, STREAMS, TERMS, TERM_MONTHS, TIERS, type PriceTable, type StreamCount, type Term, type Tier } from '@/lib/pricing';
 
@@ -199,7 +200,8 @@ export function PlanConfigurator({ locale, table, dict, ordersOpen = true, child
                 {yearly.monthlyEquivalentMinor !== null && (
                   <p className="tier-monthly">{fill(dict.common.perMonth, { price: money(yearly.monthlyEquivalentMinor) })}</p>
                 )}
-                {t !== 'starter' && <span className="tier-bonus">{p.bonus}</span>}
+                {/* « +30 days free »: hidden until its conditions are approved (src/config/promotions.ts, owner decision B6). */}
+                {PROMOTIONS.bonusDays.enabled && t !== 'starter' && <span className="tier-bonus">{p.bonus}</span>}
               </div>
               <ul className="tier-features">
                 {catalogueLines(t, p, locale).map((line) => (
@@ -310,20 +312,21 @@ export function PlanConfigurator({ locale, table, dict, ordersOpen = true, child
             <div className="sum-left">
               <small className="label">{p.summaryLabel}</small>
               <strong data-testid="selection">{selectionLabel}</strong>
-              {quote.referenceMinor && quote.savingsMinor > 0 && (
+              {/* Factual duration comparison (owner decision B6): the same plan bought as separate 12-month plans, with the
+                  amounts computed from the price list. No struck-through « regular » price. */}
+              {quote.referenceMinor !== null && quote.savingsMinor > 0 && (
                 <small className="savings" data-testid="savings">
-                  {fill(p.savings, { amount: money(quote.savingsMinor), pct: quote.savingsPercent, n: (TERM_MONTHS[term] ?? 12) / 12 })}
+                  {fill(p.savings, {
+                    n: (TERM_MONTHS[term] ?? 12) / 12,
+                    reference: money(quote.referenceMinor),
+                    amount: money(quote.savingsMinor),
+                    pct: quote.savingsPercent,
+                  })}
                 </small>
               )}
             </div>
             <div className="sum-price">
               <small className="label">{quote.savingsMinor > 0 ? p.finalPrice : p.totalLabel}</small>
-              {quote.referenceMinor !== null && quote.savingsMinor > 0 && (
-                <s className="price-was" data-testid="regular-price">
-                  <span className="sr-only">{p.regularPrice}: </span>
-                  {money(quote.referenceMinor)}
-                </s>
-              )}
               <div className="price" data-testid="price" aria-live="polite">{money(quote.amountMinor)}</div>
               <span className="price-sub">
                 {quote.monthlyEquivalentMinor !== null

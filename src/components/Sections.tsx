@@ -4,6 +4,7 @@ import { preload } from 'react-dom';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n/dictionaries';
 import { legalHrefLang } from '@/i18n/format';
+import { visibleCompareRows } from '@/config/promotions';
 import { Check, Play, CircleHelp, BadgeCheck, UserPlus, Minus, Infinity as InfinityIcon, ArrowRight, Cast, CirclePlay, Headset, Laptop, MonitorSmartphone, Plus, RefreshCcw, ShieldCheck, Smartphone, Tablet, Tv, TvMinimalPlay, Zap, type LucideIcon } from 'lucide-react';
 import { RequestButton } from './RequestButton';
 import { HeroVideoToggle } from './HeroVideoToggle';
@@ -346,7 +347,8 @@ function ComparisonTable({ dict }: { dict: Dictionary }) {
             </tr>
           </thead>
           <tbody>
-            {c.rows.map((row) => (
+            {/* The « +30 days free » row only while that promotion is enabled (src/config/promotions.ts, owner decision B6). */}
+            {visibleCompareRows(c.rows, dict.plans.bonus).map((row) => (
               <tr key={row.label}>
                 <th scope="row">{row.label}</th>
                 {row.values.map((v, i) => (

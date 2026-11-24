@@ -130,9 +130,11 @@ describe.each(LANGS)('language %s', (lang) => {
       const text = strings(d).join('\n');
       expect(text, 'no $ sign').not.toMatch(/\$/);
       const found = text.match(/(USD \d+(,\d{2})?|\d+(,\d{2})? USD)/g) ?? [];
-      expect(found.length, 'FAQ prices and taxes present').toBeGreaterThanOrEqual(4);
+      // The three plan prices of the FAQ answer « How much does it cost? ».
+      expect(d.faq.items[3]!.a.match(/(USD \d+(,\d{2})?|\d+(,\d{2})? USD)/g), 'FAQ prices present').toHaveLength(3);
       for (const p of found) expect(p, p).toMatch(rules.price);
-      expect(d.checkout.taxesValue).toMatch(rules.price);
+      // Owner decision B2 (24/11/2026): no computed tax amount (formerly « 0,00 USD »), a neutral label instead.
+      expect(d.checkout.taxesValue, 'no tax amount').not.toMatch(/\d|USD/);
     });
 
     it('search titles and descriptions fit (≤ 60 / 70–155 characters)', () => {

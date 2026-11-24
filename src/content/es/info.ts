@@ -255,7 +255,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Justo después de enviar el formulario: un correo electrónico que confirma que hemos recibido tu pedido.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Precios e impuestos', body: [{ p: 'Los precios se muestran en dólares estadounidenses (USD), impuestos no incluidos, y el precio de tu plan aparece antes de que envíes tu pedido. Las duraciones más largas cuestan menos al año: consulta los precios actuales en la sección Planes.' }] },
+      { id: 'prices', icon: 'tag', title: 'Precios e impuestos', body: [{ p: 'Los precios se muestran en dólares estadounidenses (USD). Los impuestos aplicables, si los hay, se confirman antes del pago. El precio de tu plan aparece antes de que envíes tu pedido. Las duraciones más largas cuestan menos al año: consulta los precios actuales en la sección Planes.' }] },
       { id: 'contract', icon: 'scale', title: '¿Cuándo empieza mi suscripción?', body: [{ p: 'El contrato empieza cuando nuestro equipo confirma tu pedido. Los planes nunca se renuevan automáticamente.' }] },
     ],
   },

@@ -260,7 +260,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Direkt nach dem Absenden des Formulars: eine Eingangsbestätigung per E-Mail.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Preise und Steuern', body: [{ p: 'Die Preise werden in US-Dollar (USD) zzgl. Steuern angezeigt, und den Preis Ihres Tarifs sehen Sie, bevor Sie Ihre Bestellung absenden. Längere Laufzeiten kosten weniger pro Jahr: Die aktuellen Preise finden Sie im Bereich „Tarife“.' }] },
+      { id: 'prices', icon: 'tag', title: 'Preise und Steuern', body: [{ p: 'Die Preise werden in US-Dollar (USD) angezeigt. Gegebenenfalls anfallende Steuern werden vor der Zahlung bestätigt. Den Preis Ihres Tarifs sehen Sie, bevor Sie Ihre Bestellung absenden. Längere Laufzeiten kosten weniger pro Jahr: Die aktuellen Preise finden Sie im Bereich „Tarife“.' }] },
       { id: 'contract', icon: 'scale', title: 'Wann beginnt mein Abo?', body: [{ p: 'Der Vertrag beginnt, wenn unser Team Ihre Bestellung bestätigt. Tarife verlängern sich nie automatisch.' }] },
     ],
   },

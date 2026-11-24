@@ -260,7 +260,7 @@ export const HELP_TOPICS_FR: InfoPage[] = [
         'Juste après l’envoi du formulaire : un e-mail confirmant la réception de votre commande.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Prix et taxes', body: [{ p: 'Les prix sont indiqués en dollars américains (USD), hors taxes, et le prix de votre formule est affiché avant l’envoi de votre commande. Plus la durée est longue, moins le prix annuel est élevé : consultez les prix actuels dans la section Formules.' }] },
+      { id: 'prices', icon: 'tag', title: 'Prix et taxes', body: [{ p: 'Les prix sont indiqués en dollars américains (USD). Les taxes applicables, le cas échéant, sont confirmées avant le paiement. Le prix de votre formule est affiché avant l’envoi de votre commande. Plus la durée est longue, moins le prix annuel est élevé : consultez les prix actuels dans la section Formules.' }] },
       { id: 'contract', icon: 'scale', title: 'Quand mon abonnement commence-t-il ?', body: [{ p: 'Le contrat commence lorsque notre équipe confirme votre commande. Les formules ne se renouvellent jamais automatiquement.' }] },
     ],
   },

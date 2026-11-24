@@ -64,7 +64,7 @@ Yes 12, No 1.
   « favourite sports » (`src/lib/email/templates.ts:280`). Channel/VOD counts hidden (DECISIONS D34, Phase 6A).
 - Unrendered string « Each country opens only once broadcasting authorisations are in place. » (`en.ts:590`) and
   `coverage.notLicensed: 'Available'` (`en.ts:536`).
-- Phase 13: sports « International » labels → availability qualifiers — being implemented in Phase 13, verify at
+- Phase 13: sports « International » labels → availability qualifiers — implemented in Phase 13, verify at
   integration (decision D6). This changes wording only.
 
 **Risk:** Critical. Rights per territory (13 priority markets, plus any country an order comes from) are undocumented.
@@ -218,7 +218,7 @@ withdrawal/refund policy (D3, D4), the promotion conditions (D7) and the content
   category « Google Ads, Meta, TikTok » (`en.ts:31-32`) and GTM `GTM-MGCLXP5L` with `gtmEnabled: true`
   (`src/config/analytics.ts:10-12`); container contents not in the repository.
 - Phase 13: cookie audit (actual scripts/cookies measured) and a policy correction drafted for approval, not
-  published — being implemented in Phase 13, verify at integration (decision D9).
+  published — implemented in Phase 13 and integrated (verified 24/11/2026) (decision D9).
 
 **Risk:** High.
 
@@ -362,7 +362,7 @@ read-only reconciliation query and its result; tax adviser's view on corrections
 (`src/content/en/info.ts:324`, `:412`); 6 support languages, not nl/sv/nb (`info.ts:37`); phone/WhatsApp on help,
 About and legal pages (`src/components/InfoContent.tsx:104-113`, `src/components/LegalContent.tsx:90-94`); e-mails show
 WhatsApp (`templates.ts:164-172`). Phase 13 (decision D8): wording → « 24/7 automated assistant, human help when
-needed »; WhatsApp not shown on marketing/help pages during prelaunch; Legal notice unchanged — being implemented in
+needed »; WhatsApp not shown on marketing/help pages during prelaunch; Legal notice unchanged — implemented in
 Phase 13, verify at integration.
 
 **Risk:** Medium.
@@ -408,7 +408,7 @@ channels (A5) still « blocked — decision required »; current items: SPORTS t
 (`en.ts:103-117`), « +30 days free » without conditions (`en.ts:127`, `:142`), struck « Regular price » computed
 (`en.ts:227`, `src/lib/pricing.ts:81`), 4K/EPG bullets without « where available » in the bullet itself (Phase 12
 C-020), support labels (L-10). Phase 12 audit found no reviews or ratings, no competitor comparisons, no urgency wording, no
-« instant activation » and no « legal » claims; « The best IPTV experience » (C1) is no longer in `en.ts`. Phase 13 (D6): availability qualifiers — being implemented,
+« instant activation » and no « legal » claims; « The best IPTV experience » (C1) is no longer in `en.ts`. Phase 13 (D6): availability qualifiers — implemented,
 verify at integration.
 
 **Risk:** High.
@@ -432,7 +432,7 @@ promotion conditions).
 `supportedDevices: null` (`src/config/site.ts:50`); app names unverified (`src/content/en/info.ts:24`, owner fact M7).
 Generated images verified without logos (DECISIONS D38–D45). Trustpilot logo and stars used in the review e-mail as
 official assets (`templates.ts:154-160`, DECISIONS D59). Own brand: trademark search and filing for « SYGMA TV+ » still
-open (`docs/DECISIONS.md`, pending list). Phase 13 (D6): device brand names → categories — being implemented in
+open (`docs/DECISIONS.md`, pending list). Phase 13 (D6): device brand names → categories — implemented in
 Phase 13, verify at integration.
 
 **Risk:** Medium.

@@ -26,7 +26,7 @@ need that specialist's written answer before the box is ticked. Details and file
   - [ ] Other (list languages): ______
   - Also approve: add released languages to `LEGACY_REDIRECT_LANGUAGES` before any rollback ☐ yes ☐ no
 - [ ] **A2 — Content and device wording (D6).** Phase 13 change: sports « International » labels → availability
-  qualifiers; device brand names → categories. *(Being implemented in Phase 13 — review the merged text.)*
+  qualifiers; device brand names → categories. *(Implemented in Phase 13 — review the merged text.)*
   - [ ] Approve the Phase 13 wording, and also neutralise « sports » in the Terms (`terms.ts:41`, *counsel*) and the
     trial follow-up e-mail (`templates.ts:280`) *(recommended)*
   - [ ] Approve the Phase 13 wording only
@@ -38,8 +38,7 @@ need that specialist's written answer before the box is ticked. Details and file
   - [ ] Show them in the closing banner sentence instead (same qualifier)
   - [ ] Keep them hidden until territorial rights are documented
 - [ ] **A3 — Support wording and WhatsApp (D8).** Phase 13 change: « 24/7 automated assistant, human help when
-  needed »; WhatsApp not shown on marketing/help pages during prelaunch; Legal notice unchanged. *(Being implemented —
-  review the merged text.)*
+  needed »; WhatsApp not shown on marketing/help pages during prelaunch; Legal notice unchanged. *(Implemented in Phase 13 — review the merged text.)*
   - [ ] Approve as described *(recommended)*
   - [ ] Approve the wording, keep WhatsApp visible with the prelaunch note beside it
   - [ ] Keep the current « 24/7 support in 6 languages »

@@ -41,27 +41,27 @@ D-numbers of `docs/DECISIONS.md` (which uses D1–D68 for its own history); refe
 | Prelaunch publication | Production Step B of Phase 12 §9: 8 languages public, content pages live, orders and trials closed. « Yes » = should not proceed before the item is decided; « Recommended » = Phase 12 or this register recommends deciding first; « No » = does not block. |
 | Opening orders | Setting `FEATURE_CONTACT_FORM=true` (assisted order and trial forms reopen). |
 | Commercial sales | Taking payment for subscriptions by any channel (assisted WhatsApp sale or `SALES_ENABLED=true`). |
-| Phase 13 status | « Being implemented in Phase 13, verify at integration » = another Phase 13 agent is preparing the change in parallel; this register describes the planned change, not a verified result. |
+| Phase 13 status | Updated 24/11/2026 after integration: the Phase 13 changes described here (D6 wording, D8 wording and e-mail-only contact while closed, D9 audit and draft, D1 patches, D15 review pack) are merged on `claude/phase13-release` and covered by tests. Remaining actions are owner, legal or external. |
 
 ## Summary
 
 | ID | Topic | Decision owner | Phase 13 technical work | Prelaunch publication | Opening orders | Commercial sales |
 |---|---|---|---|---|---|---|
-| D1 | Release scope | Owner | Release config prepared as a patch, not applied (being implemented) | **Yes** | No | No |
+| D1 | Release scope | Owner | Release config prepared as a patch, not applied (done in Phase 13) | **Yes** | No | No |
 | D2 | Taxes and price display | Owner + tax adviser + counsel | None | Recommended (FAQ wording) | **Yes** | **Yes** |
 | D3 | Withdrawal right | Owner + counsel | None | Recommended (nb page) | **Yes** | **Yes** |
 | D4 | Refund wording | Owner + counsel | None | No | **Yes** | **Yes** |
 | D5 | Contract formation / Terms flow | Owner + counsel | None | Recommended | **Yes** | **Yes** |
-| D6 | Content rights, sports, device names | Owner + counsel + rights holder | Wording qualified (being implemented) | **Yes** (recommended minimum) | **Yes** | **Yes** |
+| D6 | Content rights, sports, device names | Owner + counsel + rights holder | Wording qualified (done in Phase 13) | **Yes** (recommended minimum) | **Yes** | **Yes** |
 | D7 | « +30 DAYS FREE », « Regular price » | Owner + counsel | None | No | **Yes** | **Yes** |
-| D8 | Support claims, WhatsApp in prelaunch | Owner | Wording + WhatsApp hidden (being implemented) | **Yes** (recommended) | No | Recommended |
-| D9 | Cookie policy vs consent banner | Owner + privacy counsel | Audit + draft correction, not published (being implemented) | **Yes** (recommended) | No | **Yes** |
+| D8 | Support claims, WhatsApp in prelaunch | Owner | Wording + WhatsApp hidden (done in Phase 13) | **Yes** (recommended) | No | Recommended |
+| D9 | Cookie policy vs consent banner | Owner + privacy counsel | Audit + draft correction, not published (done in Phase 13) | **Yes** (recommended) | No | **Yes** |
 | D10 | Legal pages in English only | Owner + counsel | None | No | **Yes** | **Yes** |
 | D11 | 36 sensitive wordings | Owner + counsel + native reviewers | None | Recommended (25 rendered) | **Yes** | **Yes** |
 | D12 | Auto-renewal / guarantee wording choices | Owner + counsel + native reviewers | None | No | **Yes** | **Yes** |
 | D13 | Design choices | Owner | None | No | No | No |
 | D14 | Operations during prelaunch | Owner | None | **Yes** (procedure) | No | Partly (`domain` gate) |
-| D15 | Native-speaker review | Owner + native reviewers | Review pack (being implemented) | **Yes** (per language) | **Yes** (per language) | **Yes** (per language) |
+| D15 | Native-speaker review | Owner + native reviewers | Review pack (done in Phase 13) | **Yes** (per language) | **Yes** (per language) | **Yes** (per language) |
 | D16 | Reopening rule | Owner (+ counsel, tax adviser) | None (technical guard possible later) | No | **Yes** | **Yes** |
 
 | Counts (16 entries) | Yes | Recommended | Partly | No |
@@ -96,7 +96,7 @@ language prefixes.
 rollback of a public language, add it to `LEGACY_REDIRECT_LANGUAGES`.
 
 **Technical resolution.** Fully technical once decided (one `.env.production` commit). Phase 13: the release
-configuration is prepared as a patch and **not applied** — being implemented in Phase 13, verify at integration.
+configuration is prepared as a patch and **not applied** — implemented in Phase 13 and integrated (verified 24/11/2026).
 
 **Requires approval.** Owner (scope, date, language list). No external approval for the configuration itself; the
 content released depends on D6, D8, D9, D15.
@@ -287,7 +287,7 @@ Rights-holders' approval for third-party platform names is not documented.
 counsel; gate the assisted flow by country once `licensedTerritories` is filled (option C-2(a) of the Phase 11
 register).
 
-**Technical resolution.** Wording: **being implemented in Phase 13, verify at integration** (sports « International »
+**Technical resolution.** Wording: **implemented in Phase 13 and integrated (verified 24/11/2026)** (sports « International »
 labels → availability qualifiers; device brand names → categories). Not stated as part of that change, to verify at
 integration: Terms `terms.ts:41` « sports » and e-mail `templates.ts:280` « favourite sports ». Country gating of
 `/api/contact` is technically possible but **not** done in Phase 13. The wording change creates no right.
@@ -384,7 +384,7 @@ visible WhatsApp number invites order requests that the prelaunch notice says ca
 **Recommended safest option.** Use the approved wording « 24/7 automated assistant, human help when needed »; show
 e-mail only on marketing and help pages during prelaunch; keep the Legal notice unchanged.
 
-**Technical resolution.** **Being implemented in Phase 13, verify at integration**: « 24/7 support in 6 languages » →
+**Technical resolution.** **Implemented in Phase 13 and integrated (verified 24/11/2026)**: « 24/7 support in 6 languages » →
 « 24/7 automated assistant, human help when needed »; WhatsApp not shown as a contact on marketing/help pages
 during prelaunch; Legal notice unchanged. Not part of that change: e-mail templates (no e-mail is sent by the site in
 prelaunch; see D14).
@@ -420,7 +420,7 @@ verified from the code.
 **Recommended safest option.** Publish a policy that lists what is actually set, measured on the production host
 with each consent state, after privacy counsel's review.
 
-**Technical resolution.** **Being implemented in Phase 13, verify at integration**: actual scripts and cookies
+**Technical resolution.** **Implemented in Phase 13 and integrated (verified 24/11/2026)**: actual scripts and cookies
 measured; a policy correction drafted **for approval, not published**.
 
 **Requires approval.** Owner; privacy counsel; whoever administers the GTM container (to confirm its tags).
@@ -481,7 +481,7 @@ sales:** Yes.
 all languages; native review (D15) on the result.
 
 **Technical resolution.** Text changes after decisions. Phase 13 does **not** change them; the D15 review pack may
-group them for reviewers (being implemented, verify at integration).
+group them for reviewers (done: docs/i18n/phase13/).
 
 **Requires approval.** Owner, counsel, native reviewers.
 
@@ -599,7 +599,7 @@ priority.
 **Recommended safest option.** Release a language only after its native reviewer signs off priorities 1–3 (Phase 12
 §6), with priority de → nl → sv → nb, then fr, es, it.
 
-**Technical resolution.** **Being implemented in Phase 13, verify at integration**: native review pack. Applying the
+**Technical resolution.** **Implemented in Phase 13 and integrated (verified 24/11/2026)**: native review pack. Applying the
 reviewers' corrections is technical work after sign-off.
 
 **Requires approval.** Native-speaker reviewers (external), owner.

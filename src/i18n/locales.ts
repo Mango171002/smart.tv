@@ -143,11 +143,13 @@ export function languagesForMarket(country: MarketCountry, registry: readonly Si
 }
 
 /**
- * Former French URLs (/fr, /fr/*) redirect to the English page (308) — kept until French is enabled,
- * then removed in the same release. Other disabled prefixes (/de, /es, /it, /nl, /sv, /nb) were never published and keep
- * returning the branded 404 page: no new redirect is created for them.
+ * Language prefixes whose URLs redirect to the English page (308: /xx → /, /xx/* → /*) whenever that language is NOT
+ * built. French has had these redirects since the one-page site. Rollback safety (phase 13, D1): the six other
+ * releasable languages are listed too, so that un-releasing a language that was public sends its indexed URLs to the
+ * English pages instead of a 404. While a language is built (released, or preview in the preview environment), its
+ * entry generates no redirect: the release itself is unchanged.
  */
-export const LEGACY_REDIRECT_LANGUAGES = ['fr'] as const;
+export const LEGACY_REDIRECT_LANGUAGES = ['fr', 'de', 'es', 'it', 'nl', 'sv', 'nb'] as const;
 
 const isBuiltCode = (code: string, registry: readonly SiteLanguage[], preview: boolean) => {
   const l = languageInfo(code, registry);

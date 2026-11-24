@@ -70,9 +70,9 @@ const nextConfig: NextConfig = {
       ...formerPrefixed,
       { source: '/en', destination: '/', permanent: true },
       { source: '/en/:path+', destination: '/:path+', permanent: true },
-      // Former French URLs → English page, while French is not built (production: generated from src/i18n/locales.ts).
-      // Preview environment: /fr is served (French preview); only /fr/legal/* goes to the English legal pages.
-      // /de, /es, /it, /nl, /sv and /nb were never published: no redirect, they stay a 404 until their language is enabled.
+      // URLs of a language that is not built → English page (generated from src/i18n/locales.ts, LEGACY_REDIRECT_LANGUAGES:
+      // the former French URLs, and every releasable language for rollback safety). A built language has none: in the
+      // preview environment or once released, only its /xx/legal/* URLs go to the English legal pages.
       ...legacyLanguageRedirects(),
     ];
   },

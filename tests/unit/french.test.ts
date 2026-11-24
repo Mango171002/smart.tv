@@ -160,11 +160,11 @@ describe('French preview mode: never public', () => {
     for (const e of sitemap()) expect(new URL(e.url).pathname).not.toMatch(/^\/fr(\/|$)/);
   });
 
-  it('production keeps the /fr redirects; the preview keeps only /fr/legal/* → English legal pages', () => {
-    expect(legacyLanguageRedirects(undefined, false)).toEqual([
-      { source: '/fr', destination: '/', permanent: true },
-      { source: '/fr/:path*', destination: '/:path*', permanent: true },
-    ]);
+  it('production keeps the /fr redirects (and those of every other unreleased language); the preview keeps only /xx/legal/* → English legal pages', () => {
+    expect(legacyLanguageRedirects(undefined, false)).toEqual(['fr', 'de', 'es', 'it', 'nl', 'sv', 'nb'].flatMap((c) => [
+      { source: `/${c}`, destination: '/', permanent: true },
+      { source: `/${c}/:path*`, destination: '/:path*', permanent: true },
+    ]));
     // Phase 8: every preview language is built in the preview environment; each one's legal URLs go to the English pages.
     expect(legacyLanguageRedirects(undefined, true)).toEqual(['fr', 'de', 'es', 'it', 'nl', 'sv', 'nb'].map((c) => ({ source: `/${c}/legal/:path*`, destination: '/legal/:path*', permanent: false })));
   });

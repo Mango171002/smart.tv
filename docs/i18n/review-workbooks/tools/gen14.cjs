@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- standalone Node (CommonJS) reviewer tool, not site code */
 // Row generator of the Phase 13 native-review pack (docs/i18n/phase13), reused for the review workbooks: rendering scope,
 // priorities, locations, risk, legal flags, layout limits and AI notes (notes.cjs, register.cjs). Changes from the pack's
 // generator: the « CLAIMS » placeholders are dropped (claims D6/D8 landed in aad188e; `claims()` now returns the

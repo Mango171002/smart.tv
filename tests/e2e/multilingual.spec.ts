@@ -111,6 +111,9 @@ for (const lang of BUILT) {
       await dialog.getByRole('button', { name: new RegExp(escape(d.checkout.review)) }).click();
       await expect(dialog.getByTestId('quote-status')).toHaveText(new RegExp(escape(d.checkout.verified)));
       await expect(dialog.getByTestId('review-price')).toHaveText(/USD/);
+      // Owner decision B2: the taxes line shows a neutral label, no amount.
+      await expect(dialog.getByTestId('review-taxes')).toHaveText(d.checkout.taxesValue);
+      await expect(dialog.getByTestId('review-taxes')).not.toHaveText(/\d/);
       await expect(dialog.getByTestId('review-region')).toContainText(country);
       await dialog.getByRole('button', { name: new RegExp(escape(d.checkout.finish)) }).click();
       await expect(dialog.getByRole('heading', { name: new RegExp(escape(d.checkout.doneTitle.replace(/[\s ]*[!¡]+/g, '').trim())) })).toBeVisible();

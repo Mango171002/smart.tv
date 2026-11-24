@@ -10,7 +10,7 @@ import nb from '../../src/i18n/dictionaries/nb';
 import type { Locale } from '../../src/i18n/config';
 import { fill, plural } from '../../src/i18n/format';
 import { displayMoney, displayMoneyWithCode } from '../../src/lib/money-display';
-import { computeQuote, getStaticPriceTable, STREAMS, TIERS } from '../../src/lib/pricing';
+import { computeQuote, getStaticPriceTable, STREAMS, TERM_MONTHS, TIERS } from '../../src/lib/pricing';
 import { RELEASED_LANGS } from './released';
 
 /**
@@ -74,15 +74,21 @@ test.describe('price matrix', () => {
         await expect(c.locator(`button[data-term="${term}"]`)).toHaveAttribute('aria-pressed', 'true');
         await expect(c.locator(`button[data-stream="${streams}"]`)).toHaveAttribute('aria-pressed', 'true');
 
-        // Simulator: selection, price, regular price and monthly equivalent, all from the price list.
+        // Simulator: selection, price, duration comparison and monthly equivalent, all from the price list.
         const devices = plural(d.common, 'device', streams);
         await expect.soft(page.getByTestId('selection'), `${id} selection`).toHaveText(norm(`${d.plans.tiers[tier].name} · ${d.plans.terms[term]} · ${devices}`));
         await expect.soft(page.getByTestId('price'), `${id} price`).toHaveText(money(q.amountMinor));
+        // Owner decision B6: the price of the same plan as separate 12-month plans is stated as a comparison (no
+        // struck-through « regular » price), with the saving, both computed from the price list.
         if (q.referenceMinor !== null && q.savingsMinor > 0) {
-          await expect.soft(page.getByTestId('regular-price'), `${id} regular price`).toContainText(money(q.referenceMinor));
+          await expect.soft(page.getByTestId('savings'), `${id} comparison`).toHaveText(
+            norm(fill(d.plans.savings, { n: (TERM_MONTHS[term] ?? 12) / 12, reference: displayMoney(q.referenceMinor, TABLE.currency, locale), amount: displayMoney(q.savingsMinor, TABLE.currency, locale), pct: q.savingsPercent })),
+          );
+          await expect.soft(page.getByTestId('savings'), `${id} comparison amount`).toContainText(money(q.referenceMinor));
         } else {
-          await expect.soft(page.getByTestId('regular-price'), `${id} no regular price`).toHaveCount(0);
+          await expect.soft(page.getByTestId('savings'), `${id} no comparison`).toHaveCount(0);
         }
+        await expect.soft(c.locator('.sim-summary s, .sim-summary del, [data-testid="regular-price"]'), `${id} no struck price`).toHaveCount(0);
         await expect.soft(c.locator('.sim-summary .price-sub'), `${id} per month`).toHaveText(norm(fill(d.common.perMonth, { price: displayMoney(q.monthlyEquivalentMinor!, TABLE.currency, locale) })));
         // Extra-device notes of the selected plan and term.
         const base = computeQuote(TABLE, { tier, term, streams: 1 }).amountMinor;

@@ -256,7 +256,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Subito dopo l’invio del modulo: un’email che conferma la ricezione del tuo ordine.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Prezzi e tasse', body: [{ p: 'I prezzi sono indicati in dollari statunitensi (USD), tasse escluse, e il prezzo del tuo piano viene mostrato prima dell’invio dell’ordine. Le durate più lunghe costano meno all’anno: consulta i prezzi attuali nella sezione Piani.' }] },
+      { id: 'prices', icon: 'tag', title: 'Prezzi e tasse', body: [{ p: 'I prezzi sono indicati in dollari statunitensi (USD). Le eventuali tasse applicabili vengono confermate prima del pagamento. Il prezzo del tuo piano viene mostrato prima dell’invio dell’ordine. Le durate più lunghe costano meno all’anno: consulta i prezzi attuali nella sezione Piani.' }] },
       { id: 'contract', icon: 'scale', title: 'Quando inizia il mio abbonamento?', body: [{ p: 'Il contratto inizia quando il nostro team conferma il tuo ordine. I piani non si rinnovano mai automaticamente.' }] },
     ],
   },

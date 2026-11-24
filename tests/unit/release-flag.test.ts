@@ -151,9 +151,10 @@ describe('price display', () => {
     expect(displayMoney(123456, 'USD', 'fr')).toMatch(/^1\s?234,56 \$ US$/);
   });
 
-  it('French text prices use the same format (FAQ, taxes)', () => {
+  it('French text prices use the same format (FAQ); no tax amount (owner decision B2)', () => {
     const text = strings(fr).join('\n');
-    expect(fr.checkout.taxesValue).toBe('0,00 $ US');
+    expect(fr.checkout.taxesValue).toBe('Calculées par notre équipe avant le paiement');
+    expect(fr.faq.items[3]!.a.match(/\d+\s\$\sUS/g)).toHaveLength(3);
     for (const m of text.match(/\d[\d,]*\s?\$(?:\s?[A-Z]{2,3})?/g) ?? []) expect(m, m).toMatch(/ \$ US$/);
     expect(text).not.toMatch(/\$ USD|\$USD/);
   });

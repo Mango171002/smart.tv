@@ -117,7 +117,7 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
     await expect(page.getByTestId('selection')).toHaveText('Starter · 36 months · 1 device');
     await expect(price).toHaveText('$122.99');
     await expect(page.locator('.price-sub')).toHaveText('≈ $3.42 / month');
-    await expect(page.getByTestId('savings')).toHaveText('You save $54.01 (−30%) vs 3 × 12 months');
+    await expect(page.getByTestId('savings')).toHaveText('Compared with 3 separate 12-month plans ($177): you save $54.01 (−30%)');
     await page.locator('[data-stream="3"]').click();
     await expect(page.getByTestId('selection')).toHaveText('Starter · 36 months · 3 devices');
     await expect(price).toHaveText('$160.99');
@@ -220,6 +220,9 @@ test.describe('pre-registration', () => {
     await expect(dialog.getByTestId('review-region')).toContainText('Canada');
     await expect(dialog.getByTestId('review-phone')).toHaveText('+14155550123');
     await expect(dialog.getByTestId('review-price')).toHaveText('$173.99 USD');
+    // Owner decision B2: no computed tax amount, a neutral label.
+    await expect(dialog.getByTestId('review-taxes')).toHaveText('Calculated by our team before payment');
+    await expect(dialog.getByText('$0.00')).toHaveCount(0);
 
     await dialog.getByRole('button', { name: /Confirm my order/ }).click();
     await expect(dialog.getByRole('heading', { name: 'Order received!' })).toBeVisible();

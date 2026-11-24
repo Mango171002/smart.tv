@@ -308,7 +308,7 @@ export const HELP_TOPICS: InfoPage[] = [
         'Right after you send the form: an email confirming that we received your order.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Prices and taxes', body: [{ p: 'Prices are shown in US dollars (USD) before taxes, and the price of your plan is shown before you send your order. Longer durations cost less per year: see the current prices in the Plans section.' }] },
+      { id: 'prices', icon: 'tag', title: 'Prices and taxes', body: [{ p: 'Prices are shown in US dollars (USD). Applicable taxes, if any, are confirmed before payment. The price of your plan is shown before you send your order. Longer durations cost less per year: see the current prices in the Plans section.' }] },
       { id: 'contract', icon: 'scale', title: 'When does my subscription start?', body: [{ p: 'The contract starts when our team confirms your order. Plans never renew automatically.' }] },
     ],
   },

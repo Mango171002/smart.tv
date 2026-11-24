@@ -257,7 +257,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Direct nadat je het formulier hebt verstuurd: een e-mail waarin we bevestigen dat we je bestelling hebben ontvangen.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Prijzen en belastingen', body: [{ p: 'Prijzen worden getoond in Amerikaanse dollars (USD), exclusief belastingen, en je ziet de prijs van je abonnement voordat je je bestelling verstuurt. Langere looptijden kosten minder per jaar: bekijk de actuele prijzen in het onderdeel Abonnementen.' }] },
+      { id: 'prices', icon: 'tag', title: 'Prijzen en belastingen', body: [{ p: 'Prijzen worden getoond in Amerikaanse dollars (USD). Eventuele toepasselijke belastingen worden vóór de betaling bevestigd. Je ziet de prijs van je abonnement voordat je je bestelling verstuurt. Langere looptijden kosten minder per jaar: bekijk de actuele prijzen in het onderdeel Abonnementen.' }] },
       { id: 'contract', icon: 'scale', title: 'Wanneer begint mijn abonnement?', body: [{ p: 'Het contract begint wanneer ons team je bestelling bevestigt. Abonnementen worden nooit automatisch verlengd.' }] },
     ],
   },

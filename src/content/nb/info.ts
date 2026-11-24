@@ -255,7 +255,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Rett etter at du har sendt skjemaet: en e-post som bekrefter at vi har mottatt bestillingen din.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Priser og avgifter', body: [{ p: 'Prisene vises i amerikanske dollar (USD) eksklusive avgifter, og prisen på abonnementet ditt vises før du sender bestillingen. Lengre varighet koster mindre per år: se gjeldende priser under «Abonnementer».' }] },
+      { id: 'prices', icon: 'tag', title: 'Priser og avgifter', body: [{ p: 'Prisene vises i amerikanske dollar (USD). Eventuelle gjeldende avgifter bekreftes før betaling. Prisen på abonnementet ditt vises før du sender bestillingen. Lengre varighet koster mindre per år: se gjeldende priser under «Abonnementer».' }] },
       { id: 'contract', icon: 'scale', title: 'Når starter abonnementet mitt?', body: [{ p: 'Avtalen starter når teamet vårt bekrefter bestillingen din. Abonnementene fornyes aldri automatisk.' }] },
     ],
   },

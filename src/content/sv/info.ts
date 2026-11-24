@@ -257,7 +257,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Direkt efter att du har skickat formuläret: ett mejl som bekräftar att vi har tagit emot din beställning.',
         CONFIRMATION_EMAIL,
       ] }] },
-      { id: 'prices', icon: 'tag', title: 'Priser och skatt', body: [{ p: 'Priserna visas i amerikanska dollar (USD) exklusive skatt, och priset för ditt paket visas innan du skickar din beställning. Längre perioder kostar mindre per år: se aktuella priser i avsnittet Paket.' }] },
+      { id: 'prices', icon: 'tag', title: 'Priser och skatt', body: [{ p: 'Priserna visas i amerikanska dollar (USD). Eventuell tillämplig skatt bekräftas före betalningen. Priset för ditt paket visas innan du skickar din beställning. Längre perioder kostar mindre per år: se aktuella priser i avsnittet Paket.' }] },
       { id: 'contract', icon: 'scale', title: 'När börjar mitt abonnemang?', body: [{ p: 'Avtalet börjar gälla när vårt team bekräftar din beställning. Paketen förnyas aldrig automatiskt.' }] },
     ],
   },

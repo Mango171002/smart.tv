@@ -412,7 +412,8 @@ export function CheckoutDialog({
             <div className="orderline"><span>{c.whatsapp}</span><b data-testid="review-phone">{phoneE164}</b></div>
             <div className="orderline"><span>{c.plan}</span><b data-testid="review-plan">{planLabel}</b></div>
             <div className="orderline"><span>{c.subtotal}</span><b data-testid="review-price">{subtotal}</b></div>
-            <div className="orderline"><span>{c.taxes}</span><b>{c.taxesValue}</b></div>
+            {/* No tax amount is computed (owner decision B2): a neutral label, never « $0.00 ». */}
+            <div className="orderline"><span>{c.taxes}</span><b data-testid="review-taxes">{c.taxesValue}</b></div>
             <p className="footnote" role="status" data-testid="quote-status">
               {quoteState === 'loading' && c.verifying}
               {quoteState === 'ok' && <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}><Check size={14} strokeWidth={2} aria-hidden="true" /> {c.verified}</span>}

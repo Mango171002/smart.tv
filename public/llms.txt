@@ -1,0 +1,35 @@
+# SYGMA TV+
+
+> SYGMA TV+ ("One World. Endless Entertainment.") is a streaming subscription for live TV, movies and series on Smart TVs, mobile devices and computers. It is a brand of Sygma TV LLC, a company established in 2026 and registered in the State of New Mexico, United States. Online orders and free trials are not open yet: the website presents the plans and explains how ordering, free trials and refunds will work once they open.
+
+## Status
+
+- Online orders and free trials are not open yet. They cannot be arranged by email, WhatsApp or any other channel yet.
+- The plan simulator on the home page already shows the plans, durations and prices (in USD).
+
+## Service
+
+- Plans are yearly: 12, 24 or 36 months.
+- Every plan includes 1 device; devices can be added, up to 4.
+- Supported devices: Smart TVs, streaming boxes and sticks, smartphones, tablets and computers.
+- The website is available in English, French, German, Spanish, Italian, Dutch, Swedish and Norwegian Bokmål.
+
+## Company
+
+- Legal name: Sygma TV LLC (brand: SYGMA TV+)
+- Established: 2026, State of New Mexico, United States
+- Registered address: 1209 Mountain Road Pl NE, Ste H, Albuquerque, NM 87110, United States
+- Email: support@sygmatv.com
+
+## Pages
+
+- [Home](https://sygmatv.com/): plans, plan simulator and FAQ
+- [About us](https://sygmatv.com/about): company information and how the service works
+- [Help center](https://sygmatv.com/help): free trial, ordering and payment, devices, troubleshooting, support, refunds
+- [Supported devices](https://sygmatv.com/help/devices)
+- [Refunds and cancellations](https://sygmatv.com/help/refunds)
+- [Terms of Service](https://sygmatv.com/legal/terms)
+- [Privacy policy](https://sygmatv.com/legal/privacy)
+- [Legal notice](https://sygmatv.com/legal/imprint)
+
+Other languages: https://sygmatv.com/fr, /de, /es, /it, /nl, /sv, /nb (same pages under each prefix; legal pages are in English only).

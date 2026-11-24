@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { RELEASED_LANGS } from './released';
+import { RELEASED_LANGS, CONTENT_ON } from './released';
 
 /**
  * Phase 12 (UI audit U-003, U-004, U-005, U-007) — labels wrap instead of overflowing, in every built language, measured
@@ -7,7 +7,8 @@ import { RELEASED_LANGS } from './released';
  * and simulator buttons, so that a later copy change cannot overflow either.
  */
 const PREVIEW = process.env.E2E_SITE_MODE === 'preview';
-const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+/** The content pages (About us, Help center) exist in the build under test: E2E_CONTENT_PAGES=preview or live. */
+const CONTENT = CONTENT_ON;
 const LANGS = ['en', ...['fr', 'de', 'es', 'it', 'nl', 'sv', 'nb'].filter((l) => PREVIEW || RELEASED_LANGS.includes(l))];
 const home = (l: string) => (l === 'en' ? '/' : `/${l}`);
 const LONG: Record<string, [string, string]> = {
@@ -138,7 +139,7 @@ test.describe('open phone menu never widens the page (U-007)', () => {
 
 test.describe('help and about headings wrap (U-005)', () => {
   test.describe.configure({ timeout: 120_000 });
-  test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview');
+  test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview or live');
   test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly'));
   const pages = ['/about', '/help/devices', '/help/troubleshooting', '/help/free-trial', '/help/refunds'];
   for (const lang of LANGS) {
@@ -248,7 +249,7 @@ test.describe('simulator labels never break inside a word (A-002)', () => {
 
 test.describe('help and about headings hyphenate long compounds only (A-005)', () => {
   test.describe.configure({ timeout: 120_000 });
-  test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview');
+  test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview or live');
   test.beforeEach(({ isMobile }) => test.skip(isMobile, 'widths are set explicitly'));
   for (const lang of LANGS) {
     test(`${lang}: no word under 14 letters split at 320–414 px`, async ({ page }) => {

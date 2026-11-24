@@ -1,5 +1,5 @@
 import { expect, test, type Browser, type Page } from '@playwright/test';
-import { RELEASED_LANGS } from './released';
+import { RELEASED_LANGS, CONTENT_ON } from './released';
 
 /**
  * Phase 13 regression sweep (A-007, with Phase 12 U-013) — on touch screens (phones and tablets, `pointer: coarse`) every
@@ -10,7 +10,8 @@ import { RELEASED_LANGS } from './released';
  * a sentence (WCAG 2.5.5 inline exception).
  */
 const PREVIEW = process.env.E2E_SITE_MODE === 'preview';
-const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+/** The content pages (About us, Help center) exist in the build under test: E2E_CONTENT_PAGES=preview or live. */
+const CONTENT = CONTENT_ON;
 const LANGS = ['en', ...['de', 'nb'].filter((l) => PREVIEW || RELEASED_LANGS.includes(l))];
 const path = (l: string, p: string) => (l === 'en' ? p || '/' : `/${l}${p}`);
 
@@ -71,7 +72,7 @@ test.describe('touch targets ≥ 44 px on touch screens (A-007, U-013)', () => {
         await page.context().close();
       });
       test(`${lang}@${width}: help center, a help topic, about`, async ({ browser }) => {
-        test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview');
+        test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview or live');
         const page = await touchPage(browser, width, height);
         for (const p of ['/help', '/help/free-trial', '/about']) {
           await page.goto(path(lang, p));

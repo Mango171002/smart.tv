@@ -19,6 +19,23 @@ export const INDEXABLE = process.env.E2E_ALLOW_INDEXING !== 'false';
 export const PRIVATE_ROBOTS = /^User-Agent: \*\s*\nDisallow: \/\s*$/;
 
 /**
+ * Content pages (About us, Help center) of the build under test: E2E_CONTENT_PAGES = the build's NEXT_PUBLIC_CONTENT_PAGES
+ * (src/config/content-pages.ts). '' (unset, or 'off'): the pages do not exist. 'preview': they exist, noindex, never in the
+ * sitemap. 'live': they exist, indexable (index, follow), in the sitemap, with hreflang between the released languages.
+ * Any other value is a harness mistake: refused, so that a typo never silently selects the « off » expectations.
+ */
+const contentEnv = (process.env.E2E_CONTENT_PAGES ?? '').trim();
+if (!['', 'off', 'preview', 'live'].includes(contentEnv)) throw new Error(`E2E_CONTENT_PAGES must be empty, off, preview or live (got « ${contentEnv} »)`);
+export const CONTENT_MODE = (contentEnv === 'off' ? '' : contentEnv) as '' | 'preview' | 'live';
+/** The content pages exist (« preview » or « live »). */
+export const CONTENT_ON = CONTENT_MODE !== '';
+/** The content pages are published: indexable in an indexable build (a private build keeps everything noindex). */
+export const CONTENT_INDEXED = CONTENT_MODE === 'live' && INDEXABLE;
+/** Help center topics, and every content page path (without language prefix) as listed in the sitemap once « live ». */
+export const HELP_TOPICS = ['getting-started', 'devices', 'free-trial', 'ordering-payment', 'troubleshooting', 'contact-support', 'refunds'];
+export const CONTENT_PATHS = ['/about', '/help', ...HELP_TOPICS.map((t) => `/help/${t}`)];
+
+/**
  * Online requests (orders, free trials, support form) in the build under test. Default: closed, as in production
  * (FEATURE_CONTACT_FORM=false, phase 11B prelaunch). E2E_ORDERS_OPEN=true for a build made with
  * FEATURE_CONTACT_FORM=true: the tests that fill the forms run there.

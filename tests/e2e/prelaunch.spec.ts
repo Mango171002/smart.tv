@@ -8,7 +8,7 @@ import it from '../../src/i18n/dictionaries/it';
 import nl from '../../src/i18n/dictionaries/nl';
 import sv from '../../src/i18n/dictionaries/sv';
 import nb from '../../src/i18n/dictionaries/nb';
-import { ORDERS_OPEN, RELEASED_LANGS } from './released';
+import { ORDERS_OPEN, RELEASED_LANGS, CONTENT_ON } from './released';
 
 /**
  * Phase 11B — prelaunch: online orders, free trials and support requests are closed (FEATURE_CONTACT_FORM=false).
@@ -23,7 +23,8 @@ const LANGS = (Object.keys(DICTS) as Lang[]).filter((l) => l === 'en' || PREVIEW
 const home = (l: Lang) => (l === 'en' ? '/' : `/${l}`);
 const norm = (s: string) => s.replace(/[  ]/g, ' ').replace(/\s+/g, ' ').trim();
 const EMAIL = 'support@sygmatv.com';
-const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+/** The content pages (About us, Help center) exist in the build under test: E2E_CONTENT_PAGES=preview or live. */
+const CONTENT = CONTENT_ON;
 const CLOSED_ONLY = 'build with online requests open (E2E_ORDERS_OPEN=true)';
 const orderLabel = (p: (typeof en)['prelaunch']) => norm(`${p.orderTitleA} ${p.orderTitleHl}`);
 const trialLabel = (p: (typeof en)['prelaunch']) => norm(`${p.trialTitleA} ${p.trialTitleHl}`);
@@ -142,7 +143,7 @@ for (const lang of LANGS) {
     });
 
     test('About and Help center: prelaunch banner first, no « do it now » instruction', async ({ page }) => {
-      test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview');
+      test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview or live');
       const base = lang === 'en' ? '' : `/${lang}`;
       for (const path of ['/about', '/help', '/help/getting-started', '/help/devices', '/help/free-trial', '/help/ordering-payment', '/help/troubleshooting', '/help/contact-support', '/help/refunds']) {
         await page.goto(`${base}${path}`);

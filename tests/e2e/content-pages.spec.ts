@@ -1,17 +1,19 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import en from '../../src/i18n/dictionaries/en';
-import { ORDERS_OPEN, TRIAL_LABEL } from './released';
+import { CONTENT_INDEXED, CONTENT_MODE, CONTENT_ON, CONTENT_PATHS, HELP_TOPICS as TOPICS, ORDERS_OPEN, RELEASED_LANGS, TRIAL_LABEL, expectedSet } from './released';
 
 /**
  * Phase 5C content pages. Default run = production build (switch off): nothing exists, nothing changes.
- * With E2E_CONTENT_PAGES=preview (build made with NEXT_PUBLIC_CONTENT_PAGES=preview): pages, SEO, a11y.
+ * With E2E_CONTENT_PAGES=preview (build made with NEXT_PUBLIC_CONTENT_PAGES=preview): pages, SEO, a11y — noindex, not in
+ * the sitemap. With E2E_CONTENT_PAGES=live (NEXT_PUBLIC_CONTENT_PAGES=live): the same pages, published — index, follow,
+ * in the sitemap, hreflang between the released languages.
  */
-const PREVIEW = process.env.E2E_CONTENT_PAGES === 'preview';
-const TOPICS = ['getting-started', 'devices', 'free-trial', 'ordering-payment', 'troubleshooting', 'contact-support', 'refunds'];
+/** Phrase of the test titles for the robots / sitemap expectation of the build under test. */
+const STATE = CONTENT_INDEXED ? 'indexable when live' : 'noindex in preview';
 
 test.describe('content pages — switch off (production)', () => {
-  test.skip(PREVIEW, 'production-mode checks');
+  test.skip(CONTENT_ON, 'production-mode checks');
   test('no About / Help center pages, /help still redirects to the FAQ, no new link', async ({ page, request }) => {
     expect((await request.get('/about')).status()).toBe(404);
     expect((await request.get('/help/refunds')).status()).toBe(404);
@@ -25,8 +27,8 @@ test.describe('content pages — switch off (production)', () => {
   });
 });
 
-test.describe('content pages — preview', () => {
-  test.skip(!PREVIEW, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview');
+test.describe(`content pages — ${CONTENT_MODE || 'preview'}`, () => {
+  test.skip(!CONTENT_ON, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview or live');
 
   const pages = [
     { path: '/about', h1: 'About SYGMA TV+', type: 'AboutPage', crumbs: ['Home', 'About us'] },
@@ -35,7 +37,7 @@ test.describe('content pages — preview', () => {
   ];
 
   for (const p of pages) {
-    test(`${p.path}: 200, metadata, noindex in preview, breadcrumbs, structured data`, async ({ page }) => {
+    test(`${p.path}: 200, metadata, ${STATE}, breadcrumbs, structured data`, async ({ page }) => {
       const res = await page.goto(p.path);
       expect(res?.status()).toBe(200);
       const title = await page.title();
@@ -44,7 +46,15 @@ test.describe('content pages — preview', () => {
       const desc = (await page.locator('meta[name="description"]').getAttribute('content'))!;
       expect(desc.length).toBeLessThanOrEqual(155);
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`${p.path}$`));
-      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+      if (CONTENT_INDEXED) {
+        // Live: indexable, in the hreflang cluster of the released languages (none while English is the only language).
+        await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'index, follow');
+        const set = Object.fromEntries(await page.locator('link[rel="alternate"][hreflang]').evaluateAll((ls) => ls.map((l) => [l.getAttribute('hreflang'), new URL(l.getAttribute('href')!).pathname])));
+        expect(set).toEqual(RELEASED_LANGS.length ? expectedSet(p.path) : {});
+      } else {
+        await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+        await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
+      }
       await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
       if (p.h1) await expect(page.getByRole('heading', { level: 1 })).toHaveText(p.h1);
       const crumbs = page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('listitem');
@@ -112,7 +122,7 @@ test.describe('content pages — preview', () => {
     await expect(page.getByRole('link', { name: 'Full refund policy' })).toHaveAttribute('href', '/legal/refunds');
   });
 
-  test('navigation: header Help → /help, footer About us + Help center; sitemap unchanged in preview', async ({ page, request, isMobile }) => {
+  test(`navigation: header Help → /help, footer About us + Help center; ${CONTENT_INDEXED ? 'every page in the sitemap when live' : 'sitemap unchanged in preview'}`, async ({ page, request, isMobile }) => {
     await page.goto('/');
     if (isMobile) await page.getByRole('button', { name: 'Toggle menu' }).click();
     await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Help' })).toHaveAttribute('href', '/help');
@@ -120,7 +130,22 @@ test.describe('content pages — preview', () => {
     await expect(page.locator('footer a[href="/help"]')).toHaveCount(1);
     await expect(page.locator('footer a[href="/#faq"]')).toHaveText('FAQ');
     expect((await request.get('/help', { maxRedirects: 0 })).status()).toBe(200);
-    expect(await (await request.get('/sitemap.xml')).text()).not.toMatch(/\/about<|\/help/);
+    const xml = await (await request.get('/sitemap.xml')).text();
+    if (CONTENT_INDEXED) {
+      // Live: each page listed exactly once per public language (English unprefixed + each released language), with the
+      // « Last reviewed » date as lastmod.
+      const entries = xml.split('<url>').slice(1);
+      const locOf = (u: string) => new URL(u.match(/<loc>([^<]+)<\/loc>/)![1]!).pathname;
+      for (const path of CONTENT_PATHS) {
+        for (const want of [path, ...RELEASED_LANGS.map((l) => `/${l}${path}`)]) {
+          const found = entries.filter((u) => locOf(u) === want);
+          expect(found, want).toHaveLength(1);
+          expect(found[0], want).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
+        }
+      }
+    } else {
+      expect(xml).not.toMatch(/\/about<|\/help/);
+    }
   });
 
   for (const path of ['/about', '/help', '/help/refunds']) {

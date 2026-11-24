@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { RELEASED_LANGS, ORDERS_OPEN, ORDER_BUTTON } from './released';
+import { RELEASED_LANGS, ORDERS_OPEN, ORDER_BUTTON, CONTENT_ON } from './released';
 
 const ROUTES = [
   '/', '/blog', '/legal/terms', '/legal/privacy', '/legal/cookies', '/legal/refunds', '/legal/imprint',
@@ -168,10 +168,10 @@ test.describe('offers: Starter / Plus / Ultra + simulator', () => {
   });
 
   test('former pages redirect to their section of the one-page site', async ({ request }) => {
-    // The expected target depends on the build (routing unchanged): with the content pages on (E2E_CONTENT_PAGES=preview)
+    // The expected target depends on the build (routing unchanged): with the content pages on (E2E_CONTENT_PAGES=preview or live)
     // /help is a page, so /fr/help follows the /fr/* → /* redirect to /help; with the French preview built
     // (E2E_SITE_MODE=preview) the former French URLs point to the French home instead.
-    const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+    const CONTENT = CONTENT_ON;
     const FR = process.env.E2E_SITE_MODE === 'preview' || RELEASED_LANGS.includes('fr');
     const cases: Array<readonly [string, string]> = [
       ['/en/plans', '/#plans'], ['/en/devices', '/#content'], ['/en', '/'], ['/en/blog', '/blog'],

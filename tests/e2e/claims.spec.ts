@@ -7,7 +7,7 @@ import it from '../../src/i18n/dictionaries/it';
 import nl from '../../src/i18n/dictionaries/nl';
 import sv from '../../src/i18n/dictionaries/sv';
 import nb from '../../src/i18n/dictionaries/nb';
-import { ORDERS_OPEN, RELEASED_LANGS } from './released';
+import { ORDERS_OPEN, RELEASED_LANGS, CONTENT_ON } from './released';
 
 /**
  * Phase 13 — unsupported claims (D6, D8), rendered: highlight tiles without « International », devices bar without
@@ -17,7 +17,8 @@ import { ORDERS_OPEN, RELEASED_LANGS } from './released';
 const DICTS = { en, fr, de, es, it, nl, sv, nb } as const;
 type Lang = keyof typeof DICTS;
 const PREVIEW = process.env.E2E_SITE_MODE === 'preview';
-const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+/** The content pages (About us, Help center) exist in the build under test: E2E_CONTENT_PAGES=preview or live. */
+const CONTENT = CONTENT_ON;
 const LANGS = (Object.keys(DICTS) as Lang[]).filter((l) => l === 'en' || PREVIEW || RELEASED_LANGS.includes(l));
 const home = (l: Lang) => (l === 'en' ? '/' : `/${l}`);
 const PHONE = /\+44\s?7412\s?857594/;
@@ -68,7 +69,7 @@ test.describe('claims (D6, D8)', () => {
 
   for (const lang of LANGS) {
     test(`${lang}: About / Help center contact box — e-mail only while closed, phone back when open`, async ({ page }) => {
-      test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview');
+      test.skip(!CONTENT, 'needs a build with NEXT_PUBLIC_CONTENT_PAGES=preview or live');
       const base = lang === 'en' ? '' : `/${lang}`;
       for (const path of ['/about', '/help', '/help/contact-support', '/help/troubleshooting']) {
         await page.goto(`${base}${path}`);

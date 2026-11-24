@@ -7,7 +7,7 @@ import it from '../../src/i18n/dictionaries/it';
 import nl from '../../src/i18n/dictionaries/nl';
 import sv from '../../src/i18n/dictionaries/sv';
 import nb from '../../src/i18n/dictionaries/nb';
-import { RELEASED_LANGS, expectedSet, ORDERS_OPEN } from './released';
+import { RELEASED_LANGS, expectedSet, ORDERS_OPEN, CONTENT_ON, CONTENT_INDEXED, CONTENT_PATHS } from './released';
 
 /**
  * Phase 8 — German, Spanish, Italian, Dutch, Swedish, Norwegian Bokmål.
@@ -17,7 +17,8 @@ import { RELEASED_LANGS, expectedSet, ORDERS_OPEN } from './released';
 const DICTS = { de, es, it, nl, sv, nb } as const;
 type Lang = keyof typeof DICTS;
 const PREVIEW = process.env.E2E_SITE_MODE === 'preview';
-const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+/** The content pages (About us, Help center) exist in the build under test: E2E_CONTENT_PAGES=preview or live. */
+const CONTENT = CONTENT_ON;
 const BUILT = (Object.keys(DICTS) as Lang[]).filter((l) => PREVIEW || RELEASED_LANGS.includes(l));
 const OG: Record<Lang, string> = { de: 'de_DE', es: 'es_ES', it: 'it_IT', nl: 'nl_NL', sv: 'sv_SE', nb: 'nb_NO' };
 /** English sentences that must never appear on a translated page. */
@@ -52,18 +53,21 @@ for (const lang of BUILT) {
         await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
         const title = await page.title();
         expect(title.length, title).toBeLessThanOrEqual(60);
-        // Indexable once released: the home (the blog is noindex; About / Help are noindex in « preview » content mode).
-        const indexable = released && path === `/${lang}`;
+        // Indexable once released: the home, and About / Help once the content pages are « live » (the blog is noindex;
+        // About / Help are noindex in « preview » content mode).
+        const enPath = path.slice(lang.length + 1);
+        const indexable = released && (path === `/${lang}` || (CONTENT_INDEXED && CONTENT_PATHS.includes(enPath)));
         if (released) {
           expect(res?.headers()['x-robots-tag']).toBeUndefined();
+          await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', indexable ? 'index, follow' : 'noindex, follow');
         } else {
           expect(res?.headers()['x-robots-tag']).toBe('noindex, nofollow');
           await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, nofollow');
         }
         if (indexable) {
           const set = Object.fromEntries(await page.locator('link[rel="alternate"][hreflang]').evaluateAll((ls) => ls.map((l) => [l.getAttribute('hreflang'), new URL(l.getAttribute('href')!).pathname])));
-          expect(set).toEqual(expectedSet(''));
-        } else if (!released) {
+          expect(set).toEqual(expectedSet(enPath));
+        } else {
           await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(0);
         }
         // Internal links stay in the language, except the English legal pages (marked hreflang="en").

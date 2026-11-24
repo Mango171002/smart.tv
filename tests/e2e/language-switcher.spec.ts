@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
-import { RELEASED_LANGS } from './released';
+import { RELEASED_LANGS, CONTENT_ON } from './released';
 
 /**
  * Language switcher (phase 9).
@@ -11,7 +11,8 @@ const ALL = [
   ['en', 'English'], ['fr', 'Français'], ['de', 'Deutsch'], ['es', 'Español'], ['it', 'Italiano'], ['nl', 'Nederlands'], ['sv', 'Svenska'], ['nb', 'Norsk bokmål'],
 ] as const;
 const PREVIEW = process.env.E2E_SITE_MODE === 'preview';
-const CONTENT = process.env.E2E_CONTENT_PAGES === 'preview';
+/** The content pages (About us, Help center) exist in the build under test: E2E_CONTENT_PAGES=preview or live. */
+const CONTENT = CONTENT_ON;
 const LANGS = ALL.filter(([c]) => c === 'en' || PREVIEW || RELEASED_LANGS.includes(c));
 const prefix = (c: string) => (c === 'en' ? '' : `/${c}`);
 const home = (c: string) => prefix(c) || '/';

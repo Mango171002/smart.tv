@@ -7,16 +7,19 @@ is the recommended (safest) one; it is not a legal opinion. Items marked *counse
 need that specialist's written answer before the box is ticked. Details and file evidence: `decision-register.md`
 (D1–D16) and `legal-blocker-register.md` (L-01 to L-13).
 
-> **Note before you start.** The live site (production `864f703`) still has the order and trial forms open
-> (`FEATURE_CONTACT_FORM=true`). The release candidate closes them. Item A0 decides when that happens.
+> **Note (updated 24/11/2026).** The live order, trial and support forms were closed by the emergency hotfix
+> `8797d7c`, deployed to production on 24/11/2026 (owner-authorized; deploy run 45295930207; Worker code version
+> `b58996db-87c2-4f3a-adb2-c6293a061310`): `FEATURE_CONTACT_FORM=false`, prelaunch windows and buttons, English only.
+> Item A0 is resolved. Production otherwise still shows the pre-Phase-10 English site until Step A of the release
+> candidate.
 
 ---
 
 ## A. Before the public 8-language prelaunch (production Step B)
 
-- [ ] **A0 — Close the live order and trial forms now (production Step A, English prelaunch).** (Phase 12 §9)
-  - [ ] Deploy Step A after the private-staging check *(recommended)*
-  - [ ] Keep the forms open on the live site until Step B (accept the risks of section B for orders received meanwhile)
+- [x] **A0 — Close the live order and trial forms.** Done 24/11/2026 by the emergency hotfix `8797d7c` (owner-authorized).
+  Remaining choice: deploy the full release candidate (Step A, English prelaunch with Phase 10–13 content) after
+  private-staging validation ☐ *(recommended)*
 - [ ] **A1 — Release scope (D1).**
   - [ ] Phased: English prelaunch → content pages live → each language only after its native sign-off (A5) *(recommended)*
   - [ ] All 8 languages and content pages at once

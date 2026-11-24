@@ -28,7 +28,8 @@
   --color-violet: #6878ff;    /* Smart streaming, devices, subtle tech effects */
   --color-ink: #f5f8ff;       /* Primary text */
   --color-muted: #9dadc3;     /* Secondary text */
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Self-hosted Inter variable font first (phase 15, D-6: @font-face at the end of this file), then the former stack. */
+  --font-sans: 'Inter Variable', Inter, 'Inter Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
 :root {
@@ -2622,3 +2623,96 @@ select.input option { background: var(--color-bg); color: var(--color-ink); }
   #navlinks:not(.open) > a { padding-inline: 6px; margin-inline: -6px; }
   #navlinks:not(.open) > a[aria-current='page']::after { left: 6px; right: 6px; }
 }
+
+/* ==========================================================================
+   Phase 15 — approved UI decisions D-1, D-3, D-4, D-5, D-6
+   ========================================================================== */
+
+/* D-6: Inter, self-hosted (official variable font, SIL Open Font License 1.1 — public/fonts/inter/OFL.txt), from
+   @fontsource-variable/inter 5.3.0. Latin is preloaded by the layout; Latin Extended downloads only for a page that uses
+   one of its characters. « Inter Fallback »: Arial-class font with Inter's metrics (same values as next/font for Inter),
+   so the swap from the fallback to Inter does not move the layout. */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/inter/inter-latin-ext-wght-normal.v5.3.0.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/inter/inter-latin-wght-normal.v5.3.0.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans'), local('Helvetica');
+  ascent-override: 90.44%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+  size-adjust: 107.12%;
+}
+
+/* D-1: page-wide prelaunch strip under the header while orders and free trials are closed. One slim line (wraps to two
+   lines on the narrowest phones), not sticky, same surface / line tokens as the header, small lime pulse dot. */
+.prelaunch-strip { position: relative; z-index: 1; background: var(--color-surface); border-bottom: 1px solid var(--line); color: var(--color-ink); font-size: 13px; line-height: 1.35; }
+.prelaunch-strip-in { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 36px; padding-block: 7px; }
+.prelaunch-strip-dot {
+  flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--color-lime);
+  box-shadow: 0 0 8px var(--color-lime); animation: strip-pulse 2.4s ease-in-out infinite;
+}
+@keyframes strip-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+.prelaunch-strip-text { min-width: 0; font-weight: 600; opacity: .9; }
+/* 44 px tall hit area (touch screens) from an invisible ::after reaching into the page below the strip, not into the header. */
+.prelaunch-strip-link { position: relative; flex: none; color: var(--color-lime); font-weight: 700; white-space: nowrap; text-decoration: underline; text-underline-offset: 3px; }
+.prelaunch-strip-link::after { content: ''; position: absolute; left: -6px; right: -6px; top: -9px; bottom: -19px; }
+@media (hover: hover) { .prelaunch-strip-link:hover { color: var(--color-ink); } }
+@media (max-width: 580px) { .prelaunch-strip { font-size: 12px; } .prelaunch-strip-in { gap: 8px; justify-content: flex-start; } }
+/* Narrowest phones: the link may wrap too, so that the strip stays at two lines in every language (320 px). */
+@media (max-width: 400px) { .prelaunch-strip-link { white-space: normal; max-width: 8.5em; text-align: right; } }
+@media (prefers-reduced-motion: reduce) { .prelaunch-strip-dot { animation: none; } }
+
+/* D-5: long languages (fr, de, nl, nb), collapsed desktop header (901–1359 px): « Get started » stays visible next to the
+   menu button. The element exists only for those languages and is shown only at those widths. */
+.nav-cta-xl { display: none; }
+@media (min-width: 901px) and (max-width: 1359px) {
+  .header-multi[data-collapse='xl'] .nav-cta-xl {
+    display: inline-flex; margin-left: auto; min-height: 44px; padding: 0 18px; border-radius: 12px; font-size: 15px; white-space: nowrap;
+  }
+  .header-multi[data-collapse='xl'] .nav-cta-xl:hover { color: var(--color-bg); }
+  /* Grouped with the menu button: 12 px apart instead of the 28 px gap of the header row. */
+  .header-multi[data-collapse='xl'] .nav-cta-xl + .mobile-menu { margin-left: -16px; }
+}
+
+/* D-4: « ← Back to the <language> site » above the title of the English legal pages (visitors from another language). */
+.legal-return { margin: -18px 0 18px; font-size: 14px; }
+.legal-return a { display: inline-flex; align-items: center; gap: 6px; padding-block: 12px; color: var(--color-cyan); font-weight: 700; }
+.legal-return a span { text-decoration: underline; text-underline-offset: 3px; }
+.legal-return svg { flex: none; }
+
+/* D-3: plan cards from 901 px — the price rows and the buttons line up across Starter / Plus / Ultra+ in every language.
+   The cards stretch to the same height and share their rows (subgrid: each row is as tall as the tallest card's). Plus keeps
+   its prominence without the former scale(1.05), which shifted its rows: the card is drawn larger with negative margins and
+   matching extra padding, so its content box (and so its text) has exactly the size and position of the other cards'. */
+@media (min-width: 901px) {
+  .tier-grid { align-items: stretch; }
+  .tier-grid > .tier-card { --tc-px: 26px; }
+  .tier-grid > .tier-card > .btn { margin-top: auto; }
+  .tier-grid > .tier-card.is-recommended {
+    transform: none; margin: -14px -8px;
+    /* Regular card edge: 1.5 px border + padding. Plus: -14 / -8 px margin + 2 px border + padding = the same edge. */
+    padding: 41.5px calc(var(--tc-px) + 7.5px);
+  }
+  @media (hover: hover) { .tier-grid > .tier-card.is-recommended:hover { transform: translateY(-2px); } }
+  @supports (grid-template-rows: subgrid) {
+    /* Eight shared rows: the six blocks of a card today, plus room for two more (empty rows take no space). */
+    .tier-grid { grid-template-rows: repeat(8, auto); row-gap: 0; }
+    .tier-grid > .tier-card { display: grid; grid-row: span 8; grid-template-rows: subgrid; row-gap: 14px; padding-bottom: 21px; }
+    .tier-grid > .tier-card.is-recommended { padding-bottom: 34.5px; }
+  }
+}
+@media (min-width: 1001px) and (max-width: 1180px) { .tier-grid > .tier-card { --tc-px: 16px; } }

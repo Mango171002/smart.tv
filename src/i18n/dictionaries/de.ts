@@ -429,6 +429,10 @@ const de: Dictionary = {
       supportBenefitText: 'Team-Hilfe per E-Mail',
       compareSupport: 'E-Mail, Assistent 24/7',
     },
+    ui: {
+      stripPlans: 'Tarife ansehen',
+      legalBack: 'Zurück zur deutschen Website',
+    },
   },
   request: {
     trialTitle: 'Testzugang anfordern',

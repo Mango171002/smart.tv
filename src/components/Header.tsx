@@ -62,6 +62,13 @@ export function Header({ locale, nav }: { locale: Locale; nav: Dictionary['nav']
         </Link>
         {/* The menu button comes BEFORE the menu it opens, so the next Tab enters the open menu (WCAG 2.4.3). Visually nothing
             changes: it is hidden on wide screens and the open menu is an absolutely positioned panel. */}
+        {/* Long languages (fr, de, nl, nb): from 901 to 1359 px the links are in the menu; one call to action stays visible
+            next to the menu button (D-5). Hidden at every other width (globals.css « nav-cta-xl »). */}
+        {collapse === 'xl' && (
+          <a className="btn btn-sm btn-lime nav-cta-xl" href={localizedPath(locale, '#plans')} onClick={() => setOpen(false)}>
+            {nav.getStarted}
+          </a>
+        )}
         <button
           type="button"
           ref={button}

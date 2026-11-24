@@ -151,8 +151,8 @@ test.describe('language switcher — desktop', () => {
           const wrap = document.querySelector('.header .wrap')!;
           const right = wrap.getBoundingClientRect().right - parseFloat(getComputedStyle(wrap).paddingRight);
           const nav = document.querySelector('.header .nav')!.getBoundingClientRect();
-          const parts = [document.querySelector('.brand-link'), ...document.querySelectorAll('#navlinks > a'), document.querySelector('.lang-switch'), ...document.querySelectorAll('.nav-ctas > *'), document.querySelector('.mobile-menu')]
-            .map((e) => e!.getBoundingClientRect()).filter((p) => p.width > 0);
+          const parts = [document.querySelector('.brand-link'), ...document.querySelectorAll('#navlinks > a'), document.querySelector('.lang-switch'), ...document.querySelectorAll('.nav-ctas > *'), document.querySelector('.mobile-menu'), document.querySelector('.nav-cta-xl')]
+            .filter(Boolean).map((e) => e!.getBoundingClientRect()).filter((p) => p.width > 0);
           const overlaps = parts.some((p, i) => parts.slice(i + 1).some((q) => p.right > q.left + 0.5 && q.right > p.left + 0.5 && p.bottom > q.top && q.bottom > p.top));
           const outside = parts.some((p) => p.right > right + 1 || p.top < nav.top - 1 || p.bottom > nav.bottom + 1);
           const mids = parts.map((p) => p.top + p.height / 2);

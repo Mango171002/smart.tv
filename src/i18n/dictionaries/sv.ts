@@ -429,6 +429,10 @@ const sv: Dictionary = {
       supportBenefitText: 'Personlig hjälp via e-post',
       compareSupport: 'E-post, assistent 24/7',
     },
+    ui: {
+      stripPlans: 'Se paketen',
+      legalBack: 'Tillbaka till den svenska webbplatsen',
+    },
   },
   request: {
     trialTitle: 'Begär en provperiod',

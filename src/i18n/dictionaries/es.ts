@@ -429,6 +429,10 @@ const es: Dictionary = {
       supportBenefitText: 'Ayuda humana por correo',
       compareSupport: 'Correo, asistente 24/7',
     },
+    ui: {
+      stripPlans: 'Ver los planes',
+      legalBack: 'Volver al sitio en español',
+    },
   },
   request: {
     trialTitle: 'Solicitar una prueba',

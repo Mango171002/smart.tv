@@ -37,6 +37,8 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const info = getInfo(locale);
   /** Legal documents are in English only: in another language, the links say so (hreflang) and a note is shown. */
   const legalLang = locale === 'en' ? {} : { hrefLang: 'en' };
+  /** From a translated page, the link says where the visitor comes from: the English legal page offers a way back (D-4). */
+  const legalHref = (d: string) => (locale === 'en' ? `/legal/${d}` : `/legal/${d}?from=${locale}`);
   const socials = [
     ...(Object.keys(SOCIAL_ICONS) as (keyof typeof SOCIAL_ICONS)[]).map((k) => ({ key: k, ...SOCIAL_ICONS[k], href: siteConfig.social[k] })),
   ];
@@ -103,7 +105,7 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           <ul>
             {[
               ...FOOTER_LEGAL.map((d) => (
-                <li key={d}><Link href={`/legal/${d}`} {...legalLang}>{f.legalLinks[d]}</Link></li>
+                <li key={d}><Link href={legalHref(d)} {...legalLang}>{f.legalLinks[d]}</Link></li>
               )),
               // Only where the legal pages are in another language: nothing is rendered in English. The note wraps (max 22ch) so
               // that it never widens the column and squeezes the footer chips.

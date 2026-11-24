@@ -429,6 +429,10 @@ const nl: Dictionary = {
       supportBenefitText: 'Persoonlijke hulp via e-mail',
       compareSupport: 'E-mail, assistent 24/7',
     },
+    ui: {
+      stripPlans: 'Bekijk de abonnementen',
+      legalBack: 'Terug naar de Nederlandse website',
+    },
   },
   request: {
     trialTitle: 'Proefperiode aanvragen',

@@ -429,6 +429,10 @@ const fr: Dictionary = {
       supportBenefitText: 'Aide humaine par e-mail',
       compareSupport: 'E-mail, assistant 24/7',
     },
+    ui: {
+      stripPlans: 'Voir les formules',
+      legalBack: 'Retour au site en français',
+    },
   },
   request: {
     trialTitle: 'Demander un essai',

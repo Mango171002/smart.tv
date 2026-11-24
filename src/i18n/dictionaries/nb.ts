@@ -428,6 +428,10 @@ const nb: Dictionary = {
       supportBenefitText: 'Personlig hjelp på e-post',
       compareSupport: 'E-post, assistent 24/7',
     },
+    ui: {
+      stripPlans: 'Se abonnementene',
+      legalBack: 'Tilbake til det norske nettstedet',
+    },
   },
   request: {
     trialTitle: 'Be om prøveperiode',

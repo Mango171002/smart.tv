@@ -2,7 +2,11 @@
  * Customer e-mails (English, like the site). Pure functions: subject + HTML + plain text.
  * Table-based HTML with inline styles so it renders in Gmail, Outlook and Apple Mail.
  * Wording of e-mails 2 and 3: owner's texts (15/11/2026).
+ * B7 (L-08): every e-mail carries the trader identity (legal entity and address exactly as in siteConfig / the Legal
+ * notice) and links to the Terms, Refunds & withdrawal, Privacy and Legal notice pages; the confirmations also show the
+ * order details (plan, duration, devices, plan price and currency as quoted / recorded). No tax amount is ever stated.
  */
+import { siteConfig } from '@/config/site';
 
 export type EmailKind = 'trial_received' | 'trial_started' | 'trial_followup' | 'preregistration_received' | 'request_confirmed' | 'review_invite';
 
@@ -29,6 +33,8 @@ export interface EmailData {
   trialDuration?: string | null;
   /** « Trial follow-up » e-mail: the three plans (names, prices and highlights come from the site's own data). */
   plans?: EmailPlan[] | null;
+  /** « Order received » e-mail: plan price as quoted by the server when the request was sent (no tax). */
+  quote?: { amountMinor: number; currency: string } | null;
 }
 
 export interface EmailPlan {
@@ -50,8 +56,30 @@ export interface RenderedEmail {
   text: string;
 }
 
-const SITE = 'https://sygmatv.com';
-const SUPPORT = 'support@sygmatv.com';
+const SITE = `https://${siteConfig.domain ?? 'sygmatv.com'}`;
+const SUPPORT = siteConfig.supportEmail ?? 'support@sygmatv.com';
+/** Legal pages (absolute URLs, English versions). */
+export const LEGAL_LINKS = [
+  { label: 'Terms of Service', href: `${SITE}/legal/terms` },
+  { label: 'Refunds & withdrawal', href: `${SITE}/legal/refunds` },
+  { label: 'Privacy policy', href: `${SITE}/legal/privacy` },
+  { label: 'Legal notice', href: `${SITE}/legal/imprint` },
+] as const;
+
+/**
+ * Trader identity lines, from siteConfig only (never invented). The C5 elements (registration number, VAT ID,
+ * EU/UK representative) appear only once the owner/counsel has provided them; while null nothing is rendered.
+ */
+export function traderLines(cfg: Pick<typeof siteConfig, 'legalEntity' | 'legalAddress' | 'registrationNumber' | 'stateOfRegistration' | 'vatId' | 'representativeEU'> = siteConfig): string[] {
+  const lines: (string | null)[] = [
+    cfg.legalEntity,
+    cfg.legalAddress,
+    cfg.registrationNumber ? `Registration no. ${cfg.registrationNumber}${cfg.stateOfRegistration ? ` (${cfg.stateOfRegistration})` : ''}` : null,
+    cfg.vatId ? `VAT ID ${cfg.vatId}` : null,
+    cfg.representativeEU ? `EU/UK representative: ${cfg.representativeEU}` : null,
+  ];
+  return lines.filter((l): l is string => Boolean(l && l.trim()));
+}
 const SUPPORT_WHATSAPP = '+44 7412 857594';
 const SUPPORT_WHATSAPP_LINK = 'https://wa.me/447412857594';
 const TAGLINE = 'One World. Endless Entertainment.';
@@ -87,6 +115,17 @@ function devices(n?: number | null): string | null {
   return n ? `${n} device${n > 1 ? 's' : ''}` : null;
 }
 
+/** Order detail rows: plan, duration, devices and, when known, the price row (label + amount with currency). */
+function orderRows(d: EmailData, price: [string, string] | null): [string, string][] {
+  const rows: [string, string][] = [];
+  if (d.tier) rows.push(['Plan', TIER[d.tier] ?? d.tier]);
+  if (d.term) rows.push(['Duration', TERM[d.term] ?? d.term]);
+  const dev = devices(d.streams);
+  if (dev) rows.push(['Devices', dev]);
+  if (price) rows.push(price);
+  return rows;
+}
+
 /** One e-mail = a sequence of parts rendered in the card. Texts are trusted HTML (variables escaped by the caller). */
 type Part =
   | { p: string; strong?: boolean }
@@ -98,6 +137,7 @@ type Part =
   | { helpShort: true }
   | { trustpilot: true }
   | { plans: EmailPlan[] }
+  | { seller: true }
   | { cta: true; label?: string; href?: string };
 
 interface Mail {
@@ -159,6 +199,15 @@ function partHtml(part: Part): string {
 <table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr><td bgcolor="${TRUSTPILOT_GREEN}" style="border-radius:10px;"><a href="${TRUSTPILOT_REVIEW_URL}" style="display:inline-block;padding:13px 26px;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">Write a review</a></td></tr></table>
 </td></tr></table>`;
   }
+  if ('seller' in part) {
+    // Confirmations: who the customer contracts with, how to reach them, and the documents that apply.
+    const a = `color:${C.lime};text-decoration:none;`;
+    const trader = traderLines().map(esc).join('<br>');
+    const docs = LEGAL_LINKS.map((l) => `<a href="${l.href}" style="${a}">${esc(l.label)}</a>`).join(' · ');
+    return `<h2 style="margin:22px 0 10px;font-size:17px;line-height:1.3;color:${C.lime};">Seller</h2>
+<p style="margin:0 0 10px;font-size:14px;line-height:1.6;color:${C.ink};">${trader ? `${trader}<br>` : ''}Email: <a href="mailto:${SUPPORT}" style="${a}">${SUPPORT}</a></p>
+<p style="margin:0 0 18px;font-size:14px;line-height:1.6;color:${C.muted};">Please read our ${docs}.</p>`;
+  }
   if ('helpShort' in part) {
     const a = `color:${C.lime};text-decoration:none;`;
     return `<p style="margin:0 0 6px;font-size:14px;line-height:1.6;color:${C.muted};">Need help? WhatsApp <a href="${SUPPORT_WHATSAPP_LINK}" style="${a}">${SUPPORT_WHATSAPP}</a> · <a href="mailto:${SUPPORT}" style="${a}">${SUPPORT}</a></p>`;
@@ -183,9 +232,21 @@ function partText(part: Part): string {
   if ('note' in part) return strip(part.note);
   if ('trustpilot' in part) return `Write a review on Trustpilot: ${TRUSTPILOT_REVIEW_URL}`;
   if ('plans' in part) return part.plans.map((pl) => `${pl.name}${pl.recommended ? ' (recommended)' : ''} — ${pl.price} / year: ${pl.highlights.join(', ')}`).join('\n');
+  if ('seller' in part) return ['\nSeller', ...traderLines(), `Email: ${SUPPORT}`, '', 'Please read our:', ...LEGAL_LINKS.map((l) => `${l.label}: ${l.href}`)].join('\n');
   if ('helpShort' in part) return `Need help? WhatsApp ${SUPPORT_WHATSAPP} · ${SUPPORT}`;
   if ('help' in part) return `Need assistance? Our support team is here to help.\nWhatsApp: ${SUPPORT_WHATSAPP}\nEmail: ${SUPPORT}\nWebsite: ${SITE}`;
   return part.label ? `${part.label}: ${part.href ?? SITE}` : SITE;
+}
+
+/** « SYGMA TV+ is operated by <entity>, <address>. » — only with the values of siteConfig (nothing when unset). */
+function footerTraderText(): string | null {
+  const [entity, ...rest] = traderLines();
+  return entity ? `SYGMA TV+ is operated by ${[entity, ...rest].join(', ')}.` : null;
+}
+
+function footerTrader(): string {
+  const t = footerTraderText();
+  return t ? `${esc(t)}<br>` : '';
 }
 
 function layout(m: Mail): string {
@@ -201,12 +262,19 @@ function layout(m: Mail): string {
 <h1 style="margin:0 0 18px;font-size:24px;line-height:1.25;color:${C.ink};">${esc(m.title)}</h1>
 ${m.parts.map(partHtml).join('\n')}${signature}
 </td></tr>
-<tr><td style="padding:22px 6px 0;font-size:12px;line-height:1.6;color:${C.muted};">Questions? Simply reply to this e-mail or write to <a href="mailto:${SUPPORT}" style="color:${C.lime};">${SUPPORT}</a>.<br>You receive this e-mail because you sent a request on <a href="${SITE}" style="color:${C.muted};">sygmatv.com</a>. <a href="${SITE}/legal/privacy" style="color:${C.muted};">Privacy policy</a>.<br>© SYGMA TV+</td></tr>
+<tr><td style="padding:22px 6px 0;font-size:12px;line-height:1.6;color:${C.muted};">Questions? Simply reply to this e-mail or write to <a href="mailto:${SUPPORT}" style="color:${C.lime};">${SUPPORT}</a>.<br>You receive this e-mail because you sent a request on <a href="${SITE}" style="color:${C.muted};">sygmatv.com</a>.<br>${footerTrader()}${LEGAL_LINKS.map((l) => `<a href="${l.href}" style="color:${C.muted};">${esc(l.label)}</a>`).join(' · ')}<br>© SYGMA TV+</td></tr>
 </table></td></tr></table></body></html>`;
 }
 
 function plain(m: Mail): string {
-  return [m.title, '', ...m.parts.map(partText), ...(m.signature ? ['', 'SYGMA TV+', TAGLINE] : []), '', `Questions? Reply to this e-mail or write to ${SUPPORT}.`, SITE]
+  const trader = footerTraderText();
+  // The « Seller » section of the confirmations already lists the documents: not twice in the plain text.
+  const hasSeller = m.parts.some((p) => 'seller' in p);
+  return [
+    m.title, '', ...m.parts.map(partText), ...(m.signature ? ['', 'SYGMA TV+', TAGLINE] : []), '',
+    `Questions? Reply to this e-mail or write to ${SUPPORT}.`, SITE, '',
+    ...(trader ? [trader] : []), ...(hasSeller ? [] : LEGAL_LINKS.map((l) => `${l.label}: ${l.href}`)),
+  ]
     .join('\n')
     .replace(/\n{3,}/g, '\n\n');
 }
@@ -242,9 +310,11 @@ function buildMail(kind: EmailKind, d: EmailData): Mail {
       title: 'Your order has been received!',
       parts: [
         { p: 'Thank you for choosing SYGMA TV+!' },
-        ...(plan ? [{ rows: [['Your plan', plan]] as [string, string][] }] : []),
+        ...(plan ? [{ h: 'Your order details' }, { rows: orderRows(d, d.quote ? ['Plan price (quoted)', money(d.quote.amountMinor, d.quote.currency)] : null) }] : []),
+        ...(plan && d.quote ? [{ note: 'Plan price as quoted on sygmatv.com when you sent your request.' }] : []),
         { p: 'Please keep an eye on your WhatsApp messages.', strong: true },
         { p: 'Our team will contact you shortly via WhatsApp to guide you through the activation process.' },
+        { seller: true },
       ],
       signature: true,
     };
@@ -305,14 +375,13 @@ function buildMail(kind: EmailKind, d: EmailData): Mail {
 
   // « Converti »: the team has received the payment and activated the subscription.
   const inv = d.invoice;
-  const details: [string, string][] = [];
-  if (inv) details.push(['Order Number', inv.number]);
-  if (d.tier) details.push(['Plan', TIER[d.tier] ?? d.tier]);
-  if (d.term) details.push(['Duration', TERM[d.term] ?? d.term]);
-  const dev = devices(d.streams);
-  if (dev) details.push(['Devices', dev]);
-  if (inv?.amountMinor && inv.currency) details.push(['Amount Paid', money(inv.amountMinor, inv.currency)]);
-  details.push(['Payment Status', 'Paid'], ['Subscription Status', 'Active']);
+  const details: [string, string][] = [
+    ...(inv ? [['Order Number', inv.number] as [string, string]] : []),
+    // The amount is the plan's list price as recorded for the order, not a payment record (C3): « Plan price ».
+    ...orderRows(d, inv?.amountMinor && inv.currency ? ['Plan price', money(inv.amountMinor, inv.currency)] : null),
+    ['Payment Status', 'Paid'],
+    ['Subscription Status', 'Active'],
+  ];
   return {
     subject: 'Your SYGMA TV+ Subscription Is Now Active!',
     title: 'Your subscription is now active!',
@@ -326,6 +395,7 @@ function buildMail(kind: EmailKind, d: EmailData): Mail {
       { p: 'Your activation details and setup instructions have been shared with you via WhatsApp.' },
       { p: 'You can now enjoy your SYGMA TV+ experience!' },
       { help: true },
+      { seller: true },
       { p: 'Thank you for your trust!', strong: true },
     ],
     signature: true,

@@ -1,5 +1,6 @@
 import 'server-only';
-import { sendCustomerEmail } from '@/lib/email/send';
+import { sendCustomerEmail, type SendResult } from '@/lib/email/send';
+import { areCustomerEmailsEnabled } from '@/lib/features';
 import { siteConfig } from '@/config/site';
 import { emailPlans } from '@/lib/email/plans';
 import type { InvoiceData } from '@/lib/email/templates';
@@ -54,6 +55,22 @@ async function call<T>(fn: string, args: Record<string, unknown> = {}): Promise<
 }
 
 const DB_DOWN = '⚠️ Le bot n’arrive pas à joindre la base de données (clé Supabase manquante ou invalide).';
+
+/** Prelaunch (A6 / B11): answer to « Essai envoyé » / « Converti » while online requests are closed (≤ 200 chars). */
+export const PRELAUNCH_REFUSED =
+  '⛔ Prélancement : « Essai envoyé » et « Converti » sont désactivés, aucun e-mail client n’est envoyé. Rien n’a changé — répondez au client par e-mail (procédure A6).';
+
+/** The action would send an e-mail to the customer: « Converti » (orders, trials) and « Essai envoyé » (trial requests). */
+export function actionSendsCustomerEmail(action: string, kind: string | null | undefined): boolean {
+  return (action === 'convert' && kind !== 'support') || (action === 'contact' && kind === 'trial_request');
+}
+
+function mailSuffix(sent: SendResult, ok: string): string {
+  if (sent === 'sent') return ok;
+  if (sent === 'failed') return ' · ⚠️ e-mail non envoyé';
+  if (sent === 'prelaunch_blocked') return ' · ⛔ e-mail non envoyé (prélancement)';
+  return ' · (e-mail pas encore configuré)';
+}
 
 const TOPICS = ['commandes', 'paiements', 'livraisons', 'support', 'alertes'] as const;
 type Topic = (typeof TOPICS)[number];
@@ -269,7 +286,7 @@ async function handleCommand(m: TgMessage) {
       // The follow-up e-mail shows the three plans with the site's current prices.
       const data = t.kind === 'trial_followup' ? { ...t.data, plans: await emailPlans() } : t.data;
       const r = await sendCustomerEmail(t.kind, TEST_EMAIL_TO, data);
-      results.push(`${r === 'sent' ? '✅' : r === 'failed' ? '⚠️' : '⏸'} ${t.label}`);
+      results.push(`${r === 'sent' ? '✅' : r === 'failed' ? '⚠️' : r === 'prelaunch_blocked' ? '⛔' : '⏸'} ${t.label}`);
     }
     await reply(m, `<b>E-mails de test → ${TEST_EMAIL_TO}</b>\n${results.join('\n')}`);
     return;
@@ -360,6 +377,14 @@ async function handleCallback(q: TgCallback) {
     if (data) await editCard(msg.chat.id, msg.message_id, data, settings);
     return answer('Confirmation expirée, recommencez', true);
   }
+  // Prelaunch guard (A6 / B11): an action that would e-mail the customer is refused before any change.
+  if (!areCustomerEmailsEnabled() && (c.action === 'convert' || c.action === 'contact')) {
+    const current = await call<CardData>('ops_card_get', { p_request: c.requestId });
+    if (!current || actionSendsCustomerEmail(c.action, current.request.kind)) {
+      if (current) await editCard(msg.chat.id, msg.message_id, current, settings);
+      return answer(current ? PRELAUNCH_REFUSED : dbDown ? DB_DOWN : PRELAUNCH_REFUSED, true);
+    }
+  }
   const res = await call<{ ok: boolean; code?: string; card?: CardData }>('ops_apply', {
     p_request: c.requestId,
     p_version: c.version,
@@ -405,7 +430,7 @@ async function sendTrialStartedEmail(card: CardData): Promise<string> {
   if (card.events.filter((e) => e.action === 'contact').length > 1) return ' · e-mail « essai activé » déjà envoyé';
   const r = card.request;
   const sent = await sendCustomerEmail('trial_started', r.email, { name: r.name, phone: r.phone, trialDuration: siteConfig.trialDuration });
-  return sent === 'sent' ? ' · 📧 e-mail « essai activé » envoyé' : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
+  return mailSuffix(sent, ' · 📧 e-mail « essai activé » envoyé');
 }
 
 async function sendConversionEmail(card: CardData): Promise<string> {
@@ -427,7 +452,7 @@ async function sendConversionEmail(card: CardData): Promise<string> {
   const sent = await sendCustomerEmail('request_confirmed', r.email, {
     name: r.name, email: r.email, phone: r.phone, tier: r.tier, term: r.term, streams: r.streams, invoice,
   });
-  return sent === 'sent' ? ` · 📧 confirmation ${inv.number} envoyée au client` : sent === 'failed' ? ' · ⚠️ e-mail non envoyé' : ' · (e-mail pas encore configuré)';
+  return mailSuffix(sent, ` · 📧 confirmation ${inv.number} envoyée au client`);
 }
 
 export async function handleUpdate(update: TgUpdate): Promise<void> {

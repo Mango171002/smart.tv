@@ -42,6 +42,10 @@ describe('POST /api/cron/review-invites', () => {
 
   it('sends the due invitations and gives failed ones back to the queue', async () => {
     vi.stubEnv('SUPABASE_SECRET_KEY', 'sb_secret_test');
+    // Online requests open (the prelaunch skip is tested below).
+    vi.stubEnv('FEATURE_CONTACT_FORM', 'true');
+    vi.stubEnv('SUPABASE_URL', 'https://example.supabase.co');
+    vi.stubEnv('SUPABASE_PUBLISHABLE_KEY', 'sb_publishable_test');
     const { cronSecret } = await import('@/lib/cron');
     const { POST } = await import('@/app/api/cron/review-invites/route');
     rpc.mockImplementation(async (fn: string) =>
@@ -57,5 +61,20 @@ describe('POST /api/cron/review-invites', () => {
     expect(send).toHaveBeenCalledWith('trial_followup', 't@b.co', expect.objectContaining({ name: 'Tom', plans: expect.any(Array) }));
     expect(send).toHaveBeenCalledWith('review_invite', 'a@b.co', { name: 'Ana' });
     expect(rpc).toHaveBeenCalledWith('ops_review_release', { p_request: 'b' });
+  });
+
+  it('prelaunch (online requests closed): claims nothing, sends nothing, logs a count only', async () => {
+    vi.stubEnv('SUPABASE_SECRET_KEY', 'sb_secret_test');
+    vi.stubEnv('FEATURE_CONTACT_FORM', 'false');
+    const log = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    const { cronSecret } = await import('@/lib/cron');
+    const { POST } = await import('@/app/api/cron/review-invites/route');
+    const res = await POST(post((await cronSecret())!));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, skipped: 'prelaunch', sent: 0, trialFollowups: { sent: 0 } });
+    expect(rpc).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+    expect(log).toHaveBeenCalledWith(expect.stringMatching(/^\[cron\] prelaunch: customer e-mails disabled — review invitations sent 0, trial follow-ups sent 0/));
+    log.mockRestore();
   });
 });

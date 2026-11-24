@@ -99,8 +99,10 @@ describe('same-origin (CSRF) check', () => {
 
 describe('input validation', () => {
   it('validates plan selection strictly', () => {
-    expect(planSelectionSchema.safeParse({ tier: 'ultra', term: 'lifetime', streams: 4 }).success).toBe(true);
-    expect(planSelectionSchema.safeParse({ tier: 'ultra', term: 'lifetime', streams: 5 }).success).toBe(false);
+    expect(planSelectionSchema.safeParse({ tier: 'ultra', term: '36m', streams: 4 }).success).toBe(true);
+    expect(planSelectionSchema.safeParse({ tier: 'ultra', term: '36m', streams: 5 }).success).toBe(false);
+    // B11: « lifetime » is not an offered term.
+    expect(planSelectionSchema.safeParse({ tier: 'ultra', term: 'lifetime', streams: 4 }).success).toBe(false);
     expect(planSelectionSchema.safeParse({ tier: 'ultra', term: '6m', streams: 1 }).success).toBe(false);
     expect(planSelectionSchema.safeParse({ tier: 'gold', term: '12m', streams: 1 }).success).toBe(false);
     expect(planSelectionSchema.safeParse({ tier: 'plus' }).success).toBe(false);

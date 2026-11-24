@@ -16,8 +16,8 @@ export const siteConfig = {
   brandIsPlaceholder: false as boolean,
   /** Public base URL (used for canonical URLs, sitemap, hreflang). */
   siteUrl: (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/$/, ''),
-  /** Domain not decided. */
-  domain: null as string | null,
+  /** Production domain (owner-confirmed, A11). */
+  domain: 'sygmatv.com' as string | null,
   supportEmail: 'support@sygmatv.com' as string | null,
   /** Official support line (owner, 14/11/2026). */
   /** Length of the free trial given on WhatsApp (shown in the « trial started » e-mail). */
@@ -42,6 +42,18 @@ export const siteConfig = {
   legalCountry: 'United States (New Mexico)' as string | null,
   /** U.S. Employer Identification Number (federal tax ID), owner 16/11/2026. */
   companyNumber: '98-1836592' as string | null,
+  /**
+   * Seller identity elements (C5, L-07) — to be provided by the owner/counsel — never invent.
+   * While null nothing is rendered anywhere (legal pages, e-mails).
+   */
+  /** State filing / registration number of the company. To be provided by the owner/counsel — never invent. */
+  registrationNumber: null as string | null,
+  /** State (register) where that number was issued. To be provided by the owner/counsel — never invent. */
+  stateOfRegistration: null as string | null,
+  /** VAT / tax registration number(s) where registered (e.g. EU OSS, UK). To be provided by the owner/counsel — never invent. */
+  vatId: null as string | null,
+  /** Representative in the EU/UK (GDPR art. 27 or trader representative), name and address. To be provided by the owner/counsel — never invent. */
+  representativeEU: null as string | null,
   /** ISO market codes with VERIFIED written redistribution rights. None yet. */
   licensedTerritories: [] as string[],
   /** Licensed catalogue source. None yet: categories shown are illustrative. */

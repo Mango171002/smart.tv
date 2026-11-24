@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cronSecret } from '@/lib/cron';
 import { sendCustomerEmail } from '@/lib/email/send';
 import { emailPlans } from '@/lib/email/plans';
+import { areCustomerEmailsEnabled } from '@/lib/features';
 import { getServiceSupabase } from '@/lib/supabase/server';
 import { safeEqual } from '@/lib/telegram/api';
 
@@ -9,12 +10,19 @@ import { safeEqual } from '@/lib/telegram/api';
  * Hourly customer e-mails, called by the Cloudflare cron trigger (worker.ts), never by browsers:
  * - Trustpilot review invitation: one e-mail 3 days after « Converti », no reminder;
  * - trial follow-up: one e-mail 24 h after « Essai envoyé » (the three plans), unless converted or lost.
+ * Prelaunch (A6 / B11): while online requests are closed nothing is claimed or sent — the queues stay untouched
+ * (no row is marked as sent) and only a count line is logged.
  */
 export async function POST(req: Request) {
   const expected = await cronSecret();
   const given = req.headers.get('x-cron-secret') ?? '';
   if (!expected) return NextResponse.json({ ok: false, error: 'not_configured' }, { status: 503 });
   if (!safeEqual(given, expected)) return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
+
+  if (!areCustomerEmailsEnabled()) {
+    console.log('[cron] prelaunch: customer e-mails disabled — review invitations sent 0, trial follow-ups sent 0 (queues untouched)');
+    return NextResponse.json({ ok: true, skipped: 'prelaunch', sent: 0, trialFollowups: { sent: 0 } });
+  }
 
   const db = getServiceSupabase();
   if (!db) return NextResponse.json({ ok: false, error: 'not_configured' }, { status: 503 });

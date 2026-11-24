@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { greetingName, renderEmail } from '@/lib/email/templates';
 import { sendCustomerEmail } from '@/lib/email/send';
 
@@ -14,10 +14,12 @@ describe('customer e-mail templates', () => {
     const m = renderEmail('preregistration_received', { tier: 'ultra', term: '12m', streams: 1, phone: '+212600000000' });
     expect(m.subject).toBe('Your order has been received! — SYGMA TV+');
     expect(m.html).toContain('Thank you for choosing SYGMA TV+!');
-    expect(m.html).toContain('Ultra+ · 12 months · 1 device');
+    for (const t of ['Your order details', 'Ultra+', '12 months', '1 device']) expect(m.html).toContain(t);
     expect(m.html).toContain('Please keep an eye on your WhatsApp messages.');
     expect(m.html).toContain('One World. Endless Entertainment.');
-    expect(m.text).toContain('Your plan: Ultra+ · 12 months · 1 device');
+    expect(m.text).toContain('Plan: Ultra+\nDuration: 12 months\nDevices: 1 device');
+    // No quote given: no price line.
+    expect(m.text).not.toContain('Plan price');
   });
   it('« Converti » (owner text): subscription active, order number, amount paid, support contacts', () => {
     const m = renderEmail('request_confirmed', {
@@ -30,13 +32,15 @@ describe('customer e-mail templates', () => {
     for (const t of ['SYG-2026-0001', 'Ultra+', '12 months', '1 device', '$99.00 USD', 'Paid', 'Active', '+44 7412 857594', 'Thank you for your trust!']) {
       expect(m.html).toContain(t);
     }
-    expect(m.text).toContain('Amount Paid: $99.00 USD');
+    // C3: the amount is the plan's list price, not a payment record.
+    expect(m.text).toContain('Plan price: $99.00 USD');
+    expect(m.html).not.toContain('Amount Paid');
     expect(m.text).toContain('Order Number: SYG-2026-0001');
   });
   it('« Converti » without a plan: no amount line', () => {
     const m = renderEmail('request_confirmed', { invoice: { number: 'SYG-2026-0002', issuedAt: '2026-11-15T10:00:00Z' } });
     expect(m.html).toContain('SYG-2026-0002');
-    expect(m.html).not.toContain('Amount Paid');
+    expect(m.html).not.toContain('Plan price');
     expect(m.html).toContain('Hello,');
   });
   it('never puts free text that is not a plain first name in the e-mail', () => {
@@ -48,6 +52,12 @@ describe('customer e-mail templates', () => {
 });
 
 describe('sending through Brevo', () => {
+  beforeEach(() => {
+    // Online requests open: customer e-mails allowed (the prelaunch block is tested in prelaunch-guards.test.ts).
+    vi.stubEnv('FEATURE_CONTACT_FORM', 'true');
+    vi.stubEnv('SUPABASE_URL', 'https://example.supabase.co');
+    vi.stubEnv('SUPABASE_PUBLISHABLE_KEY', 'sb_publishable_test');
+  });
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();

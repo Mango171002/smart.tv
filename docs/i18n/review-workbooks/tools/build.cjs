@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- standalone Node (CommonJS) reviewer tool, not site code */
 // Builds the review-workbook rows (one JSON per language) from the Phase 13 pack generator (gen14.cjs = gen.cjs
 // repointed to the current branch files, CLAIMS placeholders dropped, rows changed since the pack marked).
 const fs = require('fs');

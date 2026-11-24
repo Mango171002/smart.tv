@@ -90,6 +90,11 @@ describe('static assets (Cloudflare Workers Assets, public/_headers)', () => {
     }
   });
 
+  it('pages (Worker responses) carry COOP same-origin-allow-popups (D13-012); static files do not need it', async () => {
+    const page = ((await nextConfig.headers!()).find((h) => h.source === '/:path*')?.headers ?? []).find((h) => h.key === 'Cross-Origin-Opener-Policy');
+    expect(page?.value).toBe('same-origin-allow-popups');
+  });
+
   it('the catch-all rule never sets caching (the specific rules keep their Cache-Control)', () => {
     expect(rules.get('/*')!['cache-control']).toBeUndefined();
     expect(rules.get('/_next/static/*')!['cache-control']).toBe('public, max-age=31536000, immutable');

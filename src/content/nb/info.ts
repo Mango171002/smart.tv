@@ -41,7 +41,7 @@ const CONFIRMATION_EMAIL = 'Når vi har mottatt og bekreftet betalingen din, få
 const LANGS = `${F.languages.slice(0, -1).map((l) => l.toLowerCase()).join(', ')} eller ${F.languages[F.languages.length - 1]!.toLowerCase()}`;
 
 // ---------------------------------------------------------------- Om oss
-const WHO_BRAND = { p: `SYGMA TV+ — «One World. Endless Entertainment.» — er et merke fra ${siteConfig.legalEntity}, et selskap etablert i ${F.established} og registrert i delstaten New Mexico i USA.` };
+const WHO_BRAND = { p: `SYGMA TV+ – «One World. Endless Entertainment.» – er et merke fra ${siteConfig.legalEntity}, et selskap etablert i ${F.established} og registrert i delstaten New Mexico i USA.` };
 /** Useful links of the About page; `contact` describes the Contact support page (e-mail only while requests are closed). */
 const aboutLinks = (contact: string) => ({ links: [
   { href: '/nb/help', label: 'Hjelpesenter', text: 'Prøveperiode, bestilling, enheter, refusjon' },
@@ -202,7 +202,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Datamaskiner.',
       ] }, { p: 'Sammen med innloggingsopplysningene forteller teamet vårt deg hvilken app du skal installere på enheten din, og hjelper deg med oppsettet.' }] },
       { id: 'how-many', icon: 'users', title: 'Hvor mange enheter samtidig?', body: [{ p: 'Alle abonnementer inkluderer 1 enhet. Du kan legge til enheter når du bestiller, opptil 4. Abonnementet er til personlig bruk i husstanden din: deling eller videresalg av tilgangen er ikke tillatt.' }] },
-      { id: 'quality', icon: 'activity', title: 'Bildekvalitet', body: [{ p: 'Bildekvaliteten avhenger av abonnementet, innholdet, enheten og internettforbindelsen din. En stabil forbindelse — helst med nettverkskabel, eller med enheten nær Wi-Fi-ruteren — betyr mest.' }] },
+      { id: 'quality', icon: 'activity', title: 'Bildekvalitet', body: [{ p: 'Bildekvaliteten avhenger av abonnementet, innholdet, enheten og internettforbindelsen din. En stabil forbindelse – helst med nettverkskabel, eller med enheten nær Wi-Fi-ruteren – betyr mest.' }] },
       { id: 'check', icon: 'check', title: 'Sjekk enheten din først', body: [{ p: `Be om en gratis prøveperiode på ${TRIAL}, så kan du teste tjenesten på din egen enhet og tilkobling før du kjøper.` }] },
     ],
   },
@@ -210,7 +210,7 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'free-trial', name: 'Gratis prøveperiode', icon: 'calendar',
     title: 'Gratis prøveperiode',
     metaTitle: 'Gratis prøveperiode: slik tester du SYGMA TV+',
-    description: `Test SYGMA TV+ gratis i ${TRIAL} på din egen enhet før du kjøper. Slik ber du om prøveperioden og hva som skjer etterpå — ingenting å betale eller si opp.`,
+    description: `Test SYGMA TV+ gratis i ${TRIAL} på din egen enhet før du kjøper. Slik ber du om prøveperioden og hva som skjer etterpå – ingenting å betale eller si opp.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)}, gratis, ingenting å si opp.`,
     intro: `Med den gratis prøveperioden kan du teste SYGMA TV+ i ${TRIAL} på din egen enhet og tilkobling før du bestemmer deg.`,
     prelaunch: { description: `Gratis prøveperioder åpner snart: da kan du teste SYGMA TV+ i ${TRIAL} på din egen enhet før du kjøper. Slik kommer prøveperioden til å fungere.`, sections: { request: { body: [{ p: 'Forespørsler om gratis prøveperiode åpner snart. Inntil da kan en prøveperiode ikke ordnes på e-post eller via andre kanaler.' }] } } },
@@ -348,7 +348,7 @@ const INFO_UI: InfoUi = {
     { k: 'Språk for kundestøtte', v: String(F.languages.length), small: `${F.languages.join(' · ')}. Personlig hjelp får du på engelsk.` },
   ],
   aboutContact: `Spørsmål om SYGMA TV+? Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
-  hubContact: 'Finner du ikke svaret? Skriv til oss — oppgi enheten din og eventuelt ordrereferansen din.',
+  hubContact: 'Finner du ikke svaret? Skriv til oss – oppgi enheten din og eventuelt ordrereferansen din.',
   topicContact: `Trenger du fortsatt hjelp? Kontakt oss på e-post eller WhatsApp. Den automatiske assistenten vår er tilgjengelig ${F.supportHours}, med personlig hjelp ved behov.`,
   hubRelated: [
     { href: '/nb/about', label: 'Om oss' },

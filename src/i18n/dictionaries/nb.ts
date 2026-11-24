@@ -321,7 +321,7 @@ const nb: Dictionary = {
     globeAlt: 'Jorden om natten sett fra verdensrommet, med bylys over kontinentene',
     titleA: 'Klar til å',
     titleHl: 'begynne å se?',
-    text: 'Direkte-TV, filmer og serier på TV, mobil og datamaskin, i HD og opptil 4K der tilgjengelig — fra {price}/måned.',
+    text: 'Direkte-TV, filmer og serier på TV, mobil og datamaskin, i HD og opptil 4K der tilgjengelig – fra {price}/måned.',
     text2: 'Gratis prøveperiode først, 7 dagers pengene-tilbake-garanti.',
     choose: 'Velg abonnement',
     trial: 'Be om gratis prøveperiode',

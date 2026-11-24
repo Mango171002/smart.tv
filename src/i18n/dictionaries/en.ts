@@ -389,7 +389,7 @@ const en = {
     supportTitleHl: 'us',
     supportText: 'Our online forms are not open yet.',
     contactLead: 'General questions:',
-    contactNote: 'Orders and free trials cannot be arranged by e-mail or any other channel yet.',
+    contactNote: 'Orders and free trials cannot be arranged by email or any other channel yet.',
     back: 'Back to the plans',
     close: 'Close',
     faqSubscribe: 'Not yet: online orders are opening soon. You can already compare the plans, durations and prices with the plan simulator.',

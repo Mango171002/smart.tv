@@ -43,7 +43,7 @@ const CONFIRMATION_EMAIL = 'Zodra we je betaling hebben ontvangen en bevestigd, 
 const LANGS = `${F.languages.slice(0, -1).join(', ')} of ${F.languages[F.languages.length - 1]}`;
 
 // ---------------------------------------------------------------- Over ons
-const WHO_BRAND = { p: `SYGMA TV+ — “One World. Endless Entertainment.” — is een merk van ${siteConfig.legalEntity}, een bedrijf dat in ${F.established} is opgericht en geregistreerd staat in de staat New Mexico, Verenigde Staten.` };
+const WHO_BRAND = { p: `SYGMA TV+ – “One World. Endless Entertainment.” – is een merk van ${siteConfig.legalEntity}, een bedrijf dat in ${F.established} is opgericht en geregistreerd staat in de staat New Mexico, Verenigde Staten.` };
 /** Useful links of the About page; `contact` describes the Contact support page (e-mail only while requests are closed). */
 const aboutLinks = (contact: string) => ({ links: [
   { href: '/nl/help', label: 'Helpcentrum', text: 'Proefperiode, bestellen, apparaten, terugbetaling' },
@@ -204,7 +204,7 @@ const HELP_TOPICS: InfoPage[] = [
         'Computers.',
       ] }, { p: 'Samen met je inloggegevens laat ons team je weten welke app je op je apparaat moet installeren, en we helpen je bij de installatie.' }] },
       { id: 'how-many', icon: 'users', title: 'Hoeveel apparaten tegelijk?', body: [{ p: 'Elk abonnement bevat 1 apparaat. Bij je bestelling kun je apparaten toevoegen, tot maximaal 4. Het abonnement is voor persoonlijk gebruik binnen je huishouden: toegang delen of doorverkopen is niet toegestaan.' }] },
-      { id: 'quality', icon: 'activity', title: 'Beeldkwaliteit', body: [{ p: 'De beeldkwaliteit hangt af van je abonnement, de content, je apparaat en je internetverbinding. Een stabiele verbinding — liefst een netwerkkabel, of een apparaat dicht bij je wifirouter — maakt het grootste verschil.' }] },
+      { id: 'quality', icon: 'activity', title: 'Beeldkwaliteit', body: [{ p: 'De beeldkwaliteit hangt af van je abonnement, de content, je apparaat en je internetverbinding. Een stabiele verbinding – liefst een netwerkkabel, of een apparaat dicht bij je wifirouter – maakt het grootste verschil.' }] },
       { id: 'check', icon: 'check', title: 'Test eerst je apparaat', body: [{ p: `Vraag een gratis proefperiode van ${TRIAL} aan: je test de dienst op je eigen apparaat en verbinding voordat je koopt.` }] },
     ],
   },
@@ -212,7 +212,7 @@ const HELP_TOPICS: InfoPage[] = [
     slug: 'free-trial', name: 'Gratis proefperiode', icon: 'calendar',
     title: 'De gratis proefperiode',
     metaTitle: 'Gratis proefperiode: SYGMA TV+ uitproberen',
-    description: `Probeer SYGMA TV+ ${TRIAL} gratis op je eigen apparaat voordat je koopt. Hoe aanvragen werkt en wat er daarna gebeurt — niets betalen, niets opzeggen.`,
+    description: `Probeer SYGMA TV+ ${TRIAL} gratis op je eigen apparaat voordat je koopt. Hoe aanvragen werkt en wat er daarna gebeurt – niets betalen, niets opzeggen.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)} gratis, niets op te zeggen.`,
     intro: `Met de gratis proefperiode test je SYGMA TV+ ${TRIAL} lang op je eigen apparaat en verbinding, voordat je beslist.`,
     prelaunch: { description: `Een gratis proefperiode aanvragen is binnenkort mogelijk: dan test je SYGMA TV+ ${TRIAL} op je eigen apparaat voordat je koopt. Zo gaat het straks.`, sections: { request: { body: [{ p: 'Een gratis proefperiode aanvragen is binnenkort mogelijk. Tot die tijd kan een proefperiode niet per e-mail of via een ander kanaal worden geregeld.' }] } } },
@@ -350,7 +350,7 @@ const INFO_UI: InfoUi = {
     { k: 'Talen van de klantenservice', v: String(F.languages.length), small: `${F.languages.join(' · ')}. Persoonlijke hulp krijg je in het Engels.` },
   ],
   aboutContact: `Vragen over SYGMA TV+? Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is.`,
-  hubContact: 'Staat je antwoord er niet bij? Schrijf ons — vermeld je apparaat en, als je die hebt, je bestelreferentie.',
+  hubContact: 'Staat je antwoord er niet bij? Schrijf ons – vermeld je apparaat en, als je die hebt, je bestelreferentie.',
   topicContact: `Nog hulp nodig? Neem contact op per e-mail of via WhatsApp. Onze automatische assistent is ${F.supportHours} beschikbaar, met hulp van een medewerker wanneer dat nodig is.`,
   hubRelated: [
     { href: '/nl/about', label: 'Over ons' },

@@ -595,7 +595,7 @@ const it: Dictionary = {
     aboutTitle: 'Informazioni su {brand}',
     about: 'Un’esperienza di streaming moderna per film, serie e TV in diretta sulla tua TV, sullo smartphone e sul computer.',
     entity: 'SYGMA TV+ è un marchio di {entity} (Nuovo Messico, USA).',
-    chips: ['Multischermo', 'Prova gratis'],
+    chips: ['Multischermo', 'Prova gratuita'],
     linksTitle: 'Link',
     helpFaq: 'Aiuto / FAQ',
     faq: 'FAQ',

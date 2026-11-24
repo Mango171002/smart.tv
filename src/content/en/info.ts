@@ -266,7 +266,7 @@ export const HELP_TOPICS: InfoPage[] = [
     description: `Test SYGMA TV+ free for ${TRIAL} on your own device before you buy. How to request your trial and what happens next — nothing to pay, nothing to cancel.`,
     summary: `${TRIAL[0]!.toUpperCase()}${TRIAL.slice(1)}, free, nothing to cancel.`,
     intro: `The free trial lets you test SYGMA TV+ for ${TRIAL} on your own device and connection, before you decide.`,
-    prelaunch: { description: `Free trials are opening soon: you will be able to test SYGMA TV+ for ${TRIAL} on your own device before you buy. How the free trial will work.`, sections: { request: { body: [{ p: 'Free trial requests are opening soon. Until then, a trial cannot be arranged by e-mail or in any other way.' }] } } },
+    prelaunch: { description: `Free trials are opening soon: you will be able to test SYGMA TV+ for ${TRIAL} on your own device before you buy. How the free trial will work.`, sections: { request: { body: [{ p: 'Free trial requests are opening soon. Until then, a trial cannot be arranged by email or in any other way.' }] } } },
     sections: [
       { id: 'request', icon: 'rocket', title: 'How do I request it?', body: [{ steps: [
         { title: 'Open the form', text: 'Select “Free trial” at the top of any page.' },

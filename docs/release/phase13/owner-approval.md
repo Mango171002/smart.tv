@@ -30,7 +30,7 @@ Owner decisions and statements (recorded as stated by the owner) and verified re
 2. **Private staging runs the release candidate `7a6577f`** (deployed 24/11/2026, Worker version
    `a48c4903-5e4f-4670-8f30-d28d8528fffd`), protected by Cloudflare Access, noindex.
 3. **D1 / A1 decided by the owner: all 8 languages simultaneously** (not English first). The production configuration
-   is **prepared, not activated**: branch `claude/release-8lang-config`, commit `8dbb442` (descendant of `7a6577f`):
+   is **prepared, not activated**: branch `claude/release-8lang-config`, commit the 8-language candidate (branch `claude/final-rc-8lang`) (descendant of `7a6577f`):
    `.env.production` adds `NEXT_PUBLIC_RELEASED_LANGUAGES=fr,de,es,it,nl,sv,nb` and `NEXT_PUBLIC_CONTENT_PAGES=live`
    (`FEATURE_CONTACT_FORM=false`, `SALES_ENABLED=false` unchanged); `LEGACY_REDIRECT_LANGUAGES` = all 7 releasable
    languages (`src/i18n/locales.ts`) for rollback safety. Validated: 680 unit tests, production-build crawl 85
@@ -48,9 +48,49 @@ Owner decisions and statements (recorded as stated by the owner) and verified re
 
 ---
 
+## 0b. Owner directions of 24/11/2026 (final technical closure) and implementation status
+
+Release candidate (English prelaunch): branch `claude/final-rc`. 8-language candidate: branch `claude/final-rc-8lang`
+= `claude/final-rc` + release configuration (`NEXT_PUBLIC_RELEASED_LANGUAGES=fr,de,es,it,nl,sv,nb`,
+`NEXT_PUBLIC_CONTENT_PAGES=live`, all releasable languages in `LEGACY_REDIRECT_LANGUAGES`, `public/llms.txt`). It supersedes
+the earlier references `8dbb442` (configuration only) and `5e4528c` (configuration + E2E/CI harness fix, CI 45395895083
+green): both changes are included, the harness fix cherry-picked onto `claude/final-rc` (`8b359b5`). Exact SHAs: final report.
+
+| ID | Owner direction (24/11) | Status in `claude/final-rc` | Still needed |
+|---|---|---|---|
+| A0 | Prepare English prelaunch production update, do not deploy | Ready (`claude/final-rc`, English-only config) | Deployment authorization |
+| A1 | Simultaneous 8 languages, Help/About on | Ready (`claude/final-rc-8lang`) | A2–A10 ticks + deployment authorization |
+| A3 | Revised support wording; human support e-mail-only in prelaunch | In place (Phase 13) | **Owner to verify the automated assistant is available 24/7** before activation |
+| A6 | No orders/trials/activations/promotional sales messages | Code guards: bot « Essai envoyé »/« Converti » refused in prelaunch, scheduled customer e-mails skipped, sender blocks customer e-mails; procedure `docs/release/final/a6-team-procedure.md` | Team briefed |
+| A8 | IndexNow at multilingual production activation only | Unchanged mechanism (repository variable `INDEXNOW_ENABLED`) | Set `INDEXNOW_ENABLED=true` just before the multilingual deploy, not before |
+| A9 | llms.txt from verified claims | `public/llms.txt` in the 8-language candidate only (no catalogue figures, no 24/7 claim) | — |
+| A10 | Actual review dates only | Not changed (dates stay 20/11/2026) | Set the real date on release day if content is reviewed again |
+| A11 | Domain sygmatv.com, keep commercial gates | `siteConfig.domain='sygmatv.com'`; remaining blockers unchanged; `/api/checkout` 403 | — |
+| A12 | Reduce monitoring log output | `monitor.yml` prints only health and failing check names | — |
+| A13 | CI/secrets hardening; test COOP | Token only in Cloudflare steps; `npm ci --ignore-scripts`; actions pinned by SHA; `environment:` keys; production deploy requires CI; COOP `same-origin-allow-popups` (tested; may affect GTM Tag Assistant preview) | GitHub Environments rules, separate staging token, branch protection (`docs/release/final/a13-ci-hardening.md`) |
+| B1 | Commercial submissions closed | `FEATURE_CONTACT_FORM=false`, `SALES_ENABLED=false` | — |
+| B10 | DB migration design approved; runbook; not applied | Migration + rollbacks in repo; runbook §7 of `docs/release/final/db-locale-migration.md` | Owner runs it before forms reopen |
+| B11 | Offered-term validation, rate limiting preparation, prelaunch guards | 12/24/36 months and 1–4 devices only (« lifetime » rejected); WAF rule `docs/release/final/rate-limit-waf.md`; guards as A6 | WAF rule in Cloudflare before forms reopen |
+| B9 | Server-side licensed-territory restriction | Orders/trials refused (403 `territory_not_licensed`) unless every known country is in `licensedTerritories` (empty → all refused) | C1 evidence, then fill the list |
+| C7 | Providers pending | Unchanged | Owner |
+| D-1…D-6 | Strip; no date; aligned cards; legal return link; collapsed-header CTA; self-hosted Inter | Implemented (strip only while closed; Inter OFL 1.1, latin 48 KB) | — |
+| A4 | Prefer version A, remarketing off, Meta/TikTok out of banner | **Owner preference — pending privacy counsel.** Texts ready (`docs/release/final/cookie-analytics-reconciliation.md`), not published; remarketing switch is a GTM/Ads action (owner) | Counsel review; GTM/Ads change |
+| A7 / B2 | Remove unsupported tax/commercial statements; no $0.00 | Done in site copy: no tax amount (« Calculated by our team before payment »), neutral tax sentence; legal texts untouched | **Pending tax adviser / counsel** for final wording; `terms.ts:49` unchanged |
+| B6 | Factual duration comparison; hide +30 days | Done: no struck « Regular price »; « Compared with n separate 12-month plans (…) : you save … »; +30 days hidden (`src/config/promotions.ts`) | Counsel; conditions before re-enabling the promotion |
+| B7 | Better confirmation e-mails | Trader identity footer, order details, legal links; « Plan price » (not « Amount paid ») | Counsel review before e-mails are used |
+| B12 | Factual non-renewal/guarantee labels | nb « Pengene-tilbake-garanti » applied; fr/sv/nb non-renewal labels too long for the 22-character card limit — not changed | **Pending counsel**; wording that fits |
+| C5 | Seller identity fields, nothing invented | `registrationNumber`, `stateOfRegistration`, `vatId`, `representativeEU` = null (render nothing) | Owner/counsel provide values |
+| C6 | Retention preserved, disabled/dry-run | In repo, dry-run default, flag absent everywhere | Counsel decisions on exceptions; owner activation |
+| C2–C4 | Requirements for tax, payment recording, invoicing | `docs/release/final/c2-c4-tax-payment-invoicing-requirements.md` | Tax adviser |
+| A2 / A2b | Neutral wording; catalogue figures hidden | Neutral wording in place; figures hidden (`claude/f14-specs` not merged) | Evidence + claims/rights review |
+| B3–B5, B8, C1, C8, C9 | Pending specialists | Unchanged | Counsel / rights holders |
+| A5 | P1–P3 before publication, then P4–P6 | Workbooks updated for the changed strings (reviewer fields empty — no review started) | 7 native sign-offs (P1–P3) |
+
+All items marked « owner preference » or « pending » remain **not approved by a specialist**.
+
 ## Status summary
 
-Prelaunch = public 8-language prelaunch (activation of `8dbb442`, orders closed). Sales = reopening orders/trials
+Prelaunch = public 8-language prelaunch (activation of the 8-language candidate (branch `claude/final-rc-8lang`), orders closed). Sales = reopening orders/trials
 (`FEATURE_CONTACT_FORM=true`) or taking payment by any channel. « Rec. » = recommended to decide first.
 
 | Item | Topic | Part | Blocks prelaunch | Blocks sales | Status |
@@ -93,7 +133,7 @@ Prelaunch = public 8-language prelaunch (activation of `8dbb442`, orders closed)
 | C8 | Trademark and platform names (L-13) | 4 Rights | Rec. | **Yes** | Open |
 | A5 | Native-speaker sign-off fr, de, es, it, nl, sv, nb (reg. D15) | 5 Native | **Yes** (each language) | **Yes** (legal-adjacent text) | Workbooks ready (`docs/i18n/review-workbooks/`); 0 of 7 signed |
 
-**Before activating the 8-language prelaunch (`8dbb442`):** A1 activation approval, A2, A3, A4, A5 (all seven
+**Before activating the 8-language prelaunch (the 8-language candidate (branch `claude/final-rc-8lang`)):** A1 activation approval, A2, A3, A4, A5 (all seven
 languages, because all are released together), A6, A8, A10 — and, recommended, A7, B3 (nb page), B5, B8, C1, C5, C8.
 **Before reopening orders or taking payment:** every item marked **Yes** in « Blocks sales ».
 
@@ -106,7 +146,7 @@ languages, because all are released together), A6, A8, A10 — and, recommended,
   Step A (English prelaunch with the Phase 10–13 content), or wait and deploy only with the 8-language activation?
 - **Current implementation:** production `8797d7c` (Fact 1) shows per-plan channel/VOD figures and « from multiple
   countries »; `7a6577f` removes them (`src/config/catalogue.ts:14-16` all `null`; no such banner text in
-  `src/i18n/dictionaries/en.ts`). `7a6577f` runs on private staging (Fact 2). `8dbb442` contains `7a6577f`.
+  `src/i18n/dictionaries/en.ts`). `7a6577f` runs on private staging (Fact 2). the 8-language candidate (branch `claude/final-rc-8lang`) contains `7a6577f`.
 - **Recommended option:** Step A now, after the staging checks: record the active production Worker version ID
   first; keep `FEATURE_CONTACT_FORM=false` in any rollback target (pattern `cfc744e`); never `wrangler rollback`
   without a version ID (`security-report.md` §4).
@@ -119,7 +159,7 @@ languages, because all are released together), A6, A8, A10 — and, recommended,
   Date ____ Initials ____
 
 ### A1 — Release scope (reg. D1) — DECIDED 24/11/2026
-- **Question:** Approve the activation of the prepared configuration `8dbb442` (staging first, then production), and
+- **Question:** Approve the activation of the prepared configuration the 8-language candidate (branch `claude/final-rc-8lang`) (staging first, then production), and
   on which date?
 - **Current implementation:** Fact 3. Production and `7a6577f`: `.env.production` has no `NEXT_PUBLIC_RELEASED_LANGUAGES`
   / `NEXT_PUBLIC_CONTENT_PAGES`; `src/i18n/locales.ts:150` `LEGACY_REDIRECT_LANGUAGES = ['fr']`. Post-deploy commands:
@@ -132,7 +172,7 @@ languages, because all are released together), A6, A8, A10 — and, recommended,
   wording; a later correction means re-indexing.
 - **Blocks public prelaunch?** Yes (it is the publication). **Blocks commercial sales?** No.
 - **Owner answer:** ☒ scope: all 8 languages simultaneously, content pages live (owner, 24/11/2026) · ☒ rollback
-  redirects for all releasable languages (in `8dbb442`) · Activation: ☐ (a) when the blocking items are ticked
+  redirects for all releasable languages (in the 8-language candidate (branch `claude/final-rc-8lang`)) · Activation: ☐ (a) when the blocking items are ticked
   ☐ (b) now, with risk acceptance · Approved deployment date ____ Initials ____
 
 ### A3 — Support wording and WhatsApp during prelaunch (reg. D8, L-10)
@@ -163,7 +203,7 @@ languages, because all are released together), A6, A8, A10 — and, recommended,
 - **Owner answer:** ☐ (a) issued to the team on ____ ☐ (b) · Initials ____
 
 ### A8 — IndexNow at activation (new ID; was part of A6)
-- **Question:** Send the changed URLs (≈ 85) to IndexNow when `8dbb442` is deployed?
+- **Question:** Send the changed URLs (≈ 85) to IndexNow when the 8-language candidate (branch `claude/final-rc-8lang`) is deployed?
 - **Current implementation:** dry run unless the repository variable `INDEXNOW_ENABLED=true`
   (`.github/workflows/deploy-cloudflare.yml:136-142`); reaches Bing, Yandex and others, not Google
   (`d1-release-config.md` §4). A rollback with IndexNow on also submits the removed URLs.
@@ -186,7 +226,7 @@ languages, because all are released together), A6, A8, A10 — and, recommended,
 - **Question:** Set the « last reviewed » dates to the real final review date in the release commit?
 - **Current implementation:** `20 November 2026` and translations in `src/content/en/info.ts:13`, `fr/info.ts:14`,
   `nl/info.ts:13`, `de/info.ts:388`, `es/info.ts:383`, `it/info.ts:384`, `sv/info.ts:385`, `nb/info.ts:383`; tests
-  `tests/unit/translations.test.ts` must match. `8dbb442` leaves them to release day. Legal pages keep their own
+  `tests/unit/translations.test.ts` must match. the 8-language candidate (branch `claude/final-rc-8lang`) leaves them to release day. Legal pages keep their own
   dates (`src/content/legal.ts:32`, `src/content/terms.ts:8`) — change only if the legal text changes.
 - **Recommended option:** yes, date of the last native/owner review.
 - **Alternatives:** (b) keep 20 November 2026.

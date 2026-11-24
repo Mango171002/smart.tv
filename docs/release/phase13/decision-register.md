@@ -301,6 +301,33 @@ counsel reviews it; engineering fills `licensedTerritories` only after counsel's
 **Blocks prelaunch publication:** Yes (recommended minimum: the Phase 13 wording change merged and approved).
 **Blocks opening orders:** Yes. **Blocks commercial sales:** Yes.
 
+**Owner update (24/11/2026) — supplier-confirmed specifications.** The owner states that the supplier has
+confirmed: **35,000+ TV channels**, **200,000+ movies and series**, and **4K HDR availability, subject to compatible
+content and devices**. Recorded as *supplier-confirmed specifications*. Per the owner, this confirmation **does not
+establish territorial broadcasting rights** (blocker C stays open). The written supplier confirmation itself is not
+in the repository: keep a copy with the rights documentation (evidence for L-01 / L-11).
+
+*History.* The figures were shown until Phase 6A (commit `9923c7f`, 20/11/2026): closing banner « Access up to 35,000+
+TV channels and 200,000+ movies & series, in HD to 4K HDR, from multiple countries », comparison rows « Live TV
+channels +12,000 / +25,000 / +35,000 » and « Movies & series +100,000 / +150,000 / +200,000 », and per-plan card
+lines. They were removed (claims inventory A1–A3, `docs/seo/claims-inventory.md`) because no contract or rights
+were documented, and the per-plan lines were switched off in `src/config/catalogue.ts` (all `null`). They were not
+removed in Phase 12 or 13; the emergency hotfix `8797d7c` kept the production banner text unchanged.
+
+*Recommended treatment (not applied — owner choice, see owner-approval A2b).*
+1. Show the confirmed totals again, framed as the supplier's catalogue, never as rights or availability in the
+   visitor's country: e.g. EN « Supplier catalogue: 35,000+ TV channels and 200,000+ movies & series. What you can
+   watch depends on your country and device. » 4K HDR keeps « on compatible content and devices » (today's
+   « 4K/HDR where available » qualifier is consistent and stays).
+2. Use them on the Ultra+ card only through the existing switch (`src/config/catalogue.ts`: `ultra: { channels:
+   35000, vod: 200000 }`), or in one sentence of the closing banner — not both, and not in the page title, meta
+   description or JSON-LD (search snippets lose the qualifier).
+3. Keep Starter and Plus figures hidden: the per-plan figures (12,000 / 25,000; 100,000 / 150,000) are **not**
+   covered by this confirmation.
+4. Never pair the figures with « from multiple countries », « international », « around the world » or named
+   sports, leagues or broadcasters (that would imply distribution rights).
+5. Translate the qualifier in all 8 languages and add it to the native-review pack (P2).
+
 ---
 
 ## D7 — « +30 DAYS FREE » badge and struck « Regular price »

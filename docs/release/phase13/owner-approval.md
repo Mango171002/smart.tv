@@ -28,6 +28,12 @@ need that specialist's written answer before the box is ticked. Details and file
     trial follow-up e-mail (`templates.ts:280`) *(recommended)*
   - [ ] Approve the Phase 13 wording only
   - [ ] Keep the current claims — requires written rights per territory (*rights holder*, *counsel*)
+- [ ] **A2b — Supplier-confirmed catalogue figures (D6, owner update 24/11/2026).** Supplier confirmed 35,000+
+  channels, 200,000+ movies & series, 4K HDR on compatible content and devices (not territorial rights).
+  - [ ] Show the totals once, as « Supplier catalogue … what you can watch depends on your country and device », on
+    the Ultra+ card via `src/config/catalogue.ts` (Starter/Plus hidden) *(recommended)*
+  - [ ] Show them in the closing banner sentence instead (same qualifier)
+  - [ ] Keep them hidden until territorial rights are documented
 - [ ] **A3 — Support wording and WhatsApp (D8).** Phase 13 change: « 24/7 automated assistant, human help when
   needed »; WhatsApp not shown on marketing/help pages during prelaunch; Legal notice unchanged. *(Being implemented —
   review the merged text.)*

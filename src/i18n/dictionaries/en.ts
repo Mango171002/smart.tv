@@ -418,6 +418,11 @@ const en = {
       /** Comparison table, « Support » row (every plan): e-mail only while closed. */
       compareSupport: 'Email, 24/7 assistant',
     },
+    /** Interface strings added in phase 15 (UI): page-wide prelaunch strip link, return link on the English legal pages. */
+    ui: {
+      stripPlans: 'See the plans',
+      legalBack: 'Back to the English site',
+    },
   },
   request: {
     trialTitle: 'Request a Trial',

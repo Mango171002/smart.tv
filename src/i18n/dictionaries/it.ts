@@ -431,6 +431,10 @@ const it: Dictionary = {
       supportBenefitText: 'Aiuto umano via email',
       compareSupport: 'Email, assistente 24/7',
     },
+    ui: {
+      stripPlans: 'Vedi i piani',
+      legalBack: 'Torna al sito in italiano',
+    },
   },
   request: {
     trialTitle: 'Richiedi una prova',

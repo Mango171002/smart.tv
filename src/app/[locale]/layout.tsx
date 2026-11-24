@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
+import { preload } from 'react-dom';
 import '../globals.css';
 import { Footer } from '@/components/Footer';
 import { SupportButton } from '@/components/SupportButton';
@@ -7,6 +8,8 @@ import { RequestHost } from '@/components/RequestHost';
 import { SectionLinkHandler } from '@/components/SectionLinkHandler';
 import { RevealScript } from '@/components/RevealScript';
 import { Header } from '@/components/Header';
+import { PrelaunchStrip } from '@/components/PrelaunchStrip';
+import { LegalReturnMemory } from '@/components/LegalReturn';
 import { Analytics } from '@/components/Analytics';
 import { ConsentBanner } from '@/components/ConsentBanner';
 import { siteConfig } from '@/config/site';
@@ -16,6 +19,10 @@ import { OG_IMAGE, TWITTER_IMAGE } from '@/lib/seo';
 import { CONSENT_DEFAULT_SCRIPT } from '@/lib/consent-default';
 import { isContactFormEnabled } from '@/lib/features';
 import { prelaunchCopy } from '@/lib/prelaunch-copy';
+import { localizedPath } from '@/lib/routes';
+
+/** Self-hosted Inter (D-6): only the Latin subset is preloaded; Latin Extended loads on demand (unicode-range, globals.css). */
+const INTER_LATIN = '/fonts/inter/inter-latin-wght-normal.v5.3.0.woff2';
 
 export const dynamicParams = false;
 
@@ -52,6 +59,9 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
+  const ordersOpen = isContactFormEnabled();
+  // <link rel="preload"> in the document head (React hoists and de-duplicates it).
+  preload(INTER_LATIN, { as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' });
   return (
     <html lang={localeSeo(locale).htmlLang} suppressHydrationWarning>
       <head>
@@ -63,14 +73,17 @@ export default async function LocaleLayout({
         <RevealScript />
         <a className="skip-link" href="#main">{dict.common.skipToContent}</a>
         <Header locale={locale} nav={dict.nav} />
+        {/* Orders and free trials closed: one discreet line under the header on every page (D-1). */}
+        {!ordersOpen && <PrelaunchStrip text={dict.prelaunch.pagesTitle} plans={{ label: dict.prelaunch.ui.stripPlans, href: localizedPath(locale, '#plans') }} />}
         <main id="main" tabIndex={-1}>{children}</main>
         <Footer locale={locale} dict={dict} />
         <SupportButton nav={dict.nav} />
         <SectionLinkHandler />
+        <LegalReturnMemory locale={locale} />
         <ConsentBanner dict={dict.consent} />
         <Analytics />
         {/* Online requests closed (FEATURE_CONTACT_FORM=false): the trial / support windows show the prelaunch message. */}
-        <RequestHost locale={locale} dict={{ request: dict.request, forms: dict.forms, common: dict.common, prelaunch: dict.prelaunch }} ordersOpen={isContactFormEnabled()} />
+        <RequestHost locale={locale} dict={{ request: dict.request, forms: dict.forms, common: dict.common, prelaunch: dict.prelaunch }} ordersOpen={ordersOpen} />
       </body>
     </html>
   );

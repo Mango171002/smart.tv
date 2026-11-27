@@ -17,27 +17,46 @@ can only be changed by the repository owner (engineering has no access and made 
 Triggers and branch filters are unchanged (`claude/intelligent-shannon-uwa4fi`, `main`; `claude/staging-deploy`;
 `**` for CI). Tests: `tests/unit/ci-hardening.test.ts`.
 
-## 2. Owner actions in GitHub (in this order)
+## 2. Code changes of branch `claude/cicd-hardening` (live with the next authorized deployment)
 
-1. **Settings → Environments → `production`** (exists after the first deploy run, or create it):
-   - *Deployment branches and tags*: « Selected branches » → `claude/intelligent-shannon-uwa4fi`, `main`.
-   - Optional: *Required reviewers* (owner) — every production deploy then waits for an approval click.
-2. **Settings → Environments → `staging`**: deployment branch `claude/staging-deploy` only.
-3. **Cloudflare (dashboard): a separate token for staging**, limited to the `sygma-staging` Worker if the plan allows
-   per-Worker scoping, otherwise to « Workers Scripts: Edit » on the account; add it as the `CLOUDFLARE_API_TOKEN`
-   secret of the **staging** environment. Do not reuse the production token.
-4. **Move the production secrets** into the `production` environment: `CLOUDFLARE_API_TOKEN`, `BREVO_API_KEY`,
-   `TELEGRAM_BOT_TOKEN`, `SUPABASE_SECRET_KEY` (*Environment secrets → Add secret*, same names), then delete the
-   repository-level copies (*Settings → Secrets and variables → Actions*).
-   - **Before deleting** `SUPABASE_SECRET_KEY` and `TELEGRAM_BOT_TOKEN` at repository level: `monitor.yml` (hourly)
-     reads them and has no `environment:` (adding one would record a « deployment » every hour). Either keep those two
-     at repository level as well, or ask engineering to add `environment: production` to the monitor job.
-5. **Branch protection / rulesets** for `main` and `claude/intelligent-shannon-uwa4fi`: no force-push, no deletion,
-   require the « CI » checks (`app`, `cloudflare-bundle`, `database`) on pull requests.
-6. **Settings → Actions → General**: « Require approval for all external contributors » for fork pull requests, and
-   *Workflow permissions* « Read repository contents ».
-7. Run « Deploy to Cloudflare » once (*Actions → Run workflow*) after the moves and check the run is green.
+| Change | Why |
+|---|---|
+| Token check: account endpoint `/accounts/<id>/tokens/verify` first, then `/user/tokens/verify` (production and staging) | An account-owned token was rejected by the user-only check and blocked the deploy |
+| Production: trigger and job limited to `claude/intelligent-shannon-uwa4fi` (`main` removed; `if: github.ref == …` on the job) | `main` does not exist: anyone with write access could create it and deploy; a manual run from another branch never deploys |
+| Staging: full CI first (`needs: ci`), job limited to `claude/staging-deploy` | Same gate as production |
+| Staging fail-safe: a public staging is replaced by a 503 Worker (`wrangler.staging-lockdown.jsonc`) instead of `wrangler delete` | Deleting needs Workers Admin; a token limited to « Edit » on `sygma-staging` can deploy the locked page |
+| `monitor.yml`: job in environment `monitor` | Lets `SUPABASE_SECRET_KEY` and `TELEGRAM_BOT_TOKEN` leave the repository secrets; until they are added to `monitor`, the repository secrets keep being used (no interruption). Each hourly run is recorded as a deployment of `monitor` |
 
-## 3. Record
+The production branch runs the workflow files of the commit it holds: until the next authorized production deploy,
+`8797d7c` still has the old `deploy-cloudflare.yml` (no environment). The changes are one commit on top of `10b9643`
+(8 languages) and cherry-pick cleanly onto `10eb7fb` (English).
 
-Done by / date: ____________ · Environments created ☐ · staging token ☐ · secrets moved ☐ · branch rules ☐
+## 3. Owner actions (GitHub and Cloudflare settings cannot be changed from the Claude session)
+
+Order matters: nothing is deleted before its replacement has been used successfully once.
+
+1. **Environment `production`** → *Deployment branches*: « Selected branches » → `claude/intelligent-shannon-uwa4fi`
+   only (remove `main`). Add yourself as *Required reviewer*.
+2. **Environment `staging`** → deployment branch `claude/staging-deploy` only (already done per owner).
+3. **Environment `monitor`** (create it) → deployment branch `claude/intelligent-shannon-uwa4fi` only, no reviewer
+   (the hourly schedule must not wait). Add `SUPABASE_SECRET_KEY` and `TELEGRAM_BOT_TOKEN` (same values).
+4. **Check the secret names**: each environment's token is named exactly `CLOUDFLARE_API_TOKEN`; `production` also has
+   `BREVO_API_KEY`, `TELEGRAM_BOT_TOKEN`, `SUPABASE_SECRET_KEY`.
+5. **Cloudflare tokens**: production = Workers Scripts Edit (account `9a7bb862…`, product level: Custom Domains do not
+   support per-Worker roles) + Zone `sygmatv.com` Workers Routes Edit; staging = Workers Edit on `sygma-staging` only
+   + Zone `sygmatv.com` Workers Routes Edit. Nothing else (no DNS, KV, R2, D1, Access, WAF).
+6. **Branch ruleset** (*Settings → Rules → Rulesets*) on `claude/intelligent-shannon-uwa4fi` and `claude/staging-deploy`:
+   block force-push and deletion; on `refs/heads/main`: restrict creation.
+7. **Settings → Actions → General**: approval required for fork pull-request workflows; *Workflow permissions* « Read
+   repository contents and packages permissions ».
+8. **Delete repository-level secrets, only after their replacement ran green**:
+   - `PREVIEW_PASSWORD`: now (only the retired preview workflow uses it).
+   - `CLOUDFLARE_API_TOKEN`, `BREVO_API_KEY`: after the first green production deploy from the new workflow
+     (deleting `CLOUDFLARE_API_TOKEN` also disables the old deploy workflow still present on 38 branches).
+   - `SUPABASE_SECRET_KEY`, `TELEGRAM_BOT_TOKEN`: after the first green Monitor run that uses environment `monitor`
+     (*Actions → Monitor*, run header « monitor » environment), which happens once `monitor.yml` reaches the
+     production branch.
+
+## 4. Record
+
+Done by / date: ____________ · production rules ☐ · monitor env ☐ · token scopes ☐ · ruleset ☐ · Actions settings ☐ · repository secrets deleted ☐

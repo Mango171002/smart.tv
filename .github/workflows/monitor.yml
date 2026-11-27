@@ -26,6 +26,9 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    # Own environment (branch rule: the default branch only) so SUPABASE_SECRET_KEY and TELEGRAM_BOT_TOKEN can
+    # leave the repository secrets. Until they are added there, the repository secrets are still used.
+    environment: monitor
     timeout-minutes: 8
     env:
       SITE: https://sygmatv.com

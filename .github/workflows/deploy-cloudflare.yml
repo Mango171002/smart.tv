@@ -1,6 +1,7 @@
 # Deploys the site to Cloudflare Workers (OpenNext).
-# Requires ONE repository secret that you create in GitHub:
-#   CLOUDFLARE_API_TOKEN  (Cloudflare token with the "Edit Cloudflare Workers" permissions)
+# Secrets of the GitHub Environment « production » (not repository secrets — docs/release/final/a13-ci-hardening.md):
+#   CLOUDFLARE_API_TOKEN (user or account-owned token: Workers Scripts Edit on the account + Workers Routes Edit
+#   on the zone sygmatv.com), BREVO_API_KEY, TELEGRAM_BOT_TOKEN, SUPABASE_SECRET_KEY.
 # Live URL: https://sygmatv.com
 # Hardening (A13, security report D13-003/004/005):
 # - the whole CI (.github/workflows/ci.yml: lint, typecheck, unit, build, E2E, Cloudflare bundle, database) must pass
@@ -15,7 +16,7 @@ name: Deploy to Cloudflare
 on:
   workflow_dispatch:
   push:
-    branches: ['claude/intelligent-shannon-uwa4fi', 'main']
+    branches: ['claude/intelligent-shannon-uwa4fi']
 
 permissions:
   contents: read
@@ -31,6 +32,8 @@ jobs:
 
   deploy:
     needs: ci
+    # Defence in depth on top of the environment's branch rule: a manual run from any other branch never deploys.
+    if: github.ref == 'refs/heads/claude/intelligent-shannon-uwa4fi'
     runs-on: ubuntu-latest
     environment: production
     env:
@@ -54,12 +57,14 @@ jobs:
             echo "::error::Add the CLOUDFLARE_API_TOKEN secret in GitHub → Settings → Secrets and variables → Actions."
             exit 1
           fi
-          status="$(curl -s -o verify.json -w '%{http_code}' -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" https://api.cloudflare.com/client/v4/user/tokens/verify)"
+          # Account-owned tokens (Manage account → API tokens) are verified on the account endpoint, user tokens
+          # (My profile → API tokens) on the user endpoint: try the account one first, then the user one.
+          status="$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/tokens/verify")"
+          [ "$status" = "200" ] || status="$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" https://api.cloudflare.com/client/v4/user/tokens/verify)"
           if [ "$status" != "200" ]; then
             echo "::error::Cloudflare rejected the token (HTTP $status). Re-create the CLOUDFLARE_API_TOKEN secret with only the token value."
             exit 1
           fi
-          rm -f verify.json
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22

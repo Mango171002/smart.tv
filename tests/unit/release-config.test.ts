@@ -178,13 +178,13 @@ describe('staging deployment workflow (deploy-staging.yml): safety checks kept',
     }
   });
 
-  it('Access is checked again AFTER the deployment, and a public staging is deleted', () => {
+  it('Access is checked again AFTER the deployment, and a public staging is locked (503 Worker)', () => {
     const deploy = at('opennextjs-cloudflare deploy');
     const after = at('Access protection check');
     expect(after).toBeGreaterThan(deploy);
     const step = wf.slice(after);
     expect(step).toMatch(/curl -s -o \/dev\/null -w '%\{http_code\}' https:\/\/staging\.sygmatv\.com\//);
-    expect(step).toMatch(/if \[ "\$code" = "200" \]; then[\s\S]*npx wrangler delete --config wrangler\.staging\.jsonc --force[\s\S]*exit 1/);
+    expect(step).toMatch(/if \[ "\$code" = "200" \]; then[\s\S]*npx wrangler deploy --config wrangler\.staging-lockdown\.jsonc[\s\S]*exit 1/);
   });
 
   it('the Access check before the deployment covers the home, the health check and a language, and fails closed', () => {
@@ -196,7 +196,7 @@ describe('staging deployment workflow (deploy-staging.yml): safety checks kept',
   it('every Cloudflare command targets the staging configuration, never wrangler.jsonc', () => {
     const cmds = wf.match(/npx (?:opennextjs-cloudflare|wrangler) [^\n&]*/g) ?? [];
     expect(cmds.length).toBeGreaterThanOrEqual(3);
-    for (const cmd of cmds) expect(cmd, cmd).toMatch(/--config wrangler\.staging\.jsonc/);
+    for (const cmd of cmds) expect(cmd, cmd).toMatch(/--config wrangler\.staging(?:-lockdown)?\.jsonc/);
     expect(wf).not.toMatch(/--config wrangler\.jsonc/);
   });
 });

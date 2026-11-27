@@ -62,7 +62,7 @@ describe('release flag (NEXT_PUBLIC_RELEASED_LANGUAGES)', () => {
   });
 
   it('is set nowhere but .env.production (Cloudflare configs, Next / OpenNext configs, staging settings, workflows)', () => {
-    expect([...CONFIGS].sort()).toEqual(['next.config.ts', 'open-next.config.ts', 'wrangler.jsonc', 'wrangler.staging.jsonc']);
+    expect([...CONFIGS].sort()).toEqual(['next.config.ts', 'open-next.config.ts', 'wrangler.jsonc', 'wrangler.staging-lockdown.jsonc', 'wrangler.staging.jsonc']);
     expect(WORKFLOWS).toContain('.github/workflows/deploy-cloudflare.yml');
     for (const f of RELEASE_FORBIDDEN_FILES) expect(read(f), f).not.toMatch(RELEASE_ASSIGNMENT);
   });

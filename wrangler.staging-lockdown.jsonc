@@ -1,0 +1,12 @@
+{
+  // LOCKED STAGING — used only by the Access protection check of .github/workflows/deploy-staging.yml.
+  // Same Worker and route as wrangler.staging.jsonc, but a one-file script that answers 503 to everything.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sygma-staging",
+  "main": "scripts/staging-lockdown/worker.mjs",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "staging.sygmatv.com/*", "zone_name": "sygmatv.com" }],
+  "triggers": { "crons": [] }
+}

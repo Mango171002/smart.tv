@@ -68,7 +68,7 @@ describe('staging build settings (.env.staging) and workflow', () => {
     for (const re of [/secret put/, /setWebhook/i, /indexnow/i, /TELEGRAM_BOT_TOKEN|BREVO_API_KEY|SUPABASE_SECRET_KEY/]) expect(wf, String(re)).not.toMatch(re);
   });
 
-  it('the production deployment workflow is unchanged (production branch and main only)', () => {
-    expect(read('.github/workflows/deploy-cloudflare.yml')).toMatch(/branches: \['claude\/intelligent-shannon-uwa4fi', 'main'\]/);
+  it('the production deployment workflow runs from the production branch only', () => {
+    expect(read('.github/workflows/deploy-cloudflare.yml')).toMatch(/branches: \['claude\/intelligent-shannon-uwa4fi'\]/);
   });
 });
